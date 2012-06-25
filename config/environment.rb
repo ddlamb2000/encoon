@@ -28,3 +28,5 @@ LANGUAGES = {
   "Français" => 'fr',
   "Español" => 'es'
 }
+
+DATA_GRID_SECURITY_ACTIVATED = true
