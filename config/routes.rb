@@ -20,6 +20,7 @@ Encoon::Application.routes.draw do
     resources :rows
   end  
   resources :rows
+  devise_for :users
   match '/login' => 'home#login'
   match '/logout' => 'home#logout'
   match '/about' => 'home#about'

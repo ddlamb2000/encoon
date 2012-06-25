@@ -1,0 +1,15 @@
+<tr>
+  <td class="header"><%= I18n.t('field.audit') %></td>
+  <td class="string">
+    <ul>
+      <% for row in entity.all_audits %>
+        <li>
+          <%= row.kind_name %>
+          <span class="detail-article">
+            <%= display_updated_time_by(row, row.who_updated, row.update_user_uuid).html_safe %>
+    			</span>
+        </li>
+      <% end %>
+    </ul>
+  </td>
+</tr>

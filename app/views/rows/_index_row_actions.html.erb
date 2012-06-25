@@ -1,0 +1,9 @@
+<% if grid.can_update?(row) %>
+  <%= link_to(icon('edit'), 
+        {:controller => 'rows', :action => "edit_row_inline", :grid_id => grid.uuid, :id => row.id},
+        :remote => true) %>
+  <%= link_to(icon('remove'), 
+        {:controller => 'rows', :grid_id => grid.uuid, :id => row.id, :inline => true, :action => "destroy"}, 
+         :confirm => I18n.t('message.delete', :name => row.to_s),
+         :method => :delete) %>
+<% end %>

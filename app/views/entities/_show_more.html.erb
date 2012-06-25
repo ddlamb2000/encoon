@@ -1,0 +1,58 @@
+<table>
+  <tr>
+	  <td class="header"><%= I18n.t('field.version') %></td>
+    <td class="string"><%=h entity.version %></td>
+ </tr>
+ <tr>
+	  <td class="header"><%= I18n.t('field.revision') %></td>
+    <td class="string"><%=h entity.revision %></td>
+  </tr>
+  <% if entity.has_begin? %>
+		<tr>
+		  <td class="header"><%= I18n.t('field.begin_date') %></td>
+		  <td class="string">
+		    <%=h display_begin_date(entity.begin) %>
+		    <span class="detail-article"><%= display_distance_date(entity.begin) %></span>
+		  </td>
+	  </tr>
+	<% end %>
+  <% if entity.has_end? %>
+	  <tr>
+		  <td class="header"><%= I18n.t('field.end_date') %></td>
+		  <td class="string">
+		    <%=h display_end_date(entity.end) %>
+		    <span class="detail-article"><%= display_distance_date(entity.end) %></span>
+		  </td>
+		</tr>
+	<% end %>
+  <tr>
+	  <td class="header"><%= I18n.t('field.created') %></td>
+    <td class="string">
+    	<%=h entity.created_at %>
+    	<span class="detail-article">
+        <%= display_created_time_by(entity, entity.who_created, entity.create_user_uuid).html_safe %>
+        <% if entity.created_photo? %>
+          <div class="mini-photo">
+            <img src="<%= url_for(:controller => 'rows', :action => 'photo', :grid_id => User::ROOT_UUID, :id => entity.create_user_uuid) %>", height=18/>
+          </div>
+        <% end %>
+      </span>
+		</td>
+  </tr>
+  <% if entity.was_updated? %>
+    <tr>
+  	  <td class="header"><%= I18n.t('field.updated') %></td>
+      <td class="string">
+        <%=h entity.updated_at %>
+        <span class="detail-article">
+          <%= display_updated_time_by( entity, entity.who_updated, entity.update_user_uuid).html_safe %>
+  		    <% if entity.updated_photo? %>
+  		      <div class="mini-photo">
+              <img src="<%= url_for(:controller => 'rows', :action => 'photo', :grid_id => User::ROOT_UUID, :id => entity.update_user_uuid) %>", height=18/>
+  		      </div>
+  		    <% end %>
+  		  </span>
+  		</td>
+    </tr>
+  <% end %>
+</table>

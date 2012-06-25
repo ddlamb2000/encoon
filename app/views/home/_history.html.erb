@@ -1,0 +1,6 @@
+<article class="article">
+  <div class="close-button"><%= link_to I18n.t('actions.hide'), {:action => "hide_history"}, :remote => true %></div>
+  <ul>
+  	 <%= display_history(session[:history_table]).html_safe %>
+  </ul>
+</article>

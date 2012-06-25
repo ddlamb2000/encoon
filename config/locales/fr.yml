@@ -1,0 +1,350 @@
+# encoding: utf-8
+#
+# Encoon : data structuration, presentation and navigation.
+# 
+# Copyright (C) 2012 David Lambert
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# 
+# See doc/COPYRIGHT.rdoc for more details.
+fr:
+  banner:
+    history:      "Historique"
+    signout:      "Déconnection"
+    copyright:    "© David Lambert 2012. Tous droits réservés."
+    welcome:      "Bienvenue sur Encoon"
+    explain_wel:  "Contrôlez, partagez et navigez dans vos données; c’est rapide et c’est nouveau."
+    whatis:       "Qu’est Encoon?"
+    testdrive:    "Envie de voir ? Mot de passe oublié ?"
+    registered:   "Utilisateurs enregistrés"
+    register:     "Enregistrement"
+    login:        "Vous devez vous connecter à l’application."
+    loggedout:    "Vous êtes maintenant déconnecté."
+    back_login:   "Retour à la page de connexion"
+    explain_in:   "Entrez votre adresse électronique et votre mot de passe afin d’accèder à vos données.
+                   <i>L’application étant expérimentale, les données saisies
+                   ne sont pas vraiment en sécurité. Rien ne garantit par exemple qu’elles seront conservées
+                   ou qu’elles restent confidentielles.</i>" 
+    explain_reg:  "Entrez votre addresse électronique, votre prénom et votre nom et vous recevrez votre mot de passe par courrier électronique."
+    explain_test: "Vous pouvez vous enregistrer vous-même ou recevoir votre mot de passe 
+                   si vous l’avez perdu, en cliquant %{here}."
+    introduction: "Encoon est aujourd’hui une application web expérimentale orientée vers la gestion de données.<br/> 
+                   Les travaux de recherche sur lesquels s’appuie Encoon ont pour objet de proposer un véritable 
+                   moteur qui permette de <strong>structurer des données</strong>, 
+                   de gérer des <strong>relations entre données</strong>, 
+                   de les <strong>présenter</strong>, et surtout de rendre évidente la <strong>navigation</strong>.<br/>
+                   Cette nouvelle application ne requière pas d’apprentissage et 
+                   de compétence en matière de bases de données car
+                   tout est piloté de façon simple par une <strong>interface entièrement Web en temps réel</strong>.
+                   Destinée dans un premier temps aux petites structures d’entreprise,
+                   l’application permet de gérer au sein de l’organisation un grand nombre d’information
+                   de tout nature et de partager cette information avec les collaborateurs de l’entreprise
+                   de façon simple et naturelle à l’aide d’un simple navigateur Internet.<br/>
+                   L’application est destinée à terme à être hébergée au sein même de l’entreprise
+                   sur un serveur local (Windows, Mac ou Linux), ou bien sur le Web. 
+                   Encoon sert également de base à la construction 
+                   d’un véritable <i>outil de création d’application d’entreprise</i>."
+
+  actions:
+    create:       "Nouveau"
+    update:       "Modifier"
+    import:       "Importer"
+    export:       "Exporter (.xml)"
+    cancel:       "Annuler"
+    ok:           "OK"
+    edit:         "Modifier"
+    delete:       "Supprimer"
+    more:         "Détails..."
+    hide:         "Masquer"
+    login:        "Connexion"
+    data:         "Afficher la liste des données"
+    attach:       "Attacher document"
+
+  devise:
+    sign_in:            "Se connecter"
+    sign_up:            "S’enregistrer"
+    forgot_password:    "Mot de passe oublié ?"
+    send_instructions:  "Envoyez les instructions de réinitialisation du mot de passe"
+    no_confirmation:    "Instructions de confirmation non reçues ?"
+    no_unlock:          "Instructions de déverrouillage non reçues ?"
+    sign_in_with:       "Se connecter avec %{provider}"
+    resend_conf:        "Envoyer les instructions de confirmation"
+    resend_unlock:      "Envoyer les instructions de déverrouillage"
+    change_passwd:      "Changer mot de passe"
+    new_passwd:         "Nouveau mot de passe"
+    conf_new_passwd:    "Confirmer le nouveau mot de passe"
+    unhappy:            "Mécontent ?"
+    cancel_account:     "Supprimer mon compte"
+    edit_user:          "Mise à jour des préférences"
+
+  version:
+    mode:         "Mode"
+    update:       "Modifier"
+    new:          "Nouvelle version"
+      
+  field:
+    uuid:         "Identifiant"
+    name:         "Nom"
+    description:  "Description"
+    active:       "Actif"    
+    begin_date:   "Date de début"
+    end_date:     "Date de fin"
+    asof_date:    "Date"
+    first_name:   "Prénom"
+    last_name:    "Nom"
+    version:      "Version"
+    revision:     "Révision"
+    created:      "Créé"
+    updated:      "Modifié"
+    history:      "Historique"
+    audit:        "Audit"
+    language:     "Langue"
+    languages:    "Langues"
+    attachments:  "Documents"
+      
+  workspaces:
+    title:        "Espaces de travail"
+    name:         "Espace de travail"
+    
+  grids:
+    title:        "Grilles de données"
+    name:         "Grille de données"
+    
+  columns:
+    title:        "Colonnes"
+    name:         "Colonne"
+    
+  rows:
+    title:        "Liste de données"
+    name:         "Données"
+    
+  users:
+    title:        "Utilisateurs"
+    name:         "Utilisateur"
+    
+  general:
+    home:         "Accueil"
+    undefined:    "(non défini)"
+    ago:          "il y a %{time}"
+    ahead:        "dans %{time}"
+    updated:      "Modifié il y %{time}."
+    created:      "Créé il y %{time}."
+    time_by:      "il y a %{time} par %{by}"
+    begins:       "À partir du %{time}"
+    ends:         "Jusqu’au  %{time}"
+    no_begin:     "Pas de date de début"
+    no_end:       "Pas de date de fin"
+    version:      "Version %{version}"
+    inactive:     "Inactif"
+    object_name:  "%{type} : %{name}"
+    here:         "ici"
+    show_table:   "Plus"
+    record:       "%{count} ligne / %{total}"
+    records:      "%{count} lignes / %{total}"
+    audit_create: "Création de la version %{version} (%{language})"
+    audit_update: "Révision %{revision} de la version %{version} (%{language})"
+    audit_import: "<u>Importation</u> de la version %{version} (%{language})"
+    audit_delete: "<strong>Suppression</strong> de la version %{version} (%{language})"
+    audit_attach: "Ajout de document"
+    audit_detach: "Suppression d’un document"
+    audit_pass:   "Mot de passe modifié"
+    new:          "Nouveau"
+    unknown:      "inconnu"
+    full_table:   "Afficher le tableau complet..."
+    next_rows:    "Lignes suivantes"
+    prev_rows:    "Lignes précédentes"
+    first_rows:   "Premières lignes"
+    search:       "Recherche"
+    design:       "Définition"
+    grid_design:  "Afficher la définition de la grille de données"
+    attached_row: "%{grid} (%{column})"
+    back_to:      "Retour vers : "
+    
+  datepicker:
+    format:           "dd/mm/yy"
+    decode:           "%d/%m/%Y"
+    dayNamesMin:      [Di, Lu, Ma, Me, Je, Ve, Sa]
+    monthNames:       [Janvier, Février, Mars, Avril, Mai, Juin, Juillet, Août, Septembre, Octobre, Novembre, Décembre]
+    monthNamesShort:  [Jan, Fév, Mar, Avr, Mai, Juin, Juil, Août, Sept, Oct, Nov, Déc]
+    currentText:      "Aujourd’hui"
+    closeText:        "Fermer"
+          
+  transaction:
+    created:      "%{name} (%{type}) créé."
+    updated:      "%{name} (%{type}) modifié."
+    deleted:      "%{name} (%{type}) supprimé."
+    not_created:  "%{name} (%{type}) non créé."
+    not_updated:  "%{name} (%{type}) non modifié."
+    not_deleted:  "%{name} (%{type}) non supprimé."
+    attached:     "Document attaché à %{name} (%{type})."
+    pass_created: "Mot de passe créé pour %{name}."
+
+  error:
+    ena_record:   "Au moins un enregistrement doit être actif."
+    dup_record:   "Il existe un autre enregistrement actif à la même date %{date}."
+    bad_password: "Adresse électronique ou mot de passe incorrect."
+    required:     "’%{column}’ est obligatoire."
+    toolong:      "’%{column}’ est trop grand (longueur maximumum est de %{length})."
+    badformat:    "’%{column}’ n’utilise pas un bon format."
+    mis_password: "Le mot de passe est obligatoire."
+    mis_name:     "Le nom est obligatoire."
+    pass_conf:    "La confirmation du mot de passe n’est pas conforme."
+    no_grid:      "Erreur: grille de données non disponible"
+    no_data:      "Erreur: données non disponible"
+        
+  message:
+    delete:       "Etes vous sûr de vouloir supprimer ’%{name}’ ?"
+    
+  date:
+    formats:
+      default: "%d/%m/%Y"
+      short: "%e %b"
+      long: "%e %B %Y"
+      long_ordinal: "%e %B %Y"
+      only_day: "%e"
+ 
+    day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
+    abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
+    month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
+    abbr_month_names: [~, jan., fév., mar., avr., mai, juin, juil., août, sept., oct., nov., déc.]
+    order:
+        - :day
+        - :month
+        - :year
+  
+  time:
+    formats:
+      default: "%d %B %Y %H:%M"
+      time: "%H:%M"
+      short: "%d %b %H:%M"
+      long: "%A %d %B %Y %H:%M:%S %Z"
+      long_ordinal: "%A %d %B %Y %H:%M:%S %Z"
+      only_second: "%S"
+    am: "am"
+    pm: "pm"
+ 
+  datetime:
+    distance_in_words:
+      half_a_minute: "une demi-minute"
+      less_than_x_seconds:
+        zero:  "moins d’une seconde"
+        one:   "moins de 1 seconde"
+        other: "moins de %{count} secondes"
+      x_seconds:
+        one:   "1 seconde"
+        other: "%{count} secondes"
+      less_than_x_minutes:
+        zero:  "moins d’une minute"
+        one:   "moins de 1 minute"
+        other: "moins de %{count} minutes"
+      x_minutes:
+        one:   "1 minute"
+        other: "%{count} minutes"
+      about_x_hours:
+        one:   "environ une heure"
+        other: "environ %{count} heures"
+      x_days:
+        one:   "1 jour"
+        other: "%{count} jours"
+      about_x_months:
+        one:   "environ un mois"
+        other: "environ %{count} mois"
+      x_months:
+        one:   "1 mois"
+        other: "%{count} mois"
+      almost_x_years:
+        one:   "presque 1 an"
+        other: "presque %{count} ans"
+      about_x_years:
+        one:   "environ un an"
+        other: "environ %{count} ans"
+      over_x_years:
+        one:   "plus d’un an"
+        other: "plus de %{count} ans"
+    prompts:
+      year:   "Année"
+      month:  "Mois"
+      day:    "Jour"
+      hour:   "Heure"
+      minute: "Minute"
+      second: "Seconde"
+  
+  number:
+    format:
+      precision: 3
+      separator: ","
+      delimiter: " "
+    currency:
+      format:
+        unit: "€"
+        precision: 2
+        format: "%n %u"
+    human:
+      format:
+        delimiter: "" 
+        precision: 2
+      storage_units:
+        format: "%n %u"
+        units:
+          byte:
+            one:   "octet"
+            other: "octets"
+          kb: "ko"
+          mb: "Mo"
+          gb: "Go"
+          tb: "To"
+ 
+  support:
+    array:
+      sentence_connector: "et"
+      skip_last_comma: true
+      words_connector: ", "
+      two_words_connector: " et "
+      last_word_connector: " et "
+  
+  activerecord:
+    errors:
+      full_messages:
+        format:   "%{message}"
+      template:
+        header: 
+          one: "Impossible d’enregistrer %{model}: 1 erreur"
+          other: "Impossible d’enregistrer %{model}: %{count} erreurs."
+        body: "Veuillez vérifier les champs suivants :"
+      messages:
+        inclusion: "n’est pas inclus(e) dans la liste"
+        exclusion: "n’est pas disponible"
+        invalid: "n’est pas valide"
+        confirmation: "ne concorde pas avec la confirmation"
+        accepted: "doit être accepté(e)"
+        empty: "doit être rempli(e)"
+        blank: "doit être rempli(e)"
+        too_long: "est trop long (pas plus de %{count} caractères)"
+        too_short: "est trop court (au moins %{count} caractères)"
+        wrong_length: "ne fait pas la bonne longueur (doit comporter %{count} caractères)"
+        taken: "n’est pas disponible"
+        not_a_number: "n’est pas un nombre"
+        greater_than: "doit être supérieur à %{count}"
+        greater_than_or_equal_to: "doit être supérieur ou égal à %{count}"
+        equal_to: "doit être égal à %{count}"
+        less_than: "doit être inférieur à %{count}"
+        less_than_or_equal_to: "doit être inférieur ou égal à %{count}"
+        odd: "doit être impair"
+        even: "doit être pair"
+        record_invalid: "La validation a échoué : %{errors}"
+    attributes:
+      user:
+        email:                      "Adresse électronique"
+        first_name:                 "Prénom"
+        last_name:                  "Nom"
+        password:                   "Mot de passe"
+        password_confirmation:      "Confirmation du mot de passe"
+        current_password:           "Mot de passe actuel"
+        remember_me:                "Se souvenir de moi"

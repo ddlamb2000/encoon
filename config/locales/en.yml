@@ -1,0 +1,205 @@
+# encoding: utf-8
+#
+# Encoon : data structuration, presentation and navigation.
+# 
+# Copyright (C) 2012 David Lambert
+# 
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+# 
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+# 
+# See doc/COPYRIGHT.rdoc for more details.
+en:
+  banner:
+    history:      "History"
+    signout:      "Log out"
+    copyright:    "© David Lambert 2012. All rights reserved."
+    welcome:      "Welcome to Encoon"
+    explain_wel:  "Control, share and navigate in your data; it's fast and it's new."
+    whatis:       "What is Encoon?"
+    testdrive:    "Want a test drive? Forgot your password?"
+    registered:   "Registered users"
+    register:     "Check in"
+    login:        "You need to log in the application."
+    loggedout:    "You're now logged out."
+    back_login:   "Back to login page"
+    explain_in:   "Enter your Email address and your password in order to access your data.
+                   <i>The application being an experiment, data entered in the system
+                   isn't secured (yet). There is no guarantee (yet) data will be kept or will stay confidential.</i>"
+    explain_reg:  "Enter your Email address, first and last name below and you'll be notified of your password." 
+    explain_test: "You can register yourself or be notified of your password if you lost it, 
+                   by just clicking %{here}."
+    introduction: "For the time being, Encoon is an experimental web-based application oriented toward data management.<br/>
+                   The object of the reasearches Encoon is based on is to propose a true 
+                   engine that allows <strong>data structuration</strong>, 
+                   <strong>data relationship management</strong>, 
+                   <strong>data presentation</strong>, and, mainly, to make obvious <strong>data navigation</strong>.<br/>
+                   This brand new application doesn't require database system learning or skills, 
+                   because everything in the application is managed through a very <strong>simple web-based user interface</strong>, in <strong>real time</strong>.
+                   Primary dedicated to small business structures,
+                   the application lets manage a large amount of multi-purposes information within the organization,
+                   and share this information across business stakeholders
+                   in an easy and natural way, using one Internet browser only.<br/>
+                   The application is supposed to be hosted within the organization itself,
+                   on a local server (Windows, Mac or Linux), or even on the Web. 
+                   Encoon is also the foundation for the development of a <i>true business-oriented application development toolkit</i>."
+      
+  actions:
+    create:       "New"
+    update:       "Update"
+    import:       "Import"
+    export:       "Export (.xml)"
+    cancel:       "Cancel"
+    ok:           "OK"
+    edit:         "Modify"
+    delete:       "Delete"
+    more:         "Details..."
+    hide:         "Hide"
+    login:        "Log in"
+    data:         "Display list of data"
+    attach:       "Attach document"
+    
+  devise:
+    sign_in:            "Sign in"
+    sign_up:            "Sign up"
+    forgot_password:    "Forgot your password?"
+    send_instructions:  "Send me reset password instructions"
+    no_confirmation:    "Didn't receive confirmation instructions?"
+    no_unlock:          "Didn't receive unlock instructions?"
+    sign_in_with:       "Sign in with %{provider}"
+    resend_conf:        "Resend confirmation instructions"
+    resend_unlock:      "Resend unlock instructions"
+    change_passwd:      "Change password"
+    new_passwd:         "New password"
+    conf_new_passwd:    "Confirm new password"
+    unhappy:            "Unhappy?"
+    cancel_account:     "Cancel my account"
+    edit_user:          "Update preferences"
+
+  version:
+    mode:         "Update"
+    update:       "Modify"
+    new:          "New version"
+    
+  field:
+    uuid:         "Identifier"
+    name:         "Name"
+    description:  "Description"
+    active:       "Active"    
+    begin_date:   "Begin date"
+    end_date:     "End date"
+    asof_date:    "As of date"
+    first_name:   "First name"
+    last_name:    "Last name"
+    version:      "Version"
+    revision:     "Revision"
+    created:      "Created"
+    updated:      "Updated"
+    history:      "History"
+    audit:        "Audit"
+    language:     "Language"
+    languages:    "Languages"
+    attachments:  "Documents"
+    
+  workspaces:
+    title:        "Workspaces"
+    name:         "Workspace"
+    
+  grids:
+    title:        "Data grids"
+    name:         "Data grid"
+    
+  columns:
+    title:        "Columns"
+    name:         "Column"
+    
+  rows:
+    title:        "Data list"
+    name:         "Data"
+    
+  users:
+    title:        "Users"
+    name:         "User"
+    
+  general:
+    home:         "Home"
+    undefined:    "(undefined)"
+    ago:          "%{time} ago"
+    ahead:        "%{time} ahead"
+    updated:      "Updated %{time} ago."
+    created:      "Created %{time} ago."
+    time_by:      "%{time} ago by %{by}"
+    begins:       "From %{time}"
+    ends:         "Until %{time}"
+    no_begin:     "No begin date"
+    no_end:       "No end date"
+    version:      "Version %{version}"
+    inactive:     "Inactive"
+    object_name:  "%{type}: %{name}"
+    here:         "here"
+    show_table:   "More"
+    record:       "%{count} row / %{total}"
+    records:      "%{count} rows / %{total}"
+    audit_create: "Creation of version %{version} (%{language})"
+    audit_update: "Revision %{revision} of version %{version} (%{language})"
+    audit_import: "<u>Import</u> of version %{version} (%{language})"
+    audit_delete: "<strong>Delete</strong> version %{version} (%{language})"
+    audit_attach: "Attach document"
+    audit_detach: "Remove attached document"
+    audit_pass:   "Password changed"
+    new:          "New"
+    unknown:      "unknown"
+    full_table:   "Display the full table..."
+    next_rows:    "Next rows"
+    prev_rows:    "Previous rows"
+    first_rows:   "First rows"
+    search:       "Search"
+    design:       "Design"
+    grid_design:  "Display data grid definition"
+    attached_row: "%{grid} (%{column})"
+    back_to:      "Back to: "
+
+  datepicker:
+    format:           "yy-mm-dd"
+    decode:           "%Y-%m-%d"
+    dayNamesMin:      [Su, Mo, Tu, We, Th, Fr, Sa]
+    monthNames:       [January, February, March, April, May, June, July, August, September, October, November, December]
+    monthNamesShort:  [Jan, Feb, Mar, Apr, May, June, July, Augu, Sept, Oct, Nov, Dec]
+    currentText:      "Today"
+    closeText:        "Close"
+          
+  transaction:
+    created:      "%{name} (%{type}) created."
+    updated:      "%{name} (%{type}) updated."
+    deleted:      "%{name} (%{type}) deleted."
+    not_created:  "%{name} (%{type}) not created."
+    not_updated:  "%{name} (%{type}) not updated."
+    not-deleted:  "%{name} (%{type}) not deleted."
+    attached:     "Document attached to %{name} (%{type})."
+    pass_created: "Password created for %{name}."
+    
+  error:
+    ena_record:   "At least one record must be active."
+    dup_record:   "Another active record exists with the same date %{date}."
+    bad_password: "Invalid Email address or password."
+    required:     "'%{column}' is required."
+    toolong:      "'%{column}' is too long (maximum length is %{length})."
+    badformat:    "'%{column}' isn't using a right format."
+    mis_name:     "Name is mandatory."
+    mis_password: "Password is mandatory."
+    pass_conf:    "Password confirmation doesn't match."
+    no_grid:      "Error: data grid isn't available"
+    no_data:      "Error: data isn't available"
+    
+  message:
+    delete:       "Are you sure you want to delete '%{name}'?"
+    
+  activerecord:
+    errors:
+      full_messages:
+        format:   "%{message}"

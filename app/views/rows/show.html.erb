@@ -1,0 +1,178 @@
+<% @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present? %>
+<section class="sidebar">
+  <% unless @grid.blank? or @row.blank? %>
+    <article class="article">
+      <ul>
+        <% if @grid_cast.present? and @grid_cast.can_select_data? %>
+          <li>
+            <%= link_to icon('greenright')  + ("&nbsp;" + I18n.t('actions.data')).html_safe, 
+                        :controller => 'rows', :grid_id => @grid_cast.uuid %>
+          </li>
+        <% elsif @grid.uuid != Grid::ROOT_UUID and @grid.can_select_data? %>
+          <li>
+            <%= link_to icon('greenright') + ("&nbsp;" + I18n.t('actions.data')).html_safe, 
+                        :controller => 'rows', :grid_id => @grid.uuid %>
+          </li>
+        <% end %>
+        <% if @grid.uuid != Grid::ROOT_UUID %>
+          <li>
+            <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
+                                       :controller => 'rows', 
+                                       :action => 'show', 
+                                       :grid_id => Grid::ROOT_UUID, 
+                                       :id => @grid.uuid %>
+          </li>
+        <% end %>
+        <% if @grid.present? and @row.present? %>
+          <li>
+    			 <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
+    	    </li>
+          <% if @row.has_attachment? %>
+      		    <% if @row.has_photo? %>
+  			        <% for document in @row.row_attachments %>
+  			          <% if document.photo? %>
+                    <li>
+  			              <img src="<%= url_for(:action => 'photo', :grid_id => @grid.uuid, :id => @row.uuid, :photo_id => document.id) %>", height=128/>
+                    </li>
+  			          <% end %>
+  			        <% end %>
+   						<% end %>
+      		    <% if @row.has_document? %>
+  			        <% for document in @row.row_attachments %>
+  			          <% if document.document? %>
+  			            <li>
+    			            <%= icon "document" %>
+    			            <a href="<%= url_for(:action => 'file', :grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id) %>">
+    			              <%= document.file_name %></a>
+  			            </li>
+  			          <% end %>
+  			        <% end %>
+      				<% end %>
+      		<% end %>
+    			<% if @grid_cast.present? %>
+            <li>
+              <%= icon "greenright" %> 
+    	        <%= link_to I18n.t('rows.title'), :controller => 'rows', :grid_id => @grid_cast.uuid %>
+            </li>
+   				<% end %>
+   			  <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
+    				  <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
+    				  <li>
+                <%= icon "blueright" %> 
+  					    <%= link_to_unless_current attached_grid.name, :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
+                <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+                <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+    				  </li>
+    			<% end %>
+          <% if @grid.uuid == Grid::ROOT_UUID %>
+    		    <% for attached_grid in Grid.select_referenced_grids(@row.uuid) %>
+    		      <li>
+  		          <%= icon "table" %> 
+                <%= link_to_unless_current attached_grid.name, 
+                                           :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID,
+                                         :id => attached_grid.uuid %>
+                <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+                <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+    		      </li>
+    		    <% end %>
+    			<% end %>
+    		<% end %>
+    	</ul>
+    </article>
+  <% end %>
+</section>
+
+<section class="content3-4">
+  <% unless @grid.blank? or @row.blank? %>
+    <article id="article" class="highlighted">
+      <header>
+    		<h1>
+    			<% if @grid.uuid == Grid::ROOT_UUID %><%= icon "table" %>
+          <% elsif @grid.uuid == Workspace::ROOT_UUID %><%= icon "workspace" %>
+    			<% else %><%= icon "entity" %>
+    			<% end %>
+    			<span class="title"><%= @grid.to_s.html_safe %></span>
+    		  <%= @row.to_s.html_safe %>
+    		  <span class="detail-article">
+    				<%= display_grid_next_versions(@grid, @row).html_safe %>
+    	      <%= display_locale(@row).html_safe if @grid.has_translation? %>
+     		    <% if not @grid.can_update?(@row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+    		  </span>
+    		</h1>
+    	</header>
+      <% if @grid.has_translation? and @row_loc.description.present? %>
+        <p><%= no_trunc(@row_loc.description.html_safe) %></p>
+      <% end %>
+  	  <table>
+  	    <% for column in @grid.column_all %>
+    		  <%= show_entity(
+  	            column, 
+  	            @row.read_value(column),
+  													link_to(@row.read_referenced_name(column), 
+  														:controller => 'rows', :action => 'show',	:grid_id => column.grid_reference_uuid, 
+  														:id => @row.read_value(column)),
+  													@row.read_referenced_description(column)
+           ) %>
+  	    <% end %>
+  	  </table>
+      <div id="show-more-detail"></div>
+  		<div id="entity-upload-attachment"></div>
+  		<div id="detail-actions"></div>
+  		<aside class="actions">
+        <% if @grid.can_update?(@row) %>
+  				<div class="button" title="Update current data or create a new version.">
+  						<%= link_to icon('edit') + ("&nbsp;" + I18n.t('actions.edit')).html_safe, 
+  											{:action => "edit_inline", :grid_id => @grid.uuid, :id => @row.id}, 
+  		                  :remote => true %>
+  				</div>
+          <div class="button" title="Delete current data.">
+              <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+                 {:grid_id => @grid.uuid, :id => @row.id, :action => "destroy"}, 
+                  :confirm => I18n.t('message.delete', :name => @row.to_s), 
+                  :method => :delete %>
+          </div>
+  				<div class="button" title="Add or remove attachment (photo or document) to current data.">
+  						<%= link_to icon('attachments') + ("&nbsp;" + I18n.t('field.attachments')).html_safe, 
+  		           {:action => "attach_document", :grid_id => @grid.uuid, :id => @row.uuid},
+  		           :remote => true %>
+  				</div>
+  			<% end %>
+        <% if @grid.can_select_data? %>
+          <div class="button" title="Export current data into a XML file.">
+                <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+                   :format => :xml %>
+         </div>
+        <% end %>
+  			<div id="show-more-button" class="button" title="Displays more information about current data.">
+  				<%= link_to icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe, 
+  								        {:action => "show_more", :grid_id => @grid.uuid, :id => @row.id},
+                          :remote => true %>
+  			</div>
+        <div id="close-more-button" class="button" style="display: none">
+          <%= link_to I18n.t('actions.hide'), {:action => "hide_more"}, :remote => true %>
+        </div>
+  		</aside>
+    </article>
+  	<% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
+  	  <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
+  	  <% attached_grid.load_cached_grid_structure(@filters) %>
+  	  <article class="highlighted">
+  		  <h2>
+  		    <%= icon 'greenright' %>
+  		    <%= attached_grid.name %>
+  	      <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+          <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+  		  </h2>
+        <%= render :partial => "list", 
+										:locals => { 
+		                  :embedded => true, 
+		                  :full => true, 
+										  :grid => attached_grid,
+										  :filters => @filters,
+		                  :table_row_count => attached_grid.row_count(@filters),
+										  :table_rows => attached_grid.row_all(@filters), 
+										  :table_columns => attached_grid.filtered_columns } %>
+    	</article>																
+    <% end %>
+  <% end %>
+</section>

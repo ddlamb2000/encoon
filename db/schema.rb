@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100602195218) do
+ActiveRecord::Schema.define(:version => 20120624075233) do
 
   create_table "audits", :force => true do |t|
     t.integer  "version"
@@ -83,32 +83,6 @@ ActiveRecord::Schema.define(:version => 20100602195218) do
   add_index "columns", ["grid_uuid"], :name => "index_columns_on_grid_uuid"
   add_index "columns", ["uuid", "begin", "end"], :name => "index_columns_on_uuid_and_begin_and_end"
   add_index "columns", ["uuid"], :name => "index_columns_on_uuid"
-
-  create_table "grid_authorizations", :force => true do |t|
-    t.string   "uuid",             :limit => 36
-    t.date     "begin"
-    t.date     "end"
-    t.integer  "version"
-    t.boolean  "enabled"
-    t.string   "grid_uuid",        :limit => 36
-    t.string   "role_uuid",        :limit => 36
-    t.boolean  "grid_select"
-    t.boolean  "grid_update"
-    t.boolean  "grid_delete"
-    t.boolean  "data_select"
-    t.boolean  "data_create"
-    t.boolean  "data_update"
-    t.boolean  "data_delete"
-    t.integer  "lock_version",                   :default => 0
-    t.string   "create_user_uuid", :limit => 36
-    t.string   "update_user_uuid", :limit => 36
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "grid_authorizations", ["uuid", "begin", "end", "grid_uuid", "role_uuid"], :name => "index_grid_authorizations_on_uuid_and_begin_and_end_and_grid_uuid_and_role_uuid"
-  add_index "grid_authorizations", ["uuid", "begin", "end"], :name => "index_grid_authorizations_on_uuid_and_begin_and_end"
-  add_index "grid_authorizations", ["uuid"], :name => "index_grid_authorizations_on_uuid"
 
   create_table "grid_locs", :force => true do |t|
     t.string  "uuid",         :limit => 36
@@ -361,41 +335,44 @@ ActiveRecord::Schema.define(:version => 20100602195218) do
     t.datetime "updated_at"
   end
 
-  create_table "user_roles", :force => true do |t|
-    t.string   "uuid",             :limit => 36
-    t.date     "begin"
-    t.date     "end"
-    t.integer  "version"
-    t.boolean  "enabled"
-    t.string   "user_uuid",        :limit => 36
-    t.string   "role_uuid",        :limit => 36
-    t.integer  "lock_version",                   :default => 0
-    t.string   "create_user_uuid", :limit => 36
-    t.string   "update_user_uuid", :limit => 36
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  add_index "user_roles", ["uuid", "begin", "end", "user_uuid", "role_uuid"], :name => "index_user_roles_on_uuid_and_begin_and_end_and_user_uuid_and_role_uuid"
-  add_index "user_roles", ["uuid", "begin", "end"], :name => "index_user_roles_on_uuid_and_begin_and_end"
-  add_index "user_roles", ["uuid"], :name => "index_user_roles_on_uuid"
-
   create_table "users", :force => true do |t|
     t.string   "identifier"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version",                   :default => 0
+    t.integer  "lock_version",                         :default => 0
     t.string   "first_name"
     t.string   "last_name"
     t.integer  "version"
     t.date     "begin"
     t.date     "end"
-    t.string   "uuid",             :limit => 36
-    t.string   "create_user_uuid", :limit => 36
-    t.string   "update_user_uuid", :limit => 36
+    t.string   "uuid",                   :limit => 36
+    t.string   "create_user_uuid",       :limit => 36
+    t.string   "update_user_uuid",       :limit => 36
     t.boolean  "enabled"
+    t.string   "email",                                :default => "", :null => false
+    t.string   "encrypted_password",                   :default => "", :null => false
+    t.string   "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer  "sign_in_count",                        :default => 0
+    t.datetime "current_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
+    t.datetime "confirmed_at"
+    t.datetime "confirmation_sent_at"
+    t.string   "unconfirmed_email"
+    t.integer  "failed_attempts",                      :default => 0
+    t.string   "unlock_token"
+    t.datetime "locked_at"
   end
 
+  add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
+  add_index "users", ["email"], :name => "index_users_on_email"
+  add_index "users", ["identifier"], :name => "index_users_on_identifier", :unique => true
+  add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
+  add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
   add_index "users", ["uuid", "begin", "end"], :name => "index_users_on_uuid_and_begin_and_end"
   add_index "users", ["uuid"], :name => "index_users_on_uuid"
 
@@ -410,6 +387,25 @@ ActiveRecord::Schema.define(:version => 20100602195218) do
   end
 
   add_index "workspace_locs", ["uuid", "version", "locale"], :name => "index_workspace_locs_on_uuid_and_version_and_locale"
+
+  create_table "workspace_sharings", :force => true do |t|
+    t.string   "uuid",             :limit => 36
+    t.date     "begin"
+    t.date     "end"
+    t.integer  "version"
+    t.boolean  "enabled"
+    t.string   "workspace_uuid",   :limit => 36
+    t.string   "user_uuid",        :limit => 36
+    t.string   "role_uuid",        :limit => 36
+    t.integer  "lock_version",                   :default => 0
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+  end
+
+  add_index "workspace_sharings", ["uuid", "begin", "end"], :name => "index_workspace_sharings_on_uuid_and_begin_and_end"
+  add_index "workspace_sharings", ["workspace_uuid", "user_uuid"], :name => "index_workspace_sharings_on_workspace_uuid_and_user_uuid"
 
   create_table "workspaces", :force => true do |t|
     t.date     "begin"

@@ -1,0 +1,12 @@
+<% @grid.load_cached_grid_structure(params[:filters]) %>
+<%= render :partial => "list", 
+           :locals => { 
+                :embedded => false,
+                :full => true, 
+                :grid => @grid, 
+                :filters => params[:filters],
+                :search => params[:search], 
+                :table_row_count => @grid.row_count(params[:filters]),
+                :table_rows => @grid.row_all(params[:filters], params[:search]), 
+                :table_columns => @grid.filtered_columns
+            } %>

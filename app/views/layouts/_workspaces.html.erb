@@ -1,0 +1,8 @@
+<% if @workspaces.present? %>
+	<% for row in @workspaces.row_all %>
+	  <div class="button" title="<%= row.description.html_safe %>">
+		  <%= link_to_unless_current icon("workspace") + ("&nbsp;" + row.name).html_safe, 
+            :controller => '/rows', :action => 'show', :grid_id => Workspace::ROOT_UUID, :id => row.uuid %>
+    </div>																					    		
+	<% end %>
+<% end %>

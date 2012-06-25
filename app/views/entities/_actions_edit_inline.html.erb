@@ -1,0 +1,23 @@
+<aside class="actions">
+  <center>
+  	<a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + I18n.t('actions.cancel')).html_safe %></a>
+    | <%= I18n.t('field.begin_date') %>&nbsp;<%= f.datepicker 'begin_date', 
+                                                               :showButtonPanel => true,
+                                                               :numberOfMonths => 2,
+                                                               :changeMonth => true,
+                                                               :changeYear => true,
+                                                               :defaultDate => (entity.begin.nil? or entity.begin == Entity.begin_of_time) ? nil : entity.begin.strftime(I18n.t('datepicker.decode')), 
+                                                               :value => (entity.begin.nil? or entity.begin == Entity.begin_of_time) ? nil : I18n.l(entity.begin),
+                                                               :dateFormat => I18n.t('datepicker.format'),
+                                                               :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
+                                                               :monthNames => I18n.t('datepicker.monthNames'),
+                                                               :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
+                                                               :currentText => I18n.t('datepicker.currentText'),
+                                                               :closeText => I18n.t('datepicker.closeText'),
+                                                               :size => "10x1" %>
+    | <%= radio_button_tag :mode, :correction, true %>&nbsp;<%= I18n.t('version.update') %>
+      <%= radio_button_tag :mode, :new_version %>&nbsp;<%= I18n.t('version.new') %>
+    | <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%= I18n.t('field.active') %>
+    | <div class="button"><%= f.submit I18n.t('actions.ok') %></div>
+  <center>
+</aside>

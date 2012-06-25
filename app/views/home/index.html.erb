@@ -1,0 +1,46 @@
+<section class="sidebar">
+  <article class="article">
+    <ul>
+      <li><%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
+    </ul>
+  </article>
+</section>
+
+<section class="content3-4">
+  <article class="highlighted">
+    <header>
+      <h1><%= bigicon 'home' %> <%= I18n.t('banner.welcome') %></h1>
+    </header>
+  </article>
+  
+  <% if @workspaces.present? %>
+    <article class="highlighted">
+      <header>
+    		<h2>
+    		  <%= @workspaces.name %>
+    		  <span title="<%= @workspaces.description.html_safe %>"><%= icon('information') %></span>
+    		</h2>
+  		</header>
+  		<%= render :partial => "rows/list", 
+  		           :locals => { 
+  		                :embedded => true,
+  		                :full => false, 
+  		                :grid => @workspaces, 
+  		                :search => '', 
+  		                :filters => nil, 
+  		                :table_row_count => @workspaces.row_count,
+  		                :table_rows => @workspaces.row_all, 
+  		                :table_columns => @workspaces.filtered_columns
+  		            } %>
+      <aside class="actions">
+        <%= link_to_unless_current icon('export') + "&nbsp;Export system data".html_safe, 
+                                   :controller => 'home',
+                                   :action => 'export_system', 
+                                   :format => :xml %>
+        <%= link_to_unless_current icon('export') + "&nbsp;Import data".html_safe, 
+                                   :controller => 'home',
+                                   :action => 'import' %>
+      </aside>
+    </article>
+  <% end %>
+</section>
