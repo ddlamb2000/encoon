@@ -1,4 +1,20 @@
 /*
+ * encoding: utf-8
+ *
+ * Encoon : data structuration, presentation and navigation.
+ * 
+ * Copyright (C) 2012 David Lambert
+ * 
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * 
+ * See doc/COPYRIGHT.rdoc for more details.
  *= require_self
  */
 @import "blueprint/reset";
@@ -22,7 +38,7 @@ $background-color-table: #e8f0e3;
 $background-color-header: white;
 $background-color-actions: #e8f0e3; 
 $background-color-buttons: #C0C0C0; 
-$background-color-banner: #B50000;
+$background-color-banner: darkOliveGreen;
 $title-color: #B50000;
 $detail-color: black;
 $shadow-color: #C0C0C0;
@@ -37,7 +53,7 @@ $shadow-color: #C0C0C0;
 
 @mixin transition {
   @include transition-property(all);
-  @include transition-duration(0.2s);
+  @include transition-duration(0.3s);
   @include transition-timing-function(ease-in); 
 }
 
@@ -49,12 +65,17 @@ body {
   }
 }
 
-#solidbody {
+.content1-1 {
+  @include float-left;
+  width: 100%;
+}
+
+.content3-4 {
   @include float-left;
   width: 75%;
 }
 
-#sidebar {
+.sidebar {
   @include float-right;
   width: 25%;
 }
@@ -66,10 +87,8 @@ body {
   margin-bottom: 8px;
   padding: 4px;
   background-color: $background-color-article;
-  .highlighted {
-    @include shadow;
-    @include border-radius;
-  }
+  opacity: 0.8;
+  filter: alpha(opacity=80);
 }
 
 .highlighted {
@@ -86,7 +105,6 @@ body {
 h1 {
   font-size: 160%;
   font-weight: bolder;
-  color: black;
   @include text-shadow;
   .title {
     color: $title-color;
@@ -94,9 +112,8 @@ h1 {
 }
 
 h2 {
-  font-size: 120%;
+  font-size: 125%;
   font-weight: bolder;
-  color: black;
   @include text-shadow;
   .title {
     color: $title-color;
@@ -112,7 +129,6 @@ h2 {
   margin-bottom: 2px;
   line-height: 14px;
   color: $detail-color;
-  opacity: 0.8;
 }
 
 .information {
@@ -141,6 +157,7 @@ p {
 a {
   @include link-colors($title-color, $detail-color, $detail-color, black);
   @include hover-link;
+  @include transition;
   text-decoration: underline;
 }
 
@@ -208,36 +225,39 @@ table {
   .list-date {
     width: 80px;
     text-align: center;
+    border-left: 1px solid $background-color-table;
     border-top: 1px solid $background-color-table;
   }
   .list-number {
     width: 80px;
     text-align: right;
+    border-left: 1px solid $background-color-table;
     border-top: 1px solid $background-color-table;
   }
   .list-string {
     text-align: left;
+    border-left: 1px solid $background-color-table;
     border-top: 1px solid $background-color-table;
   }
   .list-boolean {
     width: 15px;
     text-align: center;
+    border-left: 1px solid $background-color-table;
     border-top: 1px solid $background-color-table;
   }
   .list-description {
-    width: 100%;
     text-align: left;
+    border-left: 1px solid $background-color-table;
     border-top: 1px solid $background-color-table;
   }
   .list-information {
     width: 100%;
-    text-align: right;
+    text-align: left;
     border-bottom: 0;
   }
   .column-header {
-    width: 45px;
-    min-width: 45px;
-    max-width: 45px;
+    min-width: 40px;
+    max-width: 40px;
     text-align: center;
     vertical-align: middle;
     background-color: $background-color-header;
@@ -254,16 +274,32 @@ table {
   .button { 
     display: inline;
     vertical-align: middle;
+    input {
+      font-size: 80%;
+      display: inline;
+      background-color: $title-color; 
+      text-decoration: none;
+      padding: 4px;
+      color: white;
+      border: 0;
+      @include border-radius;
+      @include text-shadow;
+      @include transition;
+      &:hover {
+        background-color: black;
+        text-decoration: none;
+      }
+    }
   }
   a {
     background-color: white;
     text-decoration: none;
-    padding: 4px;
+    padding: 2px;
+    margin: 2px;
     vertical-align: middle;
     @include border-radius;
     @include text-shadow;
     @include transition;
-    background-color: $background-color-actions;
     &:hover {
       background-color: $title-color;
       color: white;
@@ -271,12 +307,10 @@ table {
     } 
   }
   input {
-    font-size: 80%;
+    font-size: 90%;
     display: inline;
-    background-color: $title-color; 
     text-decoration: none;
     padding: 4px;
-    color: white;
     border: 0;
     @include border-radius;
     @include text-shadow;
@@ -297,10 +331,6 @@ table {
       width: auto;        
       border-spacing: 0;
       padding: 4px;
-    }
-    &:hover {
-      background-color: black;
-      text-decoration: none;
     }
   }
 }
@@ -323,7 +353,6 @@ table {
   font-style: normal;
   color: black;
   background-color: yellow;
-  border: 1px solid $background-color-table;
   padding: 2px;
   display: inline;
   @include shadow;
@@ -354,6 +383,7 @@ table {
     vertical-align: middle;
     font-size: 90%;
     margin: 1px;
+    font-family: $blueprint-font-family;
     @include transition;
   }
   textarea {
@@ -371,20 +401,25 @@ table {
   }
 }
 
+.filter {
+  background-color: $background-color-actions; 
+  td {
+    border-top: 0;
+  }
+}
+
 .spinner {
  display: inline;
 }
 
 .close-button {
-  display: inline;
   a {
-    font-size: 80%;
     float: right;
+    display: inline;
+    font-size: 80%;
     @include link-colors(black);
     @include hover-link;
     background-color: $background-color-actions; 
-    margin-left: 4px;
-    margin-right: 4px;
     text-decoration: none;
     padding: 4px;
     @include border-radius;
@@ -413,9 +448,11 @@ table {
   border-color: red;
 }
 
-.notice-info {
-  @include clearfix;
-  margin-bottom: 0;
+#error_explanation {
+  color: $title-color;
+  h2 {
+    color: $title-color;
+  }
 }
 
 .field_with_errors {
@@ -437,25 +474,27 @@ table {
   @include float-left;
   font-size: 120%;
   width: 100%;
+  padding-top: 4px;
+  padding-bottom: 4px;
   color: white;
-  font-weight: bold;
   background: $background-color-banner;
-  padding: 2px;
   #header-application {
     @include float-left;
     background: $background-color-banner;
     text-align: left;
+    padding-left: 8px;
   }
   #header-links {
     @include float-right;
     text-align: right;
     background: $background-color-banner;
+    padding-right: 8px;
   }
   a {
     @include link-colors(white);
     @include hover-link;
-    margin: 10px;
     text-decoration: none;
+    font-weight: bolder;
     padding: 2px;
     @include border-radius;
     @include transition;
@@ -467,34 +506,54 @@ table {
   form {
     display: inline;
     input {
-      margin: 0px;
-      padding: 0;
+      margin: 0;
+      padding: 2px;
       border: 0;
+      font-size: 80%;
+      text-decoration: none;
+      text-align: center;
+      font-family: $blueprint-font-family;
+      @include border-radius;
+      @include transition;
+      &[type=text] {
+        width: auto;        
+        border-spacing: 0;
+        vertical-align: baseline;
+        @include text-shadow;
+      }
     }
     select {
       margin: 0px;
       padding: 0;
       border: 0;
+      font-family: $blueprint-font-family;
+      @include border-radius;
+      @include text-shadow;
+      @include transition;
     }
   }
 }
 
 #workspaces {
   @include clearfix;
-  font-size: 90%;
+  width: 100%;
+  font-size: 100%;
   background-color: white; 
-  padding: 4px;
-  line-height: 20px;
+  padding-top: 8px;
+  padding-bottom: 8px;
   .button { 
     display: inline;
+    padding: 4px;
   }
   a {
     text-decoration: none;
     padding: 4px;
+    border: 1px solid $background-color-table;
     @include border-radius;
     @include text-shadow;
     @include transition;
     &:hover {
+      border: 1px solid $title-color;
       background-color: $title-color;
       color: white;
       text-decoration: none;
@@ -504,13 +563,14 @@ table {
 
 #breadcrumbs {
   @include clearfix;
+  width: 100%;
   font-size: 90%;
   background-color: $background-color-actions; 
-  padding: 4px;
   margin-bottom: -4px;
   line-height: 24px;
   .button { 
     display: inline;
+    padding: 4px;
   }
   a {
     @include link-colors(black);
@@ -528,10 +588,11 @@ table {
   }
 }
 
-#show-more-button {
-  display: inline;
+#footer {
+  @include clearfix;
+  width: 100%;
 }
- 
+
 #create-button {
   display: inline;
 }
