@@ -566,7 +566,6 @@ table {
   font-size: 90%;
   background-color: $background-color-actions; 
   margin-bottom: -4px;
-  padding: 4px;
   line-height: 24px;
   .button { 
     display: inline;
@@ -586,6 +585,10 @@ table {
       text-decoration: none;
     } 
   }
+}
+
+#breadcrumbs-content {
+  padding: 4px;
 }
 
 #footer {
