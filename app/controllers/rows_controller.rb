@@ -42,7 +42,9 @@ class RowsController < ApplicationController
   
   def search
     log_debug "RowController#search: params=#{params.inspect}"
-    render :layout => false
+    respond_to do |format|
+      format.js
+    end
   end
   
   def set_page_title

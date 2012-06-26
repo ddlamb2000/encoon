@@ -8,11 +8,15 @@
                                      :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
         </li>
         <% if @grid.has_translation? %>
-          <li class="form">
-            <%= form_tag('javascript:void(0)') do %>
-             <%= icon('lookup') %>&nbsp;<%= I18n.t('general.search') %>
-              <%= text_field_tag :search, "", :size => "30x1" %>
-            <% end %>
+          <li>
+            <aside class="actions">
+              <%= form_tag({:controller => 'rows', :action => :search, :grid_id => @grid.uuid, :id => 0, :filters => params[:filters]}, 
+                            :remote => true,
+                            :id => 'search-form') do %>
+                <%= text_field_tag :search, params[:search], :size => "20x1" %>
+                <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag I18n.t("general.search") %></div>
+              <% end %>
+            </aside>
           </li>
         <% end %>
       </ul>
@@ -35,15 +39,9 @@
           </span>
         </h1>
       </header>
-      <%= render :partial => "list", 
-                 :locals => { 
-                    :embedded => false,
-                    :grid => @grid, 
-                    :search => '', 
-                    :filters => params[:filters], 
-                    :table_row_count => @grid.row_count(params[:filters]),
-                    :table_rows => @grid.row_all(params[:filters], '', params[:page], true), 
-                    :table_columns => @grid.filtered_columns } %>
+      <div id="search-list">
+        <%= render :partial => 'search_list' %>
+      </div>
     </article>
   <% else %>
     <h1><%= icon "exclamation" %> <%= @page_title %></h1>

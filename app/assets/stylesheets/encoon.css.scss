@@ -280,6 +280,7 @@ table {
       background-color: $title-color; 
       text-decoration: none;
       padding: 4px;
+      margin: 4px;
       color: white;
       border: 0;
       @include border-radius;
@@ -307,13 +308,11 @@ table {
     } 
   }
   input {
-    font-size: 90%;
     display: inline;
     text-decoration: none;
     padding: 4px;
     border: 0;
-    @include border-radius;
-    @include text-shadow;
+    margin: 4px;
     @include transition;
     &[type=text] {
       vertical-align: middle;
@@ -567,6 +566,7 @@ table {
   font-size: 90%;
   background-color: $background-color-actions; 
   margin-bottom: -4px;
+  padding: 4px;
   line-height: 24px;
   .button { 
     display: inline;

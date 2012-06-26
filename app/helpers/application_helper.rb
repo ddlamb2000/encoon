@@ -93,10 +93,10 @@ module ApplicationHelper
           output << content_tag("tr",
                                    content_tag("td", 
                                                icon('yellowlight') + 
-                                               "&nbsp;Name or description", 
+                                               ("&nbsp;Name or description").html_safe, 
                                                :class => "header") +
                                    content_tag("td", 
-                                               "contains " + search, 
+                                               ("contains <u>" + search + "</u>").html_safe, 
                                                :class => "string")
              )
     end
