@@ -33,12 +33,10 @@ class RowsController < ApplicationController
 
   def index
     log_debug "RowController#index: params=#{params.inspect}"
-    set_page_title
-    push_history
-    unlock_as_of_date
-    respond_to do |format|
-      format.html
-      format.xml
+    if params[:format].nil? or params[:format] != 'xml'  
+      set_page_title
+      push_history
+      unlock_as_of_date
     end
   end
   
@@ -69,11 +67,9 @@ class RowsController < ApplicationController
 
   def show
     log_debug "RowController#show: params=#{params.inspect}"
-    set_page_title
-    push_history
-    respond_to do |format|
-      format.html
-      format.xml
+    if params[:format].nil? or params[:format] != 'xml'  
+      set_page_title
+      push_history
     end
   end
 
@@ -486,12 +482,13 @@ private
     if @grid.nil?
       Entity.log_debug "RowsController#findParent " + 
                        "Invalid: can't find data grid #{params[:grid_id]}"
+    else
+      @grid.load_cached_grid_structure    
     end
   end
 
   def findEntity
     if @grid.present?
-      @grid.load_cached_grid_structure
       if Entity.uuid?(params[:id])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
         unlock_as_of_date

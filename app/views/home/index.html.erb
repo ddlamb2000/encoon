@@ -2,6 +2,15 @@
   <article class="article">
     <ul>
       <li><%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
+      <% if user_signed_in? %>
+        <li><%= icon 'import' %> <%= link_to_unless_current "Import data".html_safe, :controller => 'home', :action => 'import' %></li>
+      <% else %>
+        <li><%= link_to I18n.t('devise.sign_in'), new_session_path("user") %></li>
+        <li><%= link_to I18n.t('devise.sign_up'), new_registration_path("user") %></li>
+        <li><%= link_to I18n.t('devise.forgot_password'), new_password_path("user") %></li>
+        <li><%= link_to I18n.t('devise.no_confirmation'), new_confirmation_path("user") %></li>
+        <li><%= link_to I18n.t('devise.no_unlock'), new_unlock_path("user") %></li>
+      <% end %>
     </ul>
   </article>
 </section>
@@ -13,7 +22,7 @@
     </header>
   </article>
   
-  <% if @workspaces.present? %>
+  <% unless @workspaces.nil? %>
     <article class="highlighted">
       <header>
     		<h2>
@@ -31,13 +40,6 @@
   		                :table_rows => @workspaces.row_all, 
   		                :table_columns => @workspaces.filtered_columns
   		            } %>
-      <aside class="actions">
-        <%= link_to_unless_current icon('export') + "&nbsp;Export system data".html_safe, 
-                                   {:controller => 'home', :action => 'export_system', :format => :xml}, :class => :popup %>
-        <%= link_to_unless_current icon('export') + "&nbsp;Import data".html_safe, 
-                                   :controller => 'home',
-                                   :action => 'import' %>
-      </aside>
     </article>
   <% end %>
 </section>

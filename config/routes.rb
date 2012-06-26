@@ -19,16 +19,11 @@ Encoon::Application.routes.draw do
   resources :grids do
     resources :rows
   end  
-  resources :rows
   devise_for :users
-  match '/login' => 'home#login'
-  match '/logout' => 'home#logout'
   match '/about' => 'home#about'
   match '/hide_about' => 'home#hide_about'
   match '/history' => 'home#history'
   match '/hide_history' => 'home#hide_history'
-  match '/register' => 'home#register'
-  match '/export_system' => 'home#export_system'
   match '/import' => 'home#import'
   match '/refresh' => 'home#refresh'
   match ':controller/:action/:id'

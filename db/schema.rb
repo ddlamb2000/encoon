@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120624075233) do
+ActiveRecord::Schema.define(:version => 20120626204716) do
 
   create_table "audits", :force => true do |t|
     t.integer  "version"
@@ -65,18 +65,16 @@ ActiveRecord::Schema.define(:version => 20120624075233) do
     t.string   "kind"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version",                             :default => 0
-    t.string   "uuid",                       :limit => 36
-    t.string   "grid_uuid",                  :limit => 36
-    t.string   "grid_reference_uuid",        :limit => 36
-    t.string   "create_user_uuid",           :limit => 36
-    t.string   "update_user_uuid",           :limit => 36
+    t.integer  "lock_version",                      :default => 0
+    t.string   "uuid",                :limit => 36
+    t.string   "grid_uuid",           :limit => 36
+    t.string   "grid_reference_uuid", :limit => 36
+    t.string   "create_user_uuid",    :limit => 36
+    t.string   "update_user_uuid",    :limit => 36
     t.boolean  "enabled"
     t.boolean  "required"
     t.integer  "length"
     t.string   "regex"
-    t.string   "column_reference_uuid",      :limit => 36
-    t.string   "reference_grid_option_uuid", :limit => 36
     t.integer  "decimals"
   end
 

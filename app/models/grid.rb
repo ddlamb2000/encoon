@@ -224,7 +224,6 @@ class Grid < Entity
                       " grids.has_description," + 
                       " grids.create_user_uuid," + 
                       " columns.uuid as column_uuid," +
-                      " columns.reference_grid_option_uuid," +
                       " column_locs.name as column_name" +
                       " FROM grids, grid_locs, columns, column_locs" +
                       " WHERE " + as_of_date_clause("grids") + 
@@ -332,7 +331,9 @@ class Grid < Entity
         column_uuid = filter[:column_uuid]
         row_uuid = filter[:row_uuid]
         column_all.each do |column|
+          log_debug "Grid#row_all filter: column.uuid=#{column.uuid}"
           if column.uuid == column_uuid and column.kind == Column::REFERENCE
+            log_debug "Grid#row_all found reference"
             conditions << " AND rows.#{column.physical_column} = #{quote(row_uuid)}"
           end
         end
@@ -740,48 +741,10 @@ class Grid < Entity
     grid.present? ? grid.name : ""
   end
 
-  def column_export(xml, column)
-    log_debug "Grid#column_export [grid #{to_s}]"
-    xml.column(:title => column.name) do
-      column.export(xml)
-      xml.grid_uuid(self.uuid, :title => name)
-      xml.kind(column.kind)
-      xml.number(column.number)
-      xml.display(column.display)
-      xml.required(column.required) if column.required
-      xml.length(column.length) if column.length.present? and 
-                                   column.length > 0
-      xml.decimals(column.decimals) if column.decimals.present? and 
-                                       column.decimals > 0
-      xml.regex(column.regex) if column.regex.present?
-      if column.grid_reference_uuid.present?
-          xml.grid_reference_uuid(column.grid_reference_uuid, 
-                                  :title => grid_reference_name(
-                                                  column.grid_reference_uuid))
-      end
-      if column.column_reference_uuid.present?
-        xml.column_reference_uuid(column.column_reference_uuid) 
-      end
-      if column.reference_grid_option_uuid.present?
-        xml.reference_grid_option_uuid(column.reference_grid_option_uuid) 
-      end
-      Column.all_locales(column.column_locs, 
-                         column.uuid, column.version).each do |loc|
-        log_debug "Grid#column_export locale #{loc.base_locale}"
-        xml.locale do
-          xml.base_locale(loc.base_locale)
-          xml.locale(loc.locale)
-          xml.name(loc.name)
-          xml.description(loc.description) if loc.description.present?
-        end
-      end
-    end
-  end
-
   def row_export(xml, row)
     log_debug "Grid#row_export(row=#{row}) [grid #{to_s}]"
     if row.present?
-      xml.row(:title => row_title(row)) do
+      xml.row(:title => row_title(row), :grid => to_s) do
         row.export(xml)
         xml.grid_uuid(self.uuid, :title => name)
         column_all.each do |column|
@@ -793,6 +756,48 @@ class Grid < Entity
             xml.locale(loc.locale)
             xml.name(loc.name) if loc.name.present?
             xml.description(loc.description) if loc.description.present?
+          end
+        end
+      end
+      if self.uuid == Workspace::ROOT_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, Grid::ROOT_UUID)
+        if grid_def.present?
+          grid_def.load_cached_grid_structure
+          log_debug "Grid#row_export select grids in the workspace"
+          rows = grid_def.row_all([{:column_uuid => Grid::ROOT_WORKSPACE_UUID, :row_uuid => row.uuid}])
+          for child in rows
+            grid_def.row_export(xml, child)
+          end
+        end
+      end
+      if self.uuid == Grid::ROOT_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, GridMapping::ROOT_UUID)
+        if grid_def.present?
+          grid_def.load_cached_grid_structure
+          log_debug "Grid#row_export select mapping in the data grid"
+          rows = grid_def.row_all([{:column_uuid => GridMapping::ROOT_GRID_UUID, :row_uuid => row.uuid}])
+          for child in rows
+            grid_def.row_export(xml, child)
+          end
+        end
+        grid_def = Grid::select_entity_by_uuid(Grid, Column::ROOT_UUID)
+        if grid_def.present?
+          grid_def.load_cached_grid_structure
+          log_debug "Grid#row_export select columns in the data grid"
+          rows = grid_def.row_all([{:column_uuid => Column::ROOT_GRID_UUID, :row_uuid => row.uuid}])
+          for child in rows
+            grid_def.row_export(xml, child)
+          end
+        end
+      end
+      if self.uuid == Column::ROOT_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, ColumnMapping::ROOT_UUID)
+        if grid_def.present?
+          grid_def.load_cached_grid_structure
+          log_debug "Grid#row_export select mapping in the column"
+          rows = grid_def.row_all([{:column_uuid => ColumnMapping::ROOT_COLUMN_UUID, :row_uuid => row.uuid}])
+          for child in rows
+            grid_def.row_export(xml, child)
           end
         end
       end
@@ -905,25 +910,6 @@ class Grid < Entity
                            :version => version}])[0]
   end
 
-  def mapping_export(xml, mapping)
-    log_debug "Grid#mapping_export [grid #{to_s}]"
-    xml.gridmapping do
-      mapping.export(xml)
-      xml.grid_uuid(self.uuid, :title => name)
-      xml.db_table(mapping.db_table)
-      xml.db_loc_table(mapping.db_loc_table) if mapping.db_loc_table.present?
-    end
-  end
-
-  def column_mapping_export(xml, column, mapping)
-    log_debug "Grid#column_mapping_export [grid #{to_s}]"
-    xml.columnmapping do
-      mapping.export(xml)
-      xml.column_uuid(column.uuid, :title => column.name)
-      xml.db_column(mapping.db_column)
-    end
-  end
-  
   def row_initialization(row, filters)
     log_debug "Grid#row_initialization(filters=#{filters.inspect}) " + 
               "[grid #{to_s}]"
@@ -1055,8 +1041,7 @@ private
     "columns.number, columns.display, columns.kind, " + 
     "columns.grid_reference_uuid, " + 
     "columns.required, columns.length, columns.decimals, " + 
-    "columns.column_reference_uuid, columns.regex, " + 
-    "columns.reference_grid_option_uuid, " + 
+    "columns.regex, " + 
     "columns.created_at, columns.updated_at, " + 
     "columns.create_user_uuid, columns.update_user_uuid, " + 
     "column_locs.base_locale, " + 

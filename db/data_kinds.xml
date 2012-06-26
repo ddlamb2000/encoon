@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encoon>
+  <row title="Boolean" grid="Data kind">
+    <uuid>ff2dd910-06cc-012d-c1e3-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-28 19:25:47 UTC</created_at>
+    <updated_at>2010-04-06 14:23:30 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Boolean</name>
+      <description>Single boolean value that can be equal to 'true' or 'false'.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Booléen</name>
+      <description>Value booléenne qui peut être égale à 'vrai' ou 'faux'.</description>
+    </locale>
+  </row>
+  <row title="Date" grid="Data kind">
+    <uuid>6d2c8470-ea31-012c-1081-00166f92f624</uuid>
+    <version>1</version>
+    <revision>5</revision>
+    <enabled>true</enabled>
+    <created_at>2010-01-23 09:41:38 UTC</created_at>
+    <updated_at>2010-04-06 12:50:33 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Date</name>
+      <description>Single date.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Date</name>
+      <description>Date simple.</description>
+    </locale>
+  </row>
+  <row title="Decimal" grid="Data kind">
+    <uuid>f766af30-06cc-012d-c1df-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>4</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-28 19:25:34 UTC</created_at>
+    <updated_at>2010-04-06 14:24:03 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Decimal</name>
+      <description>Decimal number (float).</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Décimal</name>
+      <description>Nombre décimal(virgule flottante).</description>
+    </locale>
+  </row>
+  <row title="Hyperlink" grid="Data kind">
+    <uuid>0a0a5050-06cd-012d-c1eb-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-28 19:26:05 UTC</created_at>
+    <updated_at>2010-04-06 14:25:26 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Hyperlink</name>
+      <description>Defines a reference to an internal or external web site address.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Hyperlien</name>
+      <description>Défini une référence vers un site web interne ou externe.</description>
+    </locale>
+  </row>
+  <row title="Integer" grid="Data kind">
+    <uuid>f33188f0-06cc-012d-c1db-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-28 19:25:27 UTC</created_at>
+    <updated_at>2010-04-06 14:25:42 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Integer</name>
+      <description>Integer number.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Entier</name>
+      <description>Nombre entier.</description>
+    </locale>
+  </row>
+  <row title="Password" grid="Data kind">
+    <uuid>91add730-0d0b-012d-4ae1-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>4</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-08 18:08:49 UTC</created_at>
+    <updated_at>2010-04-06 14:26:18 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Password</name>
+      <description>String that is hidden to users and that is encrypted (SHA1, 160 bits).</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Mot de passe</name>
+      <description>Chaîne de caractères qui est cachée aux utilisateurs et qui est cryptée (SHA1, 160 bits).</description>
+    </locale>
+  </row>
+  <row title="Reference" grid="Data kind">
+    <uuid>04950150-06cd-012d-c1e7-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-28 19:25:56 UTC</created_at>
+    <updated_at>2010-04-06 12:49:14 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Reference</name>
+      <description>Specifies a reference to a data row. This is used in order to define relationships between data grids.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Référence</name>
+      <description>Défini une référence vers une grille de données. Ceci est utilisé afin de définir des relations entre grilles de données.</description>
+    </locale>
+  </row>
+  <row title="String" grid="Data kind">
+    <uuid>603286d0-ea31-012c-1079-00166f92f624</uuid>
+    <version>1</version>
+    <revision>6</revision>
+    <enabled>true</enabled>
+    <created_at>2010-01-23 09:41:16 UTC</created_at>
+    <updated_at>2010-04-06 12:50:10 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>String</name>
+      <description>Default kind of data that represents a string of alphanumerical characters.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Chaîne de caractères</name>
+      <description>Type de données par défaut qui représente une chaîne de caractères alphanumériques.</description>
+    </locale>
+  </row>
+  <row title="Text" grid="Data kind">
+    <uuid>688c4870-ea31-012c-107d-00166f92f624</uuid>
+    <version>1</version>
+    <revision>5</revision>
+    <enabled>true</enabled>
+    <created_at>2010-01-23 09:41:30 UTC</created_at>
+    <updated_at>2010-04-06 14:27:20 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebd04f0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data kind">5a2e26e0-ea31-012c-1074-00166f92f624</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Text</name>
+      <description>Piece of text that can be longer than a single string.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Texte</name>
+      <description>Morceau de texte qui est généralement plus long qu'une chaîne de caractères.</description>
+    </locale>
+  </row>
+</encoon>

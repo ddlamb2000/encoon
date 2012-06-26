@@ -65,14 +65,4 @@ class HomeController < ApplicationController
       end
     end
   end
-
-  def export_system
-    log_debug "HomeController#export_system"
-    @workspace = Workspace.select_entity_by_uuid(Workspace, Grid::SYSTEM_WORKSPACE_UUID)
-    if @workspace.present?
-      respond_to do |format|
-        format.xml  { render :layout => false }
-      end
-    end
-  end
 end

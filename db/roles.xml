@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encoon>
+  <row title="Read and write" grid="Role">
+    <uuid>57830c40-9c87-012f-089e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-19 21:55:00 UTC</created_at>
+    <updated_at>2012-06-23 17:16:04 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Role">62630550-0cb5-012d-bcb2-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Read and write</name>
+      <description>User can access data for read and write.</description>
+    </locale>
+  </row>
+  <row title="Read and write all" grid="Role">
+    <uuid>58c5b1f0-9f85-012f-1924-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-23 17:18:17 UTC</created_at>
+    <updated_at>2012-06-26 15:08:29 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Role">62630550-0cb5-012d-bcb2-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Read and write all</name>
+      <description>User can access data for read and write, and for any update.</description>
+    </locale>
+  </row>
+  <row title="Read only" grid="Role">
+    <uuid>50088bf0-9c87-012f-089e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>5</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-19 21:54:48 UTC</created_at>
+    <updated_at>2012-06-24 16:30:13 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Role">62630550-0cb5-012d-bcb2-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Read only</name>
+      <description>User can access data for read.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Lecture seule</name>
+      <description>Les utilisateurs peuvent accéder aux données en lecture seule.</description>
+    </locale>
+  </row>
+  <row title="Total control" grid="Role">
+    <uuid>69cff910-9c87-012f-089e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-19 21:55:31 UTC</created_at>
+    <updated_at>2012-06-23 17:17:04 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Role">62630550-0cb5-012d-bcb2-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Total control</name>
+      <description>User can access data for read and write and can change data structure also.</description>
+    </locale>
+  </row>
+</encoon>

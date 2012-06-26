@@ -164,10 +164,6 @@ class Column < Entity
       when 'length' then self.length = xml_value.to_i
       when 'decimals' then self.decimals = xml_value.to_i
       when 'regex' then self.regex = xml_value
-      when 'column_reference_uuid' then
-        self.column_reference_uuid = xml_value
-      when 'reference_grid_option_uuid' then
-        self.reference_grid_option_uuid = xml_value
       else super
     end
   end
@@ -184,8 +180,6 @@ class Column < Entity
     entity.length = self.length
     entity.decimals = self.decimals
     entity.regex = self.regex
-    entity.column_reference_uuid = self.column_reference_uuid
-    entity.reference_grid_option_uuid = self.reference_grid_option_uuid
   end
 
   def import!
