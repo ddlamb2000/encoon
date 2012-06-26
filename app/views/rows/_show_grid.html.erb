@@ -1,0 +1,32 @@
+<header>
+	<h1>
+		<% if @grid.uuid == Grid::ROOT_UUID %><%= bigicon "table" %>
+    <% elsif @grid.uuid == Workspace::ROOT_UUID %><%= bigicon "workspace" %>
+		<% else %><%= bigicon "entity" %>
+		<% end %>
+		<span class="title"><%= @grid.to_s.html_safe %></span>
+	  <%= @row.to_s.html_safe %>
+	  <span class="detail-article">
+			<%= display_grid_next_versions(@grid, @row).html_safe %>
+      <%= display_locale(@row).html_safe if @grid.has_translation? %>
+	    <% if not @grid.can_update?(@row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+	  </span>
+	</h1>
+</header>
+<% if @grid.has_translation? and @row_loc.description.present? %>
+  <p><%= no_trunc(@row_loc.description.html_safe) %></p>
+<% end %>
+<table>
+  <% for column in @grid.column_all %>
+	  <%= show_entity(
+          column, 
+          @row.read_value(column),
+          ((column.grid_reference_uuid.present? and @row.read_value(column).present?) ?  
+  					link_to(icon("external"), 
+        						:controller => 'rows', :action => 'show',	:grid_id => column.grid_reference_uuid, 
+        						:id => @row.read_value(column)) : ""),
+      	  @row.read_referenced_name(column),
+					@row.read_referenced_description(column)
+     ) %>
+  <% end %>
+</table>

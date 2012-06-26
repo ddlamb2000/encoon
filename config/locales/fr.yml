@@ -110,12 +110,12 @@ fr:
     attachments:  "Documents"
       
   workspaces:
-    title:        "Espaces de travail"
-    name:         "Espace de travail"
+    title:        "Domaines"
+    name:         "Domaine"
     
   grids:
-    title:        "Grilles de données"
-    name:         "Grille de données"
+    title:        "Catégorie de données"
+    name:         "Catégorie de données"
     
   columns:
     title:        "Colonnes"
@@ -163,7 +163,7 @@ fr:
     first_rows:   "Premières lignes"
     search:       "Recherche"
     design:       "Définition"
-    grid_design:  "Afficher la définition de la grille de données"
+    grid_design:  "Afficher la définition de la catégorie de données"
     attached_row: "%{grid} (%{column})"
     back_to:      "Retour vers : "
     
@@ -196,7 +196,7 @@ fr:
     mis_password: "Le mot de passe est obligatoire."
     mis_name:     "Le nom est obligatoire."
     pass_conf:    "La confirmation du mot de passe n’est pas conforme."
-    no_grid:      "Erreur: grille de données non disponible"
+    no_grid:      "Erreur: catégorie de données non disponible"
     no_data:      "Erreur: données non disponible"
         
   message:

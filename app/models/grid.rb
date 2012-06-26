@@ -30,7 +30,7 @@ class Grid < Entity
   PHASE_DESTROY = 'destroy'
   
   DISPLAY_ROWS_LIMIT = 10
-  DISPLAY_ROWS_LIMIT_FULL = 100
+  DISPLAY_ROWS_LIMIT_FULL = 50
   
   belongs_to :workspace, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :grid_locs, :foreign_key => "uuid", :primary_key => "uuid"
@@ -785,9 +785,7 @@ class Grid < Entity
         row.export(xml)
         xml.grid_uuid(self.uuid, :title => name)
         column_all.each do |column|
-          xml.data(row.read_value(column), 
-                   :uuid => column.uuid, 
-                   :name => column.name)
+          xml.data(row.read_value(column), :uuid => column.uuid, :name => column.name)
         end
         row_all_locales(row.uuid, row.version).each do |loc|
           xml.locale do
@@ -795,15 +793,6 @@ class Grid < Entity
             xml.locale(loc.locale)
             xml.name(loc.name) if loc.name.present?
             xml.description(loc.description) if loc.description.present?
-          end
-        end
-        for document in row.row_attachments
-          xml.attachment do
-            xml.content_type(document.content_type)
-            xml.file_name(document.file_name)
-            xml.document do
-              xml.cdata!('test')
-            end
           end
         end
       end

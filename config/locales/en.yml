@@ -107,12 +107,12 @@ en:
     attachments:  "Documents"
     
   workspaces:
-    title:        "Workspaces"
-    name:         "Workspace"
+    title:        "Domains"
+    name:         "Domain"
     
   grids:
-    title:        "Data grids"
-    name:         "Data grid"
+    title:        "Data categories"
+    name:         "Data category"
     
   columns:
     title:        "Columns"
@@ -160,7 +160,7 @@ en:
     first_rows:   "First rows"
     search:       "Search"
     design:       "Design"
-    grid_design:  "Display data grid definition"
+    grid_design:  "Display data category definition"
     attached_row: "%{grid} (%{column})"
     back_to:      "Back to: "
 
@@ -193,7 +193,7 @@ en:
     mis_name:     "Name is mandatory."
     mis_password: "Password is mandatory."
     pass_conf:    "Password confirmation doesn't match."
-    no_grid:      "Error: data grid isn't available"
+    no_grid:      "Error: data category isn't available"
     no_data:      "Error: data isn't available"
     
   message:

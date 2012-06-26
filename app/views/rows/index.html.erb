@@ -21,8 +21,8 @@
 </section>
       
 <section class="content3-4">
-  <article class="highlighted">
-    <% if @grid.present? %>
+  <% if @grid.present? %>
+    <article class="highlighted">
       <header>
         <h1>
           <%= bigicon @page_icon %>
@@ -38,15 +38,14 @@
       <%= render :partial => "list", 
                  :locals => { 
                     :embedded => false,
-                    :full => true, 
                     :grid => @grid, 
                     :search => '', 
                     :filters => params[:filters], 
                     :table_row_count => @grid.row_count(params[:filters]),
                     :table_rows => @grid.row_all(params[:filters], '', params[:page], true), 
                     :table_columns => @grid.filtered_columns } %>
-    <% else %>
-      <h1><%= icon "exclamation" %> <%= @page_title %></h1>
-    <% end %>
-  </article>
+    </article>
+  <% else %>
+    <h1><%= icon "exclamation" %> <%= @page_title %></h1>
+  <% end %>
 </section>

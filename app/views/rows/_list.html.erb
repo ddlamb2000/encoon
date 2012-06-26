@@ -1,122 +1,85 @@
-<% if not embedded %>
-  <table class="filter"><%= display_filters(grid, filters, search).html_safe %></table>
-<% end %>
+<table class="filter"><%= display_filters(grid, filters, defined?(search) ? search : nil).html_safe %></table>
 
 <% if table_rows.length > 0 %>
-  <p>
-    <table>
-      <% if full %>
-        <tr>
-          <% if grid.has_translation? and grid.has_name? %>
-  					<th class="list-header"><%=h grid.name %></th>
-          <% end %>
-  		  	<% for column in table_columns %>
-  		  		<%= show_header_label(column.name.html_safe, column.description.html_safe, true) %>
-  		  	<% end %>
-  		  	<th></th>
-        </tr>
-      <% end %>
-  		<% init_row_index(params[:page], full) %>
-  	  <% for row in table_rows %>
-  		  <tr>
-          <% if grid.has_translation? %>
-  		      <td class="list-description">
-              <% if grid.has_name? %>
-                <% if grid.uuid == Grid::ROOT_UUID %>
-                  <%= link_to grid.row_title(row, full).html_safe, :controller => 'rows', :action => 'index', :grid_id => row.uuid %>
-  							<% else %>
-                  <%= link_to grid.row_title(row, full).html_safe, :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
-                <% end %>
-              <% end %>
-              <% if not row.description.blank? %>
-                <span title="<%= row.description.html_safe %>"><%= icon('information') %></span>
-              <% end %>
-              <%= display_information(row) %>
-              <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
-  					</td>
+  <table>
+    <tr>
+			<th class="list-header"><%=h grid.name %></th>
+	  	<% for column in table_columns %>
+	  		<%= show_header_label(column.name.html_safe, column.description.html_safe, true) %>
+	  	<% end %>
+	  	<th></th>
+    </tr>
+		<% init_row_index(params[:page]) %>
+	  <% for row in table_rows %>
+		  <tr>
+	      <td class="list-description">
+          <% if grid.has_name? %>
+            <% if grid.uuid == Grid::ROOT_UUID %>
+              <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'index', :grid_id => row.uuid %>
+						<% else %>
+              <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
+            <% end %>
           <% else %>
-            <% if not full %>
-              <td class="list-string">
-                <%= link_to grid.row_title(row, full), 
-                          :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
-                <%= display_information(row) %>
-                <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
-              </td>
-            <% end %>
+            <%= link_to icon('blueright'),  :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
           <% end %>
-          <% if full %>
-            <% init_column_index %>
-  		      <% for column in table_columns %>
-              <%= show_entity_in_list(
-                    link_to(column, 
-                      :controller => 'columns', :action => 'show', :grid_id => grid.uuid, :id => column.uuid),
-  					  	      column, 
-                      row.read_value(column),
-  						        link_to(row.read_referenced_name(column), 
-  												:controller => 'rows', :action => 'show',	:grid_id => column.grid_reference_uuid, :id => row.read_value(column)),
-                      "") %>
-  				  <% end %>
+          <% if not row.description.blank? %>
+            <span title="<%= row.description.html_safe %>"><%= icon('information') %></span>
           <% end %>
-          <td class="column-header">
-            <% if not grid.has_name? %>
-              <%= link_to icon('blueright'),  :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
-            <% end %>
-            <%= render :partial => 'rows/index_row_actions', :locals => {:row => row, :grid => grid} %>
-          </td>
-  		  </tr>
-        <% if not grid.has_translation? %>
-          <tr>
-            <td class="list-information" colspan="9999">
-              <%= display_information(row) %>
-              <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
-            </td>
-          </tr>
-        <% end %>
-        <tr>
-          <td colspan="9999">
-            <div id=<%=h "edit-detail-row" + row.id.to_s %>></div>           
-          </td>
-        </tr>
-  		<% end %>
-    </table>
-  </p>
+          <%= display_information(row) %>
+          <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
+				</td>
+        <% init_column_index %>
+	      <% for column in table_columns %>
+          <%= show_entity_in_list(
+				  	      column, 
+                  row.read_value(column),
+                  ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
+                      link_to(icon("external"), 
+                      :controller => 'rows', :action => 'show', :grid_id => column.grid_reference_uuid, :id => row.read_value(column)) :
+                      ""),
+									row.read_referenced_name(column),
+                  "") %>
+			  <% end %>
+        <td class="column-header">
+          <%= render :partial => 'rows/index_row_actions', :locals => {:row => row, :grid => grid} %>
+        </td>
+		  </tr>
+      <tr>
+        <td colspan="9999">
+          <div id=<%=h "edit-detail-row" + row.id.to_s %>></div>           
+        </td>
+      </tr>
+		<% end %>
+  </table>
 <% end %>
 
 <aside id=<%=h "actions-rows"  + grid.uuid + get_filters_uuid(filters) %> class="actions">
   <%= show_collection_count(table_rows, table_row_count, params[:page]) %>
-  <% if full %>
-    <% if not_last_page(params[:page], table_row_count) %>
-      <%= link_to icon('down') + ("&nbsp;" + I18n.t('general.next_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
-           :filters => filters,
-           :page => calc_next_page(params[:page]) %>
-    <% end %>
-    <% if not_first_page(params[:page]) %>
-      <%= link_to icon('up') + ("&nbsp;" + I18n.t('general.prev_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
-           :filters => filters,
-           :page => calc_previous_page(params[:page]) %>
-      <%= link_to icon('previous') + ("&nbsp;" + I18n.t('general.first_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-           :filters => filters,
-           :page => 1 %>
-    <% end %>
-    <% if not embedded %>
-        <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-			          :controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-			          :filters => filters,
-                :page => -1,
-                :format => :xml %>
-    <% end %>
-	<% end %>
+  <% if not_last_page(params[:page], table_row_count) %>
+    <%= link_to icon('down') + ("&nbsp;" + I18n.t('general.next_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
+         :filters => filters,
+         :page => calc_next_page(params[:page]) %>
+  <% end %>
+  <% if not_first_page(params[:page]) %>
+    <%= link_to icon('up') + ("&nbsp;" + I18n.t('general.prev_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
+         :filters => filters,
+         :page => calc_previous_page(params[:page]) %>
+    <%= link_to icon('previous') + ("&nbsp;" + I18n.t('general.first_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+         :filters => filters,
+         :page => 1 %>
+  <% end %>
+  <% if not embedded %>
+      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+		          {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+		          :filters => filters,
+              :page => -1,
+              :format => :xml}, :class => :popup %>
+  <% end %>
   <% if embedded %>
-    <% if not_all_rows(table_row_count) %>
-        <%= link_to icon('warning') + ("&nbsp;" + I18n.t('general.full_table')).html_safe, 
-             :controller => 'rows', :action => 'index', :grid_id => grid.uuid, :filters => filters %>
-    <% else %>
-      <%= link_to icon('greenright') + ("&nbsp;" + I18n.t('general.full_table')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => grid.uuid, :filters => filters %>
-    <% end %>
+    <% if not_all_rows(table_row_count) %><%= icon('warning') %><% end %>
   <% end %>
 	<% if grid.can_create_data?(filters) %>
 		<div id="create-button" title="Create a new row of data for the corresponding data grid.">

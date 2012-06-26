@@ -24,7 +24,6 @@
   		<%= render :partial => "rows/list", 
   		           :locals => { 
   		                :embedded => true,
-  		                :full => false, 
   		                :grid => @workspaces, 
   		                :search => '', 
   		                :filters => nil, 
@@ -34,9 +33,7 @@
   		            } %>
       <aside class="actions">
         <%= link_to_unless_current icon('export') + "&nbsp;Export system data".html_safe, 
-                                   :controller => 'home',
-                                   :action => 'export_system', 
-                                   :format => :xml %>
+                                   {:controller => 'home', :action => 'export_system', :format => :xml}, :class => :popup %>
         <%= link_to_unless_current icon('export') + "&nbsp;Import data".html_safe, 
                                    :controller => 'home',
                                    :action => 'import' %>

@@ -83,7 +83,7 @@ module ApplicationHelper
                                              ("&nbsp;" + column.name).html_safe, 
                                              :class => "header") +
                                  content_tag("td", 
-                                             ("equals to " + row_name).html_safe, 
+                                             ("equals to <u>" + row_name + "</u>").html_safe, 
                                              :class => "string")
              )
         end
