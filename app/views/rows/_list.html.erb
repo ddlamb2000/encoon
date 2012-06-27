@@ -78,22 +78,24 @@
          :page => 1 %>
   <% end %>
   <% if not embedded %>
+    <% if grid.can_create_data?(filters) %>
       <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-		          {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-		          :filters => filters,
+              {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+              :filters => filters,
               :page => -1,
               :format => :xml}, :class => :popup %>
+    <% end %>
   <% end %>
   <% if embedded %>
     <% if not_all_rows(table_row_count) %><%= icon('warning') %><% end %>
   <% end %>
 	<% if grid.can_create_data?(filters) %>
 		<div id="create-button" title="Create a new row of data for the corresponding data grid.">
-				<%= link_to icon('plus') + ("&nbsp;" + I18n.t('actions.create')).html_safe, 
-					{:controller => 'rows', :action => "new_inline", :grid_id => grid.uuid, 
-           :id => 0, 
-					 :filters => filters}, 
-           :remote => true %>
+			<%= link_to icon('plus') + ("&nbsp;" + I18n.t('actions.create')).html_safe, 
+				{:controller => 'rows', :action => "new_inline", :grid_id => grid.uuid, 
+         :id => 0, 
+				 :filters => filters}, 
+         :remote => true %>
 		</div>
 	<% end %>
 </aside>

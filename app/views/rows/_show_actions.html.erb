@@ -1,26 +1,29 @@
 <aside class="actions">
 <% if @grid.can_update?(@row) %>
 	<div class="button" title="Update current data or create a new version.">
-			<%= link_to icon('edit') + ("&nbsp;" + I18n.t('actions.edit')).html_safe, 
-								{:action => "edit_inline", :grid_id => @grid.uuid, :id => @row.id}, 
-                :remote => true %>
+		<%= link_to icon('edit') + ("&nbsp;" + I18n.t('actions.edit')).html_safe, 
+							{:action => "edit_inline", :grid_id => @grid.uuid, :id => @row.id}, 
+              :remote => true %>
 	</div>
   <div class="button" title="Delete current data.">
-      <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
-         {:grid_id => @grid.uuid, :id => @row.id, :action => "destroy"}, 
-          :confirm => I18n.t('message.delete', :name => @row.to_s), 
-          :method => :delete %>
+    <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+       {:grid_id => @grid.uuid, :id => @row.id, :action => "destroy"}, 
+        :confirm => I18n.t('message.delete', :name => @row.to_s), 
+        :method => :delete %>
   </div>
 	<div class="button" title="Add or remove attachment (photo or document) to current data.">
-			<%= link_to icon('attachments') + ("&nbsp;" + I18n.t('field.attachments')).html_safe, 
-         {:action => "attach_document", :grid_id => @grid.uuid, :id => @row.uuid},
-         :remote => true %>
+		<%= link_to icon('attachments') + ("&nbsp;" + I18n.t('field.attachments')).html_safe, 
+       {:action => "attach_document", :grid_id => @grid.uuid, :id => @row.uuid},
+       :remote => true %>
 	</div>
+  <div class="button">
+    <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => @grid.uuid, :id => 0 %>
+  </div>
 <% end %>
 <% if @grid.can_select_data? %>
   <div class="button" title="Export current data into a XML file.">
-        <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-           {:format => :xml}, :class => :popup %>
+    <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+       {:format => :xml}, :class => :popup %>
  </div>
 <% end %>
 <div id="show-more-button" class="button" title="Displays more information about current data.">

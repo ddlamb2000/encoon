@@ -416,6 +416,28 @@ class RowsController < ApplicationController
     end
   end
 
+  def import
+    log_debug "RowController#import"
+    @page_title = "Import Data"
+    @page_icon = "import"
+    @upload = Upload.new
+  end
+  
+  def upload
+    log_debug "RowController#upload"
+    @upload = Upload.new
+    @upload.create_user_uuid = session[:user_uuid]
+    @upload.update_user_uuid = session[:user_uuid]
+    respond_to do |format|
+      if @upload.update_attributes(params[:upload])
+        flash[:notice] = "File uploaded."
+        format.html { redirect_to :action => "index" }
+      else
+        format.html { render :action => "import_data" }
+      end
+    end
+  end
+
 private
 
   def populate_from_params

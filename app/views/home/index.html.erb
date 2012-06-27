@@ -2,9 +2,7 @@
   <article class="article">
     <ul>
       <li><%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
-      <% if user_signed_in? %>
-        <li><%= icon 'import' %> <%= link_to_unless_current "Import data".html_safe, :controller => 'home', :action => 'import' %></li>
-      <% else %>
+      <% if not user_signed_in? %>
         <li><%= link_to I18n.t('devise.sign_in'), new_session_path("user") %></li>
         <li><%= link_to I18n.t('devise.sign_up'), new_registration_path("user") %></li>
         <li><%= link_to I18n.t('devise.forgot_password'), new_password_path("user") %></li>

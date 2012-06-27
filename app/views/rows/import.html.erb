@@ -1,0 +1,28 @@
+<article class="highlighted">
+  <header class="action-header">
+    <%= @page_title %>
+  </header> 
+  <% if @grid.present? %>
+    <%= form_for(@upload, 
+                 :as => :upload,  
+                 :url => {:action => 'upload', :grid_id => @grid.uuid, :id => 0}, 
+                 :html => {:multipart => true}) do |f| %>
+      <%= render :partial => 'entities/error_messages', :locals => { :item => @upload } %>
+      <table class="form">
+        <tr>
+           <td class="header">Data file</td>
+          <td class="string"><%= f.file_field :data_file %></td>
+        </tr>
+      </table>
+      <aside class="actions">
+        <center>
+          <a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + I18n.t('actions.cancel')).html_safe %></a>
+          <div class="button"><%= f.submit I18n.t('actions.import') %></div>
+        </center>
+      </aside>
+    <% end %>
+  <% else %>
+    <%= icon "exclamation" %>
+    <%= I18n.t('error.no_data') %>
+  <% end %>
+</article>
