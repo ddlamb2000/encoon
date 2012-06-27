@@ -41,7 +41,6 @@ class CreateRolesAndAuthorizations < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :user_roles, [:uuid, :begin, :end, :user_uuid, :role_uuid]
     add_index :user_roles, [:uuid, :begin, :end]
     add_index :user_roles, [:uuid]
 
@@ -66,7 +65,6 @@ class CreateRolesAndAuthorizations < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index :grid_authorizations, [:uuid, :begin, :end, :grid_uuid, :role_uuid]
     add_index :grid_authorizations, [:uuid, :begin, :end]
     add_index :grid_authorizations, [:uuid]
   end
