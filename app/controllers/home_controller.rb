@@ -21,9 +21,6 @@ class HomeController < ApplicationController
     @page_icon = "home"
     unlock_as_of_date
     push_history
-    respond_to do |format|
-      format.html
-    end
   end
   
   def refresh
@@ -33,15 +30,9 @@ class HomeController < ApplicationController
   end
 
   def history
-    respond_to do |format|
-      format.js
-    end
   end
   
   def hide_history
-    respond_to do |format|
-      format.js
-    end
   end
 
   def import

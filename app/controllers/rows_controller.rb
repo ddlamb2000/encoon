@@ -42,9 +42,6 @@ class RowsController < ApplicationController
   
   def search
     log_debug "RowController#search: params=#{params.inspect}"
-    respond_to do |format|
-      format.js
-    end
   end
   
   def set_page_title
@@ -76,16 +73,9 @@ class RowsController < ApplicationController
   end
 
   def show_more
-    log_debug "RowController#show_more: params=#{params.inspect}"
-    respond_to do |format|
-      format.js
-    end
   end
 
   def hide_more
-    respond_to do |format|
-      format.js
-    end
   end
 
   def new_inline
@@ -97,25 +87,16 @@ class RowsController < ApplicationController
     @row_loc = RowLoc.new
     @grid.row_initialization(@row, @filters)
     set_page_title
-    respond_to do |format|
-      format.js
-    end
   end
 
   def edit_inline
     log_debug "RowController#edit_inline: params=#{params.inspect}"
     set_page_title
-    respond_to do |format|
-      format.js
-    end
   end
 
   def edit_row_inline
     log_debug "RowController#edit_row_inline: params=#{params.inspect}"
     set_page_title
-    respond_to do |format|
-      format.js
-    end
   end
 
   def create
@@ -319,9 +300,6 @@ class RowsController < ApplicationController
     log_debug "RowController#attach_document: params=#{params.inspect}"
     @row_attachment = @row.row_attachments.new
     set_page_title 
-    respond_to do |format|
-      format.js
-    end
   end
 
   def save_attachment
