@@ -24,9 +24,7 @@ class Audit < ActiveRecord::Base
   PASSWORD = "PASSWORD"
 
   belongs_to :update_user, 
-             :select => "id, uuid, " + 
-                        "email, first_name, last_name, " + 
-                        "version, begin, end, enabled", 
+             :select => "id, uuid, email, first_name, last_name, version, begin, end, enabled", 
              :class_name => "User", 
              :foreign_key => "update_user_uuid", 
              :primary_key => "uuid"
@@ -57,6 +55,12 @@ class Audit < ActiveRecord::Base
         I18n.t('general.audit_detach')
       when PASSWORD then 
         I18n.t('general.audit_pass')
+      when IMPORT then 
+        I18n.t('general.audit_import', 
+            :version => self.version,
+            :time => self.updated_at, 
+            :revision => self.lock_version+1,
+            :language => language[0])
       else ""
     end
   end
