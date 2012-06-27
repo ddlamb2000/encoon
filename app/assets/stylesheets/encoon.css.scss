@@ -71,12 +71,12 @@ body {
 }
 
 .content3-4 {
-  @include float-left;
+  @include float-right;
   width: 75%;
 }
 
 .sidebar {
-  @include float-right;
+  @include float-left;
   width: 25%;
 }
 
