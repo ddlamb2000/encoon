@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120626204716) do
+ActiveRecord::Schema.define(:version => 20120627192423) do
 
   create_table "audits", :force => true do |t|
     t.integer  "version"
@@ -181,15 +181,6 @@ ActiveRecord::Schema.define(:version => 20120626204716) do
   end
 
   add_index "row_locs", ["uuid", "version", "locale"], :name => "index_row_locs_on_uuid_and_version_and_locale"
-
-  create_table "row_passwords", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.string  "password"
-    t.string  "salt"
-    t.integer "lock_version",               :default => 0
-  end
-
-  add_index "row_passwords", ["uuid"], :name => "index_row_passwords_on_uuid"
 
   create_table "rows", :force => true do |t|
     t.date     "begin"
@@ -411,13 +402,18 @@ ActiveRecord::Schema.define(:version => 20120626204716) do
     t.integer  "version"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "lock_version",                   :default => 0
-    t.string   "uuid",             :limit => 36
-    t.string   "create_user_uuid", :limit => 36
-    t.string   "update_user_uuid", :limit => 36
+    t.integer  "lock_version",                    :default => 0
+    t.string   "uuid",              :limit => 36
+    t.string   "create_user_uuid",  :limit => 36
+    t.string   "update_user_uuid",  :limit => 36
     t.boolean  "enabled"
+    t.boolean  "public"
+    t.string   "default_role_uuid", :limit => 36
+    t.string   "uri"
   end
 
+  add_index "workspaces", ["public"], :name => "index_workspaces_on_public"
+  add_index "workspaces", ["uri"], :name => "index_workspaces_on_uri"
   add_index "workspaces", ["uuid", "begin", "end"], :name => "index_workspaces_on_uuid_and_begin_and_end"
   add_index "workspaces", ["uuid"], :name => "index_workspaces_on_uuid"
 

@@ -3,11 +3,18 @@
   <% unless @grid.blank? or @row.blank? %>
     <% if @grid.present? and @row.present? %>
       <article class="article">
-        <ul>
-          <li>
-           <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
-          </li>
-        </ul>
+        <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
+        <% if user_signed_in? %>
+          <div id="show-more-button" class="button" title="Displays more information about current data.">
+            <%= link_to icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe, 
+                            {:action => "show_more", :grid_id => @grid.uuid, :id => @row.id},
+                            :remote => true %>
+          </div>
+          <div id="show-more-detail"></div>
+          <div id="close-more-button" class="button" style="display: none">
+            <%= link_to I18n.t('actions.hide'), {:action => "hide_more"}, :remote => true %>
+          </div>
+        <% end %>
       </article>
     <% end %>
     <article class="article">
@@ -86,7 +93,6 @@
   <% unless @grid.blank? or @row.blank? %>
     <article id="article" class="highlighted">
       <%= render :partial => 'show_grid' %>
-      <div id="show-more-detail"></div>
   		<div id="entity-upload-attachment"></div>
   		<div id="detail-actions"></div>
       <%= render :partial => 'show_actions' %>

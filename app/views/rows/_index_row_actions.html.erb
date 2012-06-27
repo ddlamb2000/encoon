@@ -1,4 +1,4 @@
-<% if grid.can_update?(row) %>
+<% if user_signed_in? and grid.can_update?(row) %>
   <%= link_to(icon('edit'), 
         {:controller => 'rows', :action => "edit_row_inline", :grid_id => grid.uuid, :id => row.id},
         :remote => true) %>

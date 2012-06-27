@@ -86,7 +86,7 @@ class Grid < Entity
                 column.kind == Column::REFERENCE and
                 column.grid_reference_uuid == Workspace::ROOT_UUID
               security = load_security_workspace(row_uuid)
-              return Role::ROLE_TOTAL_CONTROL_UUID == security.role_uuid if not security.nil?
+              return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
             end
           end
         end
@@ -99,13 +99,13 @@ class Grid < Entity
   def can_update?(row)
     if self.uuid == Workspace::ROOT_UUID
       security = load_security_workspace(row.uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security.role_uuid if not security.nil?
+      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
     elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
       security = load_security_workspace(row.workspace_uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security.role_uuid if not security.nil?
+      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
     elsif self.uuid == Column::ROOT_UUID and row.grid.present?
       security = load_security_workspace(row.grid.workspace_uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security.role_uuid if not security.nil?
+      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
     end
     can_update_data?
   end
@@ -1204,27 +1204,69 @@ private
   end
   
   def load_security_workspace(uuid)
+    log_debug "Grid#load_security_uworkspace [grid #{to_s}]"
+    
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
           " WHERE workspace_sharings.workspace_uuid = '#{uuid}'" + 
           " AND workspace_sharings.user_uuid = '#{Grid.session_user_uuid}'" +
           " AND " + as_of_date_clause("workspace_sharings") +
           " LIMIT 1"
-    Grid.find_by_sql([sql])[0]
+
+    security = Grid.find_by_sql([sql])[0]
+    return security.role_uuid if not security.nil?
+    sql = "SELECT default_role_uuid, create_user_uuid" + 
+          " FROM workspaces workspace_security" + 
+          " WHERE workspace_security.uuid = '#{uuid}'" + 
+          " AND (" +
+          "  workspace_security.public = 't'" +
+          "  OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+          "  OR workspace_security.create_user_uuid = '#{Grid.session_user_uuid}'" +
+          " )" +
+          " AND " + as_of_date_clause("workspace_security") +
+          " LIMIT 1"
+    security = Grid.find_by_sql([sql])[0]
+    return Role::ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
+                      security.create_user_uuid == Grid.session_user_uuid 
+    return security.default_role_uuid if not security.nil?
+
+    nil
   end
 
   def load_security
+    log_debug "Grid#load_security [grid #{to_s}]"
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
           " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
           " AND workspace_sharings.user_uuid = '#{Grid.session_user_uuid}'" +
           " AND " + as_of_date_clause("workspace_sharings") +
           " LIMIT 1"
-    security = load_security_workspace(self.workspace_uuid)
+    security = Grid.find_by_sql([sql])[0]
     if security.present?
       @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+    else
+      sql = "SELECT default_role_uuid, public" + 
+            " FROM workspaces workspace_security" + 
+            " WHERE workspace_security.uuid = '#{self.workspace_uuid}'" + 
+            " AND (" +
+            "  workspace_security.public = 't'" +
+            "  OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+            "  OR workspace_security.create_user_uuid = '#{Grid.session_user_uuid}'" +
+            " )" +
+            " AND " + as_of_date_clause("workspace_security") +
+            " LIMIT 1"
+      security = Grid.find_by_sql([sql])[0]
+      if security.present? and security.default_role_uuid.present?
+        @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
+        @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
+        @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
+      elsif security.present? and security.public
+        @can_select_data = true
+        @can_create_data = false
+        @can_update_data = false
+      end
     end
     log_debug "Grid#load_security " +
               "@can_select_data=#{@can_select_data}," +
@@ -1235,12 +1277,23 @@ private
 
   def self.workspace_security_clause(synonym)
     if DATA_GRID_SECURITY_ACTIVATED
-      "EXISTS (" +
-      " SELECT 1 FROM workspace_sharings " +
-      " WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
-      " AND " + as_of_date_clause("workspace_sharings") +
-      " AND workspace_sharings.user_uuid = '#{session_user_uuid}'" +
-      " AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "(" +
+      " EXISTS (" +
+      "  SELECT 1 FROM workspace_sharings " +
+      "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
+      "  AND " + as_of_date_clause("workspace_sharings") +
+      "  AND workspace_sharings.user_uuid = '#{session_user_uuid}'" +
+      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      " )" +
+      " OR EXISTS (" +
+      "  SELECT 1 FROM workspaces workspace_security " +
+      "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
+      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND (" +
+      "   workspace_security.public = 't'" +
+      "   OR workspace_security.create_user_uuid = '#{session_user_uuid}'" +
+      "  )" +
+      " )" +
       ")"
     else
       "1=1"
@@ -1249,14 +1302,28 @@ private
 
   def self.grid_security_clause(synonym)
     if DATA_GRID_SECURITY_ACTIVATED
-      "EXISTS (" +
-      " SELECT 1 FROM grids grid_security, workspace_sharings " +
-      " WHERE grid_security.uuid = #{synonym}.uuid" + 
-      " AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
-      " AND " + as_of_date_clause("grid_security") +
-      " AND " + as_of_date_clause("workspace_sharings") +
-      " AND workspace_sharings.user_uuid = '#{session_user_uuid}'" +
-      " AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "(" +
+      " EXISTS (" +
+      "  SELECT 1 FROM grids grid_security, workspace_sharings " +
+      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+      "  AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
+      "  AND " + as_of_date_clause("grid_security") +
+      "  AND " + as_of_date_clause("workspace_sharings") +
+      "  AND workspace_sharings.user_uuid = '#{session_user_uuid}'" +
+      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      " )" + 
+      " OR EXISTS (" +
+      "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
+      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+      "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
+      "  AND " + as_of_date_clause("grid_security") +
+      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND (" +
+      "   workspace_security.public = 't'" +
+      "   OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "   OR workspace_security.create_user_uuid = '#{session_user_uuid}'" +
+      "  )" +
+      " )" +
       ")"
     else
       "1=1"

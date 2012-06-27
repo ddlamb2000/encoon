@@ -1,15 +1,6 @@
 <section class="sidebar">
   <article class="article">
-    <ul>
-      <li><%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
-      <% if not user_signed_in? %>
-        <li><%= link_to I18n.t('devise.sign_in'), new_session_path("user") %></li>
-        <li><%= link_to I18n.t('devise.sign_up'), new_registration_path("user") %></li>
-        <li><%= link_to I18n.t('devise.forgot_password'), new_password_path("user") %></li>
-        <li><%= link_to I18n.t('devise.no_confirmation'), new_confirmation_path("user") %></li>
-        <li><%= link_to I18n.t('devise.no_unlock'), new_unlock_path("user") %></li>
-      <% end %>
-    </ul>
+    <%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
   </article>
 </section>
 
@@ -32,7 +23,6 @@
   		           :locals => { 
   		                :embedded => true,
   		                :grid => @workspaces, 
-  		                :search => '', 
   		                :filters => nil, 
   		                :table_row_count => @workspaces.row_count,
   		                :table_rows => @workspaces.row_all, 

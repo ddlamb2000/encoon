@@ -15,7 +15,17 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class RowsController < ApplicationController
-  before_filter :authenticate_user!
+  before_filter :authenticate_user!, :only => [:edit_inline, 
+                                               :edit_row_inline, 
+                                               :new_inline,
+                                               :create,
+                                               :update, 
+                                               :destroy,
+                                               :attach_document,
+                                               :save_attachment,
+                                               :delete_attachment,
+                                               :import,
+                                               :upload]
   before_filter :findParent
   before_filter :findEntity, :only => [:show, 
                                        :show_more, 
@@ -26,8 +36,6 @@ class RowsController < ApplicationController
                                        :attach_document,
                                        :save_attachment,
                                        :delete_attachment,
-                                       :enter_password,
-                                       :save_password,
                                        :photo,
                                        :file]
 
@@ -326,44 +334,6 @@ class RowsController < ApplicationController
       else
         log_debug "RowController#save_document: error"
         format.html { render :action => "attach_document" }
-      end
-    end
-  end
-
-  def enter_password
-    logg_debug "RowController#enter_password: params=#{params.inspect}"
-    @row_password = @row.row_passwords.new 
-    render :layout => false
-  end
-
-  def save_password
-    log_debug "RowController#save_password: params=#{params.inspect}"
-    saved = false
-    begin
-      @row.transaction do
-        @row.remove_password!
-        @row_password = @row.row_passwords.new
-        @row_password.uuid = @row.uuid
-        @row_password.user_password = 
-          params[:row_password][:user_password]
-        @row_password.user_password_confirmation = 
-          params[:row_password][:user_password_confirmation]
-        @row_password.save!
-        @row.make_audit(Audit::PASSWORD)
-        saved = true
-      end
-    rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#save_password: invalid=#{invalid.inspect}"
-      saved = false
-    end
-    respond_to do |format|
-      if saved 
-        name = @grid.row_title(@row)
-        flash[:notice] = I18n.t('transaction.pass_created', :name => name)
-        format.html { redirect_to session[:last_url] }
-      else
-        log_debug "RowController#save_password: error"
-        format.html { render :action => "enter_password" }
       end
     end
   end
