@@ -1,6 +1,15 @@
 <% @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present? %>
 <section class="sidebar">
   <% unless @grid.blank? or @row.blank? %>
+    <% if @grid.present? and @row.present? %>
+      <article class="article">
+        <ul>
+          <li>
+           <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
+          </li>
+        </ul>
+      </article>
+    <% end %>
     <article class="article">
       <ul>
         <% if @grid_cast.present? and @grid_cast.can_select_data? %>
@@ -24,9 +33,6 @@
           </li>
         <% end %>
         <% if @grid.present? and @row.present? %>
-          <li>
-    			 <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
-    	    </li>
           <% if @row.has_attachment? %>
       		    <% if @row.has_photo? %>
   			        <% for document in @row.row_attachments %>
@@ -49,12 +55,6 @@
   			        <% end %>
       				<% end %>
       		<% end %>
-    			<% if @grid_cast.present? %>
-            <li>
-              <%= icon "greenright" %> 
-    	        <%= link_to I18n.t('rows.title'), :controller => 'rows', :grid_id => @grid_cast.uuid %>
-            </li>
-   				<% end %>
    			  <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
     				  <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
     				  <li>
