@@ -106,14 +106,14 @@ class Column < Entity
   
   def physical_column
     if @physical_column.nil?
-      raise "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
+      log_error "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
     end
     @physical_column 
   end
   
   def default_physical_column
     if @default_physical_column.nil?
-      raise "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
+      log_error "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
     end
     @default_physical_column 
   end
@@ -184,7 +184,7 @@ class Column < Entity
 
   def import!
     log_debug "Column#import!"
-    raise "Can't import column when there is no grid reference" if grid.nil?
+    log_error "Can't import column when there is no grid reference" if grid.nil?
     column = grid.column_select_entity_by_uuid_version(self.uuid)
     if column.present?
       if self.revision > column.revision 

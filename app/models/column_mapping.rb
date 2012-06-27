@@ -44,7 +44,7 @@ class ColumnMapping < Entity
 
   def import!
     log_debug "ColumnMapping#import!"
-    raise "Can't import column mapping when " + 
+    log_error "Can't import column mapping when " + 
           "there is no column reference" if column.nil?
     mapping = column.column_mapping_select_entity_by_uuid_version(self.uuid, 
                                                                   self.version)

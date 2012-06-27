@@ -192,9 +192,10 @@ class Row < Entity
 
   def import!
     log_debug "Row#import!"
-    raise "Can't import row when there is no grid reference" if grid.nil?
+    log_error "Can't import row when there is no grid reference" if grid.nil?
     row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
     if row.present?
+      log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
       if self.revision > row.revision 
         log_debug "Row#import! update"
         copy_attributes(row)
@@ -220,7 +221,7 @@ class Row < Entity
 
   def import_loc!(loc)
     log_debug "Row#import_loc!(loc=#{loc})"
-    raise "Can't import row loc when there is no grid reference" if grid.nil?
+    log_error "Can't import row loc when there is no grid reference" if grid.nil?
     updated = 0
     grid.row_loc_select_entity_by_uuid(self.uuid, 
                                        self.version).each do |row_loc|
@@ -238,7 +239,7 @@ class Row < Entity
   end
 
   def create_missing_loc!
-    raise "Can't create row loc when there is no grid reference" if grid.nil?
+    log_error "Can't create row loc when there is no grid reference" if grid.nil?
     base_locs = []
     base_loc = nil
     foundI18n = false

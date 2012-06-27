@@ -50,7 +50,7 @@ class Grid < Entity
   # definition, table mapping).
   def load_cached_grid_structure(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
-              "filters=#{filters.inspect}) [grid #{to_s}]"
+              "filters=#{filters.inspect}) [grid #{inspect}]"
     load_cached_mapping
     load_cached_columns
     load_cached_column_information(filters, false, skip_mapping)
@@ -245,13 +245,13 @@ class Grid < Entity
   end
   
   def column_all
-    raise "Data grid structure " + 
+    log_error "Data grid structure " + 
           "#{self.uuid} isn't preloaded!!!" if @all_columns.nil?
     @all_columns
   end
 
   def filtered_columns
-    raise "Data grid structure " + 
+    log_error "Data grid structure " + 
           "#{self.uuid} isn't preloaded!!!" if @columns.nil?
     @columns
   end
@@ -383,7 +383,7 @@ class Grid < Entity
   def row_select_entity_by_uuid(uuid)
     log_debug "Grid#row_select_entity_by_uuid(uuid=#{uuid}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_select_entity_by_uuid Can't select data"
       return nil
     end
     sql = "SELECT #{row_all_select_columns}" + 
@@ -411,10 +411,11 @@ class Grid < Entity
   end
   
   def row_select_entity_by_uuid_version(uuid, version)
+    load_cached_grid_structure if not is_preloaded?
     log_debug "Grid#row_select_entity_by_uuid_version(uuid=#{uuid}, " + 
               "version=#{version}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_select_entity_by_uuid_version Can't select data"
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -447,7 +448,7 @@ class Grid < Entity
   def row_select_entity_by_id(id)
     log_debug "Grid#row_select_entity_by_id(id=#{id}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_select_entity_by_id Can't select data"
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -475,7 +476,7 @@ class Grid < Entity
   def row_all_versions(uuid)
     log_debug "Grid#row_all_versions(uuid=#{uuid}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_all_versions Can't select data"
       return []
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -503,7 +504,7 @@ class Grid < Entity
     log_debug "Grid#row_all_locales(uuid=#{uuid}, " + 
               "version=#{version.to_s}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_all_locales Can't select data"
       return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
@@ -557,9 +558,7 @@ class Grid < Entity
     if not full and row.present?
       return summary if summary.length > 0
       count = 0
-      if not is_preloaded?
-        load_cached_grid_structure
-      end
+      load_cached_grid_structure if not is_preloaded?
       @columns.each do |column|
         if ([Column::REFERENCE, 
              Column::STRING, 
@@ -582,7 +581,7 @@ class Grid < Entity
     log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, " +
               "version=#{version}) [grid #{to_s}]"
     if not can_select_data?
-      log_debug "Can't select data"
+      log_warning "Security: Grid#row_loc_select_entity_by_uuid Can't select data"
       return nil
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
@@ -807,7 +806,7 @@ class Grid < Entity
   def create_row!(row)
     log_debug "Grid#create_row!(row=#{row.inspect})"
     if not can_create_data?
-      log_debug "Can't create data"
+      log_warning "Security: Grid#create_row! Can't create data"
       return nil
     end
     row.created_at = Time.now
@@ -826,7 +825,7 @@ class Grid < Entity
   def create_row_loc!(row)
     log_debug "Grid#create_row_loc!(row=#{row.inspect})"
     if not can_create_data?
-      log_debug "Can't create data"
+      log_warning "Security: Grid#create_row_loc! Can't create data"
       return nil
     end
     sql = "INSERT INTO #{db_loc_table}" +
@@ -842,7 +841,7 @@ class Grid < Entity
   def update_row!(row)
     log_debug "Grid#update_row!(row=#{row.inspect})"
     if not can_update_data?
-      log_debug "Can't update data"
+      log_warning "Security: Grid#update_row! Can't update data"
       return nil
     end
     row.updated_at = Time.now
@@ -858,7 +857,7 @@ class Grid < Entity
   def update_row_loc!(row)
     log_debug "Grid#update_row_loc!(row=#{row.inspect})"
     if not can_update_data?
-      log_debug "Can't update data"
+      log_warning "Security: Grid#update_row_loc! Can't update data"
       return nil
     end
     sql = "UPDATE #{db_loc_table}" +
@@ -871,7 +870,7 @@ class Grid < Entity
   def destroy_row!(row)
     log_debug "Grid#destroy_row!(row=#{row.inspect})"
     if not can_update_data?
-      log_debug "Can't delete data"
+      log_warning "Security: Grid#destroy_row! Can't delete data"
       return nil
     end
     sql = "DELETE FROM #{db_table}" +
@@ -884,7 +883,7 @@ class Grid < Entity
   def destroy_row_loc!(row)
     log_debug "Grid#destroy_row_loc!(row=#{row.inspect})"
     if not can_update_data?
-      log_debug "Can't delete data"
+      log_warning "Security: Grid#destroy_row_loc! Can't delete data"
       return nil
     end
     sql = "DELETE FROM #{db_loc_table}" +

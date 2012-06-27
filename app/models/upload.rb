@@ -39,7 +39,7 @@ class Upload < Entity
             when User::XML_TAG then entity = User.new
             when GridMapping::XML_TAG then entity = GridMapping.new
             when ColumnMapping::XML_TAG then entity = ColumnMapping.new
-            else raise "Unkown xml tag #{xml_entity.name}"
+            else log_warning "Unkown xml tag #{xml_entity.name}"
           end
           entity.transaction do
             xml_entity.elements.each do |xml_attribute|
@@ -47,19 +47,18 @@ class Upload < Entity
                  xml_attribute.has_elements?
                 entity_loc = entity.new_loc
                 xml_attribute.elements.each do |xml_attribute_loc|
-                  entity_loc.import(xml_attribute_loc.name, 
-                                    undecode(xml_attribute_loc))      
+                  entity_loc.import(xml_attribute_loc.name, undecode(xml_attribute_loc))      
                 end
                 locs << entity_loc
               elsif xml_attribute.name == 'data' and 
                     xml_attribute.has_attributes?
-                entity.import_attribute(xml_attribute.attributes['uuid'], 
-                                        undecode(xml_attribute))      
+                entity.import_attribute(xml_attribute.attributes['uuid'], undecode(xml_attribute))      
               else
                 entity.import(xml_attribute.name, 
                               undecode(xml_attribute))   
               end
             end
+            entity.default_dates
             if entity.import!
               if locs.length > 0
                 locs.each do |entity_loc|

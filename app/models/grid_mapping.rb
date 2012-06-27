@@ -45,7 +45,7 @@ class GridMapping < Entity
 
   def import!
     log_debug "GridMapping#import!"
-    raise "Can't import grid mapping when " + 
+    log_error "Can't import grid mapping when " + 
           "there is no grid reference" if grid.nil?
     mapping = grid.mapping_select_entity_by_uuid_version(self.uuid, self.version)
     if mapping.present?
