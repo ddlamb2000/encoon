@@ -157,7 +157,7 @@ class Row < Entity
   end
 
   def import(xml_attribute, xml_value)
-    log_.debug "Row#import(xml_attribute=#{xml_attribute}, " + 
+    log_debug "Row#import(xml_attribute=#{xml_attribute}, " + 
                "xml_value=#{xml_value})"
     case xml_attribute
       when 'grid_uuid' then self.grid_uuid = xml_value
