@@ -60,7 +60,7 @@ class EntityLoc < ActiveRecord::Base
   end
 
   def import(xml_attribute, xml_value)
-    log_debug "EntityLoc::import(xml_attribute=#{xml_attribute}, " + 
+    Entity.log_debug "EntityLoc::import(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
       when 'base_locale' then self.base_locale = xml_value
@@ -71,7 +71,7 @@ class EntityLoc < ActiveRecord::Base
   end
 
   def copy_attributes(entity_loc)
-    log_debug "EntityLoc::copy_attributes entity_loc=#{entity_loc.inspect}"
+    Entity.log_debug "EntityLoc::copy_attributes entity_loc=#{entity_loc.inspect}"
     entity_loc.base_locale = self.base_locale    
     entity_loc.locale = self.locale
     entity_loc.name = self.name
