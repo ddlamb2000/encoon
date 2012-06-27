@@ -65,6 +65,10 @@ class Entity < ActiveRecord::Base
       self.enabled = true
     end
     self.version = 1 if self.version.blank?
+    default_dates
+  end
+  
+  def default_dates
     self.begin = @@begin_of_time if self.begin.blank? 
     self.end = @@end_of_time if self.end.blank?
   end
@@ -349,25 +353,30 @@ class Entity < ActiveRecord::Base
   def self.log_debug(message)
     logger.debug "[" +
                  "#{session_user_display_name}:" +
-                 "#{session_as_of_date}" +
+                 "#{I18n.l(session_as_of_date)}" +
                  "(#{session_locale})] " +
                  message
   end
 
-  def log_debug(message)
-    Entity.log_debug(message)
+  def self.log_warning(message)
+    logger.warn "[" +
+                 "#{session_user_display_name}:" +
+                 "#{I18n.l(session_as_of_date)}" +
+                 "(#{session_locale})] " +
+                 "## WARNING ## " +
+                 message
   end
 
   def self.log_error(message)
     logger.error "[" +
                  "#{session_user_display_name}:" +
-                 "#{session_as_of_date}" +
+                 "#{I18n.l(session_as_of_date)}" +
                  "(#{session_locale})] " +
                  "## ERROR ## " +
                  message
   end
 
-  def log_error(message)
-    Entity.log_error(message)
-  end
+  def log_debug(message) ; Entity.log_debug(message) ; end
+  def log_warning(message) ; Entity.log_warning(message) ; end
+  def log_error(message) ; Entity.log_error(message) ; end
 end
