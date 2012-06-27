@@ -470,7 +470,6 @@ table {
 
 #banner {
   @include clearfix;
-  @include float-left;
   font-size: 120%;
   width: 100%;
   padding-top: 4px;
