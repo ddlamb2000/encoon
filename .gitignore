@@ -1,0 +1,12 @@
+.git
+.bundle
+.DS_Store
+.loadpath
+.tmp*
+log/
+tmp/
+Thumbs.db
+db/*.sqlite3
+log/*.log
+.sass-cache/
+public/assets/
