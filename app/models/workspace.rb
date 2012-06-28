@@ -98,6 +98,24 @@ class Workspace < Entity
     end
   end
   
+  def copy_attributes(entity)
+    log_debug "Workspace#copy_attributes"
+    super
+    entity.public = self.public    
+    entity.default_role_uuid = self.default_role_uuid    
+    entity.uri = self.uri    
+  end
+
+  def import(xml_attribute, xml_value)
+    log_debug "Workspace#import(#{xml_attribute}:#{xml_value})"
+    case xml_attribute
+      when 'public' then self.public = (xml_value == 'true')
+      when 'default_role_uuid' then self.default_role_uuid = xml_value
+      when 'uri' then self.uri = xml_value
+      else super
+    end
+  end
+  
   def import!
     log_debug "Workspace#import!"
     workspace = Workspace.select_entity_by_uuid_version(Workspace, 
@@ -107,7 +125,7 @@ class Workspace < Entity
       if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
         copy_attributes(workspace)
-        self.update_user_uuid = Grid.session_user_uuid    
+        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)
@@ -117,7 +135,7 @@ class Workspace < Entity
       end
     else
       log_debug "Workspace#import! new"
-      self.create_user_uuid = self.update_user_uuid = Grid.session_user_uuid    
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
       self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!
@@ -145,28 +163,11 @@ private
     "workspaces.id, workspaces.uuid, " + 
     "workspaces.version, workspaces.lock_version, " + 
     "workspaces.begin, workspaces.end, workspaces.enabled, " +
+    "workspaces.public, workspaces.default_role_uuid, workspaces.uri, " +
     "workspaces.created_at, workspaces.updated_at, " +
     "workspaces.create_user_uuid, workspaces.update_user_uuid, " +
     "workspace_locs.base_locale, workspace_locs.locale, " +
     "workspace_locs.name, workspace_locs.description"
-  end
-  
-  def self.security_clause(synonym)
-    if DATA_GRID_SECURITY_ACTIVATED
-      "(" +
-      #" #{synonym}.create_user_uuid = '#{session_user_uuid}'" +
-      #" OR " +
-      " EXISTS (" +
-      "  SELECT 1 FROM workspace_sharings " +
-      "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
-      "  AND " + as_of_date_clause("workspace_sharings") +
-      "  AND workspace_sharings.user_uuid = '#{session_user_uuid}'" +
-      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
-      " )" +
-      ")"
-    else
-      "1=1"
-    end
   end
 end
 

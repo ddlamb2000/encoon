@@ -190,7 +190,7 @@ class Column < Entity
       if self.revision > column.revision 
         logger.debug "Column#import! update"
         copy_attributes(column)
-        self.update_user_uuid = Grid.session_user_uuid    
+        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         column.save!
         column.update_dates!(grid.columns, update_user_uuid)
@@ -200,7 +200,7 @@ class Column < Entity
       end
     else
       log_debug "Column#import! new"
-      self.create_user_uuid = self.update_user_uuid = Grid.session_user_uuid    
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
       self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!

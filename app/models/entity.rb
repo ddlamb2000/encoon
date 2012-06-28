@@ -290,7 +290,7 @@ class Entity < ActiveRecord::Base
         if previous_item.present? and previous_item.end != item.begin-1
           log_debug "Entity#update_dates previous_item set end date"
           previous_item.end = item.begin-1
-          previous_item.update_user_uuid = Grid.session_user_uuid
+          previous_item.update_user_uuid = Entity.session_user_uuid
           previous_item.save!
         end
         previous_item = item
@@ -301,7 +301,7 @@ class Entity < ActiveRecord::Base
     if last_item.present? and last_item.end != @@end_of_time
       log_debug "Entity#update_dates last_item set end date"
       last_item.end = @@end_of_time
-      last_item.update_user_uuid = Grid.session_user_uuid
+      last_item.update_user_uuid = Entity.session_user_uuid
       last_item.save!
     end
   end
@@ -336,6 +336,61 @@ class Entity < ActiveRecord::Base
 
   def self.session_locale
     Thread.current[:session_locale]
+  end
+
+  def self.workspace_security_clause(synonym)
+    if DATA_GRID_SECURITY_ACTIVATED
+      "(" +
+      " EXISTS (" +
+      "  SELECT 1 FROM workspace_sharings " +
+      "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
+      "  AND " + as_of_date_clause("workspace_sharings") +
+      "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      " )" +
+      " OR EXISTS (" +
+      "  SELECT 1 FROM workspaces workspace_security " +
+      "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
+      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND (" +
+      "   workspace_security.public = 't'" +
+      "   OR workspace_security.create_user_uuid = '#{Entity.session_user_uuid}'" +
+      "  )" +
+      " )" +
+      ")"
+    else
+      "1=1"
+    end
+  end
+
+  def self.grid_security_clause(synonym)
+    if DATA_GRID_SECURITY_ACTIVATED
+      "(" +
+      " EXISTS (" +
+      "  SELECT 1 FROM grids grid_security, workspace_sharings " +
+      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+      "  AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
+      "  AND " + as_of_date_clause("grid_security") +
+      "  AND " + as_of_date_clause("workspace_sharings") +
+      "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      " )" + 
+      " OR EXISTS (" +
+      "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
+      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+      "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
+      "  AND " + as_of_date_clause("grid_security") +
+      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND (" +
+      "   workspace_security.public = 't'" +
+      "   OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "   OR workspace_security.create_user_uuid = '#{Entity.session_user_uuid}'" +
+      "  )" +
+      " )" +
+      ")"
+    else
+      "1=1"
+    end
   end
 
   # Logs debugging message.

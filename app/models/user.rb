@@ -78,7 +78,7 @@ class User < Entity
       if self.revision > user.revision 
         log_debug "User#import! update"
         copy_attributes(user)
-        self.update_user_uuid = Grid.session_user_uuid    
+        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         user.save!
         user.update_dates!(User)
@@ -88,7 +88,7 @@ class User < Entity
       end
     else
       log_debug "User#import! new"
-      self.create_user_uuid = self.update_user_uuid = Grid.session_user_uuid    
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
       self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!
