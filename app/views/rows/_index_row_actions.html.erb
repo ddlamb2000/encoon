@@ -6,4 +6,6 @@
         {:controller => 'rows', :grid_id => grid.uuid, :id => row.id, :inline => true, :action => "destroy"}, 
          :confirm => I18n.t('message.delete', :name => row.to_s),
          :method => :delete) %>
+<% else %>
+  <%= icon('locked') %>
 <% end %>
