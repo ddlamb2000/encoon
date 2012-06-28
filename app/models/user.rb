@@ -33,7 +33,7 @@ class User < Entity
          :lockable, 
          :omniauthable
 
-  attr_accessible :email, :password, :password_confirmation, :remember_me
+  attr_accessible :email, :first_name, :last_name, :password, :password_confirmation, :remember_me
 
   def to_s
     name = ""
