@@ -15,14 +15,28 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 module EntityHelper
-  def show_header_label(label, description, list=false)
+  def show_header_label(kind, label, description, list=false)
+    style = "header"
+    if list
+      case kind
+        when Column::STRING then style = "list-header-string"
+        when Column::TEXT then style = "list-header-string"
+        when Column::HYPERLINK then style = "list-header-string"
+        when Column::INTEGER then style = "list-header-number"
+        when Column::DECIMAL then style = "list-header-number"
+        when Column::DATE then style = "list-header-date"
+        when Column::BOOLEAN then style = "list-header-boolean"
+        when Column::REFERENCE then style = "list-header-string"
+        when Column::PASSWORD then style = "list-header-string"
+      end
+    end
     content_tag(list ? "th" : "td",
       label +
       (description.present? ? 
       (("&nbsp;<span title=\"" + description + "\">").html_safe +
       icon("information") +
       "</span>".html_safe) : ""),
-      :class => (list ? "list-" : "") + "header"
+      :class => style
      )
   end
 
@@ -82,12 +96,12 @@ module EntityHelper
   
   def show_entity(column, value, referenced_link, referenced_name, referenced_description)
     content_tag("tr",
-      show_header_label(column.name.html_safe, column.description.html_safe) +
+      show_header_label(column.kind, column.name.html_safe, column.description.html_safe) +
       show(value, column.kind, column.grid_reference_uuid, referenced_link, referenced_name, referenced_description)
     )
   end
 
-  def show_entity_in_list(column, value, referenced_link, referenced_name, referenced_description)
+  def show_entity_in_list(column, value, referenced_link, referenced_name, referenced_description = "")
     show(value, column.kind, column.grid_reference_uuid, referenced_link, referenced_name, referenced_description, true)
   end
 end

@@ -7,7 +7,7 @@
     <tr>
 			<th class="list-header"><%=h grid.name %></th>
 	  	<% for column in table_columns %>
-	  		<%= show_header_label(column.name.html_safe, column.description.html_safe, true) %>
+	  		<%= show_header_label(column.kind, column.name.html_safe, column.description.html_safe, true) %>
 	  	<% end %>
 	  	<th></th>
     </tr>
@@ -43,8 +43,7 @@
                       link_to(icon("external"), 
                       :controller => 'rows', :action => 'show', :grid_id => column.grid_reference_uuid, :id => row.read_value(column)) :
                       ""),
-									row.read_referenced_name(column),
-                  "") %>
+									row.read_referenced_name(column)) %>
 			  <% end %>
         <td class="column-header">
           <%= render :partial => 'rows/index_row_actions', :locals => {:row => row, :grid => grid} %>
