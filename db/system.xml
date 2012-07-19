@@ -3,13 +3,16 @@
   <row title="System" grid="Domain">
     <uuid>eec10850-dd45-012c-aafe-0026b0d63708</uuid>
     <version>1</version>
-    <revision>52</revision>
+    <revision>53</revision>
     <enabled>true</enabled>
     <created_at>2009-12-17 17:43:45 UTC</created_at>
-    <updated_at>2010-05-07 13:41:27 UTC</updated_at>
+    <updated_at>2012-06-27 09:56:48 UTC</updated_at>
     <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid></update_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
     <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
+    <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public">f</data>
+    <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">57830c40-9c87-012f-089e-4417fe7fde95</data>
+    <data uuid="44b03b60-a26c-012f-de85-4417fe7fde95" name="Uri">system</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -77,8 +80,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
@@ -120,8 +121,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">4</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
@@ -163,8 +162,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">5a2e26e0-ea31-012c-1074-00166f92f624</data>
     <locale>
@@ -191,49 +188,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">50270360-ea31-012c-106f-00166f92f624</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">kind</data>
   </row>
-  <row title="Length" grid="Attribute">
-    <uuid>049459a1-1da5-012d-9964-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:07:33 UTC</created_at>
-    <updated_at>2010-04-06 12:19:34 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">8</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">7</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Length</name>
-      <description>Defines the maximum length of data in the column.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Longueur</name>
-      <description>Défini la longueur maximale de la données dans la colonne.</description>
-    </locale>
-  </row>
-  <row title="Length | length" grid="Attribute mapping">
-    <uuid>1c40fd00-1da5-012d-c94b-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:08:13 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">049459a1-1da5-012d-9964-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">length</data>
-  </row>
   <row title="Number" grid="Attribute">
     <uuid>42e7f000-06cd-012d-c1f8-0026b0d63708</uuid>
     <version>1</version>
@@ -249,8 +203,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">2</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
@@ -277,51 +229,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">42e7f000-06cd-012d-c1f8-0026b0d63708</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">number</data>
   </row>
-  <row title="Precision" grid="Attribute">
-    <uuid>338bd171-1da5-012d-a3cf-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>6</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:08:52 UTC</created_at>
-    <updated_at>2010-04-06 12:37:25 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">9</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">8</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">10</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Precision</name>
-      <description>Defines the precision (number of decimals) of data in the column, when applicable.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Précision</name>
-      <description>Défini la précision (nombre de décimales) de la données dans la colonne, à condition de la données soit numérique.</description>
-    </locale>
-  </row>
-  <row title="Precision | decimals" grid="Attribute mapping">
-    <uuid>3ddfdc71-1da5-012d-46af-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>2</revision>
-    <enabled>true</enabled>
-    <created_at>2010-04-02 10:54:36 UTC</created_at>
-    <updated_at>2010-04-02 10:58:24 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">338bd171-1da5-012d-a3cf-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">decimals</data>
-  </row>
   <row title="Reference" grid="Attribute">
     <uuid>5a5107e0-0990-012d-e81a-4417fe7fde95</uuid>
     <version>1</version>
@@ -337,8 +244,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">6</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">20</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
@@ -380,8 +285,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">10</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">10</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -423,8 +326,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">7</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -504,8 +405,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
@@ -545,8 +444,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">25</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -607,8 +504,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">2</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision">0</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -637,8 +532,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">3</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision">0</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -667,8 +560,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">3</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision">0</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -737,8 +628,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
     <locale>
@@ -780,8 +669,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -817,8 +704,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -918,8 +803,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
@@ -959,8 +842,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">25</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -995,8 +876,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length">25</data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
@@ -1053,6 +932,105 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspaces</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">workspace_locs</data>
+  </row>
+  <row title="Default role" grid="Attribute">
+    <uuid>0e1f4990-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:48 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Default role</name>
+      <description>Default role for registered users.</description>
+    </locale>
+  </row>
+  <row title="Default role | default_role_uuid" grid="Attribute mapping">
+    <uuid>186c3270-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:55:05 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">0e1f4990-a26c-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">default_role_uuid</data>
+  </row>
+  <row title="Public" grid="Attribute">
+    <uuid>f1ca9820-a26b-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:00 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Public</name>
+      <description>The domain is public so accessble to unregistered users.</description>
+    </locale>
+  </row>
+  <row title="Public | public" grid="Attribute mapping">
+    <uuid>f93205a0-a26b-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:13 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">f1ca9820-a26b-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">public</data>
+  </row>
+  <row title="Uri" grid="Attribute">
+    <uuid>44b03b60-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:56:19 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Uri</name>
+      <description>Defines a uri used to provide meaningful web adresses.</description>
+    </locale>
+  </row>
+  <row title="Uri | uri" grid="Attribute mapping">
+    <uuid>4a956bf0-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:56:29 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">44b03b60-a26c-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">uri</data>
   </row>
   <row title="Role" grid="Data category">
     <uuid>62630550-0cb5-012d-bcb2-4417fe7fde95</uuid>
@@ -1146,8 +1124,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
     <locale>
@@ -1185,8 +1161,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
     <locale>
@@ -1221,8 +1195,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">08beadc0-ea31-012c-105d-00166f92f624</data>
     <locale>
@@ -1298,8 +1270,6 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required"></data>
-    <data uuid="049459a1-1da5-012d-9964-4417fe7fde95" name="Length"></data>
-    <data uuid="338bd171-1da5-012d-a3cf-4417fe7fde95" name="Precision"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
