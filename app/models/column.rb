@@ -161,8 +161,6 @@ class Column < Entity
       when 'number' then self.number = xml_value.to_i
       when 'display' then self.display = xml_value.to_i
       when 'required' then self.required = (xml_value == 'true')
-      when 'length' then self.length = xml_value.to_i
-      when 'decimals' then self.decimals = xml_value.to_i
       when 'regex' then self.regex = xml_value
       else super
     end
@@ -177,8 +175,6 @@ class Column < Entity
     entity.number = self.number
     entity.display = self.display
     entity.required = self.required
-    entity.length = self.length
-    entity.decimals = self.decimals
     entity.regex = self.regex
   end
 

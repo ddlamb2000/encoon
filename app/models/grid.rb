@@ -1046,12 +1046,10 @@ private
     "columns.begin, columns.end, columns.enabled, " +
     "columns.number, columns.display, columns.kind, " + 
     "columns.grid_reference_uuid, " + 
-    "columns.required, columns.length, columns.decimals, " + 
-    "columns.regex, " + 
+    "columns.required, columns.regex, " + 
     "columns.created_at, columns.updated_at, " + 
     "columns.create_user_uuid, columns.update_user_uuid, " + 
-    "column_locs.base_locale, " + 
-    "column_locs.locale, " +
+    "column_locs.base_locale, column_locs.locale, " +
     "column_locs.name, column_locs.description"
   end
   

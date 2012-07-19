@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120627192423) do
+ActiveRecord::Schema.define(:version => 20120719105733) do
 
   create_table "audits", :force => true do |t|
     t.integer  "version"
@@ -73,9 +73,7 @@ ActiveRecord::Schema.define(:version => 20120627192423) do
     t.string   "update_user_uuid",    :limit => 36
     t.boolean  "enabled"
     t.boolean  "required"
-    t.integer  "length"
     t.string   "regex"
-    t.integer  "decimals"
   end
 
   add_index "columns", ["grid_uuid"], :name => "index_columns_on_grid_uuid"
