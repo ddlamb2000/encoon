@@ -97,17 +97,24 @@ class Grid < Entity
   end
 
   def can_update?(row)
-    if self.uuid == Workspace::ROOT_UUID
-      security = load_security_workspace(row.uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
-    elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
-      security = load_security_workspace(row.workspace_uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
-    elsif self.uuid == Column::ROOT_UUID and row.grid.present?
-      security = load_security_workspace(row.grid.workspace_uuid)
-      return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
+    log_debug "Grid#can_update?(" +
+              "row=#{row.uuid})"
+    if can_update_data?
+      return true if row.create_user_uuid == Entity.session_user_uuid
+      if self.uuid == Workspace::ROOT_UUID
+        log_debug "Grid#can_update? ############################# WORKSPACE"
+        security = load_security_workspace(row.uuid)
+        log_debug "Grid#can_update? ############################# WORKSPACE: security=#{security.inspect}"
+        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
+      elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
+        security = load_security_workspace(row.workspace_uuid)
+        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
+      elsif self.uuid == Column::ROOT_UUID and row.grid.present?
+        security = load_security_workspace(row.grid.workspace_uuid)
+        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
+      end
     end
-    can_update_data?
+    false    
   end
 
   def before_destroy
@@ -1204,7 +1211,7 @@ private
   end
   
   def load_security_workspace(uuid)
-    log_debug "Grid#load_security_uworkspace [grid #{to_s}]"
+    log_debug "Grid#load_security_workspace [grid #{to_s}]"
     
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
@@ -1214,7 +1221,9 @@ private
           " LIMIT 1"
 
     security = Grid.find_by_sql([sql])[0]
+    log_debug "Grid#load_security_workspace (1) security=#{security.inspect}"
     return security.role_uuid if not security.nil?
+
     sql = "SELECT default_role_uuid, create_user_uuid" + 
           " FROM workspaces workspace_security" + 
           " WHERE workspace_security.uuid = '#{uuid}'" + 
@@ -1226,6 +1235,7 @@ private
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
+    log_debug "Grid#load_security_workspace (2) security=#{security.inspect}"
     return Role::ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
                       security.create_user_uuid == Entity.session_user_uuid 
     return security.default_role_uuid if not security.nil?
