@@ -11,16 +11,16 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120719105733) do
+ActiveRecord::Schema.define(:version => 20120803184843) do
 
   create_table "audits", :force => true do |t|
+    t.string   "uuid",             :limit => 36
     t.integer  "version"
     t.integer  "lock_version",                   :default => 0
+    t.string   "update_user_uuid", :limit => 36
     t.string   "kind",             :limit => 36
-    t.datetime "updated_at"
+    t.datetime "updated_at",                                    :null => false
     t.string   "locale"
-    t.string   "update_user_uuid"
-    t.string   "uuid"
     t.string   "grid_uuid",        :limit => 36
   end
 
@@ -50,8 +50,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.string   "create_user_uuid", :limit => 36
     t.string   "update_user_uuid", :limit => 36
     t.string   "db_column"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
   end
 
   add_index "column_mappings", ["column_uuid"], :name => "index_column_mappings_on_column_uuid"
@@ -63,8 +63,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.integer  "number"
     t.integer  "display"
     t.string   "kind"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
     t.integer  "lock_version",                      :default => 0
     t.string   "uuid",                :limit => 36
     t.string   "grid_uuid",           :limit => 36
@@ -104,8 +104,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.string   "update_user_uuid", :limit => 36
     t.string   "db_table"
     t.string   "db_loc_table"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
   end
 
   add_index "grid_mappings", ["grid_uuid"], :name => "index_grid_mappings_on_grid_uuid"
@@ -114,8 +114,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.date     "begin"
     t.date     "end"
     t.integer  "version"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                       :null => false
+    t.datetime "updated_at",                                       :null => false
     t.integer  "lock_version",                   :default => 0
     t.string   "uuid",             :limit => 36
     t.string   "workspace_uuid",   :limit => 36
@@ -151,8 +151,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.integer  "lock_version",                   :default => 0
     t.string   "create_user_uuid", :limit => 36
     t.string   "update_user_uuid", :limit => 36
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
   end
 
   add_index "roles", ["uuid", "begin", "end"], :name => "index_roles_on_uuid_and_begin_and_end"
@@ -205,8 +205,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.string   "value18"
     t.string   "value19"
     t.string   "value20"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
     t.string   "uuid",             :limit => 36
     t.string   "grid_uuid",        :limit => 36
     t.string   "create_user_uuid", :limit => 36
@@ -301,8 +301,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
   create_table "sessions", :force => true do |t|
     t.string   "session_id",                    :null => false
     t.text     "data",       :limit => 1048576
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
   end
 
   add_index "sessions", ["session_id"], :name => "index_sessions_on_session_id"
@@ -318,14 +318,17 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.string   "create_user_uuid", :limit => 36
     t.string   "update_user_uuid", :limit => 36
     t.string   "file_name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                    :null => false
+    t.datetime "updated_at",                                    :null => false
+    t.integer  "records"
+    t.integer  "inserted"
+    t.integer  "updated"
   end
 
   create_table "users", :force => true do |t|
     t.string   "identifier"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                           :null => false
+    t.datetime "updated_at",                                           :null => false
     t.integer  "lock_version",                         :default => 0
     t.string   "first_name"
     t.string   "last_name"
@@ -398,8 +401,8 @@ ActiveRecord::Schema.define(:version => 20120719105733) do
     t.date     "begin"
     t.date     "end"
     t.integer  "version"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                     :null => false
+    t.datetime "updated_at",                                     :null => false
     t.integer  "lock_version",                    :default => 0
     t.string   "uuid",              :limit => 36
     t.string   "create_user_uuid",  :limit => 36

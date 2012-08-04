@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <encoon>
-  <row title="Boolean" grid="Data kind">
+  <row title="Boolean" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>ff2dd910-06cc-012d-c1e3-0026b0d63708</uuid>
     <version>1</version>
     <revision>3</revision>
@@ -23,7 +23,7 @@
       <description>Value booléenne qui peut être égale à 'vrai' ou 'faux'.</description>
     </locale>
   </row>
-  <row title="Date" grid="Data kind">
+  <row title="Date" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>6d2c8470-ea31-012c-1081-00166f92f624</uuid>
     <version>1</version>
     <revision>5</revision>
@@ -46,7 +46,7 @@
       <description>Date simple.</description>
     </locale>
   </row>
-  <row title="Decimal" grid="Data kind">
+  <row title="Decimal" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>f766af30-06cc-012d-c1df-0026b0d63708</uuid>
     <version>1</version>
     <revision>4</revision>
@@ -69,7 +69,7 @@
       <description>Nombre décimal(virgule flottante).</description>
     </locale>
   </row>
-  <row title="Hyperlink" grid="Data kind">
+  <row title="Hyperlink" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>0a0a5050-06cd-012d-c1eb-0026b0d63708</uuid>
     <version>1</version>
     <revision>3</revision>
@@ -92,7 +92,7 @@
       <description>Défini une référence vers un site web interne ou externe.</description>
     </locale>
   </row>
-  <row title="Integer" grid="Data kind">
+  <row title="Integer" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>f33188f0-06cc-012d-c1db-0026b0d63708</uuid>
     <version>1</version>
     <revision>3</revision>
@@ -115,7 +115,7 @@
       <description>Nombre entier.</description>
     </locale>
   </row>
-  <row title="Password" grid="Data kind">
+  <row title="Password" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>91add730-0d0b-012d-4ae1-4417fe7fde95</uuid>
     <version>1</version>
     <revision>4</revision>
@@ -138,7 +138,7 @@
       <description>Chaîne de caractères qui est cachée aux utilisateurs et qui est cryptée (SHA1, 160 bits).</description>
     </locale>
   </row>
-  <row title="Reference" grid="Data kind">
+  <row title="Reference" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>04950150-06cd-012d-c1e7-0026b0d63708</uuid>
     <version>1</version>
     <revision>3</revision>
@@ -161,7 +161,7 @@
       <description>Défini une référence vers une grille de données. Ceci est utilisé afin de définir des relations entre grilles de données.</description>
     </locale>
   </row>
-  <row title="String" grid="Data kind">
+  <row title="String" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>603286d0-ea31-012c-1079-00166f92f624</uuid>
     <version>1</version>
     <revision>6</revision>
@@ -184,7 +184,7 @@
       <description>Type de données par défaut qui représente une chaîne de caractères alphanumériques.</description>
     </locale>
   </row>
-  <row title="Text" grid="Data kind">
+  <row title="Text" grid_uuid="5a2e26e0-ea31-012c-1074-00166f92f624" grid="Data kind">
     <uuid>688c4870-ea31-012c-107d-00166f92f624</uuid>
     <version>1</version>
     <revision>5</revision>

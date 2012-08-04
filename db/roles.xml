@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <encoon>
-  <row title="Read and write" grid="Role">
+  <row title="Read and write" grid_uuid="62630550-0cb5-012d-bcb2-4417fe7fde95" grid="Role">
     <uuid>57830c40-9c87-012f-089e-4417fe7fde95</uuid>
     <version>1</version>
     <revision>2</revision>
@@ -17,7 +17,7 @@
       <description>User can access data for read and write.</description>
     </locale>
   </row>
-  <row title="Read and write all" grid="Role">
+  <row title="Read and write all" grid_uuid="62630550-0cb5-012d-bcb2-4417fe7fde95" grid="Role">
     <uuid>58c5b1f0-9f85-012f-1924-4417fe7fde95</uuid>
     <version>1</version>
     <revision>2</revision>
@@ -34,7 +34,7 @@
       <description>User can access data for read and write, and for any update.</description>
     </locale>
   </row>
-  <row title="Read only" grid="Role">
+  <row title="Read only" grid_uuid="62630550-0cb5-012d-bcb2-4417fe7fde95" grid="Role">
     <uuid>50088bf0-9c87-012f-089e-4417fe7fde95</uuid>
     <version>1</version>
     <revision>5</revision>
@@ -57,7 +57,7 @@
       <description>Les utilisateurs peuvent accéder aux données en lecture seule.</description>
     </locale>
   </row>
-  <row title="Total control" grid="Role">
+  <row title="Total control" grid_uuid="62630550-0cb5-012d-bcb2-4417fe7fde95" grid="Role">
     <uuid>69cff910-9c87-012f-089e-4417fe7fde95</uuid>
     <version>1</version>
     <revision>2</revision>

@@ -16,7 +16,11 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class User < Entity
   ROOT_UUID = '08beadc0-ea31-012c-105d-00166f92f624'
-  XML_TAG = 'user'
+  ROOT_EMAIL_UUID = 'e878a5b1-1a56-012d-50c9-4417fe7fde95'
+  ROOT_FIRST_NAME_UUID = 'd164bfd1-1a56-012d-2c94-4417fe7fde95'
+  ROOT_LAST_NAME_UUID = 'da06d511-1a56-012d-71ca-4417fe7fde95'
+  
+  SYSTEM_ADMINISTRATOR_UUID = 'eebdc1a0-dd45-012c-aafe-0026b0d63708'
 
   has_many :row_passwords, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :row_attachments, :foreign_key => "uuid", :primary_key => "uuid"
@@ -50,24 +54,23 @@ class User < Entity
     false
   end
 
-  def export(xml)
-    log_debug "User#export"
-    xml.user(:title => self.to_s) do
-      super(xml)
-      xml.email(self.email)
-      xml.firstname(self.first_name)
-      xml.lastname(self.last_name)
-    end
+  def self.select_entity_by_uuid_version(collection, uuid, version)
+    collection.find(:first, 
+                    :select => self.all_select_columns,
+                    :conditions => 
+                      ["users.uuid = :uuid " + 
+                       " AND users.version = :version ", 
+                       {:uuid => uuid, 
+                       :version => version}]) 
   end
   
-  def import(xml_attribute, xml_value)
-    log_debug "User#import(xml_attribute=#{xml_attribute}, " + 
+  def import_attribute(xml_attribute, xml_value)
+    log_debug "User#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when 'email' then self.email = xml_value
-      when 'firstname' then self.first_name = xml_value
-      when 'lastname' then self.last_name = xml_value
-      else super
+      when ROOT_EMAIL_UUID then self.email = xml_value
+      when ROOT_FIRST_NAME_UUID then self.first_name = xml_value
+      when ROOT_LAST_NAME_UUID then self.last_name = xml_value
     end
   end
   
@@ -78,26 +81,35 @@ class User < Entity
       if self.revision > user.revision 
         log_debug "User#import! update"
         copy_attributes(user)
-        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         user.save!
         user.update_dates!(User)
-        return true
+        return "updated"
       else
         log_debug "User#import! skip update"
       end
     else
       log_debug "User#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
-      self.created_at = self.updated_at = Time.now    
+      self.password = rand(36**15).to_s(36);
+      log_debug "User#import! generated password=#{self.password}"
       make_audit(Audit::IMPORT)
       save!
       update_dates!(User)
-      return true
+      return "inserted"
     end
-    false
+    ""
   end
 
-  def create_missing_loc!
+  def create_missing_loc! ; end
+
+private
+
+  def self.all_select_columns
+    "users.id, users.uuid, " + 
+    "users.version, users.lock_version, " + 
+    "users.begin, users.end, users.enabled, " +
+    "users.email, users.first_name, users.last_name, " +
+    "users.created_at, users.updated_at, " +
+    "users.create_user_uuid, users.update_user_uuid"
   end
 end

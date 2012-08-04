@@ -20,7 +20,6 @@ class Grid < Entity
   ROOT_COUNTRY_UUID = 'e1fa0830-dd46-012c-538a-0016cbad334a'
   ROOT_HAS_NAME_UUID = '78a7e2d1-293a-012d-2869-4417fe7fde95'
   ROOT_HAS_DESCRIPTION_UUID = '8afbf6b1-293a-012d-1701-4417fe7fde95'
-  XML_TAG = 'grid'
   
   SYSTEM_WORKSPACE_UUID = 'eec10850-dd45-012c-aafe-0026b0d63708'
 
@@ -102,9 +101,7 @@ class Grid < Entity
     if can_update_data?
       return true if row.create_user_uuid == Entity.session_user_uuid
       if self.uuid == Workspace::ROOT_UUID
-        log_debug "Grid#can_update? ############################# WORKSPACE"
         security = load_security_workspace(row.uuid)
-        log_debug "Grid#can_update? ############################# WORKSPACE: security=#{security.inspect}"
         return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
         security = load_security_workspace(row.workspace_uuid)
@@ -390,7 +387,7 @@ class Grid < Entity
   def row_select_entity_by_uuid(uuid)
     log_debug "Grid#row_select_entity_by_uuid(uuid=#{uuid}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_select_entity_by_uuid Can't select data"
+      log_security_warning "Grid#row_select_entity_by_uuid Can't select data"
       return nil
     end
     sql = "SELECT #{row_all_select_columns}" + 
@@ -422,7 +419,7 @@ class Grid < Entity
     log_debug "Grid#row_select_entity_by_uuid_version(uuid=#{uuid}, " + 
               "version=#{version}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_select_entity_by_uuid_version Can't select data"
+      log_security_warning "Grid#row_select_entity_by_uuid_version Can't select data"
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -455,7 +452,7 @@ class Grid < Entity
   def row_select_entity_by_id(id)
     log_debug "Grid#row_select_entity_by_id(id=#{id}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_select_entity_by_id Can't select data"
+      log_security_warning "Grid#row_select_entity_by_id Can't select data"
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -483,7 +480,7 @@ class Grid < Entity
   def row_all_versions(uuid)
     log_debug "Grid#row_all_versions(uuid=#{uuid}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_all_versions Can't select data"
+      log_security_warning "Grid#row_all_versions Can't select data"
       return []
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
@@ -511,7 +508,7 @@ class Grid < Entity
     log_debug "Grid#row_all_locales(uuid=#{uuid}, " + 
               "version=#{version.to_s}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_all_locales Can't select data"
+      log_security_warning "Grid#row_all_locales Can't select data"
       return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
@@ -588,8 +585,8 @@ class Grid < Entity
     log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, " +
               "version=#{version}) [grid #{to_s}]"
     if not can_select_data?
-      log_warning "Security: Grid#row_loc_select_entity_by_uuid Can't select data"
-      return nil
+      log_security_warning "Grid#row_loc_select_entity_by_uuid Can't select data"
+      return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
                         " FROM grids grids, #{db_loc_table} row_locs" + 
@@ -691,16 +688,16 @@ class Grid < Entity
     entity.has_description = self.has_description    
   end
 
-  def import(xml_attribute, xml_value)
-    log_debug "Grid#import(#{xml_attribute}:#{xml_value})"
+  def import_attribute(xml_attribute, xml_value)
+    log_debug "Grid#import_attribute(xml_attribute=#{xml_attribute}, " + 
+              "xml_value=#{xml_value})"
     case xml_attribute
-      when 'workspace_uuid' then self.workspace_uuid = xml_value
-      when 'has_name' then self.has_name = (xml_value == 'true')
-      when 'has_description' then self.has_description = (xml_value == 'true')
-      else super
+      when ROOT_WORKSPACE_UUID then self.workspace_uuid = xml_value
+      when ROOT_HAS_NAME_UUID then self.has_name = ['true','t','1'].include?(xml_value)
+      when ROOT_HAS_DESCRIPTION_UUID then self.has_description = ['true','t','1'].include?(xml_value)
     end
   end
-  
+
   def import!
     log_debug "Grid#import!"
     grid = Grid.select_entity_by_uuid_version(Grid, self.uuid, self.version)
@@ -708,24 +705,21 @@ class Grid < Entity
       if self.revision > grid.revision 
         log_debug "Grid#import! update"
         copy_attributes(grid)
-        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         grid.save!
         grid.update_dates!(Grid)
-        return true
+        return "updated"
       else
         log_debug "Grid#import! skip update"
       end
     else
       log_debug "Grid#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
-      self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!
       update_dates!(Grid)
-      return true
+      return "inserted"
     end
-    false
+    ""
   end
 
   def import_loc!(loc)
@@ -750,7 +744,7 @@ class Grid < Entity
   def row_export(xml, row)
     log_debug "Grid#row_export(row=#{row}) [grid #{to_s}]"
     if row.present?
-      xml.row(:title => row_title(row), :grid => to_s) do
+      xml.row(:title => row_title(row), :grid_uuid => self.uuid, :grid => to_s) do
         row.export(xml)
         xml.grid_uuid(self.uuid, :title => name)
         column_all.each do |column|
@@ -813,8 +807,8 @@ class Grid < Entity
   def create_row!(row)
     log_debug "Grid#create_row!(row=#{row.inspect})"
     if not can_create_data?
-      log_warning "Security: Grid#create_row! Can't create data"
-      return nil
+      log_security_warning "Grid#create_row! Can't create data"
+      return false
     end
     row.created_at = Time.now
     row.updated_at = Time.now
@@ -827,13 +821,14 @@ class Grid < Entity
                                 self.id, 
                                 self.class.sequence_name)
     row.make_audit(Audit::CREATE)
+    true
   end
   
   def create_row_loc!(row)
     log_debug "Grid#create_row_loc!(row=#{row.inspect})"
     if not can_create_data?
-      log_warning "Security: Grid#create_row_loc! Can't create data"
-      return nil
+      log_security_warning "Grid#create_row_loc! Can't create data"
+      return false
     end
     sql = "INSERT INTO #{db_loc_table}" +
           "(#{row_all_insert_loc_columns})" +
@@ -843,13 +838,14 @@ class Grid < Entity
                                 self.class.primary_key, 
                                 self.id, 
                                 self.class.sequence_name)
+    true
   end
   
   def update_row!(row)
     log_debug "Grid#update_row!(row=#{row.inspect})"
     if not can_update_data?
-      log_warning "Security: Grid#update_row! Can't update data"
-      return nil
+      log_security_warning "Grid#update_row! Can't update data"
+      return false
     end
     row.updated_at = Time.now
     sql = "UPDATE #{db_table}" +
@@ -859,44 +855,48 @@ class Grid < Entity
     connection.update(sql, "#{self.class.name} Update")
     row.lock_version += 1
     row.make_audit(Audit::UPDATE)
+    true
   end
   
   def update_row_loc!(row)
     log_debug "Grid#update_row_loc!(row=#{row.inspect})"
     if not can_update_data?
-      log_warning "Security: Grid#update_row_loc! Can't update data"
-      return nil
+      log_security_warning "Grid#update_row_loc! Can't update data"
+      return false
     end
     sql = "UPDATE #{db_loc_table}" +
           " SET #{row_loc_update_values(row)}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
     connection.update(sql, "#{self.class.name} Update")
+    true
   end
   
   def destroy_row!(row)
     log_debug "Grid#destroy_row!(row=#{row.inspect})"
     if not can_update_data?
-      log_warning "Security: Grid#destroy_row! Can't delete data"
-      return nil
+      log_security_warning "Grid#destroy_row! Can't delete data"
+      return false
     end
     sql = "DELETE FROM #{db_table}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
     connection.delete(sql, "#{self.class.name} Delete")
     row.make_audit(Audit::DELETE)
+    true
   end
   
   def destroy_row_loc!(row)
     log_debug "Grid#destroy_row_loc!(row=#{row.inspect})"
     if not can_update_data?
-      log_warning "Security: Grid#destroy_row_loc! Can't delete data"
-      return nil
+      log_security_warning "Grid#destroy_row_loc! Can't delete data"
+      return false
     end
     sql = "DELETE FROM #{db_loc_table}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
     connection.delete(sql, "#{self.class.name} Delete")
+    true
   end
   
   def mapping_all

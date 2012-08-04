@@ -125,7 +125,7 @@ class Entity < ActiveRecord::Base
   end
 
   def to_s
-    name
+    attribute_present?(:name) ? read_attribute(:name) : self.uuid
   end
 
   def name
@@ -196,14 +196,11 @@ class Entity < ActiveRecord::Base
       when 'version' then self.version = xml_value.to_i
       when 'begin' then self.begin = Date::parse(xml_value)
       when 'end' then self.end = Date::parse(xml_value)
-      when 'enabled' then self.enabled = (xml_value == 'true')
+      when 'enabled' then self.enabled = ['true','t','1'].include?(xml_value)
       when 'revision' then self.lock_version = xml_value.to_i-1
+      when 'create_user_uuid' then self.create_user_uuid = xml_value
+      when 'update_user_uuid' then self.update_user_uuid = xml_value
     end
-  end
-  
-  def import_attribute(xml_attribute, xml_value)
-    log_debug "Entity#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
   end
   
   def copy_attributes(entity)
@@ -212,6 +209,7 @@ class Entity < ActiveRecord::Base
     entity.end = self.end
     entity.enabled = self.enabled
     entity.updated_at = self.updated_at    
+    entity.create_user_uuid = self.create_user_uuid    
     entity.update_user_uuid = self.update_user_uuid    
   end
 
@@ -405,33 +403,77 @@ class Entity < ActiveRecord::Base
   #
   #   # Prints a value in the log for debugging.
   #   Entity.log_debug "Entity#calc Calculated value = #{value.to_s}"
-  def self.log_debug(message)
-    logger.debug "[" +
-                 "#{session_user_display_name}:" +
-                 "#{I18n.l(session_as_of_date)}" +
-                 "(#{session_locale})] " +
-                 message
+  def self.log_debug(message, out=false)
+    if session_as_of_date.present? and session_locale.present?
+      logger.debug "[" +
+                   "#{session_user_display_name}:" +
+                   "#{I18n.l(session_as_of_date)}" +
+                   "(#{session_locale})] " +
+                   message
+    else
+      logger.debug message
+    end
+    puts message if out 
   end
 
-  def self.log_warning(message)
-    logger.warn "[" +
-                 "#{session_user_display_name}:" +
-                 "#{I18n.l(session_as_of_date)}" +
-                 "(#{session_locale})] " +
-                 "## WARNING ## " +
-                 message
+  def self.log_warning(message, out=false)
+    if session_as_of_date.present? and session_locale.present?
+      logger.warn "[" +
+                   "#{session_user_display_name}:" +
+                   "#{I18n.l(session_as_of_date)}" +
+                   "(#{session_locale})] " +
+                   "## WARNING ## " +
+                   message
+    else
+      logger.warn "## WARNING ## " + message
+    end 
+    puts message if out 
   end
 
-  def self.log_error(message)
-    logger.error "[" +
-                 "#{session_user_display_name}:" +
-                 "#{I18n.l(session_as_of_date)}" +
-                 "(#{session_locale})] " +
-                 "## ERROR ## " +
-                 message
+  def self.log_security_warning(message)
+    if session_as_of_date.present? and session_locale.present?
+      logger.warn "[" +
+                   "#{session_user_display_name}:" +
+                   "#{I18n.l(session_as_of_date)}" +
+                   "(#{session_locale})] " +
+                   "## SECURITY ## " +
+                   message
+    else
+      logger.warn "## SECURITY ## " + message
+    end 
   end
 
-  def log_debug(message) ; Entity.log_debug(message) ; end
+  def self.log_error(message, exception=nil)
+    if session_as_of_date.present? and session_locale.present?
+      logger.error "[" +
+                   "#{session_user_display_name}:" +
+                   "#{I18n.l(session_as_of_date)}" +
+                   "(#{session_locale})] " +
+                   "## ERROR ## " +
+                   message +
+                   (exception.present? ? " - " + exception.inspect : "")
+      if exception.present?
+        for trace in exception.backtrace
+          logger.error "[" +
+                       "#{session_user_display_name}:" +
+                       "#{I18n.l(session_as_of_date)}" +
+                       "(#{session_locale})] " +
+                       "## EXCEPTION ## " +
+                       trace
+        end
+      end                   
+    else
+      logger.error "## ERROR ## " + message + (exception.present? ? " - " + exception.inspect : "")
+      if exception.present?
+        for trace in exception.backtrace
+          logger.error "## EXCEPTION ## " + trace
+        end
+      end                   
+    end 
+  end
+
+  def log_debug(message, out=false) ; Entity.log_debug(message, out) ; end
   def log_warning(message) ; Entity.log_warning(message) ; end
-  def log_error(message) ; Entity.log_error(message) ; end
+  def log_security_warning(message) ; Entity.log_security_warning(message) ; end
+  def log_error(message, exception=nil) ; Entity.log_error(message, exception) ; end
 end

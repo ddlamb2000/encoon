@@ -16,7 +16,9 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class Workspace < Entity
   ROOT_UUID = 'f54309d0-ea30-012c-1054-00166f92f624'
-  XML_TAG = 'workspace'
+  ROOT_DEFAULT_ROLE_UUID_UUID = '0e1f4990-a26c-012f-de85-4417fe7fde95'
+  ROOT_PUBLIC_UUID = 'f1ca9820-a26b-012f-de85-4417fe7fde95'
+  ROOT_URI_UUID = '44b03b60-a26c-012f-de85-4417fe7fde95'
 
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
@@ -41,7 +43,6 @@ class Workspace < Entity
                       ["workspaces.uuid = :uuid " + 
                        " AND " + as_of_date_clause("workspaces") +
                        " AND workspace_locs.version = workspaces.version " +
-                       " AND " + security_clause("workspaces"), 
                        " AND " + locale_clause("workspace_locs"), 
                        {:uuid => uuid}]) 
   end
@@ -54,7 +55,6 @@ class Workspace < Entity
                       ["workspaces.uuid = :uuid " + 
                        " AND workspaces.version = :version " + 
                        " AND workspace_locs.version = workspaces.version " +
-                       " AND " + security_clause("workspaces"), 
                        " AND " + locale_clause("workspace_locs"), 
                        {:uuid => uuid, 
                        :version => version}]) 
@@ -80,24 +80,6 @@ class Workspace < Entity
     loc
   end
   
-  def export(xml)
-    log_debug "Workspace#export"
-    xml.workspace(:title => self.name) do
-      super(xml)
-      Workspace.all_locales(workspace_locs, 
-                            self.uuid, 
-                            self.version).each do |loc|
-        log_debug "Workspace#export locale #{loc.base_locale}"
-        xml.locale do
-          xml.base_locale(loc.base_locale)
-          xml.locale(loc.locale)
-          xml.name(loc.name)
-          xml.description(loc.description) if loc.description.present?
-        end
-      end
-    end
-  end
-  
   def copy_attributes(entity)
     log_debug "Workspace#copy_attributes"
     super
@@ -106,16 +88,16 @@ class Workspace < Entity
     entity.uri = self.uri    
   end
 
-  def import(xml_attribute, xml_value)
-    log_debug "Workspace#import(#{xml_attribute}:#{xml_value})"
+  def import_attribute(xml_attribute, xml_value)
+    log_debug "Workspace#import_attribute(xml_attribute=#{xml_attribute}, " + 
+              "xml_value=#{xml_value})"
     case xml_attribute
-      when 'public' then self.public = (xml_value == 'true')
-      when 'default_role_uuid' then self.default_role_uuid = xml_value
-      when 'uri' then self.uri = xml_value
-      else super
+      when ROOT_PUBLIC_UUID then self.public = ['true','t','1'].include?(xml_value)
+      when ROOT_DEFAULT_ROLE_UUID_UUID then self.default_role_uuid = xml_value
+      when ROOT_URI_UUID then self.uri = xml_value
     end
   end
-  
+
   def import!
     log_debug "Workspace#import!"
     workspace = Workspace.select_entity_by_uuid_version(Workspace, 
@@ -125,24 +107,21 @@ class Workspace < Entity
       if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
         copy_attributes(workspace)
-        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)
-        return true
+        return "updated"
       else
         log_debug "Workspace#import! skip update"
       end
     else
       log_debug "Workspace#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
-      self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!
       update_dates!(Workspace)
-      return true
+      return "inserted"
     end
-    false
+    ""
   end
 
   def import_loc!(loc)
@@ -163,9 +142,9 @@ private
     "workspaces.id, workspaces.uuid, " + 
     "workspaces.version, workspaces.lock_version, " + 
     "workspaces.begin, workspaces.end, workspaces.enabled, " +
-    "workspaces.public, workspaces.default_role_uuid, workspaces.uri, " +
     "workspaces.created_at, workspaces.updated_at, " +
     "workspaces.create_user_uuid, workspaces.update_user_uuid, " +
+    "workspaces.public, workspaces.default_role_uuid, workspaces.uri, " +
     "workspace_locs.base_locale, workspace_locs.locale, " +
     "workspace_locs.name, workspace_locs.description"
   end
@@ -173,8 +152,4 @@ end
 
 class WorkspaceLoc < EntityLoc
   validates_presence_of :name
-end
-
-class WorkspaceSharing < Entity
-  ROOT_UUID = '4c2b6200-9a7a-012f-642b-4417fe7fde95'
 end

@@ -15,8 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Row < Entity
-  XML_TAG = 'row'
-  
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   has_many :row_locs, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :row_attachments, :foreign_key => "uuid", :primary_key => "uuid"
@@ -192,73 +190,81 @@ class Row < Entity
 
   def import!
     log_debug "Row#import!"
-    log_error "Can't import row when there is no grid reference" if grid.nil?
-    row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
-    if row.present?
-      log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
-      if self.revision > row.revision 
-        log_debug "Row#import! update"
-        copy_attributes(row)
-        self.update_user_uuid = Entity.session_user_uuid    
-        make_audit(Audit::IMPORT)
-        grid.update_row!(self)
-        grid.row_update_dates!(self.uuid)
-        return true
-      else
-        log_debug "Row#import! skip update"
-      end
+    if grid.nil?
+      log_error "Row#import! Can't import row when there is no grid reference"
     else
-      log_debug "Row#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
-      self.created_at = self.updated_at = Time.now    
-      make_audit(Audit::IMPORT)
-      grid.create_row!(self)
-      grid.row_update_dates!(self.uuid)
-      return true
+      row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
+      if row.present?
+        log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
+        if self.revision > row.revision 
+          log_debug "Row#import! update"
+          copy_attributes(row)
+          make_audit(Audit::IMPORT)
+          updated = grid.update_row!(self)
+          grid.row_update_dates!(self.uuid)
+          return "updated" if updated
+        else
+          log_debug "Row#import! skip update"
+        end
+      else
+        log_debug "Row#import! new"
+        make_audit(Audit::IMPORT)
+        created = grid.create_row!(self)
+        grid.row_update_dates!(self.uuid)
+        return "inserted" if created
+      end
     end
-    false
+    ""
   end
 
   def import_loc!(loc)
     log_debug "Row#import_loc!(loc=#{loc})"
-    log_error "Can't import row loc when there is no grid reference" if grid.nil?
-    updated = 0
-    grid.row_loc_select_entity_by_uuid(self.uuid, 
-                                       self.version).each do |row_loc|
-      if row_loc.base_locale == loc.base_locale
-        log_debug "Row#import_loc! update"
-        loc.copy_attributes(row_loc)
-        grid.update_row_loc!(row_loc)
-        updated += 1
+    if grid.nil?
+      log_error "Row#import_loc! Can't import row loc when there is no grid reference"
+    else
+      log_debug "Row#import_loc! grid=#{grid.inspect}"
+      updated = 0
+      grid.row_loc_select_entity_by_uuid(self.uuid, 
+                                         self.version).each do |row_loc|
+        if row_loc.base_locale == loc.base_locale
+          log_debug "Row#import_loc! update"
+          loc.copy_attributes(row_loc)
+          grid.update_row_loc!(row_loc)
+          updated += 1
+        end
       end
-    end
-    if updated == 0
-      log_debug "Row#import_loc! new"
-      grid.create_row_loc!(loc)
+      if updated == 0
+        log_debug "Row#import_loc! new"
+        grid.create_row_loc!(loc)
+      end
     end
   end
 
   def create_missing_loc!
-    log_error "Can't create row loc when there is no grid reference" if grid.nil?
-    base_locs = []
-    base_loc = nil
-    foundI18n = false
-    grid.row_loc_select_entity_by_uuid(self.uuid, self.version).each do |loc|
-      base_locs << loc.base_locale
-      if not foundI18n
-        base_loc = loc
-        foundI18n = (loc.base_locale == I18n.locale.to_s)
+    log_debug "Row#create_missing_loc!"
+    if grid.nil?
+      log_error "Row#create_missing_loc! Can't create row loc when there is no grid reference"
+    else 
+      base_locs = []
+      base_loc = nil
+      foundI18n = false
+      grid.row_loc_select_entity_by_uuid(self.uuid, self.version).each do |loc|
+        base_locs << loc.base_locale
+        if not foundI18n
+          base_loc = loc
+          foundI18n = (loc.base_locale == I18n.locale.to_s)
+        end
       end
-    end
-    if base_loc.present?
-      LANGUAGES.each do |lang, locale|
-        if (base_locs.find {|value| locale.to_s == value}).nil?
-          loc = new_loc        
-          base_loc.copy_attributes(loc)
-          loc.locale = locale.to_s
-          loc.base_locale = base_loc.base_locale
-          grid.create_row_loc!(loc)
-          log_debug "Row#create_missing! new, locale=#{locale.to_s}"
+      if base_loc.present?
+        LANGUAGES.each do |lang, locale|
+          if (base_locs.find {|value| locale.to_s == value}).nil?
+            loc = new_loc        
+            base_loc.copy_attributes(loc)
+            loc.locale = locale.to_s
+            loc.base_locale = base_loc.base_locale
+            grid.create_row_loc!(loc)
+            log_debug "Row#create_missing! new, locale=#{locale.to_s}"
+          end
         end
       end
     end

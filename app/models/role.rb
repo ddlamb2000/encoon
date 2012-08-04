@@ -16,7 +16,6 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class Role < Entity
   ROOT_UUID = '62630550-0cb5-012d-bcb2-4417fe7fde95'
-  XML_TAG = 'role'
   
   ROLE_READ_ONLY_UUID = '50088bf0-9c87-012f-089e-4417fe7fde95'
   ROLE_READ_WRITE_UUID = '57830c40-9c87-012f-089e-4417fe7fde95'

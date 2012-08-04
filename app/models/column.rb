@@ -21,11 +21,9 @@ class Column < Entity
   ROOT_NUMBER_UUID = '42e7f000-06cd-012d-c1f8-0026b0d63708'
   ROOT_DISPLAY_UUID = '4c766f00-06cd-012d-c1fb-0026b0d63708'
   ROOT_REFERENCE_UUID = '5a5107e0-0990-012d-e81a-4417fe7fde95'
-  
   ROOT_DATA_KIND_UUID = '5a2e26e0-ea31-012c-1074-00166f92f624'
-  ROOT_GRID_DISPLAY_OPTION_UUID = 'f4b48831-1df3-012d-8b41-4417fe7fde95'
-  
-  XML_TAG = 'column'
+  ROOT_REQUIRED_UUID = '8df46b61-1da3-012d-46db-4417fe7fde95'
+  ROOT_REGEX_UUID = '68792a30-1da5-012d-2556-4417fe7fde95'
 
   STRING = "603286d0-ea31-012c-1079-00166f92f624"
   TEXT = "688c4870-ea31-012c-107d-00166f92f624"
@@ -150,19 +148,17 @@ class Column < Entity
     loc
   end
   
-  def import(xml_attribute, xml_value)
-    log_debug "Column#import(xml_attribute=#{xml_attribute}, " + 
+  def import_attribute(xml_attribute, xml_value)
+    log_debug "Column#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when 'grid_uuid' then self.grid_uuid = xml_value
-      when 'grid_reference_uuid' then
-        self.grid_reference_uuid = xml_value
-      when 'kind' then self.kind = xml_value
-      when 'number' then self.number = xml_value.to_i
-      when 'display' then self.display = xml_value.to_i
-      when 'required' then self.required = (xml_value == 'true')
-      when 'regex' then self.regex = xml_value
-      else super
+      when ROOT_GRID_UUID then self.grid_uuid = xml_value
+      when ROOT_REFERENCE_UUID then self.grid_reference_uuid = xml_value
+      when ROOT_KIND_UUID then self.kind = xml_value
+      when ROOT_NUMBER_UUID then self.number = xml_value.to_i
+      when ROOT_DISPLAY_UUID then self.display = xml_value.to_i
+      when ROOT_REQUIRED_UUID then self.required = ['true','t','1'].include?(xml_value)
+      when ROOT_REGEX_UUID then self.regex = xml_value
     end
   end
   
@@ -181,29 +177,26 @@ class Column < Entity
   def import!
     log_debug "Column#import!"
     log_error "Can't import column when there is no grid reference" if grid.nil?
-    column = grid.column_select_entity_by_uuid_version(self.uuid)
+    column = grid.column_select_entity_by_uuid_version(self.uuid, self.version)
     if column.present?
       if self.revision > column.revision 
         logger.debug "Column#import! update"
         copy_attributes(column)
-        self.update_user_uuid = Entity.session_user_uuid    
         make_audit(Audit::IMPORT)
         column.save!
         column.update_dates!(grid.columns, update_user_uuid)
-        return true
+        return "updated"
       else
         log_debug "Column#import! skip update"
       end
     else
       log_debug "Column#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid    
-      self.created_at = self.updated_at = Time.now    
       make_audit(Audit::IMPORT)
       save!
       update_dates!(grid.columns)
-      return true
+      return "inserted"
     end
-    false
+    ""
   end
 
   def import_loc!(loc)

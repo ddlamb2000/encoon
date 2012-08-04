@@ -15,6 +15,9 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Upload < Entity
+
+  require "rexml/document"
+
   def upload(file_name)
     self.file_name = file_name
     self.data_file=File.new(self.file_name)
@@ -22,50 +25,68 @@ class Upload < Entity
   end
   
   def data_file=(input_file)
-    require "rexml/document"
+    self.records = 0
+    self.inserted = 0
+    self.updated = 0
     if input_file.present? 
       self.file_name = input_file.original_filename if self.file_name.blank?
+      log_debug "Upload#data_file= [#{self.file_name}]"
       xml_doc = REXML::Document.new input_file.read
       xml_doc.elements.each do |xml_root| 
-        xml_root.elements.each do |xml_entity| 
-          log_debug "Upload#data_file= xml_entity=#{xml_entity.name}"
-          entity = nil
-          locs = []
-          case xml_entity.name
-            when Workspace::XML_TAG then entity = Workspace.new
-            when Grid::XML_TAG then entity = Grid.new
-            when Column::XML_TAG then entity = Column.new
-            when Row::XML_TAG then entity = Row.new
-            when User::XML_TAG then entity = User.new
-            when GridMapping::XML_TAG then entity = GridMapping.new
-            when ColumnMapping::XML_TAG then entity = ColumnMapping.new
-            else log_warning "Unkown xml tag #{xml_entity.name}"
-          end
-          entity.transaction do
-            xml_entity.elements.each do |xml_attribute|
-              if xml_attribute.name == 'locale' and 
-                 xml_attribute.has_elements?
-                entity_loc = entity.new_loc
-                xml_attribute.elements.each do |xml_attribute_loc|
-                  entity_loc.import(xml_attribute_loc.name, undecode(xml_attribute_loc))      
-                end
-                locs << entity_loc
-              elsif xml_attribute.name == 'data' and 
-                    xml_attribute.has_attributes?
-                entity.import_attribute(xml_attribute.attributes['uuid'], undecode(xml_attribute))      
+        log_debug "Upload#data_file= xml_root=#{xml_root.name}"
+        if "encoon" == xml_root.name
+          xml_root.elements.each do |xml_entity|
+            log_debug "Upload#data_file= xml_entity=#{xml_entity.name}"
+            if "row" == xml_entity.name
+              self.records = self.records + 1
+              grid_uuid = ""
+              xml_entity.attributes.each do |xml_attribute|
+                log_debug "Upload#data_file= xml_attribute=#{xml_attribute}"
+                grid_uuid = xml_attribute[1] if "grid_uuid" == xml_attribute[0]
+              end
+              if grid_uuid == ""
+                log_warning "Upload#data_file= Missing grid_uui"
               else
-                entity.import(xml_attribute.name, 
-                              undecode(xml_attribute))   
-              end
-            end
-            entity.default_dates
-            if entity.import!
-              if locs.length > 0
-                locs.each do |entity_loc|
-                  entity.import_loc!(entity_loc)
+                entity = nil
+                locs = []
+                case grid_uuid
+                  when Workspace::ROOT_UUID then entity = Workspace.new
+                  when Grid::ROOT_UUID then entity = Grid.new
+                  when Column::ROOT_UUID then entity = Column.new
+                  when User::ROOT_UUID then entity = User.new
+                  when GridMapping::ROOT_UUID then entity = GridMapping.new
+                  when ColumnMapping::ROOT_UUID then entity = ColumnMapping.new
+                  when WorkspaceSharing::ROOT_UUID then entity = WorkspaceSharing.new
+                  else entity = Row.new
+                end
+                entity.transaction do
+                  xml_entity.elements.each do |xml_attribute|
+                    if xml_attribute.name == 'locale' and xml_attribute.has_elements?
+                      entity_loc = entity.new_loc
+                      xml_attribute.elements.each do |xml_attribute_loc|
+                        entity_loc.import(xml_attribute_loc.name, undecode(xml_attribute_loc))      
+                      end
+                      locs << entity_loc
+                    elsif xml_attribute.name == 'data' and xml_attribute.has_attributes?
+                      entity.import_attribute(xml_attribute.attributes['uuid'], undecode(xml_attribute))      
+                    else
+                      entity.import(xml_attribute.name, undecode(xml_attribute))   
+                    end
+                  end
+                  entity.default_dates
+                  imported = entity.import!
+                  if imported != ""
+                    if locs.length > 0
+                      locs.each do |entity_loc|
+                        entity.import_loc!(entity_loc)
+                      end
+                    end
+                    entity.create_missing_loc!
+                    self.inserted = self.inserted + 1 if "inserted" == imported
+                    self.updated = self.updated + 1 if "updated" == imported
+                  end
                 end
               end
-              entity.create_missing_loc!
             end
           end
         end
@@ -76,6 +97,6 @@ class Upload < Entity
 private
   
   def undecode(attribute)
-    attribute.get_text.to_s.gsub(/&amp;/,'&').gsub(/&lt;/,'<').gsub(/&gt;/,'>')    
+    attribute.get_text.to_s.gsub(/&amp;/,'&').gsub(/&lt;/,'<').gsub(/&gt;/,'>').gsub(/&quot;/,'"')    
   end
 end

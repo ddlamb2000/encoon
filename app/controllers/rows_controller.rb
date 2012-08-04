@@ -40,7 +40,7 @@ class RowsController < ApplicationController
                                        :file]
 
   def index
-    log_debug "RowController#index: params=#{params.inspect}"
+    log_debug "RowsController#index: params=#{params.inspect}"
     if params[:format].nil? or params[:format] != 'xml'  
       set_page_title
       push_history
@@ -49,7 +49,7 @@ class RowsController < ApplicationController
   end
   
   def search
-    log_debug "RowController#search: params=#{params.inspect}"
+    log_debug "RowsController#search: params=#{params.inspect}"
   end
   
   def set_page_title
@@ -73,7 +73,7 @@ class RowsController < ApplicationController
   end
 
   def show
-    log_debug "RowController#show: params=#{params.inspect}"
+    log_debug "RowsController#show: params=#{params.inspect}"
     if params[:format].nil? or params[:format] != 'xml'  
       set_page_title
       push_history
@@ -87,7 +87,7 @@ class RowsController < ApplicationController
   end
 
   def new_inline
-    log_debug "RowController#new_inline: params=#{params.inspect}"
+    log_debug "RowsController#new_inline: params=#{params.inspect}"
     @filters = params[:filters]
     @filters_uuid = get_filters_uuid(@filters)
     @grid.load_cached_grid_structure(@filters, true)
@@ -98,17 +98,17 @@ class RowsController < ApplicationController
   end
 
   def edit_inline
-    log_debug "RowController#edit_inline: params=#{params.inspect}"
+    log_debug "RowsController#edit_inline: params=#{params.inspect}"
     set_page_title
   end
 
   def edit_row_inline
-    log_debug "RowController#edit_row_inline: params=#{params.inspect}"
+    log_debug "RowsController#edit_row_inline: params=#{params.inspect}"
     set_page_title
   end
 
   def create
-    log_debug "RowController#create: params=#{params.inspect}"
+    log_debug "RowsController#create: params=#{params.inspect}"
     saved = false
     @grid.load_cached_grid_structure(params[:filters], true)
     @row = @grid.rows.new
@@ -133,7 +133,7 @@ class RowsController < ApplicationController
               @grid.create_row_loc!(@row_loc)
             else
               @grid.row_validate(@row, Grid::PHASE_CREATE)
-              log_debug "RowController#create: rollback!"
+              log_debug "RowsController#create: rollback!"
               raise ActiveRecord::Rollback
             end
           end
@@ -142,12 +142,15 @@ class RowsController < ApplicationController
           @grid.create_row!(@row)
           saved = true
         else
-          log_debug "RowController#create: rollback!(2)"
+          log_debug "RowsController#create: rollback!(2)"
           raise ActiveRecord::Rollback
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#create: invalid=#{invalid.inspect}"
+      log_debug "RowsController#create: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "RowsController#create", invalid
       saved = false
     end
     change_as_of_date(@row)
@@ -160,7 +163,7 @@ class RowsController < ApplicationController
                                 :name => name)
         format.html { redirect_to session[:last_url] }
       else
-        log_debug "RowController#create: error, params=#{params.inspect}"
+        log_debug "RowsController#create: error, params=#{params.inspect}"
         set_page_title
         format.html { render :action => "_new_inline" }
       end
@@ -168,7 +171,7 @@ class RowsController < ApplicationController
   end
   
   def update
-    log_debug "RowController#update: params=#{params.inspect}"
+    log_debug "RowsController#update: params=#{params.inspect}"
     saved = false
     @grid.load_cached_grid_structure(params[:filters])
     begin
@@ -204,7 +207,7 @@ class RowsController < ApplicationController
                     @grid.create_row_loc!(@row_loc)
                   else
                     @grid.row_validate(@row, Grid::PHASE_UPDATE)
-                    log_debug "RowController#update: rollback!"
+                    log_debug "RowsController#update: rollback!"
                     raise ActiveRecord::Rollback
                   end
                 end
@@ -235,7 +238,7 @@ class RowsController < ApplicationController
                                               Grid::PHASE_UPDATE)
                       @grid.update_row_loc!(@row_loc)
                     else
-                      log_debug "RowController#update: rollback!(3)"
+                      log_debug "RowsController#update: rollback!(3)"
                       raise ActiveRecord::Rollback
                     end
                   end
@@ -243,7 +246,7 @@ class RowsController < ApplicationController
               end
               saved = true
             else
-              log_debug "RowController#update: rollback!(4)"
+              log_debug "RowsController#update: rollback!(4)"
               raise ActiveRecord::Rollback
             end
           end
@@ -251,7 +254,10 @@ class RowsController < ApplicationController
       end
       @grid.row_update_dates!(@row.uuid)
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#update: invalid=#{invalid.inspect}"
+      log_debug "RowsController#update: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "RowsController#update", invalid
       saved = false
     end
     change_as_of_date(@row)
@@ -262,7 +268,7 @@ class RowsController < ApplicationController
                                 :type => @grid, :name => name)
         format.html { redirect_to session[:last_url] }
       else
-        log_debug "RowController#update: error, params=#{params.inspect}"
+        log_debug "RowsController#update: error, params=#{params.inspect}"
         set_page_title
         format.html { render :action => "_edit_inline" }
       end
@@ -270,7 +276,7 @@ class RowsController < ApplicationController
   end
 
   def destroy
-    log_debug "RowController#destroy: params=#{params.inspect}"
+    log_debug "RowsController#destroy: params=#{params.inspect}"
     saved = false
     name = @grid.row_title(@row)
     begin
@@ -289,7 +295,10 @@ class RowsController < ApplicationController
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#destroy: invalid=#{invalid.inspect}"
+      log_debug "RowsController#destroy: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "RowsController#destroy", invalid
       saved = false
     end
     respond_to do |format|
@@ -298,20 +307,20 @@ class RowsController < ApplicationController
                                 :type => @grid, :name => name)
         format.html { redirect_to session[params[:inline] ? :last_url : :prior_url] }
       else
-        log_debug "RowController#destroy: error, params=#{params.inspect}"
+        log_debug "RowsController#destroy: error, params=#{params.inspect}"
         format.html { render :action => "show" }
       end
     end
   end
 
   def attach_document
-    log_debug "RowController#attach_document: params=#{params.inspect}"
+    log_debug "RowsController#attach_document: params=#{params.inspect}"
     @row_attachment = @row.row_attachments.new
     set_page_title 
   end
 
   def save_attachment
-    log_debug "RowController#save_attachment: params=#{params.inspect}"
+    log_debug "RowsController#save_attachment: params=#{params.inspect}"
     saved = false
     begin
       @row.transaction do
@@ -322,7 +331,10 @@ class RowsController < ApplicationController
         saved = true
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#save_attachment: invalid=#{invalid.inspect}"
+      log_debug "RowsController#save_attachment: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "RowsController#save_attachment", invalid
       saved = false
     end
     respond_to do |format|
@@ -332,14 +344,14 @@ class RowsController < ApplicationController
                                 :type => @grid, :name => name)
         format.html { redirect_to session[:last_url] }
       else
-        log_debug "RowController#save_document: error"
+        log_debug "RowsController#save_document: error"
         format.html { render :action => "attach_document" }
       end
     end
   end
 
   def photo
-    log_debug "RowController#photo: params=#{params.inspect}"
+    log_debug "RowsController#photo: params=#{params.inspect}"
     if params[:photo_id].present?
       @row_attachment = @row.row_attachments.find(params[:photo_id])
     else
@@ -351,7 +363,7 @@ class RowsController < ApplicationController
   end
 
   def file
-    log_debug "RowController#file: params=#{params.inspect}"
+    log_debug "RowsController#file: params=#{params.inspect}"
     @row_attachment = @row.row_attachments.find(params[:file_id])
     if @row_attachment.present?
       send_data @row_attachment.document, 
@@ -361,7 +373,7 @@ class RowsController < ApplicationController
   end
 
   def delete_attachment
-    log_debug "RowController#delete_attachment: params=#{params.inspect}"
+    log_debug "RowsController#delete_attachment: params=#{params.inspect}"
     saved = false
     begin
       @row.transaction do
@@ -373,7 +385,10 @@ class RowsController < ApplicationController
       end
       saved = true
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowController#delete_attachment: invalid=#{invalid.inspect}"
+      log_debug "RowsController#delete_attachment: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "RowsController#delete_attachment", invalid
       saved = false
     end
     if saved
@@ -387,14 +402,14 @@ class RowsController < ApplicationController
   end
 
   def import
-    log_debug "RowController#import"
+    log_debug "RowsController#import"
     @page_title = "Import Data"
     @page_icon = "import"
     @upload = Upload.new
   end
   
   def upload
-    log_debug "RowController#upload"
+    log_debug "RowsController#upload"
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
     @upload.update_user_uuid = session[:user_uuid]
