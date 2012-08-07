@@ -56,6 +56,7 @@ namespace :app do
         row.transaction do
           row.create_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
           row.update_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
+          row.role_uuid = Role::ROLE_TOTAL_CONTROL_UUID
           row.workspace_uuid = workspace.uuid
           row.user_uuid = user.uuid
           row.save!
