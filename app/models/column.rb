@@ -188,6 +188,7 @@ class Column < Entity
         return "updated"
       else
         log_debug "Column#import! skip update"
+        return "skipped"
       end
     else
       log_debug "Column#import! new"

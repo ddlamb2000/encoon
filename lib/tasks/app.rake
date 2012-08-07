@@ -29,27 +29,28 @@ namespace :app do
 
   desc 'Restarts server'
   task :restart do
+    Entity.log_debug "Restart server", true
     sh 'touch tmp/restart.txt'
   end
 
   desc 'Grant access for a user to a workspace'
   task :grant_access => :environment do
-    puts "Grant access for a user to a workspace"
+    Entity.log_debug "Grant access for a user to a workspace", true
     if ENV['user'].nil? or ENV['workspace'].nil?
       puts "Usage rake app:grant_access workspace=<workspace uri> user=<user email>"
       return
     else
       user = User.find_by_email ENV['user']
       if user.nil?
-        puts "Can't find user"
+        Entity.log_debug "Can't find user", true
         return
       end
       workspace = Workspace.find_by_uri ENV['workspace']
       if workspace.nil?
-        puts "Can't find workspace"
+        Entity.log_debug "Can't find workspace", true
         return
       end
-      puts "Process workspace #{workspace.uuid} for user #{user.uuid}"
+      Entity.log_debug "Process workspace #{workspace.uuid} for user #{user.uuid}", true
     end
   end
   
@@ -60,8 +61,7 @@ namespace :app do
       return
     else
       file = ENV['file']
-      puts "rake:import_data upload #{file}.xml"
-      errors = total_count = total_inserted = total_updated = 0
+      Entity.log_debug "rake:import_data upload #{file}.xml", true
       Thread.current[:session_locale] = 'en'
       Thread.current[:session_as_of_date] = Date.current
       Thread.current[:session_user_display_name] = User::SYSTEM_ADMINISTRATOR_UUID
@@ -69,19 +69,16 @@ namespace :app do
         upload = Upload.create
         upload.upload(file)
         upload.save!
-        total_count = total_count + upload.records
-        total_inserted = total_inserted + upload.inserted
-        total_updated = total_updated + upload.updated
+        Entity.log_debug "rake db:import_data complete " +
+                         "#{upload.records} records, " + 
+                         "#{upload.inserted} inserted, " + 
+                         "#{upload.updated} updated, " +
+                         "#{upload.skipped} skipped, " +
+                         "#{upload.elapsed} elapsed (ms).", true
       rescue Exception => invalid
         Entity.log_error "rake:import_data", invalid
         puts "rake:import_data " + invalid.inspect
-        errors = errors + 1
       end
-      puts "rake:import_data complete " +
-                "#{errors} errors, " + 
-                "#{total_count} records, " + 
-                "#{total_inserted} inserted, " + 
-                "#{total_updated} updated."
     end
   end
 end

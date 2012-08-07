@@ -57,11 +57,12 @@ class Grid < Entity
   end
   
   def load_cached_grid_structure_reference(filters=nil)
-    log_debug "Grid#load_grid_structure_reference(" +
+    log_debug "Grid#load_cached_grid_structure_reference(" +
               "filters=#{filters.inspect}) [grid #{to_s}]"
     load_cached_mapping
     load_cached_columns
     load_cached_column_information(filters, true)
+    load_security
   end
   
   def is_preloaded? ; @columns.present? ; end
@@ -711,6 +712,7 @@ class Grid < Entity
         return "updated"
       else
         log_debug "Grid#import! skip update"
+        return "skipped"
       end
     else
       log_debug "Grid#import! new"

@@ -65,6 +65,7 @@ class WorkspaceSharing < Entity
         return "updated"
       else
         log_debug "WorkspaceSharing#import! skip update"
+        return "skipped"
       end
     else
       log_debug "WorkspaceSharing#import! new"

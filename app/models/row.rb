@@ -205,6 +205,7 @@ class Row < Entity
           return "updated" if updated
         else
           log_debug "Row#import! skip update"
+          return "skipped"
         end
       else
         log_debug "Row#import! new"

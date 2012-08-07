@@ -14,7 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # 
 # See doc/COPYRIGHT.rdoc for more details.
-errors = total_count = total_inserted = total_updated = 0
+errors = total_count = total_inserted = total_updated = total_skipped = total_elapsed = 0
 for file in ["administrator", "credentials", "system", "kinds", "roles", "countries"]
   Entity.log_debug "rake db:seed upload #{file}.xml", true
   Thread.current[:session_locale] = 'en'
@@ -27,10 +27,14 @@ for file in ["administrator", "credentials", "system", "kinds", "roles", "countr
     Entity.log_debug "rake db:seed complete " +
                      "#{upload.records} records, " + 
                      "#{upload.inserted} inserted, " + 
-                     "#{upload.updated} updated.", true
+                     "#{upload.updated} updated, " +
+                     "#{upload.skipped} skipped, " +
+                     "#{upload.elapsed} elapsed (ms).", true
     total_count = total_count + upload.records
     total_inserted = total_inserted + upload.inserted
     total_updated = total_updated + upload.updated
+    total_skipped = total_skipped + upload.skipped
+    total_elapsed = total_elapsed + upload.elapsed
   rescue Exception => invalid
     Entity.log_error "rake db:seed", invalid
     puts "rake db:seed " + invalid.inspect
@@ -41,4 +45,7 @@ Entity.log_debug "rake db:seed total " +
                  "#{errors} errors, " + 
                  "#{total_count} records, " + 
                  "#{total_inserted} inserted, " + 
-                 "#{total_updated} updated.", true
+                 "#{total_updated} updated, " +
+                 "#{total_skipped} skipped, " +
+                 "#{total_elapsed} elapsed (ms).", true
+                 

@@ -323,6 +323,8 @@ ActiveRecord::Schema.define(:version => 20120803184843) do
     t.integer  "records"
     t.integer  "inserted"
     t.integer  "updated"
+    t.integer  "skipped"
+    t.integer  "elapsed"
   end
 
   create_table "users", :force => true do |t|

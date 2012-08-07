@@ -87,6 +87,7 @@ class User < Entity
         return "updated"
       else
         log_debug "User#import! skip update"
+        return "skipped"
       end
     else
       log_debug "User#import! new"

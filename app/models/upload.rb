@@ -25,10 +25,9 @@ class Upload < Entity
   end
   
   def data_file=(input_file)
-    self.records = 0
-    self.inserted = 0
-    self.updated = 0
-    if input_file.present? 
+    self.records = self.inserted = self.updated = self.skipped = self.elapsed = 0
+    if input_file.present?
+      start_run = Time.now 
       self.file_name = input_file.original_filename if self.file_name.blank?
       log_debug "Upload#data_file= [#{self.file_name}]"
       xml_doc = REXML::Document.new input_file.read
@@ -84,6 +83,7 @@ class Upload < Entity
                     entity.create_missing_loc!
                     self.inserted = self.inserted + 1 if "inserted" == imported
                     self.updated = self.updated + 1 if "updated" == imported
+                    self.skipped = self.skipped + 1 if "skipped" == imported
                   end
                 end
               end
@@ -91,7 +91,8 @@ class Upload < Entity
           end
         end
       end
-    end
+      self.elapsed = Time.now - start_run
+   end
   end
 
 private
