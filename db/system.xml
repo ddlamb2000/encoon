@@ -1289,4 +1289,138 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">f3fa9441-1a54-012d-364e-4417fe7fde95</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">file_name</data>
   </row>
+  <row title="Inserted" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>3e9db251-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:19:07 UTC</created_at>
+    <updated_at>2012-08-07 10:21:00 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Inserted</name>
+    </locale>
+  </row>
+  <row title="Inserted | inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>6252aa30-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:07 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">3e9db251-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">inserted</data>
+  </row>
+  <row title="Records" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>89f824c0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:13 UTC</created_at>
+    <updated_at>2012-08-07 10:24:31 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Records</name>
+    </locale>
+  </row>
+  <row title="Records | records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>8f95cec0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:22 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">89f824c0-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">records</data>
+  </row>
+  <row title="Skipped" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>9b8fdee0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:43 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">5</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Skipped</name>
+    </locale>
+  </row>
+  <row title="Skipped | skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>a166c150-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:52 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">9b8fdee0-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">skipped</data>
+  </row>
+  <row title="Updated" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>6c5f3380-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:23 UTC</created_at>
+    <updated_at>2012-08-07 10:20:51 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">4</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Updated</name>
+    </locale>
+  </row>
+  <row title="Updated | updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>72edab00-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:34 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">6c5f3380-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">updated</data>
+  </row>
 </encoon>
