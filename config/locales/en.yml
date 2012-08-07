@@ -188,7 +188,6 @@ en:
     dup_record:   "Another active record exists with the same date %{date}."
     bad_password: "Invalid Email address or password."
     required:     "'%{column}' is required."
-    toolong:      "'%{column}' is too long (maximum length is %{length})."
     badformat:    "'%{column}' isn't using a right format."
     mis_name:     "Name is mandatory."
     mis_password: "Password is mandatory."

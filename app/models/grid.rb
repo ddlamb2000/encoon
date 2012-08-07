@@ -988,19 +988,6 @@ class Grid < Entity
                                               :column => column))
           end
         end
-        if column.length.present? and column.length > 0
-          if column.kind == Column::STRING or
-             column.kind == Column::TEXT or
-             column.kind == Column::HYPERLINK or
-             column.kind == Column::PASSWORD
-            if value.length > column.length
-              validated = false
-              row.errors.add(attribute, I18n.t('error.toolong', 
-                                                :column => column,
-                                                :length => column.length))
-            end
-          end
-        end
         if column.regex.present?
           if not Regexp.new(column.regex).match(value)
             validated = false

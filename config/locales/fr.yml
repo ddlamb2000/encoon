@@ -191,7 +191,6 @@ fr:
     dup_record:   "Il existe un autre enregistrement actif à la même date %{date}."
     bad_password: "Adresse électronique ou mot de passe incorrect."
     required:     "’%{column}’ est obligatoire."
-    toolong:      "’%{column}’ est trop grand (longueur maximumum est de %{length})."
     badformat:    "’%{column}’ n’utilise pas un bon format."
     mis_password: "Le mot de passe est obligatoire."
     mis_name:     "Le nom est obligatoire."
