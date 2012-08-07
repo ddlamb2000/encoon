@@ -35,22 +35,43 @@ namespace :app do
 
   desc 'Grant access for a user to a workspace'
   task :grant_access => :environment do
-    Entity.log_debug "Grant access for a user to a workspace", true
+    Entity.log_debug "rake:grant_access Grant access for a user to a workspace", true
     if ENV['user'].nil? or ENV['workspace'].nil?
       puts "Usage rake app:grant_access workspace=<workspace uri> user=<user email>"
       return
     else
       user = User.find_by_email ENV['user']
       if user.nil?
-        Entity.log_debug "Can't find user", true
+        Entity.log_debug "rake:grant_access Can't find user", true
         return
       end
       workspace = Workspace.find_by_uri ENV['workspace']
       if workspace.nil?
-        Entity.log_debug "Can't find workspace", true
+        Entity.log_debug "rake:grant_access Can't find workspace", true
         return
       end
-      Entity.log_debug "Process workspace #{workspace.uuid} for user #{user.uuid}", true
+      Entity.log_debug "rake:grant_access Process workspace #{workspace.uuid} for user #{user.uuid}", true
+      row = WorkspaceSharing.new
+      begin
+        row.transaction do
+          row.create_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
+          row.update_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
+          row.workspace_uuid = workspace.uuid
+          row.user_uuid = user.uuid
+          row.save!
+          saved = true
+        end
+      rescue ActiveRecord::RecordInvalid => invalid
+        Entity.log_debug "rake:grant_access invalid=#{invalid.inspect}", true
+        saved = false
+      rescue Exception => invalid
+        Entity.log_error "rake:grant_access", invalid
+        puts "rake:grant_access " + invalid.inspect
+        saved = false
+      end
+    end
+    if saved
+      Entity.log_debug "Processed workspace #{workspace.uuid} for user #{user.uuid}", true
     end
   end
   
