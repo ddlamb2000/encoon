@@ -129,6 +129,10 @@ protected
     Entity.log_debug(message)
   end
 
+  def log_error(message, invalid)
+    Entity.log_error(message, invalid)
+  end
+
   def as_of_date_clause(synonym)
     Entity.as_of_date_clause(synonym) 
   end
