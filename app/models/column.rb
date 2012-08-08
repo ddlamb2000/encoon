@@ -180,7 +180,7 @@ class Column < Entity
     column = grid.column_select_entity_by_uuid_version(self.uuid, self.version)
     if column.present?
       if self.revision > column.revision 
-        logger.debug "Column#import! update"
+        log_debug "Column#import! update"
         copy_attributes(column)
         make_audit(Audit::IMPORT)
         column.save!
