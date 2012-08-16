@@ -1,0 +1,50 @@
+h1 {
+  font-size: 160%;
+  font-weight: bolder;
+  @include text-shadow;
+  .title {
+    color: $title-color;
+  }
+}
+
+h2 {
+  font-size: 125%;
+  font-weight: bolder;
+  @include text-shadow;
+  .title {
+    color: $title-color;
+  }
+}
+
+p {
+  margin-left: 0;
+  margin-right: 0;
+  margin-top: 0;
+  margin-bottom: 8px;
+  text-align: justify;
+  font-family: serif;
+  line-height: 140%;
+}
+
+a {
+  @include link-colors($title-color, $detail-color, $detail-color, black);
+  @include hover-link;
+  @include transition;
+  text-decoration: underline;
+}
+
+img {
+  @include border-radius;
+}
+
+ul {
+  @include no-bullets;
+  padding: 0;
+  margin:0;
+}
+
+li {
+  @include no-bullets;
+  padding: 0;
+  margin:0;
+}

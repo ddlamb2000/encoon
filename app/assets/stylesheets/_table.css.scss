@@ -1,0 +1,102 @@
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 0;
+  tr {
+    padding: 2px;
+    vertical-align: text-top;
+  }
+  td {
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+    vertical-align: text-top;
+  }
+  .header {
+    text-align: right;
+    width: 33%;
+    @include text-shadow;
+  }
+  .string {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid $background-color-table;
+  }
+  .date {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid $background-color-table;
+  }
+  .number {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid $background-color-table;
+  }
+  .boolean {
+    width: 100%;
+    text-align: left;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-header-string {
+    text-align: left;
+    background-color: $background-color-header;
+    @include text-shadow;
+  }
+  .list-header-date {
+    text-align: center;
+    background-color: $background-color-header;
+    @include text-shadow;
+  }
+  .list-header-boolean {
+    text-align: center;
+    background-color: $background-color-header;
+    @include text-shadow;
+  }
+  .list-header-number {
+    text-align: right;
+    background-color: $background-color-header;
+    @include text-shadow;
+  }
+  .list-date {
+    width: 80px;
+    text-align: center;
+    border-left: 1px solid $background-color-table;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-number {
+    width: 80px;
+    text-align: right;
+    border-left: 1px solid $background-color-table;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-string {
+    text-align: left;
+    border-left: 1px solid $background-color-table;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-boolean {
+    width: 15px;
+    text-align: center;
+    border-left: 1px solid $background-color-table;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-description {
+    text-align: left;
+    border-left: 1px solid $background-color-table;
+    border-top: 1px solid $background-color-table;
+  }
+  .list-information {
+    width: 100%;
+    text-align: left;
+    border-bottom: 0;
+  }
+  .column-header {
+    min-width: 40px;
+    max-width: 40px;
+    text-align: center;
+    vertical-align: middle;
+    background-color: $background-color-header;
+    border-top: 1px solid $background-color-table;
+  }
+}
