@@ -69,6 +69,7 @@ $padding: 4px;
   margin-top: $padding;
   margin-bottom: 2*$padding;
   padding: $padding;
+  background-color: $background-color-article;
   border: 1px solid transparent;
   @include transition;
   &:hover {

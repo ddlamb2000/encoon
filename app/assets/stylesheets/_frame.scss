@@ -118,4 +118,5 @@ body {
   background-color: $background-color-article;
   @include shadow;
   @include border-radius;
+  overflow: auto;
 }
