@@ -26,9 +26,8 @@
 <% content_for :document do %>
   <% if @grid.present? %>
     <article class="article">
-      <header>
+      <header class="header-article-level2">
         <h1>
-          <%= bigicon @page_icon %>
           <span class="title"><%= @grid.to_s.html_safe %></span>
           <% if not @grid.description.blank? %>
             <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>

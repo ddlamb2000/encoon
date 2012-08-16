@@ -1,10 +1,6 @@
 <article id="article" class="article">
-  <header>
+  <header class="header-article">
   	<h1>
-  		<% if @grid.uuid == Grid::ROOT_UUID %><%= bigicon "table" %>
-      <% elsif @grid.uuid == Workspace::ROOT_UUID %><%= bigicon "workspace" %>
-  		<% else %><%= bigicon "entity" %>
-  		<% end %>
   		<span class="title"><%= @grid.to_s.html_safe %></span>
   	  <%= @row.to_s.html_safe %>
   	  <span class="detail-article">

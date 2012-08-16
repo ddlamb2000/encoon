@@ -74,6 +74,15 @@ li {
   color: $detail-color;
 }
 
+.header-article {
+  background: $background-color-article-header;
+  padding: $padding;
+}
+
+.header-article-level2 {
+  background: $background-color-article-header-level2;
+}
+
 .information {
   display: inline;
   font-size: 95%;

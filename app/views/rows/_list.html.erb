@@ -5,11 +5,11 @@
 <% if table_rows.length > 0 %>
   <table>
     <tr>
-			<th class="list-header"><%=h grid.name %></th>
+			<th class="list-header-string"><%=h grid.name %></th>
 	  	<% for column in table_columns %>
 	  		<%= show_header_label(column.kind, column.name.html_safe, column.description.html_safe, true) %>
 	  	<% end %>
-	  	<th></th>
+	  	<th class="list-header-string"></th>
     </tr>
 		<% init_row_index(params[:page]) %>
 	  <% for row in table_rows %>

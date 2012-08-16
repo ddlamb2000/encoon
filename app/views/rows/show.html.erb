@@ -97,10 +97,9 @@
       <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
       <% attached_grid.load_cached_grid_structure(@filters) %>
       <article class="article">
-        <header>
+        <header class="header-article-level2">
           <h2>
-            <%= icon 'greenright' %>
-            <%= attached_grid.name %>
+            <span class="title"><%= attached_grid.name %></span>
             <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
             <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
             <%= link_to icon('expand'), 

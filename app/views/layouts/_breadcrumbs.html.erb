@@ -2,13 +2,11 @@
   <% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
   <% if breadcrumbs.present? and breadcrumbs != "" %> 
     <article class="article">
-      <header>
-        <span class="button">
-          <span class="hightlighted">
-            <a href="#"><%=t 'general.back_to' %></a>
-          </span>
+      <span class="button">
+        <span class="hightlighted">
+          <a href="#"><%=t 'general.back_to' %></a>
         </span>
-      </header>
+      </span>
       <%= breadcrumbs %>
     </article>
   <% end %>

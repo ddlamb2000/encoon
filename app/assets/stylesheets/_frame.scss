@@ -102,13 +102,10 @@ body {
 }
 
 .navigator {
-  margin-left: 2*$padding;
   margin-right: 2*$padding;
   margin-top: 2*$padding;
   margin-bottom: 2*$padding;
-  padding: $padding;
-  background-color: $background-color-article;
-  opacity: 0.85;
+  opacity: 0.80;
   form {
     display: inline;
     input {
