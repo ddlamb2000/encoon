@@ -149,6 +149,7 @@ body {
     }
   }
   .button { 
+    margin-right: $padding;
     @include border-radius;
     .hightlighted {
       background-color: $background-color-highlights;
@@ -176,12 +177,10 @@ body {
 
 .document {
   margin-left: 0;
-  margin-right: 2*$padding;
+  margin-right: 4*$padding;
   margin-top: 2*$padding;
   margin-bottom: 2*$padding;
   padding: $padding;
   background-color: $background-color-article;
   @include shadow;
-  @include border-radius;
-  overflow: auto;
 }
