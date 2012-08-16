@@ -24,7 +24,8 @@ module ApplicationHelper
   end
   
   def current_page_title
-    (@page_title.present? ? @page_title + " | Encoon"  : "Encoon") 
+    (@page_title.present? ? @page_title + " | Encoon"  : "Encoon") +
+      ('production' != Rails.env ? (" (" + Rails.env + ")") : "") 
   end
   
   def trunc(value, limit=80)
