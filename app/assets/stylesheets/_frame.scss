@@ -75,24 +75,12 @@ body {
       @include transition;
     }
   }
-}
-
-#workspaces {
-  @include clearfix;
-  width: 100%;
-  padding-top: 4*$padding;
-  padding-left: 2*$padding;
-}
-
-.document {
-  margin-left: 4px;
-  margin-right: 4px;
-  margin-top: 4px;
-  margin-bottom: 8px;
-  padding: $padding;
-  background-color: $background-color-article;
-  @include shadow;
-  @include border-radius;
+  #workspaces {
+    @include clearfix;
+    width: 100%;
+    padding-top: 4*$padding;
+    padding-left: 2*$padding;
+  }
 }
 
 .content1-1 {
@@ -108,6 +96,26 @@ body {
 .sidebar {
   @include float-left;
   width: 25%;
-  opacity: 0.8;
-  filter: alpha(opacity=80);
+}
+
+.navigator {
+  margin-left: 2*$padding;
+  margin-right: 2*$padding;
+  margin-top: 0;
+  margin-bottom: 2*$padding;
+  padding: $padding;
+  background-color: $background-color-article;
+  opacity: 0.75;
+  filter: alpha(opacity=75);
+}
+
+.document {
+  margin-left: 0;
+  margin-right: 2*$padding;
+  margin-top: 0;
+  margin-bottom: 2*$padding;
+  padding: $padding;
+  background-color: $background-color-article;
+  @include shadow;
+  @include border-radius;
 }

@@ -26,23 +26,25 @@
       
 <section class="content3-4">
   <% if @grid.present? %>
-    <article class="document">
-      <header>
-        <h1>
-          <%= bigicon @page_icon %>
-          <span class="title"><%= @grid.to_s.html_safe %></span>
-          <% if not @grid.description.blank? %>
-            <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
-          <% end %>
-          <span class="detail-article">
-            <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
-          </span>
-        </h1>
-      </header>
-      <div id="search-list">
-        <%= render :partial => 'search_list' %>
-      </div>
-    </article>
+    <section class="document">
+      <article class="article">
+        <header>
+          <h1>
+            <%= bigicon @page_icon %>
+            <span class="title"><%= @grid.to_s.html_safe %></span>
+            <% if not @grid.description.blank? %>
+              <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
+            <% end %>
+            <span class="detail-article">
+              <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+            </span>
+          </h1>
+        </header>
+        <div id="search-list">
+          <%= render :partial => 'search_list' %>
+        </div>
+      </article>
+    </section>
   <% else %>
     <h1><%= icon "exclamation" %> <%= @page_title %></h1>
   <% end %>

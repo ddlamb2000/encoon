@@ -64,12 +64,16 @@ $padding: 4px;
 @import "frame";
 
 .article {
-  margin-left: 4px;
-  margin-right: 4px;
-  margin-top: 4px;
-  margin-bottom: 8px;
+  margin-left: $padding;
+  margin-right: $padding;
+  margin-top: $padding;
+  margin-bottom: 2*$padding;
   padding: $padding;
-  background-color: $background-color-article;
+  border: 1px solid transparent;
+  @include transition;
+  &:hover {
+    border: 1px solid $background-color-highlights;
+  }
 }
 
 h1 {
