@@ -1,20 +1,24 @@
-<% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
-<% if breadcrumbs.present? and breadcrumbs != "" %> 
+<section id="breadcrumbs">
+  <% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
+  <% if breadcrumbs.present? and breadcrumbs != "" %> 
+    <article class="article">
+      <header>
+        <span class="button">
+          <span class="hightlighted">
+            <a href="#"><%=t 'general.back_to' %></a>
+          </span>
+        </span>
+      </header>
+      <%= breadcrumbs %>
+    </article>
+  <% end %>
+  
   <article class="article">
     <span class="button">
-      <span class="hightlighted">
-        <a href="#"><%=t 'general.back_to' %></a>
-      </span>
+      <%= link_to(icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe, 
+                         {:action => "history", :controller => '/home'},
+                         :remote => true) %>
     </span>
-    <%= breadcrumbs %>
+    <section id="history-content"></section>
   </article>
-<% end %>
-
-<article class="article">
-  <span class="button">
-    <%= link_to icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe, 
-                       {:action => "history", :controller => '/home'},
-                       :remote => true %>
-  </span>
-  <section id="history-content"></section>
-</article>
+</section>

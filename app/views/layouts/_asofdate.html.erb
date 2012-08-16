@@ -1,0 +1,31 @@
+<article class="article">
+  <%= form_for :home, :url => { :controller => '/home', :action => 'refresh' } do |f| %>
+    <header>
+      <span class="button">
+        <span class="hightlighted">
+          <%= I18n.t('field.asof_date') %>
+          <%= display_warning_current_date(session[:as_of_date]) %>
+        </span>
+      </span>
+    </header> 
+    <% if session[:lock_as_of_date] %>
+      <%= I18n.l(session[:as_of_date]) %>
+    <% else %>
+      <%= f.datepicker 'session_date', 
+                       :showButtonPanel => true,
+                       :numberOfMonths => 2,
+                       :changeMonth => true,
+                       :changeYear => true,
+                       :defaultDate => session[:as_of_date].nil? ? nil : session[:as_of_date].strftime(I18n.t('datepicker.decode')), 
+                       :value => session[:as_of_date].nil? ? nil : I18n.l(session[:as_of_date]),
+                       :dateFormat => I18n.t('datepicker.format'),
+                       :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
+                       :monthNames => I18n.t('datepicker.monthNames'),
+                       :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
+                       :currentText => I18n.t('datepicker.currentText'),
+                       :closeText => I18n.t('datepicker.closeText'),
+                       :size => "10x1", 
+                       :onchange => 'this.form.submit()' %>
+    <% end %>
+  <% end %>
+</article>

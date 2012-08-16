@@ -30,9 +30,9 @@
 @import "blueprint";
 
 $default-border-radius: 4px;
-$blueprint-font-family: sans-serif;
-$blueprint-font-size: 12px;
-$background-color: #e8f0e3;             // gray
+$blueprint-font-family: 'Lucida sans', 'helvetica neue', helvetica, arial, sans-serif;
+$blueprint-font-size: 11px;
+$background-color: #DEE9E6;             // gray
 $background-color-banner: #b50000;      // red
 $background-color-highlights: #556b2f;  // green 
 $background-color-article: white;
@@ -42,7 +42,8 @@ $background-color-actions: #e8f0e3;
 $background-color-buttons: #c0c0c0;
 $title-color: #b50000;
 $detail-color: black;
-$shadow-color: #c0c0c0;
+$shadow-color: #606060;
+$text-shadow-color: #D0D0D0;
 $padding: 4px;
 
 @mixin shadow {
@@ -50,7 +51,7 @@ $padding: 4px;
 }
 
 @mixin text-shadow {
-  @include single-text-shadow($shadow-color, 2px, 2px, 2px);
+  @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
 }
 
 @mixin transition {

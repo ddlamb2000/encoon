@@ -10,7 +10,7 @@
     margin: 1px;
     @include transition;
     &:hover { 
-      background-color: $background-color-article; 
+      border: 1px solid $background-color-highlights; 
     }
     &[type=text] {
       vertical-align: middle;

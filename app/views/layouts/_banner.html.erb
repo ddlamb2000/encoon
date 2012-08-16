@@ -10,29 +10,6 @@
       <% end %>
     </span>
   <% end %>
-	<%= form_for :home, :url => { :controller => '/home', :action => 'refresh' } do |f| %>
-		<%= display_warning_current_date(session[:as_of_date]) %>
-		<%= I18n.t('field.asof_date') %> 
-	  <% if session[:lock_as_of_date] %>
-      <%= I18n.l(session[:as_of_date]) %>
-	  <% else %>
-      <%= f.datepicker 'session_date', 
-                       :showButtonPanel => true,
-                       :numberOfMonths => 2,
-                       :changeMonth => true,
-                       :changeYear => true,
-                       :defaultDate => session[:as_of_date].nil? ? nil : session[:as_of_date].strftime(I18n.t('datepicker.decode')), 
-                       :value => session[:as_of_date].nil? ? nil : I18n.l(session[:as_of_date]),
-                       :dateFormat => I18n.t('datepicker.format'),
-                       :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
-                       :monthNames => I18n.t('datepicker.monthNames'),
-                       :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
-                       :currentText => I18n.t('datepicker.currentText'),
-                       :closeText => I18n.t('datepicker.closeText'),
-                       :size => "10x1", 
-                       :onchange => 'this.form.submit()' %>
-	  <% end %>
-	<% end %>
   <%= form_tag '', :method => 'GET', :class => 'locale' do %>
     <%= select_tag 'locale', options_for_select(LANGUAGES, I18n.locale.to_s), :onchange => 'this.form.submit()' %>
   <% end %>
