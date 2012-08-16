@@ -165,7 +165,7 @@ fr:
     design:       "Définition"
     grid_design:  "Afficher la définition de la catégorie de données"
     attached_row: "%{grid} (%{column})"
-    back_to:      "Retour vers : "
+    back_to:      "Retour arrière"
     
   datepicker:
     format:           "dd/mm/yy"

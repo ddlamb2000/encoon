@@ -162,7 +162,7 @@ en:
     design:       "Design"
     grid_design:  "Display data category definition"
     attached_row: "%{grid} (%{column})"
-    back_to:      "Back to: "
+    back_to:      "Backtrack"
 
   datepicker:
     format:           "yy-mm-dd"

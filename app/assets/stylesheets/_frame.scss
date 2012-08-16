@@ -12,6 +12,27 @@ body {
   padding-bottom: $padding;
   color: white;
   background: $background-color-banner;
+  .button { 
+    display: inline;
+    @include border-radius;
+    .hightlighted {
+      background-color: $background-color-highlights;
+      padding: $padding;
+      @include border-radius;
+    } 
+    a {
+      @include link-colors(white);
+      @include hover-link;
+      text-decoration: none;
+      padding: $padding;
+      @include border-radius;
+      @include transition;
+      &:hover {
+        background-color: $background-color-highlights;
+        text-decoration: none;
+      }
+    } 
+  }
   #header-application {
     @include float-left;
     background: $background-color-banner;
@@ -25,27 +46,6 @@ body {
     background: $background-color-banner;
     padding-right: 2*$padding;
   }
-  .button { 
-    display: inline;
-    @include border-radius;
-    .hightlighted {
-      background-color: $background-color-highlights;
-      padding: $padding;
-      @include border-radius;
-    } 
-  }
-  a {
-    @include link-colors(white);
-    @include hover-link;
-    text-decoration: none;
-    padding: $padding;
-    @include border-radius;
-    @include transition;
-    &:hover {
-      background-color: $background-color-highlights;
-      text-decoration: none;
-    }
-  } 
   form {
     display: inline;
     input {
@@ -83,6 +83,11 @@ body {
   }
 }
 
+#footer {
+  text-align: center;
+  font-size: 80%;
+}
+
 .content1-1 {
   @include float-left;
   width: 100%;
@@ -111,21 +116,25 @@ body {
     .hightlighted {
       background-color: $background-color-highlights;
       padding: $padding;
+      color: $background-color-article;
       @include border-radius;
+      a {
+        color: $background-color-article;
+      }
+    } 
+    a {
+      color: $detail-color;
+      text-decoration: none;
+      padding: $padding;
+      @include border-radius;
+      @include transition;
+      &:hover {
+        background-color: $background-color-highlights;
+        color: $background-color-article;
+        text-decoration: none;
+      }
     } 
   }
-  a {
-    @include link-colors(white);
-    @include hover-link;
-    text-decoration: none;
-    padding: $padding;
-    @include border-radius;
-    @include transition;
-    &:hover {
-      background-color: $background-color-highlights;
-      text-decoration: none;
-    }
-  } 
 }
 
 .document {

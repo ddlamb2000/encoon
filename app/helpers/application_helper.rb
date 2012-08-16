@@ -135,7 +135,6 @@ module ApplicationHelper
         count += 1
       end
     end
-    output = I18n.t('general.back_to') + output + " | " if !output.blank?
     output
   end
 

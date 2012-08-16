@@ -1,9 +1,9 @@
-<div class="button">
+<span class="button">
   <%= link_to_unless_current(icon("home") + ("&nbsp;" + I18n.t('general.home')).html_safe, 
                             {:controller => '/home', :action => 'index'}) do |name| %>
     <span class="hightlighted"><%= name %></span>
   <% end %>
-</div>
+</span>
 <% if @workspaces.present? %>
 	<% for row in @workspaces.row_all %>
 	  <div class="button" title="<%= row.description.html_safe %>">
