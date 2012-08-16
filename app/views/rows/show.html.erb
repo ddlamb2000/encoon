@@ -91,34 +91,36 @@
 
 <section class="content3-4">
   <% unless @grid.blank? or @row.blank? %>
-    <article id="article" class="highlighted">
+    <article id="article" class="document">
       <%= render :partial => 'show_grid' %>
   		<div id="entity-upload-attachment"></div>
   		<div id="detail-actions"></div>
       <%= render :partial => 'show_actions' %>
+      <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
+        <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
+        <% attached_grid.load_cached_grid_structure(@filters) %>
+        <article class="article">
+          <header>
+            <h2>
+              <%= icon 'greenright' %>
+              <%= attached_grid.name %>
+              <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+              <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+              <%= link_to icon('expand'), 
+                          :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
+            </h2>
+          </header>
+          <%= render :partial => "list", 
+                      :locals => { 
+                        :embedded => true, 
+                        :grid => attached_grid,
+                        :filters => @filters,
+                        :table_row_count => attached_grid.row_count(@filters),
+                        :table_rows => attached_grid.row_all(@filters), 
+                        :table_columns => attached_grid.filtered_columns } %>
+        </article>                                
+      <% end %>
     </article>
-  	<% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
-  	  <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
-  	  <% attached_grid.load_cached_grid_structure(@filters) %>
-  	  <article class="highlighted">
-  		  <h2>
-  		    <%= icon 'greenright' %>
-  		    <%= attached_grid.name %>
-  	      <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
-          <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
-          <%= link_to icon('expand'), 
-                      :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
-  		  </h2>
-        <%= render :partial => "list", 
-										:locals => { 
-		                  :embedded => true, 
-										  :grid => attached_grid,
-										  :filters => @filters,
-		                  :table_row_count => attached_grid.row_count(@filters),
-										  :table_rows => attached_grid.row_all(@filters), 
-										  :table_columns => attached_grid.filtered_columns } %>
-    	</article>																
-    <% end %>
   <% else %>
     <h1><%= icon "exclamation" %> <%= @page_title %></h1>
   <% end %>

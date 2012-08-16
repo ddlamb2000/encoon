@@ -63,21 +63,6 @@ $padding: 4px;
 
 @import "frame";
 
-.content1-1 {
-  @include float-left;
-  width: 100%;
-}
-
-.content3-4 {
-  @include float-right;
-  width: 75%;
-}
-
-.sidebar {
-  @include float-left;
-  width: 25%;
-}
-
 .article {
   margin-left: 4px;
   margin-right: 4px;
@@ -85,19 +70,6 @@ $padding: 4px;
   margin-bottom: 8px;
   padding: $padding;
   background-color: $background-color-article;
-  opacity: 0.8;
-  filter: alpha(opacity=80);
-}
-
-.highlighted {
-  margin-left: 4px;
-  margin-right: 4px;
-  margin-top: 4px;
-  margin-bottom: 8px;
-  padding: $padding;
-  background-color: $background-color-article;
-  @include shadow;
-  @include border-radius;
 }
 
 h1 {

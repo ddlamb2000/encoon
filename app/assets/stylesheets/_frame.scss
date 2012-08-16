@@ -83,3 +83,31 @@ body {
   padding-top: 4*$padding;
   padding-left: 2*$padding;
 }
+
+.document {
+  margin-left: 4px;
+  margin-right: 4px;
+  margin-top: 4px;
+  margin-bottom: 8px;
+  padding: $padding;
+  background-color: $background-color-article;
+  @include shadow;
+  @include border-radius;
+}
+
+.content1-1 {
+  @include float-left;
+  width: 100%;
+}
+
+.content3-4 {
+  @include float-right;
+  width: 75%;
+}
+
+.sidebar {
+  @include float-left;
+  width: 25%;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
+}
