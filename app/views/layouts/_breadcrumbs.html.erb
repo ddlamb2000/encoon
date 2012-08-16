@@ -1,7 +1,10 @@
-<section id="breadcrumbs-content">
+<article class="article">
   <%= display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
+</article>
+
+<article class="article">
   <%= link_to icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe, 
                      {:action => "history", :controller => '/home'},
                      :remote => true %>
   <section id="history-content"></section>
-</section>
+</article>

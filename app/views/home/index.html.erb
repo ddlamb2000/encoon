@@ -4,15 +4,15 @@
   </article>
 </section>
 
-<section class="content3-4">
-  <article class="document">
+<% content_for :document do %>
+  <article class="article">
     <header>
       <h1><%= bigicon 'home' %> <%= I18n.t('banner.welcome') %></h1>
     </header>
   </article>
   
   <% unless @workspaces.nil? %>
-    <article class="document">
+    <article class="article">
       <header>
     		<h2>
     		  <%= @workspaces.name %>
@@ -30,4 +30,4 @@
   		            } %>
     </article>
   <% end %>
-</section>
+<% end %>

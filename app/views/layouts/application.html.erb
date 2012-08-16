@@ -21,11 +21,20 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <section id="breadcrumbs"><%= render :partial => 'layouts/breadcrumbs' %></section>
       <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
       <% if flash[:error] -%><section class='error'><%= icon('exclamation') %> <%= flash[:error] %></section><% end -%>
     </header>
-    <%= yield %>
-    <footer id="footer"><%= render :partial => 'layouts/footer' %></footer>
+    <section class="sidebar">
+      <section class="navigator">
+        <section id="breadcrumbs"><%= render :partial => 'layouts/breadcrumbs' %></section>
+        <%= yield :navigator %>
+        <footer id="footer"><%= render :partial => 'layouts/footer' %></footer>
+      </section>
+    </section>
+    <section class="content3-4">
+      <section class="document">
+        <%= yield :document %>
+      </section>
+    </section>
   </body>
 </html>

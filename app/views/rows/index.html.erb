@@ -1,51 +1,48 @@
 <% @grid.load_cached_grid_structure(params[:filters]) if @grid.present? %>
-<section class="sidebar">
+
+<% content_for :navigator do %>
+  <% if @grid.present? %>
+    <ul>
+      <li>
+        <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
+                                   :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
+      </li>
+      <% if @grid.has_translation? %>
+        <li>
+          <aside class="actions">
+            <%= form_tag({:controller => 'rows', :action => :search, :grid_id => @grid.uuid, :id => 0, :filters => params[:filters]}, 
+                          :remote => true,
+                          :id => 'search-form') do %>
+              <%= text_field_tag :search, params[:search], :size => "20x1" %>
+              <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag I18n.t("general.search") %></div>
+            <% end %>
+          </aside>
+        </li>
+      <% end %>
+    </ul>
+  <% end %>
+<% end %>
+      
+<% content_for :document do %>
   <% if @grid.present? %>
     <article class="article">
-      <ul>
-        <li>
-          <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
-                                     :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
-        </li>
-        <% if @grid.has_translation? %>
-          <li>
-            <aside class="actions">
-              <%= form_tag({:controller => 'rows', :action => :search, :grid_id => @grid.uuid, :id => 0, :filters => params[:filters]}, 
-                            :remote => true,
-                            :id => 'search-form') do %>
-                <%= text_field_tag :search, params[:search], :size => "20x1" %>
-                <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag I18n.t("general.search") %></div>
-              <% end %>
-            </aside>
-          </li>
-        <% end %>
-      </ul>
+      <header>
+        <h1>
+          <%= bigicon @page_icon %>
+          <span class="title"><%= @grid.to_s.html_safe %></span>
+          <% if not @grid.description.blank? %>
+            <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
+          <% end %>
+          <span class="detail-article">
+            <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+          </span>
+        </h1>
+      </header>
+      <div id="search-list">
+        <%= render :partial => 'search_list' %>
+      </div>
     </article>
-  <% end %>
-</section>
-      
-<section class="content3-4">
-  <% if @grid.present? %>
-    <section class="document">
-      <article class="article">
-        <header>
-          <h1>
-            <%= bigicon @page_icon %>
-            <span class="title"><%= @grid.to_s.html_safe %></span>
-            <% if not @grid.description.blank? %>
-              <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
-            <% end %>
-            <span class="detail-article">
-              <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
-            </span>
-          </h1>
-        </header>
-        <div id="search-list">
-          <%= render :partial => 'search_list' %>
-        </div>
-      </article>
-    </section>
   <% else %>
     <h1><%= icon "exclamation" %> <%= @page_title %></h1>
   <% end %>
-</section>
+<% end %>

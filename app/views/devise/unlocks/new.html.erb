@@ -1,26 +1,22 @@
-<section class="sidebar">
-  <article class="article">
-    <%= render "links" %>
-  </article>
-</section>
+<% content_for :navigator do %>
+  <%= render "links" %>
+<% end %>
 
-<section class="content3-4">
-  <article class="document">
-    <header>
-      <h1><%= I18n.t('devise.no_unlock') %></h1>
-    </header>
-    <header class="action-header"><%= I18n.t('devise.resend_unlock') %></header>
-    <%= form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post }) do |f| %>
-      <%= devise_error_messages! %>
-      <table class="form">
-        <tr>
-          <td class="header"><%= f.label :email %><span class="required">*</span></td>
-          <td class="string"><%= f.text_field :email %></td>
-        </tr>
-      </table>
-      <aside class="actions">
-        <center><div class="button"><%= f.submit I18n.t('devise.resend_unlock') %></div></center>
-      </aside>
-    <% end %>
-  </article>
-</section>
+<% content_for :document do %>
+  <header>
+    <h1><%= I18n.t('devise.no_unlock') %></h1>
+  </header>
+  <header class="action-header"><%= I18n.t('devise.resend_unlock') %></header>
+  <%= form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post }) do |f| %>
+    <%= devise_error_messages! %>
+    <table class="form">
+      <tr>
+        <td class="header"><%= f.label :email %><span class="required">*</span></td>
+        <td class="string"><%= f.text_field :email %></td>
+      </tr>
+    </table>
+    <aside class="actions">
+      <center><div class="button"><%= f.submit I18n.t('devise.resend_unlock') %></div></center>
+    </aside>
+  <% end %>
+<% end %>

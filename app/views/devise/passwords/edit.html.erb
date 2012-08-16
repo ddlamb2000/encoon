@@ -1,31 +1,27 @@
-<section class="sidebar">
-  <article class="article">
-    <%= render "links" %>
-  </article>
-</section>
+<% content_for :navigator do %>
+  <%= render "links" %>
+<% end %>
 
-<section class="content3-4">
-  <article class="document">
-    <header>
-      <h1><%= I18n.t('devise.change_passwd') %></h1>
-    </header>
-    <header class="action-header"><%= I18n.t('devise.change_passwd') %></header>
-    <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-      <%= devise_error_messages! %>
-      <%= f.hidden_field :reset_password_token %>
-      <table class="form">
-        <tr>
-          <td class="header"><%= f.label :password, I18n.t('devise.new_passwd') %><span class="required">*</span></td>
-          <td class="string"><%= f.password_field :password %></td>
-        </tr>
-        <tr>
-          <td class="header"><%= f.label :password_confirmation, I18n.t('devise.conf_new_passwd') %></td>
-          <td class="string"><%= f.password_field :password_confirmation %></td>
-        </tr>
-      </table>
-      <aside class="actions">
-        <center><div class="button"><%= f.submit I18n.t('devise.change_passwd') %></div></center>
-      </aside>
-    <% end %>
-  </article>
-</section>
+<% content_for :document do %>
+  <header>
+    <h1><%= I18n.t('devise.change_passwd') %></h1>
+  </header>
+  <header class="action-header"><%= I18n.t('devise.change_passwd') %></header>
+  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+    <%= devise_error_messages! %>
+    <%= f.hidden_field :reset_password_token %>
+    <table class="form">
+      <tr>
+        <td class="header"><%= f.label :password, I18n.t('devise.new_passwd') %><span class="required">*</span></td>
+        <td class="string"><%= f.password_field :password %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :password_confirmation, I18n.t('devise.conf_new_passwd') %></td>
+        <td class="string"><%= f.password_field :password_confirmation %></td>
+      </tr>
+    </table>
+    <aside class="actions">
+      <center><div class="button"><%= f.submit I18n.t('devise.change_passwd') %></div></center>
+    </aside>
+  <% end %>
+<% end %>

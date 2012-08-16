@@ -90,29 +90,48 @@ body {
 
 .content3-4 {
   @include float-right;
-  width: 75%;
+  width: 70%;
 }
 
 .sidebar {
   @include float-left;
-  width: 25%;
+  width: 30%;
 }
 
 .navigator {
   margin-left: 2*$padding;
   margin-right: 2*$padding;
-  margin-top: 0;
+  margin-top: 2*$padding;
   margin-bottom: 2*$padding;
   padding: $padding;
   background-color: $background-color-article;
-  opacity: 0.75;
-  filter: alpha(opacity=75);
+  .button { 
+    display: inline;
+    @include border-radius;
+    .hightlighted {
+      background-color: $background-color-highlights;
+      padding: $padding;
+      @include border-radius;
+    } 
+  }
+  a {
+    @include link-colors(white);
+    @include hover-link;
+    text-decoration: none;
+    padding: $padding;
+    @include border-radius;
+    @include transition;
+    &:hover {
+      background-color: $background-color-highlights;
+      text-decoration: none;
+    }
+  } 
 }
 
 .document {
   margin-left: 0;
   margin-right: 2*$padding;
-  margin-top: 0;
+  margin-top: 2*$padding;
   margin-bottom: 2*$padding;
   padding: $padding;
   background-color: $background-color-article;

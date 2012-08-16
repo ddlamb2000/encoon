@@ -458,42 +458,6 @@ table {
   }
 }
 
-#breadcrumbs {
-  @include clearfix;
-  width: 100%;
-  font-size: 90%;
-  background-color: $background-color-actions; 
-  margin-bottom: -4px;
-  line-height: 24px;
-  .button { 
-    display: inline;
-    padding: $padding;
-  }
-  a {
-    @include link-colors(black);
-    @include hover-link;
-    text-decoration: none;
-    padding: $padding;
-    @include border-radius;
-    @include text-shadow;
-    @include transition;
-    &:hover {
-      background-color: $title-color;
-      color: white;
-      text-decoration: none;
-    }
-  }
-}
-
-#breadcrumbs-content {
-  padding: $padding;
-}
-
-#footer {
-  @include clearfix;
-  width: 100%;
-}
-
 #create-button {
   display: inline;
 }
