@@ -31,7 +31,6 @@
 	<% end %>
   <%= form_tag '', :method => 'GET', :class => 'locale' do %>
     | <%= I18n.t('field.language') %> <%= select_tag 'locale', options_for_select(LANGUAGES, I18n.locale.to_s), :onchange => 'this.form.submit()' %>
-    <%= icon(I18n.locale.to_s) %>
   <% end %>
   <% if user_signed_in? %>
     | <%= link_to icon('logout') + ("&nbsp;" + I18n.t('banner.signout')).html_safe, destroy_user_session_path, :method => :delete %>
