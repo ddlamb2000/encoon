@@ -30,7 +30,7 @@
 @import "blueprint";
 
 $default-border-radius: 4px;
-$blueprint-font-family: "Trebuchet MS", Georgia, "Times New Roman", Times, serif;
+$blueprint-font-family: sans-serif;
 $blueprint-font-size: 12px;
 $background-color: #e8f0e3;             // gray
 $background-color-banner: #b50000;      // red
@@ -120,7 +120,7 @@ p {
   margin-top: 0;
   margin-bottom: 8px;
   text-align: justify;
-  font-size: 90%;
+  font-family: serif;
   line-height: 140%;
 }
 
