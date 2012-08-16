@@ -20,7 +20,6 @@ module ApplicationHelper
     options = args.last.is_a?(Hash) ? args.pop : {}
     options = options.merge(:builder => GridBuilder)
     args = (args << options)
-    logger.debug "ApplicationHelper::grid_form_for(name=#{name.inspect}, args=#{args.inspect}"
     form_for(name, *args, &block)
   end
   
