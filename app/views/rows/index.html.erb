@@ -2,13 +2,22 @@
 
 <% content_for :navigator do %>
   <% if @grid.present? %>
-    <ul>
-      <li>
-        <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
-                                   :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
-      </li>
-      <% if @grid.has_translation? %>
+    <article class="article">
+      <ul>
         <li>
+          <%= @grid.to_s.html_safe %>
+          <% if not @grid.description.blank? %>
+            <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
+          <% end %>
+        </li>
+        <li>
+          <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
+                                     :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
+        </li>
+      </ul>
+    </article>
+      <% if @grid.has_translation? %>
+        <article class="article">
           <aside class="actions">
             <%= form_tag({:controller => 'rows', :action => :search, :grid_id => @grid.uuid, :id => 0, :filters => params[:filters]}, 
                           :remote => true,
@@ -17,9 +26,8 @@
               <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag I18n.t("general.search") %></div>
             <% end %>
           </aside>
-        </li>
+        </article>
       <% end %>
-    </ul>
   <% end %>
 <% end %>
       
@@ -29,9 +37,6 @@
       <header class="header-article-level2">
         <h1>
           <span class="title"><%= @grid.to_s.html_safe %></span>
-          <% if not @grid.description.blank? %>
-            <span title="<%= @grid.description.html_safe %>"><%= icon('information') %></span>
-          <% end %>
           <span class="detail-article">
             <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
           </span>

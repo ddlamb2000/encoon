@@ -1,6 +1,8 @@
 body {
   background: {
     color: $background-color;
+    image: url('background.jpg');
+    repeat: repeat;
   }
 }
 
@@ -11,6 +13,7 @@ body {
   padding-bottom: $padding;
   color: white;
   @include background-image(radial-gradient(80% 50%, adjust-lightness($background-color-banner, 5%) 5%, $background-color-banner));
+  background-color: $background-color-banner;
   .button { 
     display: inline;
     @include border-radius;
@@ -78,6 +81,7 @@ body {
     width: 100%;
     padding-top: 2*$padding;
     padding-left: 2*$padding;
+    font-weight: bolder;
   }
 }
 
@@ -102,20 +106,36 @@ body {
 }
 
 .navigator {
+  margin-left: 2*$padding;
   margin-right: 2*$padding;
   margin-top: 2*$padding;
   margin-bottom: 2*$padding;
   opacity: 0.80;
+  .article {
+    margin-left: $padding;
+    margin-right: $padding;
+    margin-top: $padding;
+    margin-bottom: 2*$padding;
+    padding: $padding;
+    background-color: $background-color-navigator-section;
+    line-height: 210%;
+    border: 1px solid transparent;
+    @include transition;
+    @include border-radius;
+    &:hover {
+      border: 1px solid $background-color-highlights;
+    }
+  }
   form {
     display: inline;
     input {
       margin: 0;
       padding: 2px;
       border: 1px solid $background-color-table;
-      font-size: 80%;
       text-decoration: none;
       text-align: center;
       font-family: $blueprint-font-family;
+      background-color: $background-color-article;
       @include border-radius;
       @include transition;
       &:hover {
@@ -125,7 +145,6 @@ body {
         width: auto;        
         border-spacing: 0;
         vertical-align: baseline;
-        @include text-shadow;
       }
     }
   }

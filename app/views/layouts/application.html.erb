@@ -21,8 +21,6 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
-      <% if flash[:error] -%><section class='error'><%= icon('exclamation') %> <%= flash[:error] %></section><% end -%>
     </header>
     <section class="sidebar">
       <section class="navigator">

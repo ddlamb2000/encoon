@@ -4,7 +4,6 @@
   <% unless @grid.blank? or @row.blank? %>
     <% if @grid.present? and @row.present? %>
       <article class="article">
-        <%= render :partial => "entities/show_more", :locals => { :entity => @row } %>
         <% if user_signed_in? %>
           <div id="show-more-button" class="button" title="Displays more information about current data.">
             <%= link_to icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe, 
@@ -66,9 +65,17 @@
    			  <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
     				  <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
     				  <li>
-                <%= icon "expand" %> 
-  					    <%= link_to_unless_current attached_grid.name, :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
-                <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+
+                <span class="button">
+                  <span class="hightlighted">
+                    <%= icon "expand" %> 
+      					    <%= link_to_unless_current attached_grid.name, :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
+                    <%= icon "external" %> 
+                  </span>
+                </span>
+                <% unless attached_grid.description.nil? %>
+                  <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
+                <% end %>
                 <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
     				  </li>
     			<% end %>
@@ -100,10 +107,7 @@
         <header class="header-article-level2">
           <h2>
             <span class="title"><%= attached_grid.name %></span>
-            <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
             <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
-            <%= link_to icon('expand'), 
-                        :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
           </h2>
         </header>
         <%= render :partial => "list", 
