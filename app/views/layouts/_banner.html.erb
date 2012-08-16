@@ -1,5 +1,5 @@
 <section id="header-application">
-  <%= link_to_unless_current icon("home") + ("&nbsp;" + I18n.t('general.home')).html_safe, :controller => '/home', :action => 'index' %>
+  <%=t 'banner.welcome' %>
 </section>
 <section id="header-links">
   <% if user_signed_in? %>
@@ -40,3 +40,4 @@
     | <%= link_to_unless_current I18n.t('devise.sign_up'), new_registration_path("user") %></li>
   <% end %>
 </section>
+<section id="workspaces"><%= render :partial => "layouts/workspaces" %></section>

@@ -1,0 +1,83 @@
+body {
+  background: {
+    color: $background-color;
+  }
+}
+
+#banner {
+  @include clearfix;
+  font-size: 120%;
+  width: 100%;
+  padding-top: $padding;
+  padding-bottom: $padding;
+  color: white;
+  background: $background-color-banner;
+  #header-application {
+    @include float-left;
+    background: $background-color-banner;
+    text-align: left;
+    padding-left: 8px;
+  }
+  #header-links {
+    @include float-right;
+    text-align: right;
+    background: $background-color-banner;
+    padding-right: 8px;
+  }
+  .button { 
+    display: inline;
+    @include border-radius;
+    .hightlighted {
+      background-color: $background-color-highlights;
+      padding: $padding;
+      @include border-radius;
+    } 
+  }
+  a {
+    @include link-colors(white);
+    @include hover-link;
+    text-decoration: none;
+    padding: 2px;
+    @include border-radius;
+    @include transition;
+    &:hover {
+      background-color: $background-color-highlights;
+      text-decoration: none;
+    }
+  } 
+  form {
+    display: inline;
+    input {
+      margin: 0;
+      padding: 2px;
+      border: 0;
+      font-size: 80%;
+      text-decoration: none;
+      text-align: center;
+      font-family: $blueprint-font-family;
+      @include border-radius;
+      @include transition;
+      &[type=text] {
+        width: auto;        
+        border-spacing: 0;
+        vertical-align: baseline;
+        @include text-shadow;
+      }
+    }
+    select {
+      margin: 0px;
+      padding: 0;
+      border: 0;
+      font-family: $blueprint-font-family;
+      @include border-radius;
+      @include text-shadow;
+      @include transition;
+    }
+  }
+}
+
+#workspaces {
+  @include clearfix;
+  width: 100%;
+  padding-left: 8px;
+}

@@ -1,8 +1,19 @@
+<div class="button">
+  <%= link_to_unless_current(icon("home") + ("&nbsp;" + I18n.t('general.home')).html_safe, 
+                            {:controller => '/home', :action => 'index'}) do |name| %>
+    <span class="hightlighted"><%= name %></span>
+  <% end %>
+</div>
 <% if @workspaces.present? %>
 	<% for row in @workspaces.row_all %>
 	  <div class="button" title="<%= row.description.html_safe %>">
-		  <%= link_to_unless_current icon("workspace") + ("&nbsp;" + row.name).html_safe, 
-            :controller => '/rows', :action => 'show', :grid_id => Workspace::ROOT_UUID, :id => row.uuid %>
+		  <%= link_to_unless_current(icon("workspace") + ("&nbsp;" + row.name).html_safe, 
+            {:controller => '/rows', 
+             :action => 'show', 
+             :grid_id => Workspace::ROOT_UUID, 
+             :id => row.uuid }) do |name| %>
+        <span class="hightlighted"><%= name %></span>
+      <% end %>
     </div>																					    		
 	<% end %>
 <% end %>

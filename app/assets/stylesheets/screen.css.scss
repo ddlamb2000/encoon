@@ -32,16 +32,18 @@
 $default-border-radius: 4px;
 $blueprint-font-family: "Trebuchet MS", Georgia, "Times New Roman", Times, serif;
 $blueprint-font-size: 12px;
-$background-color: #e8f0e3;
+$background-color: #e8f0e3;             // gray
+$background-color-banner: #b50000;      // red
+$background-color-highlights: #556b2f;  // green 
 $background-color-article: white;
 $background-color-table: #e8f0e3;
 $background-color-header: white;
 $background-color-actions: #e8f0e3; 
-$background-color-buttons: #C0C0C0; 
-$background-color-banner: #B50000;
+$background-color-buttons: #C0C0C0;
 $title-color: #B50000;
 $detail-color: black;
 $shadow-color: #C0C0C0;
+$padding: 4px;
 
 @mixin shadow {
   @include single-box-shadow($shadow-color, 3px, 3px, 3px); 
@@ -59,11 +61,7 @@ $shadow-color: #C0C0C0;
 
 @include blueprint;
 
-body {
-  background: {
-    color: $background-color;
-  }
-}
+@import "frame";
 
 .content1-1 {
   @include float-left;
@@ -85,7 +83,7 @@ body {
   margin-right: 4px;
   margin-top: 4px;
   margin-bottom: 8px;
-  padding: 4px;
+  padding: $padding;
   background-color: $background-color-article;
   opacity: 0.8;
   filter: alpha(opacity=80);
@@ -96,7 +94,7 @@ body {
   margin-right: 4px;
   margin-top: 4px;
   margin-bottom: 8px;
-  padding: 4px;
+  padding: $padding;
   background-color: $background-color-article;
   @include shadow;
   @include border-radius;
@@ -282,7 +280,7 @@ table {
 
 .actions {
   font-size: 90%;
-  padding: 4px;
+  padding: $padding;
   background-color: $background-color-actions;
   vertical-align: middle;
   @include border-radius;
@@ -294,7 +292,7 @@ table {
       display: inline;
       background-color: $title-color; 
       text-decoration: none;
-      padding: 4px;
+      padding: $padding;
       margin: 4px;
       color: white;
       border: 0;
@@ -325,7 +323,7 @@ table {
   input {
     display: inline;
     text-decoration: none;
-    padding: 4px;
+    padding: $padding;
     border: 0;
     margin: 4px;
     @include transition;
@@ -338,13 +336,13 @@ table {
       vertical-align: middle;
       width: auto;        
       border-spacing: 0;
-      padding: 4px;
+      padding: $padding;
     }
     &[type=checkbox] {
       vertical-align: middle;
       width: auto;        
       border-spacing: 0;
-      padding: 4px;
+      padding: $padding;
     }
   }
 }
@@ -435,7 +433,7 @@ table {
     @include hover-link;
     background-color: $background-color-actions; 
     text-decoration: none;
-    padding: 4px;
+    padding: $padding;
     @include border-radius;
     @include text-shadow;
     @include transition;
@@ -483,97 +481,6 @@ table {
   }
 }
 
-#banner {
-  @include clearfix;
-  font-size: 120%;
-  width: 100%;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  color: white;
-  background: $background-color-banner;
-  #header-application {
-    @include float-left;
-    background: $background-color-banner;
-    text-align: left;
-    padding-left: 8px;
-  }
-  #header-links {
-    @include float-right;
-    text-align: right;
-    background: $background-color-banner;
-    padding-right: 8px;
-  }
-  a {
-    @include link-colors(white);
-    @include hover-link;
-    text-decoration: none;
-    font-weight: bolder;
-    padding: 2px;
-    @include border-radius;
-    @include transition;
-    &:hover {
-      background-color: $background-color-buttons;
-      text-decoration: none;
-    }
-  } 
-  form {
-    display: inline;
-    input {
-      margin: 0;
-      padding: 2px;
-      border: 0;
-      font-size: 80%;
-      text-decoration: none;
-      text-align: center;
-      font-family: $blueprint-font-family;
-      @include border-radius;
-      @include transition;
-      &[type=text] {
-        width: auto;        
-        border-spacing: 0;
-        vertical-align: baseline;
-        @include text-shadow;
-      }
-    }
-    select {
-      margin: 0px;
-      padding: 0;
-      border: 0;
-      font-family: $blueprint-font-family;
-      @include border-radius;
-      @include text-shadow;
-      @include transition;
-    }
-  }
-}
-
-#workspaces {
-  @include clearfix;
-  width: 100%;
-  font-size: 100%;
-  background-color: white; 
-  padding-top: 8px;
-  padding-bottom: 8px;
-  .button { 
-    display: inline;
-    padding: 4px;
-  }
-  a {
-    text-decoration: none;
-    padding: 4px;
-    border: 1px solid $background-color-table;
-    @include border-radius;
-    @include text-shadow;
-    @include transition;
-    &:hover {
-      border: 1px solid $title-color;
-      background-color: $title-color;
-      color: white;
-      text-decoration: none;
-    } 
-  }
-}
-
 #breadcrumbs {
   @include clearfix;
   width: 100%;
@@ -583,13 +490,13 @@ table {
   line-height: 24px;
   .button { 
     display: inline;
-    padding: 4px;
+    padding: $padding;
   }
   a {
     @include link-colors(black);
     @include hover-link;
     text-decoration: none;
-    padding: 4px;
+    padding: $padding;
     @include border-radius;
     @include text-shadow;
     @include transition;
@@ -597,12 +504,12 @@ table {
       background-color: $title-color;
       color: white;
       text-decoration: none;
-    } 
+    }
   }
 }
 
 #breadcrumbs-content {
-  padding: 4px;
+  padding: $padding;
 }
 
 #footer {
