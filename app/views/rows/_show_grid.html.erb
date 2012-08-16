@@ -13,9 +13,6 @@
 	  </span>
 	</h1>
 </header>
-<% if @grid.has_translation? and @row_loc.description.present? %>
-  <p><%= no_trunc(@row_loc.description.html_safe) %></p>
-<% end %>
 <table>
   <% for column in @grid.column_all %>
 	  <%= show_entity(
@@ -30,3 +27,6 @@
      ) %>
   <% end %>
 </table>
+<% if @grid.has_translation? and @row_loc.description.present? %>
+  <p><%= no_trunc(@row_loc.description.html_safe) %></p>
+<% end %>
