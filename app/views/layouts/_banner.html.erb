@@ -3,8 +3,12 @@
 </section>
 <section id="header-links">
   <% if user_signed_in? %>
-    <%= link_to_unless_current icon('preferences') + ("&nbsp;" + 
-                               current_user.to_s).html_safe, edit_user_registration_path %> |
+    <div class="button">
+      <%= link_to_unless_current(icon('preferences') + ("&nbsp;" + 
+                               current_user.to_s).html_safe, edit_user_registration_path) do |name| %>
+        <span class="hightlighted"><%= name %></span>
+      <% end %>
+    </div>
   <% end %>
 	<%= form_for :home, :url => { :controller => '/home', :action => 'refresh' } do |f| %>
 		<%= display_warning_current_date(session[:as_of_date]) %>
@@ -30,12 +34,12 @@
 	  <% end %>
 	<% end %>
   <%= form_tag '', :method => 'GET', :class => 'locale' do %>
-    | <%= I18n.t('field.language') %> <%= select_tag 'locale', options_for_select(LANGUAGES, I18n.locale.to_s), :onchange => 'this.form.submit()' %>
+    <%= select_tag 'locale', options_for_select(LANGUAGES, I18n.locale.to_s), :onchange => 'this.form.submit()' %>
   <% end %>
   <% if user_signed_in? %>
-    | <%= link_to icon('logout') + ("&nbsp;" + I18n.t('banner.signout')).html_safe, destroy_user_session_path, :method => :delete %>
+    <%= link_to icon('logout') + ("&nbsp;" + I18n.t('banner.signout')).html_safe, destroy_user_session_path, :method => :delete %>
   <% else %>
-    | <%= link_to_unless_current I18n.t('devise.sign_in'), new_session_path("user") %>
+    <%= link_to_unless_current I18n.t('devise.sign_in'), new_session_path("user") %>
     | <%= link_to_unless_current I18n.t('devise.sign_up'), new_registration_path("user") %></li>
   <% end %>
 </section>
