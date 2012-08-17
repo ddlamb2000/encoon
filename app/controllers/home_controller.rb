@@ -30,6 +30,7 @@ class HomeController < ApplicationController
   end
 
   def history
+    render :partial => "history"
   end
   
   def hide_history

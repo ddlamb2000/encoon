@@ -10,7 +10,7 @@ body {
   width: 100%;
   padding-top: $padding;
   padding-bottom: $padding;
-  color: white;
+  color: $color-highlight;
   @include background-image(radial-gradient(80% 50%, adjust-lightness($background-color-banner, 5%) 5%, $background-color-banner));
   background-color: $background-color-banner;
   .button { 
@@ -19,10 +19,11 @@ body {
     .hightlighted {
       background-color: $background-color-highlights;
       padding: $padding;
+      font-weight: bolder;
       @include border-radius;
     } 
     a {
-      @include link-colors(white);
+      @include link-colors($color-highlight);
       @include hover-link;
       text-decoration: none;
       padding: $padding;
@@ -108,17 +109,20 @@ body {
   margin-right: 2*$padding;
   margin-top: 2*$padding;
   margin-bottom: 2*$padding;
-  opacity: 0.80;
+  color: $color-highlight;
   .article {
     margin-left: $padding;
     margin-right: $padding;
     margin-top: $padding;
     margin-bottom: $padding;
     padding: $padding;
-    background-color: $background-color-navigator-section;
+    @include background-image(radial-gradient(80% 50%, adjust-lightness($background-color-banner, 5%) 5%, $background-color-banner));
+    background-color: $background-color-banner;
     line-height: 210%;
-    border: 1px solid $background-color-table;
     @include border-radius;
+    a {
+      @include link-colors($color-highlight);
+    }
   }
   form {
     display: inline;
@@ -152,6 +156,7 @@ body {
       font-weight: bolder;
       @include border-radius;
       a {
+        @include link-colors($color-highlight);
         color: $background-color-article;
       }
     } 
@@ -159,6 +164,7 @@ body {
       color: $detail-color;
       text-decoration: none;
       padding: $padding;
+      @include link-colors($color-highlight);
       @include border-radius;
       @include transition;
       &:hover {

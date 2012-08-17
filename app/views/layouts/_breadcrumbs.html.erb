@@ -10,13 +10,4 @@
       <%= breadcrumbs %>
     </article>
   <% end %>
-  
-  <article class="article">
-    <span class="button">
-      <%= link_to(icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe, 
-                         {:action => "history", :controller => '/home'},
-                         :remote => true) %>
-    </span>
-    <section id="history-content"></section>
-  </article>
 </section>

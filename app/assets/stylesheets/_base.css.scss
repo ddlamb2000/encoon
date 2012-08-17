@@ -1,5 +1,5 @@
 h1 {
-  font-size: 140%;
+  font-size: 160%;
   font-weight: bolder;
   @include text-shadow;
   .title {
@@ -8,7 +8,7 @@ h1 {
 }
 
 h2 {
-  font-size: 125%;
+  font-size: 130%;
   font-weight: bolder;
   @include text-shadow;
   .title {
@@ -162,27 +162,6 @@ li {
   td {
     border-top: 0;
   }
-}
-
-.close-button {
-  a {
-    float: right;
-    display: inline;
-    font-size: 80%;
-    @include link-colors(black);
-    @include hover-link;
-    background-color: $background-color-actions; 
-    text-decoration: none;
-    padding: $padding;
-    @include border-radius;
-    @include text-shadow;
-    @include transition;
-    &:hover {
-      background-color: $title-color;
-      color: white;
-      text-decoration: none;
-    }
-  } 
 }
 
 .mini-photo {

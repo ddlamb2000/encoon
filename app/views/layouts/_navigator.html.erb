@@ -2,5 +2,6 @@
 <% if flash[:error] -%><section class='error'><%= icon('exclamation') %> <%= flash[:error] %></section><% end -%>
 <%= render :partial => "layouts/asofdate" %>
 <%= render :partial => 'layouts/breadcrumbs' %>
+<%= render :partial => 'layouts/history' %>
 <%= yield :navigator %>
 <%= render :partial => 'layouts/footer' %>

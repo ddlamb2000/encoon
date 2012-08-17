@@ -184,6 +184,10 @@ module ApplicationHelper
     end
   end
   
+  def display_loading
+    icon('loading') + "&nbsp;".html_safe + I18n.t('general.loading')
+  end
+
   def display_new
     "&nbsp;" + content_tag("div", I18n.t('general.new'), :class => "new")
   end
@@ -193,7 +197,7 @@ module ApplicationHelper
             :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
-
+  
   def display_created_time_by(entity, who, who_uuid)
     I18n.t('general.time_by', 
             :time => time_ago_in_words(
