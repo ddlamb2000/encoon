@@ -190,7 +190,8 @@ body {
     margin-top: $padding;
     margin-bottom: 2*$padding;
     padding: $padding;
-    border: 1px solid transparent;
+    border: 1px dashed transparent;
+    @include border-radius;
     @include transition;
     &:hover {
       border: 1px solid $background-color-highlights;
