@@ -99,7 +99,7 @@
 
 <% content_for :document do %>
   <% unless @grid.blank? or @row.blank? %>
-    <%= render :partial => 'show_grid' %>
+    <%= render :partial => 'entities/row', :locals => { :grid => @grid, :row => @row, :row_loc => @row_loc } %>
     <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
       <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
       <% attached_grid.load_cached_grid_structure(@filters) %>
@@ -110,7 +110,7 @@
             <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
           </h2>
         </header>
-        <%= render :partial => "list", 
+        <%= render :partial => "entities/list", 
                     :locals => { 
                       :embedded => true, 
                       :grid => attached_grid,

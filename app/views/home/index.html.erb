@@ -19,7 +19,7 @@
     		  <span title="<%= @workspaces.description.html_safe %>"><%= icon('information') %></span>
     		</h2>
   		</header>
-  		<%= render :partial => "rows/list", 
+  		<%= render :partial => "entities/list", 
   		           :locals => { 
   		                :embedded => true,
   		                :grid => @workspaces, 
