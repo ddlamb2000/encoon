@@ -40,22 +40,22 @@ table {
   }
   .list-header-string {
     text-align: left;
-    font-weight: normal;
+    font-weight: bolder;
     background-color: $background-color-table-header;
   }
   .list-header-date {
     text-align: center;
-    font-weight: normal;
+    font-weight: bolder;
     background-color: $background-color-table-header;
   }
   .list-header-boolean {
     text-align: center;
-    font-weight: normal;
+    font-weight: bolder;
     background-color: $background-color-table-header;
   }
   .list-header-number {
     text-align: right;
-    font-weight: normal;
+    font-weight: bolder;
     background-color: $background-color-table-header;
   }
   .list-date {
