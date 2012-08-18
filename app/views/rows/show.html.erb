@@ -9,7 +9,7 @@
             <%= icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe %>
           </span>
           <div class="slideButton">
-            <input type="checkbox" id="more-button" <%= session[:show_details] ? 'checked' : '' %>/>
+            <input type="checkbox" id="more-button" <%= session[:show_details] ? 'checked' : '' %> />
             <label for="more-button"></label>
           </div>
           <section id="more-content" style="display: none;"></section>
