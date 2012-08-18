@@ -5,15 +5,28 @@
     <% if @grid.present? and @row.present? %>
       <article class="article">
         <% if user_signed_in? %>
-          <div id="show-more-button" class="button" title="Displays more information about current data.">
-            <%= link_to icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe, 
-                            {:action => "show_more", :grid_id => @grid.uuid, :id => @row.id},
-                            :remote => true %>
+          <span id="more-title" class="button">
+            <%= icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe %>
+          </span>
+          <div class="slideButton">
+            <input type="checkbox" id="more-button" />
+            <label for="more-button"></label>
           </div>
-          <div id="show-more-detail"></div>
-          <div id="close-more-button" class="button" style="display: none">
-            <%= link_to I18n.t('actions.hide'), {:action => "hide_more"}, :remote => true %>
-          </div>
+          <section id="more-content"></section>
+          <script>
+            $("#more-button").click(function (event){
+              if ($(this).attr('checked')) {
+                $("#more-content").html("<%= escape_javascript(display_loading) %>");
+                $("#more-content").show();
+                $("#more-content").load("<%= url_for(:action => "show_more", :grid_id => @grid.uuid, :id => @row.id) %>");
+                $("#more-title").addClass("highlighted");
+              } 
+              else {
+                $("#more-title").removeClass("highlighted");
+                $("#more-content").hide();
+              }
+            });
+          </script>
         <% end %>
       </article>
     <% end %>

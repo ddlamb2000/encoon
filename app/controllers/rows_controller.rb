@@ -81,9 +81,7 @@ class RowsController < ApplicationController
   end
 
   def show_more
-  end
-
-  def hide_more
+    render :partial => "show_more"
   end
 
   def new_inline
