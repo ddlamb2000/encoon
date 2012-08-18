@@ -16,8 +16,9 @@
           <script>
             function showDetails() {
               if ($("#more-button").attr('checked')) {
+                $("#more-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
                 $("#more-content").show();
-                $("#more-content").html('<%= escape_javascript(render :partial => "details") %>');
+                $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
                 $.ajax("<%= url_for(set_path(:flag => "show_details")) %>");
                 $("#more-title").addClass("highlighted");
               } 
@@ -128,14 +129,18 @@
             <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
           </h2>
         </header>
-        <%= render :partial => "entities/list", 
-                    :locals => { 
-                      :embedded => true, 
-                      :grid => attached_grid,
-                      :filters => @filters,
-                      :table_row_count => attached_grid.row_count(@filters),
-                      :table_rows => attached_grid.row_all(@filters), 
-                      :table_columns => attached_grid.filtered_columns } %>
+        <div id="<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>">
+          <%= render :partial => "home/loading" %>
+        </div>
+        <script>
+          $("#<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>").load(
+            "<%= url_for(:action => :search_list, 
+                         :grid_id => attached_grid.uuid,
+                         :id => 0,
+                         :filters => @filters,
+                         :embedded => true
+                         ) %>");
+        </script>
       </article>                                
     <% end %>
   <% else %>

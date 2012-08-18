@@ -13,7 +13,7 @@
       <script>
         function showBreadcrumb() {
           if ($("#breadcrumb-button").attr('checked')) {
-            $("#breadcrumb-content").html("<%= escape_javascript(display_loading) %>");
+            $("#breadcrumb-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
             $("#breadcrumb-content").show();
             $("#breadcrumb-content").html("<%= escape_javascript(breadcrumbs) %>");
             $.ajax("<%= url_for(set_path(:flag => "show_breadcrumb")) %>");

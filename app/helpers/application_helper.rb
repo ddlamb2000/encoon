@@ -187,10 +187,6 @@ module ApplicationHelper
     end
   end
   
-  def display_loading
-    icon('loading') + "&nbsp;".html_safe + I18n.t('actions.wait')
-  end
-
   def display_new
     "&nbsp;" + content_tag("div", I18n.t('general.new'), :class => "new")
   end

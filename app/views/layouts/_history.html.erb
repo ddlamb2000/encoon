@@ -11,7 +11,7 @@
     <script>
       function showHistory() {
         if ($("#history-button").attr('checked')) {
-          $("#history-content").html("<%= escape_javascript(display_loading) %>");
+          $("#history-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
           $("#history-content").show();
           $("#history-content").load("<%= url_for(history_path) %>");
           $.ajax("<%= url_for(set_path(:flag => "show_history")) %>");

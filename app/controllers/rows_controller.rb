@@ -47,6 +47,13 @@ class RowsController < ApplicationController
       unlock_as_of_date
     end
   end
+
+  # Renders the content of a list through an Ajax request  
+  def search_list
+    log_debug "RowsController#list: params=#{params.inspect}"
+    @embedded = params[:embedded]
+    render :partial => "search_list"
+  end
   
   def search
     log_debug "RowsController#search: params=#{params.inspect}"
@@ -80,6 +87,7 @@ class RowsController < ApplicationController
     end
   end
 
+  # Renders the details of an article through an Ajax request  
   def details
     render :partial => "details"
   end
