@@ -6,7 +6,7 @@
     <span class="button">
       <%= link_to_unless_current(icon('preferences') + ("&nbsp;" + 
                                current_user.to_s).html_safe, edit_user_registration_path) do |name| %>
-        <span class="hightlighted"><%= name %></span>
+        <span class="highlighted"><%= name %></span>
       <% end %>
     </span>
   <% end %>
