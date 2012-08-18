@@ -28,7 +28,7 @@ class RowsController < ApplicationController
                                                :upload]
   before_filter :findParent
   before_filter :findEntity, :only => [:show, 
-                                       :show_more, 
+                                       :details, 
                                        :edit_inline, 
                                        :edit_row_inline, 
                                        :update, 
@@ -80,8 +80,8 @@ class RowsController < ApplicationController
     end
   end
 
-  def show_more
-    render :partial => "show_more"
+  def details
+    render :partial => "details"
   end
 
   def new_inline

@@ -18,7 +18,7 @@
               if ($(this).attr('checked')) {
                 $("#more-content").html("<%= escape_javascript(display_loading) %>");
                 $("#more-content").show();
-                $("#more-content").load("<%= url_for(:action => "show_more", :grid_id => @grid.uuid, :id => @row.id) %>");
+                $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
                 $("#more-title").addClass("highlighted");
               } 
               else {
