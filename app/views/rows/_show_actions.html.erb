@@ -23,7 +23,7 @@
   <% if user_signed_in? and @grid.can_update?(@row) %>
     <div class="button" title="Export current data into a XML file.">
       <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-         {:format => :xml}, :class => :popup %>
+         {:format => :xml} %>
    </div>
   <% end %>
 </aside>
