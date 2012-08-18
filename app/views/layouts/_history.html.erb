@@ -1,27 +1,26 @@
 <section id="history">
   <article class="article">
-      <span id="history-title" class="button">
-        <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
-      </span>
+    <span id="history-title" class="button">
+      <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
+    </span>
     <div class="slideButton">
-      <input type="checkbox" value="None" id="history-button" name="check" />
+      <input type="checkbox" id="history-button" />
       <label for="history-button"></label>
     </div>
     <section id="history-content"></section>
+    <script>
+      $("#history-button").click(function (event){
+        if ($(this).attr('checked')) {
+          $("#history-content").html("<%= escape_javascript(display_loading) %>");
+          $("#history-content").show();
+          $("#history-content").load("<%= url_for(:controller => '/home', :action => "history") %>");
+          $("#history-title").addClass("highlighted");
+        } 
+        else {
+          $("#history-title").removeClass("highlighted");
+          $("#history-content").hide();
+        }
+      });
+    </script>
   </article>
 </section>
-
-<script>
-  $("#history-button").click(function (event){
-    if ($(this).attr('checked')) {
-      $("#history-content").html("<%= escape_javascript(display_loading) %>");
-      $("#history-content").show();
-      $("#history-content").load("<%= url_for(:controller => '/home', :action => "history") %>");
-      $("#history-title").addClass("highlighted");
-    } 
-    else {
-      $("#history-title").removeClass("highlighted");
-      $("#history-content").hide();
-    }
-  });
-</script>
