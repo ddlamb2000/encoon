@@ -9,13 +9,13 @@
             <%= icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe %>
           </span>
           <div class="slideButton">
-            <input type="checkbox" id="more-button" />
+            <input type="checkbox" id="more-button" <%= session[:show_details] ? 'checked' : '' %>/>
             <label for="more-button"></label>
           </div>
           <section id="more-content" style="display: none;"></section>
           <script>
-            $("#more-button").click(function (event){
-              if ($(this).attr('checked')) {
+            function showDetails() {
+              if ($("#more-button").attr('checked')) {
                 $("#more-content").html("<%= escape_javascript(display_loading) %>");
                 $("#more-content").show();
                 $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
@@ -24,7 +24,12 @@
               else {
                 $("#more-title").removeClass("highlighted");
                 $("#more-content").hide();
+                $("#more-content").load("<%= url_for(:action => "hide_details") %>");
               }
+            };
+            showDetails();
+            $("#more-button").click(function (event){
+              showDetails();
             });
           </script>
         <% end %>
