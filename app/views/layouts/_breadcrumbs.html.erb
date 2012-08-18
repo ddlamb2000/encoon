@@ -2,10 +2,36 @@
   <% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
   <% if breadcrumbs.present? and breadcrumbs != "" %> 
     <article class="article">
-      <span class="button highlighted">
-        <a href="#"><%=t 'general.back_to' %></a>
+      <span id="breadcrumb-title" class="button">
+        <%= icon('previous') + ("&nbsp;" + I18n.t('general.back_to')).html_safe %>
       </span>
-      <%= breadcrumbs %>
+      <div class="slideButton">
+        <input type="checkbox" id="breadcrumb-button"  <%= session[:show_breadcrumb] ? 'checked' : '' %> />
+        <label for="breadcrumb-button"></label>
+      </div>
+      <section id="breadcrumb-content" style="display: none;"></section>
+      <script>
+        function showBreadcrumb() {
+          if ($("#breadcrumb-button").attr('checked')) {
+            $("#breadcrumb-content").html("<%= escape_javascript(display_loading) %>");
+            $("#breadcrumb-content").show();
+            $("#breadcrumb-content").html("<%= escape_javascript(breadcrumbs) %>");
+            $.ajax("<%= url_for(set_path(:flag => "show_breadcrumb")) %>");
+            $("#breadcrumb-title").addClass("highlighted");
+          } 
+          else {
+            $("#breadcrumb-title").removeClass("highlighted");
+            $("#breadcrumb-content").hide();
+            $.ajax("<%= url_for(unset_path(:flag => "show_breadcrumb")) %>");
+          }
+        };
+        showBreadcrumb();
+        $("#breadcrumb-button").click(function (event){
+          showBreadcrumb();
+        });
+      </script>
+
+
     </article>
   <% end %>
 </section>

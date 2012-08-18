@@ -81,13 +81,7 @@ class RowsController < ApplicationController
   end
 
   def details
-    session[:show_details] = true
     render :partial => "details"
-  end
-
-  def hide_details
-    session[:show_details] = false
-    render :nothing => true
   end
 
   def new_inline

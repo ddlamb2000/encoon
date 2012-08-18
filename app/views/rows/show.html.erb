@@ -19,12 +19,13 @@
                 $("#more-content").html("<%= escape_javascript(display_loading) %>");
                 $("#more-content").show();
                 $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
+                $.ajax("<%= url_for(set_path(:flag => "show_details")) %>");
                 $("#more-title").addClass("highlighted");
               } 
               else {
                 $("#more-title").removeClass("highlighted");
                 $("#more-content").hide();
-                $("#more-content").load("<%= url_for(:action => "hide_details") %>");
+                $.ajax("<%= url_for(unset_path(:flag => "show_details")) %>");
               }
             };
             showDetails();

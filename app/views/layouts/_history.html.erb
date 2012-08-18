@@ -13,13 +13,14 @@
         if ($("#history-button").attr('checked')) {
           $("#history-content").html("<%= escape_javascript(display_loading) %>");
           $("#history-content").show();
-          $("#history-content").load("<%= url_for(:controller => '/home', :action => "history") %>");
+          $("#history-content").load("<%= url_for(history_path) %>");
+          $.ajax("<%= url_for(set_path(:flag => "show_history")) %>");
           $("#history-title").addClass("highlighted");
         } 
         else {
           $("#history-title").removeClass("highlighted");
           $("#history-content").hide();
-          $("#history-content").load("<%= url_for(:controller => '/home', :action => "hide_history") %>");
+          $.ajax("<%= url_for(unset_path(:flag => "show_history")) %>");
         }
       };
       showHistory();

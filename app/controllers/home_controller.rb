@@ -15,7 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class HomeController < ApplicationController
-
   def index
     @page_title = ""
     @page_icon = "home"
@@ -30,13 +29,18 @@ class HomeController < ApplicationController
   end
 
   def history
-    session[:show_history] = true
     render :partial => "history"
   end
 
-  def hide_history
-    session[:show_history] = false
+  # Sets the session flag referenced by the given parameter.
+  def set
+    session[params[:flag]] = true unless params[:flag].nil?
     render :nothing => true
   end
 
+  # Unsets the session flag referenced by the given parameter.
+  def unset
+    session[params[:flag]] = false unless params[:flag].nil?
+    render :nothing => true
+  end
 end
