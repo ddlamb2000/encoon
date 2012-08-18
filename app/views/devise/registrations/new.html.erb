@@ -32,7 +32,7 @@
       </tr>
     </table>
     <aside class="actions">
-      <center><div class="button"><%= f.submit I18n.t('devise.sign_up') %></div></center>
+      <center><div class="button"><%= f.submit I18n.t('devise.sign_up'), :disable_with => I18n.t('actions.wait') %></div></center>
     </aside>
   <% end %>
 <% end %>

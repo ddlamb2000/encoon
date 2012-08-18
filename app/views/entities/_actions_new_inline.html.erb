@@ -15,6 +15,6 @@
                                                                :currentText => I18n.t('datepicker.currentText'),
                                                                :closeText => I18n.t('datepicker.closeText'),
                                                                :size => "10x1" %>
-    | <div class="button"><%= f.submit I18n.t('actions.ok') %></div>
+    | <div class="button"><%= f.submit I18n.t('actions.ok'), :disable_with => I18n.t('actions.wait') %></div>
   </center>
 </aside>

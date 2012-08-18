@@ -16,7 +16,7 @@
       </tr>
     </table>
     <aside class="actions">
-      <center><div class="button"><%= f.submit I18n.t('devise.resend_unlock') %></div></center>
+      <center><div class="button"><%= f.submit I18n.t('devise.resend_unlock'), :disable_with => I18n.t('actions.wait') %></div></center>
     </aside>
   <% end %>
 <% end %>

@@ -185,7 +185,7 @@ module ApplicationHelper
   end
   
   def display_loading
-    icon('loading') + "&nbsp;".html_safe + I18n.t('general.loading')
+    icon('loading') + "&nbsp;".html_safe + I18n.t('actions.wait')
   end
 
   def display_new

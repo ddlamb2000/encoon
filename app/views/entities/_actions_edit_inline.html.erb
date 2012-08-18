@@ -18,6 +18,6 @@
     | <%= radio_button_tag :mode, :correction, true %>&nbsp;<%= I18n.t('version.update') %>
       <%= radio_button_tag :mode, :new_version %>&nbsp;<%= I18n.t('version.new') %>
     | <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%= I18n.t('field.active') %>
-    | <div class="button"><%= f.submit I18n.t('actions.ok') %></div>
+    | <div class="button"><%= f.submit I18n.t('actions.ok'), :disable_with => I18n.t('actions.wait') %></div>
   <center>
 </aside>

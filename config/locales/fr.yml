@@ -66,6 +66,7 @@ fr:
     login:        "Connexion"
     data:         "Afficher la liste des données"
     attach:       "Attacher document"
+    wait:         "Patience..."
 
   devise:
     sign_in:            "Se connecter"
@@ -166,7 +167,6 @@ fr:
     grid_design:  "Afficher la définition de la catégorie de données"
     attached_row: "%{grid} (%{column})"
     back_to:      "Retour arrière"
-    loading:      "(chargement)"
     
   datepicker:
     format:           "dd/mm/yy"

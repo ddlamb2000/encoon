@@ -21,7 +21,7 @@
       </tr>
     </table>
     <aside class="actions">
-      <center><div class="button"><%= f.submit I18n.t('devise.change_passwd') %></div></center>
+      <center><div class="button"><%= f.submit I18n.t('devise.change_passwd'), :disable_with => I18n.t('actions.wait') %></div></center>
     </aside>
   <% end %>
 <% end %>
