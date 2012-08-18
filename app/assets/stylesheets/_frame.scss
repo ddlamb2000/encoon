@@ -195,6 +195,28 @@ body {
       @include shade; 
     }
   }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+    tr {
+      padding: 2px;
+      vertical-align: text-top;
+    }
+    td {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: 2px;
+      padding-right: 2px;
+      vertical-align: text-top;
+      text-align: left;
+    }
+    .header {
+      text-align: right;
+      width: 33%;
+      font-weight: bolder;
+    }
+  }
 }
 
 .document {
@@ -232,5 +254,109 @@ body {
   }
   .header-article-level2 {
     background: $background-color-article-header-level2;
+  }
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+    tr {
+      padding: 2px;
+      vertical-align: text-top;
+      &:hover {
+        background: $background-color-table;
+      }
+    }
+    td {
+      padding-top: 0;
+      padding-bottom: 0;
+      padding-left: 2px;
+      padding-right: 2px;
+      vertical-align: text-top;
+    }
+    .header {
+      text-align: right;
+      width: 33%;
+      font-weight: bolder;
+    }
+    .string {
+      width: 100%;
+      text-align: left;
+      border-top: 1px solid $background-color-table;
+    }
+    .date {
+      width: 100%;
+      text-align: left;
+      border-top: 1px solid $background-color-table;
+    }
+    .number {
+      width: 100%;
+      text-align: left;
+      border-top: 1px solid $background-color-table;
+    }
+    .boolean {
+      width: 100%;
+      text-align: left;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-header-string {
+      text-align: left;
+      font-weight: bolder;
+      background-color: $background-color-table-header;
+    }
+    .list-header-date {
+      text-align: center;
+      font-weight: bolder;
+      background-color: $background-color-table-header;
+    }
+    .list-header-boolean {
+      text-align: center;
+      font-weight: bolder;
+      background-color: $background-color-table-header;
+    }
+    .list-header-number {
+      text-align: right;
+      font-weight: bolder;
+      background-color: $background-color-table-header;
+    }
+    .list-date {
+      width: 80px;
+      text-align: center;
+      border-left: 1px solid $background-color-table;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-number {
+      width: 80px;
+      text-align: right;
+      border-left: 1px solid $background-color-table;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-string {
+      text-align: left;
+      border-left: 1px solid $background-color-table;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-boolean {
+      width: 15px;
+      text-align: center;
+      border-left: 1px solid $background-color-table;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-description {
+      text-align: left;
+      border-left: 1px solid $background-color-table;
+      border-top: 1px solid $background-color-table;
+    }
+    .list-information {
+      width: 100%;
+      text-align: left;
+      border-bottom: 0;
+    }
+    .column-header {
+      min-width: 40px;
+      max-width: 40px;
+      text-align: right;
+      vertical-align: middle;
+      border-top: 1px solid $background-color-table;
+    }
   }
 }
