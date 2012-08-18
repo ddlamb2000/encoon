@@ -95,6 +95,10 @@ body {
 #navigator {
   @include float-left;
   width: 25%;
+  #history-content, #more-content {
+    max-height: 300px;
+    overflow: auto;
+  }
 }
 
 .tools {
@@ -211,6 +215,7 @@ body {
       padding-right: 2px;
       vertical-align: text-top;
       text-align: left;
+      line-height: 130%;
     }
     .header {
       text-align: right;
