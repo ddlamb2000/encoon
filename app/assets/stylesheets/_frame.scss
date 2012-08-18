@@ -86,22 +86,17 @@ body {
   font-size: 80%;
 }
 
-.content1-1 {
-  @include float-left;
-  width: 100%;
-}
-
-.content3-4 {
+#main-area {
   @include float-right;
   width: 75%;
 }
 
-.sidebar {
+#navigator {
   @include float-left;
   width: 25%;
 }
 
-.navigator {
+.tools {
   margin-left: 2*$padding;
   margin-right: 2*$padding;
   margin-top: 2*$padding;

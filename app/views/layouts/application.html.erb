@@ -22,12 +22,12 @@
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
     </header>
-    <section class="sidebar">
-      <section class="navigator">
+    <section id="navigator">
+      <section class="tools">
         <%= render :partial => "layouts/navigator" %>
       </section>
     </section>
-    <section class="content3-4">
+    <section id="main-area">
       <section class="document">
         <%= yield :document %>
       </section>
