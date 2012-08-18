@@ -40,7 +40,6 @@ $background-color-article-header: transparent;
 $background-color-article-header-level2: transparent;
 $background-color-table: #e8f0e3;
 $background-color-table-header: #F8F8F8;
-$background-color-actions: #e8f0e3; 
 $background-color-buttons: #c0c0c0;
 $background-color-navigator-section: #404040;
 $title-color: #b50000;
@@ -62,6 +61,13 @@ $padding: 4px;
   @include transition-property(all);
   @include transition-duration(0.3s);
   @include transition-timing-function(ease-in); 
+}
+
+@mixin undecored-link {
+  text-decoration: none;
+  &:hover {
+    text-decoration: none; 
+  } 
 }
 
 @include blueprint;

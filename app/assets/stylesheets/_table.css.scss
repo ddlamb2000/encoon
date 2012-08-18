@@ -5,6 +5,9 @@ table {
   tr {
     padding: 2px;
     vertical-align: text-top;
+    &:hover {
+      background: $background-color-table;
+    }
   }
   td {
     padding-top: 0;
