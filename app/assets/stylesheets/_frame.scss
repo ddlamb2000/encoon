@@ -115,7 +115,7 @@ body {
     padding: $padding;
     @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
     background-color: $background-color-navigator-section;
-    line-height: 210%;
+    line-height: 180%;
     @include border-radius;
     a {
       @include link-colors($color-highlight);
