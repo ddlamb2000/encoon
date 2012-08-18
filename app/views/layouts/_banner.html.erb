@@ -1,6 +1,7 @@
 <section id="header-application">
-  <%=t 'banner.welcome' %>
+  <%= current_application_title %>
 </section>
+
 <section id="header-links">
   <% if user_signed_in? %>
     <span class="button">
@@ -27,4 +28,7 @@
     </span>
   <% end %>
 </section>
-<section id="workspaces"><%= render :partial => "layouts/workspaces" %></section>
+
+<section id="workspaces">
+  <%= render :partial => "layouts/workspaces" %>
+</section>
