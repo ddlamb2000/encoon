@@ -4,13 +4,13 @@
       <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
     </span>
     <div class="slideButton">
-      <input type="checkbox" id="history-button" />
+      <input type="checkbox" id="history-button"  <%= session[:show_history] ? 'checked' : '' %> />
       <label for="history-button"></label>
     </div>
     <section id="history-content" style="display: none;"></section>
     <script>
-      $("#history-button").click(function (event){
-        if ($(this).attr('checked')) {
+      function showHistory() {
+        if ($("#history-button").attr('checked')) {
           $("#history-content").html("<%= escape_javascript(display_loading) %>");
           $("#history-content").show();
           $("#history-content").load("<%= url_for(:controller => '/home', :action => "history") %>");
@@ -19,7 +19,12 @@
         else {
           $("#history-title").removeClass("highlighted");
           $("#history-content").hide();
+          $("#history-content").load("<%= url_for(:controller => '/home', :action => "hide_history") %>");
         }
+      };
+      showHistory();
+      $("#history-button").click(function (event){
+        showHistory();
       });
     </script>
   </article>

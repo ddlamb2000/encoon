@@ -30,7 +30,13 @@ class HomeController < ApplicationController
   end
 
   def history
+    session[:show_history] = true
     render :partial => "history"
+  end
+
+  def hide_history
+    session[:show_history] = false
+    render :nothing => true
   end
 
 end
