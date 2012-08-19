@@ -1,7 +1,7 @@
 h1 {
   font-size: 160%;
   font-weight: bolder;
-  @include text-shadow;
+  @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
   .title {
     color: $title-color;
   }
@@ -10,7 +10,7 @@ h1 {
 h2 {
   font-size: 130%;
   font-weight: bolder;
-  @include text-shadow;
+  @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
   .title {
     color: $title-color;
   }
@@ -81,7 +81,7 @@ li {
       vertical-align: middle;
       padding: $padding;
       @include border-radius;
-      @include text-shadow;
+      @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
       @include transition;
       &:hover {
         background-color: $title-color;
@@ -99,7 +99,7 @@ li {
       color: white;
       border: 0;
       @include border-radius;
-      @include text-shadow;
+      @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
       @include transition;
       &:hover {
         background-color: black;
@@ -154,7 +154,7 @@ li {
   background-color: yellow;
   padding: 2px;
   display: inline;
-  @include shadow;
+  @include single-box-shadow($shadow-color, 5px, 5px, 5px); 
   @include border-radius;
 }
 
