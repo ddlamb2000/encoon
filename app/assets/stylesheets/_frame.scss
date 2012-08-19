@@ -11,7 +11,7 @@ body {
   color: $color-highlight;
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-banner, 5%) 5%, $background-color-banner));
   background-color: $background-color-banner;
-  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+  @include single-box-shadow($shadow-color, 0, 2px, 2px); 
   .button { 
     display: inline;
     @include border-radius;
@@ -235,6 +235,7 @@ body {
   padding: $padding;
   @include background-image(radial-gradient(50% 70%, adjust-lightness($background-color-article, 85%) 5%, $background-color-article));
   background-color: $background-color-article;
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   .article {
     margin-left: $padding;
     margin-right: $padding;
