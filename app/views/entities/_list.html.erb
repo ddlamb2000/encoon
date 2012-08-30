@@ -1,4 +1,4 @@
-<% if not embedded %>
+<% if not embedded and filters.present? %>
   <table class="filter"><%= display_filters(grid, filters, defined?(search) ? search : nil).html_safe %></table>
 <% end %>
 

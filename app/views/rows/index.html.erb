@@ -45,8 +45,9 @@
       <div id="search-list"><%= render :partial => "home/loading" %></div>
       <script>
         $("#search-list").load("<%= url_for(:action => :search_list, 
-                                     :grid_id => @grid.uuid,
-                                     :id => 0) %>");
+                                            :grid_id => @grid.uuid,
+                                            :filters => @filters,
+                                            :id => 0) %>");
       </script>
     </article>
   <% else %>

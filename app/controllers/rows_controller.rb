@@ -49,12 +49,19 @@ class RowsController < ApplicationController
       push_history
       unlock_as_of_date
     end
+    @filters = params[:filters]
   end
 
   # Renders the content of a list through an Ajax request  
   def search_list
     log_debug "RowsController#list: params=#{params.inspect}"
     @embedded = params[:embedded]
+    @filters = params[:filters]
+    @search = params[:search]
+    @page = params[:page]
+    @table_row_count = @grid.row_count(@filters)
+    @table_rows = @grid.row_all(@filters, @search, @page, true) 
+    @table_columns = @grid.filtered_columns
     render :partial => "search_list"
   end
   
@@ -479,7 +486,7 @@ private
       Entity.log_debug "RowsController#findParent " + 
                        "Invalid: can't find data grid #{params[:grid_id]}"
     else
-      @grid.load_cached_grid_structure    
+      @grid.load_cached_grid_structure(params[:filters])    
     end
   end
 
