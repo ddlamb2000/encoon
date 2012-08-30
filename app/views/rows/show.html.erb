@@ -95,7 +95,7 @@
                 <% unless attached_grid.description.nil? %>
                   <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
                 <% end %>
-                <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+                <span class="detail"><%= attached_grid.column_name.html_safe %></span>
     				  </li>
     			<% end %>
           <% if @grid.uuid == Grid::ROOT_UUID %>
@@ -106,7 +106,7 @@
                                            :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID,
                                          :id => attached_grid.uuid %>
                 <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
-                <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+                <span class="detail"><%= attached_grid.column_name.html_safe %></span>
     		      </li>
     		    <% end %>
     			<% end %>
@@ -126,7 +126,7 @@
         <header class="header-article-level2">
           <h2>
             <span class="title"><%= attached_grid.name %></span>
-            <span class="detail-article"><%= attached_grid.column_name.html_safe %></span>
+            <span class="detail"><%= attached_grid.column_name.html_safe %></span>
           </h2>
         </header>
         <div id="<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>">

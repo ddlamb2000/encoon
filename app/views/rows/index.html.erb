@@ -37,7 +37,7 @@
       <header class="header-article-level2">
         <h1>
           <span class="title"><%= @grid.to_s.html_safe %></span>
-          <span class="detail-article">
+          <span class="detail">
             <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
           </span>
         </h1>

@@ -156,7 +156,7 @@ module ApplicationHelper
                                     I18n.t('general.ago', 
                                            :time => time_ago_in_words(link[:when], 
                                                      :include_seconds => true)), 
-                                    :class => 'detail-article'), 
+                                    :class => 'detail'), 
                                 :class => "description")
       end
     end

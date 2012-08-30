@@ -85,11 +85,25 @@ li {
 .information {
   display: inline;
   font-size: 95%;
-  font-weight: normal;
-  font-style: normal;
-  background: #ffd;
-  color: black;
-  border: 1px solid red;
+  background: $background-color;
+  color: $title-color;
+  img {
+    border: 0;
+  }
+}
+
+.detail {
+  display: inline;
+  font-size: 95%;
+  font-style: italic;
+  img {
+    border: 0;
+  }
+}
+
+.small-description {
+  display: inline;
+  font-size: 95%;
   img {
     border: 0;
   }

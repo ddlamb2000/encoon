@@ -28,7 +28,7 @@
             <span title="<%= row.description.html_safe %>"><%= icon('information') %></span>
           <% end %>
           <%= display_information(row) %>
-          <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
+          <span class="detail"><%= display_updated_date(row).html_safe %></span>
           <% if grid.uuid == Grid::ROOT_UUID %>
             <%= link_to icon('table'), :controller => 'rows', :action => 'show', 
                                        :grid_id => Grid::ROOT_UUID, :id => row.uuid %>
@@ -40,7 +40,7 @@
 				  	      column, 
                   row.read_value(column),
                   ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
-                      link_to(icon("external"), 
+                      link_to(row.read_referenced_name(column), 
                       :controller => 'rows', :action => 'show', :grid_id => column.grid_reference_uuid, :id => row.read_value(column)) :
                       ""),
 									row.read_referenced_name(column)) %>

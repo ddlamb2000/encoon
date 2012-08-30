@@ -12,7 +12,7 @@
       <td class="header"><%= I18n.t('field.begin_date') %></td>
       <td class="string">
         <%=h display_begin_date(@row.begin) %>
-        <span class="detail-article"><%= display_distance_date(@row.begin) %></span>
+        <span class="detail"><%= display_distance_date(@row.begin) %></span>
       </td>
     </tr>
   <% end %>
@@ -21,7 +21,7 @@
       <td class="header"><%= I18n.t('field.end_date') %></td>
       <td class="string">
         <%=h display_end_date(@row.end) %>
-        <span class="detail-article"><%= display_distance_date(@row.end) %></span>
+        <span class="detail"><%= display_distance_date(@row.end) %></span>
       </td>
     </tr>
   <% end %>
@@ -29,7 +29,7 @@
     <td class="header"><%= I18n.t('field.created') %></td>
     <td class="string">
       <%=h @row.created_at %>
-      <span class="detail-article">
+      <span class="detail">
         <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
       </span>
     </td>
@@ -39,7 +39,7 @@
       <td class="header"><%= I18n.t('field.updated') %></td>
       <td class="string">
         <%=h @row.updated_at %>
-        <span class="detail-article">
+        <span class="detail">
           <%= display_updated_time_by( @row, @row.who_updated, @row.update_user_uuid).html_safe %>
         </span>
       </td>
@@ -57,7 +57,7 @@
         <li>
           <%= link_to information(row, true), :action => 'show', :grid_id => @grid.uuid, :id => row.id %>      
   				<%=sanitize trunc(row.description).html_safe %>
-          <span class="detail-article"><%= display_updated_date(row).html_safe %></span>
+          <span class="detail"><%= display_updated_date(row).html_safe %></span>
         </li>
   		</ul>
       <% end %>
@@ -85,7 +85,7 @@
         <% for row in @row.all_audits %>
           <li>
             <%= row.kind_name.html_safe %>
-            <span class="detail-article">
+            <span class="detail">
               <%= display_updated_time_by(row, row.who_updated, row.update_user_uuid).html_safe %>
             </span>
           </li>
