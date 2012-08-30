@@ -22,12 +22,12 @@
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
     </header>
-    <section id="navigator">
+    <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
         <%= render :partial => "layouts/navigator" %>
       </section>
     </section>
-    <section id="main-area">
+    <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
       <section class="document">
         <%= yield :document %>
       </section>

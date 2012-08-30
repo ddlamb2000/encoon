@@ -83,32 +83,37 @@ body {
   }
 }
 
-#footer {
-  text-align: center;
-  font-size: 80%;
+.main-area {
+  @include float-right;
+  width: 70%;
 }
 
-#main-area {
-  @include float-right;
-  width: 75%;
+.large-area {
+  @include float-left;
+  width: 100%;
 }
 
 #navigator {
   @include float-left;
-  width: 25%;
+  width: 30%;
   #history-content, #more-content {
     max-height: 300px;
     overflow: auto;
   }
 }
 
+#footer {
+  text-align: center;
+  font-size: 80%;
+}
+
 .tools {
   margin-left: 2*$padding;
   margin-right: 2*$padding;
-  margin-top: 2*$padding;
+  margin-top: 4*$padding;
   margin-bottom: 2*$padding;
   color: $color-highlight;
-  .article {
+  article {
     margin-left: $padding;
     margin-right: $padding;
     margin-top: $padding;
@@ -197,15 +202,15 @@ body {
 }
 
 .document {
-  margin-left: 0;
+  margin-left: 2*$padding;
   margin-right: 4*$padding;
-  margin-top: 2*$padding;
+  margin-top: 4*$padding;
   margin-bottom: 2*$padding;
   padding: $padding;
   @include background-image(radial-gradient(50% 70%, adjust-lightness($background-color-article, 85%) 5%, $background-color-article));
   background-color: $background-color-article;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
-  .article {
+  article {
     margin-left: $padding;
     margin-right: $padding;
     margin-top: $padding;

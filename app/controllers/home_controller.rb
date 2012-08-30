@@ -15,6 +15,9 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class HomeController < ApplicationController
+  before_filter :load_workspaces, :only => [:index, 
+                                            :refresh]
+
   def index
     @page_title = ""
     @page_icon = "home"

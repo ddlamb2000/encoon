@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class ApplicationController < ActionController::Base
-  before_filter :load_credentials, :load_workspaces
+  before_filter :load_credentials
 
   # Application layout
   layout "application"

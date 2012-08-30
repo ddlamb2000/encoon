@@ -1,3 +1,10 @@
+<% if user_signed_in? %>
+  <div class="slideButton">
+    <input type="checkbox" id="navigator-button"  <%= session[:hide_navigator] ? '' : 'checked' %> />
+    <label for="navigator-button"></label>
+  </div>
+<% end %>
+
 <span class="button">
   <%= link_to_unless_current(icon("home") + ("&nbsp;" + I18n.t('general.home')).html_safe, 
                             {:controller => '/home', :action => 'index'}) do |name| %>
@@ -17,3 +24,24 @@
     </div>																					    		
 	<% end %>
 <% end %>
+
+<script>
+  function showNavigator() {
+    if ($("#navigator-button").attr('checked')) {
+      $.ajax("<%= url_for(unset_path(:flag => "hide_navigator")) %>");
+      $("#navigator").show();
+      $("#main-area").removeClass("large-area");
+      $("#main-area").addClass("main-area");
+    } 
+    else {
+      $("#navigator").hide();
+      $("#main-area").removeClass("main-area");
+      $("#main-area").addClass("large-area");
+      $.ajax("<%= url_for(set_path(:flag => "hide_navigator")) %>");
+    }
+  };
+  showNavigator();
+  $("#navigator-button").click(function (event){
+    showNavigator();
+  });
+</script>

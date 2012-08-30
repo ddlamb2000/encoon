@@ -15,6 +15,9 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class RowsController < ApplicationController
+  before_filter :load_workspaces, :only => [:index, 
+                                            :show]
+
   before_filter :authenticate_user!, :only => [:edit_inline, 
                                                :edit_row_inline, 
                                                :new_inline,
