@@ -5,6 +5,11 @@ h1 {
   .title {
     color: $title-color;
   }
+  .detail {
+    display: inline;
+    font-size: 60%;
+    font-style: italic;
+  }
 }
 
 h2 {
@@ -87,6 +92,7 @@ li {
   font-size: 95%;
   background: $background-color;
   color: $title-color;
+  font-weight: normal;
   img {
     border: 0;
   }
@@ -96,6 +102,7 @@ li {
   display: inline;
   font-size: 95%;
   font-style: italic;
+  font-weight: normal;
   img {
     border: 0;
   }

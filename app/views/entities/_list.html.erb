@@ -1,5 +1,7 @@
 <% if not embedded and filters.present? %>
-  <table class="filter"><%= display_filters(grid, filters, defined?(search) ? search : nil).html_safe %></table>
+  <table class="filter">
+    <%= display_filters(grid, filters, defined?(search) ? search : nil).html_safe %>
+  </table>
 <% end %>
 
 <% if table_rows.length > 0 %>
@@ -7,7 +9,10 @@
     <tr>
 			<th class="list-header-string"><%=h grid.name %></th>
 	  	<% for column in table_columns %>
-	  		<%= show_header_label(column.kind, column.name.html_safe, column.description.html_safe, true) %>
+	  		<%= show_header_label(column.kind, 
+	  		                       column.name.html_safe, 
+	  		                       column.description.html_safe, 
+	  		                       true) %>
 	  	<% end %>
 	  	<th class="list-header-string"></th>
     </tr>
@@ -17,13 +22,17 @@
 	      <td class="list-description">
           <span title="<%= trunc(row.description.html_safe) %>">
             <% if grid.has_name? %>
-              <% if grid.uuid == Grid::ROOT_UUID %>
-                <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'index', :grid_id => row.uuid %>
-  						<% else %>
-                <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
-              <% end %>
+              <%= link_to grid.row_title(row).html_safe, 
+                            :controller => 'rows', 
+                            :action => 'show', 
+                            :grid_id => grid.uuid, 
+                            :id => row.uuid %>
             <% else %>
-              <%= link_to icon('blueright'),  :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
+              <%= link_to icon('blueright'),
+                          :controller => 'rows', 
+                          :action => 'show', 
+                          :grid_id => grid.uuid, 
+                          :id => row.uuid %>
             <% end %>
           </span>
           <%= display_information(row) %>
@@ -36,12 +45,18 @@
                   row.read_value(column),
                   ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
                       link_to(row.read_referenced_name(column), 
-                      :controller => 'rows', :action => 'show', :grid_id => column.grid_reference_uuid, :id => row.read_value(column)) :
+                      :controller => 'rows', 
+                      :action => 'show', 
+                      :grid_id => column.grid_reference_uuid, 
+                      :id => row.read_value(column)) :
                       ""),
 									row.read_referenced_name(column)) %>
 			  <% end %>
         <td class="column-header">
-          <%= render :partial => 'rows/index_row_actions', :locals => {:row => row, :grid => grid} %>
+          <%= render :partial => 'rows/index_row_actions', 
+                      :locals => {
+                        :row => row, 
+                        :grid => grid} %>
         </td>
 		  </tr>
       <tr>

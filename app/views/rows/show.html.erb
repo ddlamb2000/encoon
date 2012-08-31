@@ -3,7 +3,7 @@
 <% content_for :navigator do %>
   <% unless @grid.blank? or @row.blank? %>
     <% if @grid.present? and @row.present? %>
-      <article class="article">
+      <article>
         <% if user_signed_in? %>
           <span id="more-title" class="button">
             <%= icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe %>
@@ -36,22 +36,11 @@
         <% end %>
       </article>
     <% end %>
-    <article class="article">
+    <article>
       <ul>
-        <% if @grid_cast.present? and @grid_cast.can_select_data? %>
-          <li>
-            <%= link_to icon('greenright')  + ("&nbsp;" + I18n.t('actions.data')).html_safe, 
-                        :controller => 'rows', :grid_id => @grid_cast.uuid %>
-          </li>
-        <% elsif @grid.uuid != Grid::ROOT_UUID and @grid.can_select_data? %>
-          <li>
-            <%= link_to icon('greenright') + ("&nbsp;" + I18n.t('actions.data')).html_safe, 
-                        :controller => 'rows', :grid_id => @grid.uuid %>
-          </li>
-        <% end %>
         <% if @grid.uuid != Grid::ROOT_UUID %>
           <li>
-            <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
+            <%= link_to_unless_current icon('table') + ("&nbsp;" + @grid.name).html_safe, 
                                        :controller => 'rows', 
                                        :action => 'show', 
                                        :grid_id => Grid::ROOT_UUID, 
@@ -118,14 +107,39 @@
 
 <% content_for :document do %>
   <% unless @grid.blank? or @row.blank? %>
-    <%= render :partial => 'entities/row', :locals => { :grid => @grid, :row => @row, :row_loc => @row_loc } %>
-    <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
-      <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
-      <% attached_grid.load_cached_grid_structure(@filters) %>
-      <article class="article">
+    <%= render :partial => 'entities/row', 
+               :locals => { 
+                 :grid => @grid, 
+                 :row => @row, 
+                 :row_loc => @row_loc } %>
+    <% if @grid_cast.present? and @grid_cast.can_select_data? %>
+      <article>
         <header class="header-article-level2">
           <h2>
-            <span class="title"><%= attached_grid.name %></span>
+            <span class="detail"><%=t 'rows.title' %></span>
+          </h2>
+        </header>
+        <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">
+          <%= render :partial => "home/loading" %>
+        </div>
+        <script>
+          $("#<%=h "list-grid" + @grid_cast.id.to_s %>").load(
+            "<%= url_for(:action => :search_list, 
+                         :grid_id => @grid_cast.uuid,
+                         :id => 0,
+                         :embedded => true
+                         ) %>");
+        </script>
+      </article>
+    <% end %>
+    <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
+      <% @filters = [{:column_uuid => attached_grid.column_uuid, 
+                      :row_uuid => @row.uuid, :row_name => @row.name}] %>
+      <% attached_grid.load_cached_grid_structure(@filters) %>
+      <article>
+        <header class="header-article-level2">
+          <h2>
+            <span class="title"><%= attached_grid.name.html_safe %></span>
             <span class="detail"><%= attached_grid.column_name.html_safe %></span>
           </h2>
         </header>
