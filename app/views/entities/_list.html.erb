@@ -15,24 +15,19 @@
 	  <% for row in table_rows %>
 		  <tr>
 	      <td class="list-description">
-          <% if grid.has_name? %>
-            <% if grid.uuid == Grid::ROOT_UUID %>
-              <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'index', :grid_id => row.uuid %>
-						<% else %>
-              <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
+          <span title="<%= trunc(row.description.html_safe) %>">
+            <% if grid.has_name? %>
+              <% if grid.uuid == Grid::ROOT_UUID %>
+                <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'index', :grid_id => row.uuid %>
+  						<% else %>
+                <%= link_to grid.row_title(row).html_safe, :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
+              <% end %>
+            <% else %>
+              <%= link_to icon('blueright'),  :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
             <% end %>
-          <% else %>
-            <%= link_to icon('blueright'),  :controller => 'rows', :action => 'show', :grid_id => grid.uuid, :id => row.uuid %>
-          <% end %>
-          <% if not row.description.blank? %>
-            <span title="<%= row.description.html_safe %>"><%= icon('information') %></span>
-          <% end %>
+          </span>
           <%= display_information(row) %>
           <span class="detail"><%= display_updated_date(row).html_safe %></span>
-          <% if grid.uuid == Grid::ROOT_UUID %>
-            <%= link_to icon('table'), :controller => 'rows', :action => 'show', 
-                                       :grid_id => Grid::ROOT_UUID, :id => row.uuid %>
-          <% end %>
 				</td>
         <% init_column_index %>
 	      <% for column in table_columns %>
