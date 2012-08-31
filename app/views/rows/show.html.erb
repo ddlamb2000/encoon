@@ -44,7 +44,8 @@
       <ul>
         <% if @grid.uuid != Grid::ROOT_UUID %>
           <li>
-            <%= link_to_unless_current icon('table') + ("&nbsp;" + @grid.name).html_safe, 
+            <%= icon('table') %>
+            <%= link_to_unless_current @grid.name.html_safe, 
                                        :controller => 'rows', 
                                        :action => 'show', 
                                        :grid_id => Grid::ROOT_UUID, 
@@ -80,14 +81,10 @@
 
                 <span class="button">
                   <span class="highlighted">
-                    <%= icon "expand" %> 
       					    <%= link_to_unless_current attached_grid.name, :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
                     <%= icon "external" %> 
                   </span>
                 </span>
-                <% unless attached_grid.description.nil? %>
-                  <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
-                <% end %>
                 <span class="detail"><%= attached_grid.column_name.html_safe %></span>
     				  </li>
     			<% end %>
@@ -98,7 +95,6 @@
                 <%= link_to_unless_current attached_grid.name, 
                                            :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID,
                                          :id => attached_grid.uuid %>
-                <span title="<%= attached_grid.description.html_safe %>"><%= icon('information') %></span>
                 <span class="detail"><%= attached_grid.column_name.html_safe %></span>
     		      </li>
     		    <% end %>
@@ -120,7 +116,7 @@
       <article>
         <header class="header-article-level2">
           <h2>
-            <span class="detail"><%=t 'rows.title' %></span>
+            <span class="title"><%=t 'rows.title' %></span>
           </h2>
         </header>
         <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">

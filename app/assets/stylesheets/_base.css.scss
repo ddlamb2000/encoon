@@ -19,6 +19,11 @@ h2 {
   .title {
     color: $title-color;
   }
+  .detail {
+    display: inline;
+    font-size: 60%;
+    font-style: italic;
+  }
 }
 
 p {
