@@ -1,18 +1,18 @@
 <section class="sidebar">
-  <article class="article">
+  <article>
     <%= icon 'notice' %> <%= I18n.t('banner.explain_wel') %></li>
   </article>
 </section>
 
 <% content_for :document do %>
-  <article class="article">
+  <article>
     <header>
       <h1><%= I18n.t('banner.welcome') %></h1>
     </header>
   </article>
   
   <% unless @workspaces.nil? %>
-    <article class="article">
+    <article>
       <header>
     		<h2>
     		  <%= @workspaces.name %>

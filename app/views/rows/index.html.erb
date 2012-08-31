@@ -2,7 +2,7 @@
 
 <% content_for :navigator do %>
   <% if @grid.present? %>
-    <article class="article">
+    <article>
       <ul>
         <li>
           <%= @grid.to_s.html_safe %>
@@ -17,7 +17,7 @@
       </ul>
     </article>
       <% if @grid.has_translation? %>
-        <article class="article">
+        <article>
           <aside class="actions">
             <%= form_tag({:controller => 'rows', :action => :search, :grid_id => @grid.uuid, :id => 0, :filters => params[:filters]}, 
                           :remote => true,
@@ -33,7 +33,7 @@
       
 <% content_for :document do %>
   <% if @grid.present? %>
-    <article class="article">
+    <article>
       <header class="header-article-level2">
         <h1>
           <span class="title"><%= @grid.to_s.html_safe %></span>
