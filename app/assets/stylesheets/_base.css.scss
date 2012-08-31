@@ -123,11 +123,10 @@ li {
 }
 
 .actions {
-  font-size: 90%;
   padding: $padding;
-  background-color: $background-color-table-header;
   vertical-align: middle;
-  @include border-radius;
+  text-align: center;
+  background-color: $background-color-table-header;
   .button { 
     display: inline;
     vertical-align: middle;
@@ -136,33 +135,29 @@ li {
     padding: $padding;
     a {
       background-color: white;
-      text-decoration: none;
       vertical-align: middle;
       padding: $padding;
       @include border-radius;
-      @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
       @include transition;
+      @include undecored-link;
       &:hover {
         background-color: $title-color;
         color: white;
-        text-decoration: none;
       } 
     }
     input {
       font-size: 80%;
       display: inline;
       background-color: $title-color; 
-      text-decoration: none;
       padding: $padding;
       margin: $padding;
       color: white;
       border: 0;
       @include border-radius;
-      @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
       @include transition;
+      @include undecored-link;
       &:hover {
         background-color: black;
-        text-decoration: none;
       }
     }
   }
@@ -171,7 +166,7 @@ li {
     text-decoration: none;
     padding: $padding;
     border: 0;
-    margin: 4px;
+    margin: $padding;
     @include transition;
     &[type=text] {
       vertical-align: middle;
@@ -195,14 +190,12 @@ li {
 
 .action-header {
   background: $background-color-banner;
-  color: $background-color;
-  text-align: center;
-  font-weight: bolder;
+  color: $color-highlight;
 }
 
 .required {
   display: inline;
-  color: red;
+  color: $title-color;
 }
 
 .new {
@@ -210,10 +203,9 @@ li {
   font-weight: bolder;
   font-style: normal;
   color: black;
-  background-color: yellow;
-  padding: 2px;
+  background-color: $background-color-highlights;
   display: inline;
-  @include single-box-shadow($shadow-color, 5px, 5px, 5px); 
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   @include border-radius;
 }
 

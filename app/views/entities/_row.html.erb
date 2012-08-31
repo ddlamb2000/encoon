@@ -31,7 +31,9 @@
   <% end %>
   <div id="entity-upload-attachment"></div>
   <div id="detail-actions"></div>
-  <footer id="actions">
-    <%= render :partial => 'show_actions' %>
+  <%= render :partial => 'entities/row_actions', 
+             :locals => { 
+               :grid => grid, 
+               :row => row } %>
   </footer>
 </article>

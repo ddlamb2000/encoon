@@ -68,8 +68,9 @@
   </table>
 <% end %>
 
+<%= show_collection_count(table_rows, table_row_count, params[:page]) %>
+
 <aside id=<%=h "actions-rows"  + grid.uuid + get_filters_uuid(filters) %> class="actions">
-  <%= show_collection_count(table_rows, table_row_count, params[:page]) %>
   <% if not_last_page(params[:page], table_row_count) %>
     <%= link_to icon('down') + ("&nbsp;" + I18n.t('general.next_rows')).html_safe, 
          :controller => 'rows', :action => 'index', :grid_id => grid.uuid,

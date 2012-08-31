@@ -97,8 +97,6 @@ class Grid < Entity
   end
 
   def can_update?(row)
-    log_debug "Grid#can_update?(" +
-              "row=#{row.uuid})"
     if can_update_data?
       return true if row.create_user_uuid == Entity.session_user_uuid
       if self.uuid == Workspace::ROOT_UUID
@@ -1146,7 +1144,6 @@ private
 
   # Loads in memory information about database mapping
   def load_cached_mapping
-    log_debug "Grid#load_cached_mapping [grid #{to_s}]"
     grid_mapping = grid_mapping_read
     if grid_mapping.present?
       @db_table = 

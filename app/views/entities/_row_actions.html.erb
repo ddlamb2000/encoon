@@ -1,0 +1,37 @@
+<% if user_signed_in? and grid.can_update?(row) %>
+  <footer id="<%=h "actions-article-grid" + grid.id.to_s + "-row" + row.id.to_s %>" class="actions" style="display: none;">
+  	<span class="button" title="Update current data or create a new version.">
+  		<%= link_to icon('edit') + ("&nbsp;" + I18n.t('actions.edit')).html_safe, 
+  							{:action => "edit_inline", :grid_id => grid.uuid, :id => row.id}, 
+                :remote => true %>
+  	</span>
+    <span class="button" title="Delete current data.">
+      <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+         {:grid_id => grid.uuid, :id => row.id, :action => "destroy"}, 
+          :confirm => I18n.t('message.delete', :name => row.to_s), 
+          :method => :delete %>
+    </span>
+  	<span class="button" title="Add or remove attachment (photo or document) to current data.">
+  		<%= link_to icon('attachments') + ("&nbsp;" + I18n.t('field.attachments')).html_safe, 
+         {:action => "attach_document", :grid_id => grid.uuid, :id => row.uuid},
+         :remote => true %>
+  	</span>
+    <span class="button">
+      <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => grid.uuid, :id => 0 %>
+    </span>
+    <span class="button" title="Export current data into a XML file.">
+      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+         {:format => :xml} %>
+    </span>
+  </footer>
+  <script>
+    $("#<%=h "article-grid" + grid.id.to_s + "-row" + row.id.to_s %>").hover(
+      function (event){
+        $("#<%=h "actions-article-grid" + grid.id.to_s + "-row" + row.id.to_s %>").show();
+      },
+      function (event){
+        $("#<%=h "actions-article-grid" + grid.id.to_s + "-row" + row.id.to_s %>").hide();
+      }
+    );
+  </script>
+<% end %>
