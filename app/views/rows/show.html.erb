@@ -14,23 +14,27 @@
           </div>
           <section id="more-content" style="display: none;"></section>
           <script>
-            function showDetails() {
+            function showDetails(updateFlag) {
               if ($("#more-button").attr('checked')) {
                 $("#more-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
                 $("#more-content").show();
                 $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
-                $.ajax("<%= url_for(set_path(:flag => "show_details")) %>");
+                if(updateFlag) {
+                  $.ajax("<%= url_for(set_path(:flag => "show_details")) %>");
+                }
                 $("#more-title").addClass("highlighted");
               } 
               else {
                 $("#more-title").removeClass("highlighted");
                 $("#more-content").hide();
-                $.ajax("<%= url_for(unset_path(:flag => "show_details")) %>");
+                if(updateFlag) {
+                  $.ajax("<%= url_for(unset_path(:flag => "show_details")) %>");
+                }
               }
             };
-            showDetails();
+            showDetails(false);
             $("#more-button").click(function (event){
-              showDetails();
+              showDetails(true);
             });
           </script>
         <% end %>

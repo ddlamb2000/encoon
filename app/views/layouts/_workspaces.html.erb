@@ -26,9 +26,11 @@
 <% end %>
 
 <script>
-  function showNavigator() {
+  function showNavigator(updateFlag) {
     if ($("#navigator-button").attr('checked')) {
-      $.ajax("<%= url_for(unset_path(:flag => "hide_navigator")) %>");
+      if(updateFlag) {
+        $.ajax("<%= url_for(unset_path(:flag => "hide_navigator")) %>");
+      }
       $("#navigator").show();
       $("#main-area").removeClass("large-area");
       $("#main-area").addClass("main-area");
@@ -37,11 +39,13 @@
       $("#navigator").hide();
       $("#main-area").removeClass("main-area");
       $("#main-area").addClass("large-area");
-      $.ajax("<%= url_for(set_path(:flag => "hide_navigator")) %>");
+      if(updateFlag) {
+        $.ajax("<%= url_for(set_path(:flag => "hide_navigator")) %>");
+      }
     }
   };
-  showNavigator();
+  showNavigator(false);
   $("#navigator-button").click(function (event){
-    showNavigator();
+    showNavigator(true);
   });
 </script>

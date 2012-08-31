@@ -11,23 +11,27 @@
       </div>
       <section id="breadcrumb-content" style="display: none;"></section>
       <script>
-        function showBreadcrumb() {
+        function showBreadcrumb(updateFlag) {
           if ($("#breadcrumb-button").attr('checked')) {
             $("#breadcrumb-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
             $("#breadcrumb-content").show();
             $("#breadcrumb-content").html("<%= escape_javascript(breadcrumbs) %>");
-            $.ajax("<%= url_for(set_path(:flag => "show_breadcrumb")) %>");
+            if(updateFlag) {
+              $.ajax("<%= url_for(set_path(:flag => "show_breadcrumb")) %>");
+            }
             $("#breadcrumb-title").addClass("highlighted");
           } 
           else {
             $("#breadcrumb-title").removeClass("highlighted");
             $("#breadcrumb-content").hide();
-            $.ajax("<%= url_for(unset_path(:flag => "show_breadcrumb")) %>");
+            if(updateFlag) {
+              $.ajax("<%= url_for(unset_path(:flag => "show_breadcrumb")) %>");
+            }
           }
         };
-        showBreadcrumb();
+        showBreadcrumb(false);
         $("#breadcrumb-button").click(function (event){
-          showBreadcrumb();
+          showBreadcrumb(true);
         });
       </script>
 
