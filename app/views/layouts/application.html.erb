@@ -21,11 +21,15 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
-      <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
+      <% if session[:hide_navigator] %>
+        <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
+        <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
+      <% end %>
     </header>
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
+        <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
+        <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
         <%= render :partial => "layouts/navigator" %>
       </section>
     </section>

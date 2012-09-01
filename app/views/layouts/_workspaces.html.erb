@@ -1,11 +1,9 @@
-<% if user_signed_in? %>
-  <div class="slideButton">
-    <input type="checkbox" 
-           id="navigator-button"
-           <%= session[:hide_navigator] ? '' : 'checked' %> />
-    <label for="navigator-button"></label>
-  </div>
-<% end %>
+<div class="slideButton">
+  <input type="checkbox" 
+         id="navigator-button"
+         <%= session[:hide_navigator] ? '' : 'checked' %> />
+  <label for="navigator-button"></label>
+</div>
 
 <span class="button">
   <%= link_to_unless_current(I18n.t('general.home').html_safe, root_path) do |name| %>

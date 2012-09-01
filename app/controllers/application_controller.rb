@@ -88,14 +88,6 @@ protected
     session[:breadcrumb_table] = breadcrumbs
   end
   
-  def reset_history
-    session[:breadcrumb_table] = nil
-    session[:history_table] = nil
-    session[:prior_page_title] = nil
-    session[:prior_url] = nil
-    session[:prior_page_icon] = nil
-  end
-  
   def change_as_of_date(entity)
     if entity.begin > session[:as_of_date]
       session[:as_of_date] = entity.begin 

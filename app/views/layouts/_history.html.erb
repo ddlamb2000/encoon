@@ -1,36 +1,38 @@
-<section id="history">
-  <article>
-    <span id="history-title" class="button">
-      <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
-    </span>
-    <div class="slideButton">
-      <input type="checkbox" id="history-button"  <%= session[:show_history] ? 'checked' : '' %> />
-      <label for="history-button"></label>
-    </div>
-    <section id="history-content" style="display: none;"></section>
-    <script>
-      function showHistory(updateFlag) {
-        if ($("#history-button").attr('checked')) {
-          $("#history-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-          $("#history-content").show();
-          $("#history-content").load("<%= url_for(history_path) %>");
-          if(updateFlag) {
-            $.ajax("<%= url_for(set_path(:flag => "show_history")) %>");
+<% if session[:history_table].present? %>
+  <section id="history">
+    <article>
+      <span id="history-title" class="button">
+        <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
+      </span>
+      <div class="slideButton">
+        <input type="checkbox" id="history-button"  <%= session[:show_history] ? 'checked' : '' %> />
+        <label for="history-button"></label>
+      </div>
+      <section id="history-content" style="display: none;"></section>
+      <script>
+        function showHistory(updateFlag) {
+          if ($("#history-button").attr('checked')) {
+            $("#history-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+            $("#history-content").show();
+            $("#history-content").load("<%= url_for(history_path) %>");
+            if(updateFlag) {
+              $.ajax("<%= url_for(set_path(:flag => "show_history")) %>");
+            }
+            $("#history-title").addClass("highlighted");
+          } 
+          else {
+            $("#history-title").removeClass("highlighted");
+            $("#history-content").hide();
+            if(updateFlag) {
+              $.ajax("<%= url_for(unset_path(:flag => "show_history")) %>");
+            }
           }
-          $("#history-title").addClass("highlighted");
-        } 
-        else {
-          $("#history-title").removeClass("highlighted");
-          $("#history-content").hide();
-          if(updateFlag) {
-            $.ajax("<%= url_for(unset_path(:flag => "show_history")) %>");
-          }
-        }
-      };
-      showHistory(false);
-      $("#history-button").click(function (event){
-        showHistory(true);
-      });
-    </script>
-  </article>
-</section>
+        };
+        showHistory(false);
+        $("#history-button").click(function (event){
+          showHistory(true);
+        });
+      </script>
+    </article>
+  </section>
+<% end %>
