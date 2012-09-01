@@ -15,16 +15,8 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class HomeController < ApplicationController
-  before_filter :load_workspaces, :only => [:index, 
-                                            :refresh]
+  before_filter :load_workspaces, :only => [:refresh]
 
-  def index
-    @page_title = ""
-    @page_icon = "home"
-    unlock_as_of_date
-    push_history
-  end
-  
   def refresh
     log_debug "HomeController#refresh date=#{params[:home][:session_date]}"
     session[:as_of_date] = Date.strptime(params[:home][:session_date], I18n.t('datepicker.decode'))

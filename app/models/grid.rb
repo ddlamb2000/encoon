@@ -23,6 +23,9 @@ class Grid < Entity
   
   SYSTEM_WORKSPACE_UUID = 'eec10850-dd45-012c-aafe-0026b0d63708'
 
+  HOME_GRID_UUID = 'cf01e9a0-d59d-012f-590e-4417fe7fde95'
+  HOME_ROW_UUID = 'f38b12c0-d59d-012f-590e-4417fe7fde95'
+
   PHASE_CREATE = 'create'
   PHASE_NEW_VERSION = 'new_version'
   PHASE_UPDATE = 'update'

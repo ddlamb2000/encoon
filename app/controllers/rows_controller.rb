@@ -15,8 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class RowsController < ApplicationController
-  before_filter :load_workspaces, :only => [:index, 
-                                            :show]
+  before_filter :load_workspaces, :only => [:home, :show]
 
   before_filter :authenticate_user!, :only => [:edit_inline, 
                                                :edit_row_inline, 
@@ -29,27 +28,25 @@ class RowsController < ApplicationController
                                                :delete_attachment,
                                                :import,
                                                :upload]
-  before_filter :findParent
-  before_filter :findEntity, :only => [:show, 
-                                       :details, 
-                                       :edit_inline, 
-                                       :edit_row_inline, 
-                                       :update, 
-                                       :destroy,
-                                       :attach_document,
-                                       :save_attachment,
-                                       :delete_attachment,
-                                       :photo,
-                                       :file]
+  before_filter :findGrid
+  before_filter :findRow, :only => [:show, 
+                                    :details, 
+                                    :edit_inline, 
+                                    :edit_row_inline, 
+                                    :update, 
+                                    :destroy,
+                                    :attach_document,
+                                    :save_attachment,
+                                    :delete_attachment,
+                                    :photo,
+                                    :file]
 
-  def index
-    log_debug "RowsController#index: params=#{params.inspect}"
-    if params[:format].nil? or params[:format] != 'xml'  
-      set_page_title
-      push_history
-      unlock_as_of_date
-    end
-    @filters = params[:filters]
+  def home
+    params[:grid_id] = Grid::HOME_GRID_UUID
+    params[:id] = Grid::HOME_ROW_UUID
+    findGrid
+    findRow
+    render :show
   end
 
   # Renders the content of a list through an Ajax request  
@@ -475,7 +472,7 @@ private
     true
   end
   
-  def findParent
+  def findGrid
     @grid = nil
     if Entity.uuid?(params[:grid_id])
       @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
@@ -483,14 +480,14 @@ private
       @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
     end
     if @grid.nil?
-      Entity.log_debug "RowsController#findParent " + 
+      Entity.log_debug "RowsController#findGrid " + 
                        "Invalid: can't find data grid #{params[:grid_id]}"
     else
       @grid.load_cached_grid_structure(params[:filters])    
     end
   end
 
-  def findEntity
+  def findRow
     if @grid.present?
       if Entity.uuid?(params[:id])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
@@ -499,7 +496,7 @@ private
         @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
         lock_as_of_date
       end
-      Entity.log_debug "RowsController#findEntity " + 
+      Entity.log_debug "RowsController#findRow " + 
                        "Invalid: can't find row with " +
                        "grid_id=#{params[:grid_id].to_s}" +
                        " and id=#{params[:id].to_s}" if @row.nil?

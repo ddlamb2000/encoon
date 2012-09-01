@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 Encoon::Application.routes.draw do
-  root :to => 'home#index'
+  root :to => 'rows#home'
   resources :grids do
     resources :rows
   end  
