@@ -1,14 +1,12 @@
-<article class="document">
-  <header class="action-header">
-    <%= I18n.t('actions.create') %>
-    <%= @grid.to_s.html_safe %>
-  </header> 
-	<%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
-		 <%= render :partial => "edit", 
-	             :locals => {:f => f, 
-	                         :parent => @grid, 
-	                         :entity => @row,
-	                         :filters => @filters} %>
-	  <%= render :partial => 'entities/actions_new_inline', :locals => {:f => f} %>
-	<% end %>
-</article>
+<header class="action-header">
+  <%= I18n.t('actions.create') %>
+  <%= @grid.to_s.html_safe %>
+</header> 
+<%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
+	 <%= render :partial => "edit", 
+             :locals => {:f => f, 
+                         :parent => @grid, 
+                         :entity => @row,
+                         :filters => @filters} %>
+  <%= render :partial => 'entities/actions_new_inline', :locals => {:f => f} %>
+<% end %>

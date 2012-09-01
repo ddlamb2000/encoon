@@ -1,20 +1,18 @@
-<article>
-  <header class="action-header">
-    <%=t 'actions.edit' %>
-    <%= @page_title.html_safe %>
-	</header> 
-  <% if @grid.present? and @row.present? %>
-		<%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
-		  <%= render :partial => "edit", 
-	               :locals => {:f => f, 
-	                         :parent => @grid, 
-	                         :entity => @row,
-	                         :filters => params[:filters]} %>
-		  <%= render :partial => 'entities/actions_edit_inline', 
-                 :locals => {:f => f,:entity => @row} %>
-		<% end %>
-	<% else %>
-    <%= icon "exclamation" %>
-    <%= I18n.t('error.no_data') %>
+<header class="action-header">
+  <%=t 'actions.edit' %>
+  <%= @page_title.html_safe %>
+</header> 
+<% if @grid.present? and @row.present? %>
+	<%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
+	  <%= render :partial => "edit", 
+               :locals => {:f => f, 
+                         :parent => @grid, 
+                         :entity => @row,
+                         :filters => params[:filters]} %>
+	  <%= render :partial => 'entities/actions_edit_inline', 
+               :locals => {:f => f,:entity => @row} %>
 	<% end %>
-</article>
+<% else %>
+  <%= icon "exclamation" %>
+  <%= I18n.t('error.no_data') %>
+<% end %>
