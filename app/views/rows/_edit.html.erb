@@ -14,12 +14,6 @@
       </td>
     </tr>
 	<% end %>
-  <% if @grid.has_translation? and @grid.has_description? %>
-    <tr>
-      <td class="header"><%= I18n.t('field.description') %></td>
-      <td class="string"><%= text_area_tag :description, @row_loc.description, :size => "70x4" %></td>
-    </tr>
-	<% end %>
   <% for column in parent.column_all %>
     <%= f.edit_entity(@row,
                       column, 
@@ -27,5 +21,11 @@
                         (("&nbsp;<span title=\"" + column.description + "\">").html_safe +
                         icon("information") +
                         "</span>".html_safe) : "") %>
+  <% end %>
+  <% if @grid.has_translation? and @grid.has_description? %>
+    <tr>
+      <td class="header"><%= I18n.t('field.description') %></td>
+      <td class="string"><%= text_area_tag :description, @row_loc.description, :size => "70x10" %></td>
+    </tr>
   <% end %>
 </table>

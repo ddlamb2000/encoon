@@ -1,20 +1,25 @@
-<aside class="actions">
-  <center>
-  	<a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + I18n.t('actions.cancel')).html_safe %></a>
-    | <%= I18n.t('field.begin_date') %>&nbsp;<%= f.datepicker 'begin', 
-                                                               :showButtonPanel => true,
-                                                               :numberOfMonths => 2,
-                                                               :changeMonth => true,
-                                                               :changeYear => true,
-                                                               :defaultDate => nil, 
-                                                               :value => nil,
-                                                               :dateFormat => I18n.t('datepicker.format'),
-                                                               :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
-                                                               :monthNames => I18n.t('datepicker.monthNames'),
-                                                               :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
-                                                               :currentText => I18n.t('datepicker.currentText'),
-                                                               :closeText => I18n.t('datepicker.closeText'),
-                                                               :size => "10x1" %>
-    | <div class="button"><%= f.submit I18n.t('actions.ok'), :disable_with => I18n.t('actions.wait') %></div>
-  </center>
-</aside>
+<footer class="actions">
+  <span class="button">
+    <%=t 'field.begin_date' %>
+    <%= f.datepicker 'begin', 
+                     :showButtonPanel => true,
+                     :numberOfMonths => 2,
+                     :changeMonth => true,
+                     :changeYear => true,
+                     :defaultDate => nil, 
+                     :value => nil,
+                     :dateFormat => I18n.t('datepicker.format'),
+                     :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
+                     :monthNames => I18n.t('datepicker.monthNames'),
+                     :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
+                     :currentText => I18n.t('datepicker.currentText'),
+                     :closeText => I18n.t('datepicker.closeText'),
+                     :size => "10x1" %>
+  </span>
+  <span class="button">
+    <a href="<%= session[:last_url] %>"><%=t 'actions.cancel' %></a>
+  </span>
+  <span class="button">
+    <%= f.submit I18n.t('actions.ok'), :disable_with => I18n.t('actions.wait') %>
+  </span>
+</footer>

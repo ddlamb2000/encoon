@@ -1,38 +1,128 @@
 .form {
   margin-top: $padding;
   margin-bottom: $padding;
+  padding: $padding;
   background-color: $background-color-table-header;
   input {
+    font-family: $blueprint-font-family;
+    font-size: 100%;
     border: 1px solid $background-color-table;
     vertical-align: middle;
-    padding: 0;
+    padding: $padding;
     margin: 0;
     @include transition;
+    @include border-radius;
     &:hover { 
       border: 1px solid $background-color-highlights; 
     }
-    &[type=text] {
+    &[type=text], &[type=email] {
       vertical-align: middle;
       width: auto;        
       border-spacing: 0;
     }
   }
   select {
-    vertical-align: middle;
     font-family: $blueprint-font-family;
-    margin: 0;
-    @include transition;
-  }
-  textarea {
+    font-size: 100%;
     border: 1px solid $background-color-table;
     vertical-align: middle;
-    font-family: $blueprint-font-family;
-    width: auto;        
-    height: auto;        
+    padding: $padding;
     margin: 0;
     @include transition;
+    @include border-radius;
+    &:hover { 
+      border: 1px solid $background-color-highlights; 
+    }
   }
-  td {
-    border-top: 0;
+  textarea {
+    font-family: $blueprint-font-family;
+    font-size: 100%;
+    border: 1px solid $background-color-table;
+    vertical-align: middle;
+    width: 95%; 
+    height: auto; 
+    padding: $padding;
+    margin: 0;
+    @include transition;
+    @include border-radius;
+    &:hover { 
+      border: 1px solid $background-color-highlights; 
+    }
   }
+}
+
+.actions {
+  margin-top: 2*$padding;
+  padding: 2*$padding;
+  vertical-align: middle;
+  text-align: center;
+  background-color: $background-color-table-header;
+  .button { 
+    display: inline;
+    vertical-align: middle;
+    margin: 2*$padding;
+    a {
+      display: inline;
+      background-color: white;
+      vertical-align: middle;
+      padding: 2*$padding;
+      margin: 0;
+      @include border-radius;
+      @include transition;
+      @include undecored-link;
+      @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+      &:hover {
+        background-color: $title-color;
+        color: white;
+        @include border-radius;
+      } 
+    }
+    input {
+      &[type=submit] {
+        font-size: 100%;
+        display: inline;
+        vertical-align: middle;
+        background-color: $background-color-highlights;
+        color: $background-color-article;
+        padding: 2*$padding;
+        margin: 0;
+        border: 0;
+        cursor: pointer;
+        @include border-radius;
+        @include transition;
+        @include undecored-link;
+        @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+        &:hover {
+          background-color: $title-color;
+          color: white;
+          @include border-radius;
+        }
+      }
+    }
+  }
+  input {
+    display: inline;
+    text-decoration: none;
+    padding: $padding;
+    border: 0;
+    margin: $padding;
+    @include transition;
+    &[type=text], &[type=email], &[type=radio], &[type=checkbox] {
+      vertical-align: middle;
+      width: auto;        
+      border-spacing: 0;
+      padding: $padding;
+    }
+  }
+}
+
+.action-header {
+  background: $background-color-banner;
+  color: $color-highlight;
+  font-weight: bolder;
+}
+
+.required {
+  display: inline;
+  color: $title-color;
 }

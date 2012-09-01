@@ -122,89 +122,14 @@ li {
   }
 }
 
-.actions {
-  padding: $padding;
-  vertical-align: middle;
-  text-align: center;
-  background-color: $background-color-table-header;
-  .button { 
-    display: inline;
-    vertical-align: middle;
-    @include border-radius;
-    margin: $padding;
-    padding: $padding;
-    a {
-      background-color: white;
-      vertical-align: middle;
-      padding: $padding;
-      @include border-radius;
-      @include transition;
-      @include undecored-link;
-      &:hover {
-        background-color: $title-color;
-        color: white;
-      } 
-    }
-    input {
-      font-size: 80%;
-      display: inline;
-      background-color: $title-color; 
-      padding: $padding;
-      margin: $padding;
-      color: white;
-      border: 0;
-      @include border-radius;
-      @include transition;
-      @include undecored-link;
-      &:hover {
-        background-color: black;
-      }
-    }
-  }
-  input {
-    display: inline;
-    text-decoration: none;
-    padding: $padding;
-    border: 0;
-    margin: $padding;
-    @include transition;
-    &[type=text] {
-      vertical-align: middle;
-      width: auto;        
-      border-spacing: 0;
-    }
-    &[type=radio] {
-      vertical-align: middle;
-      width: auto;        
-      border-spacing: 0;
-      padding: $padding;
-    }
-    &[type=checkbox] {
-      vertical-align: middle;
-      width: auto;        
-      border-spacing: 0;
-      padding: $padding;
-    }
-  }
-}
-
-.action-header {
-  background: $background-color-banner;
-  color: $color-highlight;
-}
-
-.required {
-  display: inline;
-  color: $title-color;
-}
-
 .new {
-  font-size: 7pt;
+  font-size: 90%;
   font-weight: bolder;
   font-style: normal;
   color: black;
-  background-color: $background-color-highlights;
+  background-color: yellow;
   display: inline;
+  padding: $padding;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   @include border-radius;
 }
@@ -222,8 +147,4 @@ li {
 .notice {
   @include clearfix;
   margin-bottom: 0;
-}
-
-#create-button {
-  display: inline;
 }
