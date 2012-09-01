@@ -119,28 +119,6 @@ module ApplicationHelper
     output
   end
 
-  def display_breadcrumbs(history, max_count=5)
-    output = ""
-    count = 0
-    if history.present?
-      history.reverse_each do |link|
-        if count > 0 and count <= max_count
-          hyperlink = content_tag("a", 
-                                  icon(link[:page_icon].to_s) + 
-                                  ("&nbsp;" + 
-                                  link[:page_title]).html_safe, 
-                                  :href => link[:url])
-          output << " » " if !output.blank? 
-          output << hyperlink
-        elsif count == max_count+1
-          output << " " + "&hellip;" 
-        end
-        count += 1
-      end
-    end
-    output
-  end
-
   def display_history(history)
     output = ""
     if history.present?

@@ -51,7 +51,6 @@ protected
   end
 
   def push_history
-    session[:breadcrumb_table] = [] if session[:breadcrumb_table].nil?
     session[:history_table] = [] if session[:history_table].nil?
 
     visited = {
@@ -72,20 +71,6 @@ protected
     session[:last_url] = visited[:url]
 
     found = false
-    breadcrumbs = []
-    session[:breadcrumb_table].collect do |item|
-     if request.url == item[:url]
-        found = true
-     end
-     if !found
-        breadcrumbs << item
-        session[:prior_page_title] = item[:page_title]
-        session[:prior_url] = item[:url]
-        session[:prior_page_icon] = item[:page_icon]
-     end
-    end
-    breadcrumbs << visited
-    session[:breadcrumb_table] = breadcrumbs
   end
   
   def change_as_of_date(entity)

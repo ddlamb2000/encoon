@@ -28,7 +28,20 @@ class RowsController < ApplicationController
                                                :delete_attachment,
                                                :import,
                                                :upload]
-  before_filter :findGrid
+  before_filter :findGrid, :only => [:search_list,
+                                     :show, 
+                                     :details,
+                                     :new_inline, 
+                                     :edit_inline, 
+                                     :edit_row_inline,
+                                     :create, 
+                                     :update, 
+                                     :destroy,
+                                     :attach_document,
+                                     :save_attachment,
+                                     :delete_attachment,
+                                     :photo,
+                                     :file]
   
   before_filter :findRow, :only => [:show, 
                                     :details, 
