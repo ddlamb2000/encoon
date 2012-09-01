@@ -158,5 +158,6 @@
     </article>                                
   <% end %>
 <% else %>
-  <h2><%= @page_title %></h2>
+  <h1><%= bigicon @page_icon %><%= @page_title %></h1>
+  <p><%=t 'error.not_found' %><p>
 <% end %>

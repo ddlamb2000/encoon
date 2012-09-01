@@ -102,31 +102,12 @@ class RowsController < ApplicationController
     log_debug "RowsController#search: params=#{params.inspect}"
   end
   
-  def set_page_title
-    if @grid.present?
-      if @row.present?
-        @page_title = I18n.t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
-      else
-        @page_title = @grid.to_s
-      end
-      if @grid.uuid == Grid::ROOT_UUID
-        @page_icon = "table"
-      elsif @grid.uuid == Workspace::ROOT_UUID
-        @page_icon = "workspace"
-      else
-        @page_icon = "entity"
-      end
-    else
-      @page_title = I18n.t('error.no_grid')
-      @page_icon = "exclamation"
-    end
-  end
-
   def show
     log_debug "RowsController#show: params=#{params.inspect}"
     if params[:format].nil? or params[:format] != 'xml'  
       set_page_title
       push_history
+      render :show, :status => @status
     end
   end
 
@@ -315,7 +296,7 @@ class RowsController < ApplicationController
         name = @grid.row_title(@row)
         flash[:notice] = I18n.t('transaction.updated', 
                                 :type => @grid, :name => name)
-        format.html { redirect_to session[:last_url] }
+        format.html { redirect_to :back }
       else
         log_debug "RowsController#update: error, params=#{params.inspect}"
         set_page_title
@@ -473,6 +454,30 @@ class RowsController < ApplicationController
   end
 
 private
+
+  def set_page_title
+    @status = 200
+    unless @grid.nil?
+      unless @row.nil?
+        @page_title = I18n.t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
+        if @grid.uuid == Grid::ROOT_UUID
+          @page_icon = "table"
+        elsif @grid.uuid == Workspace::ROOT_UUID
+          @page_icon = "workspace"
+        else
+          @page_icon = "entity"
+        end
+      else
+        @status = 404
+        @page_title = I18n.t('error.no_data')
+        @page_icon = "exclamation"
+      end
+    else
+      @status = 404
+      @page_title = I18n.t('error.no_grid')
+      @page_icon = "exclamation"
+    end
+  end
 
   def populate_from_params
     for column in @grid.column_all

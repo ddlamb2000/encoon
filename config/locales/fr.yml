@@ -19,38 +19,6 @@ fr:
     history:      "Historique"
     signout:      "Déconnection"
     copyright:    "© David Lambert 2012. Tous droits réservés."
-    welcome:      "Bienvenue sur Encoon"
-    explain_wel:  "Contrôlez, partagez et navigez dans vos données; c’est rapide et c’est nouveau."
-    whatis:       "Qu’est Encoon?"
-    testdrive:    "Envie de voir ? Mot de passe oublié ?"
-    registered:   "Utilisateurs enregistrés"
-    register:     "Enregistrement"
-    login:        "Vous devez vous connecter à l’application."
-    loggedout:    "Vous êtes maintenant déconnecté."
-    back_login:   "Retour à la page de connexion"
-    explain_in:   "Entrez votre adresse électronique et votre mot de passe afin d’accèder à vos données.
-                   <i>L’application étant expérimentale, les données saisies
-                   ne sont pas vraiment en sécurité. Rien ne garantit par exemple qu’elles seront conservées
-                   ou qu’elles restent confidentielles.</i>" 
-    explain_reg:  "Entrez votre addresse électronique, votre prénom et votre nom et vous recevrez votre mot de passe par courrier électronique."
-    explain_test: "Vous pouvez vous enregistrer vous-même ou recevoir votre mot de passe 
-                   si vous l’avez perdu, en cliquant %{here}."
-    introduction: "Encoon est aujourd’hui une application web expérimentale orientée vers la gestion de données.<br/> 
-                   Les travaux de recherche sur lesquels s’appuie Encoon ont pour objet de proposer un véritable 
-                   moteur qui permette de <strong>structurer des données</strong>, 
-                   de gérer des <strong>relations entre données</strong>, 
-                   de les <strong>présenter</strong>, et surtout de rendre évidente la <strong>navigation</strong>.<br/>
-                   Cette nouvelle application ne requière pas d’apprentissage et 
-                   de compétence en matière de bases de données car
-                   tout est piloté de façon simple par une <strong>interface entièrement Web en temps réel</strong>.
-                   Destinée dans un premier temps aux petites structures d’entreprise,
-                   l’application permet de gérer au sein de l’organisation un grand nombre d’information
-                   de tout nature et de partager cette information avec les collaborateurs de l’entreprise
-                   de façon simple et naturelle à l’aide d’un simple navigateur Internet.<br/>
-                   L’application est destinée à terme à être hébergée au sein même de l’entreprise
-                   sur un serveur local (Windows, Mac ou Linux), ou bien sur le Web. 
-                   Encoon sert également de base à la construction 
-                   d’un véritable <i>outil de création d’application d’entreprise</i>."
 
   actions:
     create:       "Nouveau"
@@ -123,7 +91,7 @@ fr:
     name:         "Colonne"
     
   rows:
-    title:        "Liste de données"
+    title:        "Données"
     name:         "Données"
     
   users:
@@ -166,7 +134,6 @@ fr:
     design:       "Définition"
     grid_design:  "Afficher la définition de la catégorie de données"
     attached_row: "%{grid} (%{column})"
-    back_to:      "Retour arrière"
     
   datepicker:
     format:           "dd/mm/yy"
@@ -198,6 +165,7 @@ fr:
     pass_conf:    "La confirmation du mot de passe n’est pas conforme."
     no_grid:      "Erreur: catégorie de données non disponible"
     no_data:      "Erreur: données non disponible"
+    not_found:    "Nous sommes désolés, mais la page demandée est introuvable et ne correspond à aucune information répertoriée."
         
   message:
     delete:       "Etes vous sûr de vouloir supprimer ’%{name}’ ?"

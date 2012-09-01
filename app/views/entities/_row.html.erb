@@ -1,6 +1,7 @@
 <article id="<%=h "article-grid" + grid.id.to_s + "-row" + row.id.to_s %>">
   <header class="header-article">
   	<h1>
+      <%= bigicon @page_icon %>
   		<span class="title"><%= grid.to_s.html_safe %></span>
   	  <%= row.to_s.html_safe %>
   	  <span class="detail">

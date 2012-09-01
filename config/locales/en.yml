@@ -19,35 +19,6 @@ en:
     history:      "History"
     signout:      "Log out"
     copyright:    "© David Lambert 2012. All rights reserved."
-    welcome:      "Welcome to Encoon"
-    explain_wel:  "Control, share and navigate in your data; it's fast and it's new."
-    whatis:       "What is Encoon?"
-    testdrive:    "Want a test drive? Forgot your password?"
-    registered:   "Registered users"
-    register:     "Check in"
-    login:        "You need to log in the application."
-    loggedout:    "You're now logged out."
-    back_login:   "Back to login page"
-    explain_in:   "Enter your Email address and your password in order to access your data.
-                   <i>The application being an experiment, data entered in the system
-                   isn't secured (yet). There is no guarantee (yet) data will be kept or will stay confidential.</i>"
-    explain_reg:  "Enter your Email address, first and last name below and you'll be notified of your password." 
-    explain_test: "You can register yourself or be notified of your password if you lost it, 
-                   by just clicking %{here}."
-    introduction: "For the time being, Encoon is an experimental web-based application oriented toward data management.<br/>
-                   The object of the reasearches Encoon is based on is to propose a true 
-                   engine that allows <strong>data structuration</strong>, 
-                   <strong>data relationship management</strong>, 
-                   <strong>data presentation</strong>, and, mainly, to make obvious <strong>data navigation</strong>.<br/>
-                   This brand new application doesn't require database system learning or skills, 
-                   because everything in the application is managed through a very <strong>simple web-based user interface</strong>, in <strong>real time</strong>.
-                   Primary dedicated to small business structures,
-                   the application lets manage a large amount of multi-purposes information within the organization,
-                   and share this information across business stakeholders
-                   in an easy and natural way, using one Internet browser only.<br/>
-                   The application is supposed to be hosted within the organization itself,
-                   on a local server (Windows, Mac or Linux), or even on the Web. 
-                   Encoon is also the foundation for the development of a <i>true business-oriented application development toolkit</i>."
       
   actions:
     create:       "New"
@@ -120,7 +91,7 @@ en:
     name:         "Column"
     
   rows:
-    title:        "Data list"
+    title:        "Data"
     name:         "Data"
     
   users:
@@ -163,7 +134,6 @@ en:
     design:       "Design"
     grid_design:  "Display data category definition"
     attached_row: "%{grid} (%{column})"
-    back_to:      "Backtrack"
 
   datepicker:
     format:           "yy-mm-dd"
@@ -195,6 +165,7 @@ en:
     pass_conf:    "Password confirmation doesn't match."
     no_grid:      "Error: data category isn't available"
     no_data:      "Error: data isn't available"
+    not_found:    "We're sorry, but the requested page can't be found and doesn't refer to any information."
     
   message:
     delete:       "Are you sure you want to delete '%{name}'?"
