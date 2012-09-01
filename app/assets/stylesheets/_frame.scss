@@ -177,12 +177,10 @@ body {
     }
   } 
   table {
-    border-collapse: collapse;
     width: 100%;
     margin-bottom: 0;
     tr {
       padding: 2px;
-      vertical-align: text-top;
     }
     td {
       padding-top: 0;
@@ -190,12 +188,10 @@ body {
       padding-left: 2px;
       padding-right: 2px;
       vertical-align: text-top;
-      text-align: left;
-      line-height: 130%;
     }
     .header {
       text-align: right;
-      width: 33%;
+      width: 25%;
       font-weight: bolder;
     }
   }
@@ -231,7 +227,6 @@ body {
     background: $background-color-article-header-level2;
   }
   table {
-    border-collapse: collapse;
     width: 100%;
     margin-bottom: 0;
     tr {

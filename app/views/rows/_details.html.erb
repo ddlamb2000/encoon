@@ -1,15 +1,15 @@
 <table>
   <tr>
-    <td class="header"><%= I18n.t('field.version') %></td>
+    <td class="header"><%=t 'field.version' %></td>
     <td class="string"><%=h @row.version %></td>
  </tr>
  <tr>
-    <td class="header"><%= I18n.t('field.revision') %></td>
+    <td class="header"><%=t 'field.revision' %></td>
     <td class="string"><%=h @row.revision %></td>
   </tr>
   <% if @row.has_begin? %>
     <tr>
-      <td class="header"><%= I18n.t('field.begin_date') %></td>
+      <td class="header"><%=t 'field.begin_date' %></td>
       <td class="string">
         <%=h display_begin_date(@row.begin) %>
         <span class="detail"><%= display_distance_date(@row.begin) %></span>
@@ -18,7 +18,7 @@
   <% end %>
   <% if @row.has_end? %>
     <tr>
-      <td class="header"><%= I18n.t('field.end_date') %></td>
+      <td class="header"><%=t 'field.end_date' %></td>
       <td class="string">
         <%=h display_end_date(@row.end) %>
         <span class="detail"><%= display_distance_date(@row.end) %></span>
@@ -26,7 +26,7 @@
     </tr>
   <% end %>
   <tr>
-    <td class="header"><%= I18n.t('field.created') %></td>
+    <td class="header"><%=t 'field.created' %></td>
     <td class="string">
       <%=h @row.created_at %>
       <span class="detail">
@@ -36,7 +36,7 @@
   </tr>
   <% if @row.was_updated? %>
     <tr>
-      <td class="header"><%= I18n.t('field.updated') %></td>
+      <td class="header"><%=t 'field.updated' %></td>
       <td class="string">
         <%=h @row.updated_at %>
         <span class="detail">
@@ -46,11 +46,7 @@
     </tr>
   <% end %>
   <tr>
-    <td class="header"><%= I18n.t('field.uuid') %></td>
-    <td class="string"><%=h @row.uuid %></td>
-  </tr>
-  <tr>
-    <td class="header"><%= I18n.t('field.history') %></td>
+    <td class="header"><%=t 'field.history' %></td>
     <td class="string">
       <ul>
       <% for row in @grid.row_all_versions(@row.uuid) %>
@@ -65,7 +61,7 @@
   </tr>
   <% if @grid.has_translation? %>
     <tr>
-      <td class="header"><%= I18n.t('field.languages') %></td>
+      <td class="header"><%=t 'field.languages' %></td>
       <td class="string">
         <ul>
           <% for row in @grid.row_all_locales(@row.uuid, @row.version) %>
@@ -79,7 +75,7 @@
     </tr>
   <% end %>
   <tr>
-    <td class="header"><%= I18n.t('field.audit') %></td>
+    <td class="header"><%=t 'field.audit' %></td>
     <td class="string">
       <ul>
         <% for row in @row.all_audits %>
@@ -92,5 +88,9 @@
         <% end %>
       </ul>
     </td>
+  </tr>
+  <tr>
+    <td class="header"><%=t 'field.uuid' %></td>
+    <td class="string"><%=h @row.uuid %></td>
   </tr>
 </table>

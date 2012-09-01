@@ -64,6 +64,7 @@ class RowsController < ApplicationController
   end
 
   def history
+    session[:show_history] = true
     render :partial => "history"
   end
 
@@ -113,6 +114,7 @@ class RowsController < ApplicationController
 
   # Renders the details of an article through an Ajax request  
   def details
+    session[:show_details] = true
     render :partial => "details"
   end
 
