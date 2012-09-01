@@ -33,7 +33,6 @@ p {
   margin-bottom: 8px;
   font-size: 105%;
   text-align: left;
-  font-family: serif;
   line-height: 140%;
 }
 
@@ -129,7 +128,6 @@ li {
   color: black;
   background-color: yellow;
   display: inline;
-  padding: $padding;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   @include border-radius;
 }
@@ -145,11 +143,7 @@ li {
 }
 
 .notice {
-  position: absolute;
-  top: 5%;
-  left: 5%;
-  width: 90%;
-  z-index: 10;
+  width: 100%;
   opacity: 0.95;
   filter: alpha(opacity=95);
 }
