@@ -3,7 +3,6 @@
     <%= display_filters(grid, filters, defined?(search) ? search : nil).html_safe %>
   </table>
 <% end %>
-
 <% if table_rows.length > 0 %>
   <table>
     <tr>
@@ -62,45 +61,10 @@
 		<% end %>
   </table>
 <% end %>
-
 <%= show_collection_count(table_rows, table_row_count, params[:page]) %>
 <% if embedded and not_all_rows(table_row_count) %><%= icon('warning') %><% end %>
-
-<footer id=<%=h "actions-rows"  + grid.uuid + get_filters_uuid(filters) %> class="actions">
-  <% if not_last_page(params[:page], table_row_count) %>
-    <%= link_to icon('down') + ("&nbsp;" + I18n.t('general.next_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
-         :filters => filters,
-         :page => calc_next_page(params[:page]) %>
-  <% end %>
-  <% if not_first_page(params[:page]) %>
-    <%= link_to icon('up') + ("&nbsp;" + I18n.t('general.prev_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
-         :filters => filters,
-         :page => calc_previous_page(params[:page]) %>
-    <%= link_to icon('previous') + ("&nbsp;" + I18n.t('general.first_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-         :filters => filters,
-         :page => 1 %>
-  <% end %>
-	<% if user_signed_in? and grid.can_create_data?(filters) %>
-		<span title="Create a new row of data for the corresponding data grid." class="button">
-			<%= link_to icon('plus') + ("&nbsp;" + I18n.t('actions.create')).html_safe, 
-    				{:controller => 'rows', :action => "new_inline", :grid_id => grid.uuid, 
-             :id => 0, 
-    				 :filters => filters}, 
-             :remote => true %>
-		</span>
-	<% end %>
-  <% if user_signed_in? and grid.can_create_data?(filters) %>
-    <span title="Export rows in an .xml file." class="button">
-      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-            {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-            :filters => filters,
-            :page => -1,
-            :format => :xml} %>
-    </span>
-  <% end %>
-</footer>
-
-<div id=<%=h "create-detail-row" + grid.uuid + get_filters_uuid(filters) %>></div>
+<%= render :partial => 'entities/list_actions', 
+           :locals => { 
+             :grid => grid,
+             :filters => filters,
+             :table_row_count => table_row_count } %>

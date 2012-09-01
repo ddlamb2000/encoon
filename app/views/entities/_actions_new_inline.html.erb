@@ -17,9 +17,15 @@
                      :size => "10x1" %>
   </span>
   <span class="button">
-    <a href="<%= session[:last_url] %>"><%=t 'actions.cancel' %></a>
+    <a id="cancel" href="#"><%=t 'actions.cancel' %></a>
   </span>
   <span class="button">
     <%= f.submit I18n.t('actions.ok') %>
   </span>
 </footer>
+
+<script>
+  $("#cancel").click(function (event){
+    $("#row-dialog").empty();
+  });
+</script>

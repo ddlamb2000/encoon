@@ -100,8 +100,8 @@
   <% end %>
 <% end %>
 
-<section id="dialog-article"></section>
 <% unless @grid.blank? or @row.blank? %>
+  <section id="row-dialog"></section>
   <%= render :partial => 'entities/row', 
              :locals => { 
                :grid => @grid, 

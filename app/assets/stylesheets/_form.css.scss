@@ -8,9 +8,6 @@
     margin: $padding;
     @include transition;
     @include border-radius;
-    &:hover { 
-      border: 1px solid $background-color-highlights; 
-    }
     &[type=text], &[type=email] {
       vertical-align: middle;
       width: auto;        
@@ -26,9 +23,6 @@
     margin: $padding;
     @include transition;
     @include border-radius;
-    &:hover { 
-      border: 1px solid $background-color-highlights; 
-    }
   }
   textarea {
     font-family: $blueprint-font-family;
@@ -41,9 +35,6 @@
     margin: $padding;
     @include transition;
     @include border-radius;
-    &:hover { 
-      border: 1px solid $background-color-highlights; 
-    }
   }
 }
 

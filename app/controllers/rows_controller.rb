@@ -127,11 +127,13 @@ class RowsController < ApplicationController
     @row_loc = RowLoc.new
     @grid.row_initialization(@row, @filters)
     set_page_title
+    render :partial => "new_inline"
   end
 
   def edit_inline
     log_debug "RowsController#edit_inline: params=#{params.inspect}"
     set_page_title
+    render :partial => "edit_inline"
   end
 
   def edit_row_inline
