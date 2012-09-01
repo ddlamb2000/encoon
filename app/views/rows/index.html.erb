@@ -41,7 +41,7 @@
         </span>
       </h1>
     </header>
-    <div id="search-list"><%= render :partial => "home/loading" %></div>
+    <div id="search-list"><%= render :partial => "layouts/loading" %></div>
     <script>
       $("#search-list").load("<%= url_for(:action => :search_list, 
                                           :grid_id => @grid.uuid,

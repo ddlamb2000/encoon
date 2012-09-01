@@ -16,7 +16,7 @@
           <script>
             function showDetails(updateFlag) {
               if ($("#more-button").attr('checked')) {
-                $("#more-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
+                $("#more-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
                 $("#more-content").show();
                 $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
                 if(updateFlag) {
@@ -120,7 +120,7 @@
         </h2>
       </header>
       <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">
-        <%= render :partial => "home/loading" %>
+        <%= render :partial => "layouts/loading" %>
       </div>
       <script>
         $("#<%=h "list-grid" + @grid_cast.id.to_s %>").load(
@@ -144,7 +144,7 @@
         </h2>
       </header>
       <div id="<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>">
-        <%= render :partial => "home/loading" %>
+        <%= render :partial => "layouts/loading" %>
       </div>
       <script>
         $("#<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>").load(

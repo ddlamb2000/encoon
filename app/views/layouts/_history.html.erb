@@ -11,7 +11,7 @@
     <script>
       function showHistory(updateFlag) {
         if ($("#history-button").attr('checked')) {
-          $("#history-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
+          $("#history-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#history-content").show();
           $("#history-content").load("<%= url_for(history_path) %>");
           if(updateFlag) {

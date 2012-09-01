@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class RowsController < ApplicationController
-  before_filter :load_workspaces, :only => [:home, :show]
+  before_filter :load_workspaces, :only => [:home, :show, :refresh]
 
   before_filter :authenticate_user!, :only => [:edit_inline, 
                                                :edit_row_inline, 
@@ -29,6 +29,7 @@ class RowsController < ApplicationController
                                                :import,
                                                :upload]
   before_filter :findGrid
+  
   before_filter :findRow, :only => [:show, 
                                     :details, 
                                     :edit_inline, 
@@ -47,6 +48,28 @@ class RowsController < ApplicationController
     findGrid
     findRow
     render :show
+  end
+
+  def history
+    render :partial => "history"
+  end
+
+  # Sets the session flag referenced by the given parameter.
+  def set
+    session[params[:flag]] = true unless params[:flag].nil?
+    render :nothing => true
+  end
+
+  # Unsets the session flag referenced by the given parameter.
+  def unset
+    session[params[:flag]] = false unless params[:flag].nil?
+    render :nothing => true
+  end
+
+  def refresh
+    log_debug "HomeController#refresh date=#{params[:home][:session_date]}"
+    session[:as_of_date] = Date.strptime(params[:home][:session_date], I18n.t('datepicker.decode'))
+    redirect_to session[:last_url]
   end
 
   # Renders the content of a list through an Ajax request  

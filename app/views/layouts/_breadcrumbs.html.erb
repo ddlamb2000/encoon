@@ -13,7 +13,7 @@
       <script>
         function showBreadcrumb(updateFlag) {
           if ($("#breadcrumb-button").attr('checked')) {
-            $("#breadcrumb-content").html('<%= escape_javascript(render :partial => "home/loading") %>');
+            $("#breadcrumb-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
             $("#breadcrumb-content").show();
             $("#breadcrumb-content").html("<%= escape_javascript(breadcrumbs) %>");
             if(updateFlag) {

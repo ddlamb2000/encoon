@@ -20,11 +20,10 @@ Encoon::Application.routes.draw do
     resources :rows
   end  
   devise_for :users
-  match '/history' => 'home#history', :as => 'history'
-  match '/set' => 'home#set', :as => 'set'
-  match '/unset' => 'home#unset', :as => 'unset'
-  match '/import' => 'home#import', :as => 'import'
-  match '/refresh' => 'home#refresh', :as => 'refresh'
+  match '/history' => 'rows#history', :as => 'history'
+  match '/set' => 'rows#set', :as => 'set'
+  match '/unset' => 'rows#unset', :as => 'unset'
+  match '/refresh' => 'rows#refresh', :as => 'refresh'
   match ':controller/:action/:id'
   match ':controller/:action/:id.:format'
 end
