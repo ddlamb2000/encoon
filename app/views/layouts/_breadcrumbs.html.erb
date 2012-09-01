@@ -1,6 +1,6 @@
-<section id="breadcrumbs">
-  <% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
-  <% if breadcrumbs.present? and breadcrumbs != "" %> 
+<% breadcrumbs = display_breadcrumbs(session[:breadcrumb_table]).html_safe %>
+<% if breadcrumbs.present? and breadcrumbs != "" %> 
+  <section id="breadcrumbs">
     <article>
       <span id="breadcrumb-title" class="button">
         <%= icon('previous') + ("&nbsp;" + I18n.t('general.back_to')).html_safe %>
@@ -35,5 +35,5 @@
         });
       </script>
     </article>
-  <% end %>
-</section>
+  </section>
+<% end %>

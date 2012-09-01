@@ -2,28 +2,23 @@
   <%= render "links" %>
 <% end %>
 
-<% content_for :document do %>
-  <header>
-    <h1><%= I18n.t('devise.sign_in') %></h1>
-  </header>
-  <header class="action-header"><%= I18n.t('devise.sign_in') %></header>
-  <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-    <table class="form">
-      <tr>
-        <td class="header"><%= f.label :email %><span class="required">*</span></td>
-        <td class="string"><%= f.text_field :email %></td>
-      </tr>
-      <tr>
-        <td class="header"><%= f.label :password %><span class="required">*</span></td>
-        <td class="string"><%= f.password_field :password %></td>
-      </tr>
-      <tr>
-        <td class="header"><%= f.label :remember_me %></td>
-        <td class="string"><%= f.check_box :remember_me %></td>
-      </tr>
-    </table>
-    <aside class="actions">
-      <center><div class="button"><%= f.submit I18n.t('devise.sign_in'), :disable_with => I18n.t('actions.wait') %></div></center>
-    </aside>
-  <% end %>
+<header class="action-header"><%= I18n.t('devise.sign_in') %></header>
+<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
+  <table class="form">
+    <tr>
+      <td class="header"><%= f.label :email %><span class="required">*</span></td>
+      <td class="string"><%= f.text_field :email %></td>
+    </tr>
+    <tr>
+      <td class="header"><%= f.label :password %><span class="required">*</span></td>
+      <td class="string"><%= f.password_field :password %></td>
+    </tr>
+    <tr>
+      <td class="header"><%= f.label :remember_me %></td>
+      <td class="string"><%= f.check_box :remember_me %></td>
+    </tr>
+  </table>
+  <footer class="actions">
+    <span class="button"><%= f.submit I18n.t('devise.sign_in'), :disable_with => I18n.t('actions.wait') %></span>
+  </footer>
 <% end %>

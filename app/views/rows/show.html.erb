@@ -105,60 +105,58 @@
   <% end %>
 <% end %>
 
-<% content_for :document do %>
-  <section id="dialog-article"></section>
-  <% unless @grid.blank? or @row.blank? %>
-    <%= render :partial => 'entities/row', 
-               :locals => { 
-                 :grid => @grid, 
-                 :row => @row, 
-                 :row_loc => @row_loc } %>
-    <% if @grid_cast.present? and @grid_cast.can_select_data? %>
-      <article>
-        <header class="header-article-level2">
-          <h2>
-            <span class="title"><%=t 'rows.title' %></span>
-          </h2>
-        </header>
-        <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">
-          <%= render :partial => "home/loading" %>
-        </div>
-        <script>
-          $("#<%=h "list-grid" + @grid_cast.id.to_s %>").load(
-            "<%= url_for(:action => :search_list, 
-                         :grid_id => @grid_cast.uuid,
-                         :id => 0,
-                         :embedded => true
-                         ) %>");
-        </script>
-      </article>
-    <% end %>
-    <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
-      <% @filters = [{:column_uuid => attached_grid.column_uuid, 
-                      :row_uuid => @row.uuid, :row_name => @row.name}] %>
-      <% attached_grid.load_cached_grid_structure(@filters) %>
-      <article>
-        <header class="header-article-level2">
-          <h2>
-            <span class="title"><%= attached_grid.name.html_safe %></span>
-            <span class="detail"><%= attached_grid.column_name.html_safe %></span>
-          </h2>
-        </header>
-        <div id="<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>">
-          <%= render :partial => "home/loading" %>
-        </div>
-        <script>
-          $("#<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>").load(
-            "<%= url_for(:action => :search_list, 
-                         :grid_id => attached_grid.uuid,
-                         :id => 0,
-                         :filters => @filters,
-                         :embedded => true
-                         ) %>");
-        </script>
-      </article>                                
-    <% end %>
-  <% else %>
-    <h2><%= @page_title %></h2>
+<section id="dialog-article"></section>
+<% unless @grid.blank? or @row.blank? %>
+  <%= render :partial => 'entities/row', 
+             :locals => { 
+               :grid => @grid, 
+               :row => @row, 
+               :row_loc => @row_loc } %>
+  <% if @grid_cast.present? and @grid_cast.can_select_data? %>
+    <article>
+      <header class="header-article-level2">
+        <h2>
+          <span class="title"><%=t 'rows.title' %></span>
+        </h2>
+      </header>
+      <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">
+        <%= render :partial => "home/loading" %>
+      </div>
+      <script>
+        $("#<%=h "list-grid" + @grid_cast.id.to_s %>").load(
+          "<%= url_for(:action => :search_list, 
+                       :grid_id => @grid_cast.uuid,
+                       :id => 0,
+                       :embedded => true
+                       ) %>");
+      </script>
+    </article>
   <% end %>
+  <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
+    <% @filters = [{:column_uuid => attached_grid.column_uuid, 
+                    :row_uuid => @row.uuid, :row_name => @row.name}] %>
+    <% attached_grid.load_cached_grid_structure(@filters) %>
+    <article>
+      <header class="header-article-level2">
+        <h2>
+          <span class="title"><%= attached_grid.name.html_safe %></span>
+          <span class="detail"><%= attached_grid.column_name.html_safe %></span>
+        </h2>
+      </header>
+      <div id="<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>">
+        <%= render :partial => "home/loading" %>
+      </div>
+      <script>
+        $("#<%=h "list-grid" + attached_grid.id.to_s + "-" + get_filters_uuid(@filters) %>").load(
+          "<%= url_for(:action => :search_list, 
+                       :grid_id => attached_grid.uuid,
+                       :id => 0,
+                       :filters => @filters,
+                       :embedded => true
+                       ) %>");
+      </script>
+    </article>                                
+  <% end %>
+<% else %>
+  <h2><%= @page_title %></h2>
 <% end %>

@@ -31,26 +31,24 @@
   <% end %>
 <% end %>
       
-<% content_for :document do %>
-  <% if @grid.present? %>
-    <article>
-      <header class="header-article-level2">
-        <h1>
-          <span class="title"><%= @grid.to_s.html_safe %></span>
-          <span class="detail">
-            <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
-          </span>
-        </h1>
-      </header>
-      <div id="search-list"><%= render :partial => "home/loading" %></div>
-      <script>
-        $("#search-list").load("<%= url_for(:action => :search_list, 
-                                            :grid_id => @grid.uuid,
-                                            :filters => @filters,
-                                            :id => 0) %>");
-      </script>
-    </article>
-  <% else %>
-    <h1><%= icon "exclamation" %> <%= @page_title %></h1>
-  <% end %>
+<% if @grid.present? %>
+  <article>
+    <header class="header-article-level2">
+      <h1>
+        <span class="title"><%= @grid.to_s.html_safe %></span>
+        <span class="detail">
+          <% if not @grid.can_update_data? %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+        </span>
+      </h1>
+    </header>
+    <div id="search-list"><%= render :partial => "home/loading" %></div>
+    <script>
+      $("#search-list").load("<%= url_for(:action => :search_list, 
+                                          :grid_id => @grid.uuid,
+                                          :filters => @filters,
+                                          :id => 0) %>");
+    </script>
+  </article>
+<% else %>
+  <h1><%= icon "exclamation" %> <%= @page_title %></h1>
 <% end %>

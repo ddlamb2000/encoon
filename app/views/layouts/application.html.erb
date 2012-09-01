@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title><%= current_page_title.html_safe %></title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <meta name="copyright" content="<%= I18n.t('banner.copyright') %>">
+    <meta name="copyright" content="<%=t 'banner.copyright' %>">
     <meta name="generator" content="Ruby on Rails 3.2.6" />
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width" />
@@ -22,7 +22,7 @@
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
       <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
-      <% if flash[:error] -%><section class='error'><%= icon('exclamation') %> <%= flash[:error] %></section><% end -%>
+      <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
     </header>
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
@@ -30,9 +30,7 @@
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
-      <section class="document">
-        <%= yield :document %>
-      </section>
+      <section class="document"><%= yield %></section>
     </section>
   </body>
 </html>
