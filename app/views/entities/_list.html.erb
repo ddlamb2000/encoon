@@ -59,11 +59,6 @@
                         :grid => grid} %>
         </td>
 		  </tr>
-      <tr>
-        <td colspan="9999">
-          <div id=<%=h "edit-detail-row" + row.id.to_s %>></div>           
-        </td>
-      </tr>
 		<% end %>
   </table>
 <% end %>
@@ -88,15 +83,6 @@
          :filters => filters,
          :page => 1 %>
   <% end %>
-  <% if not embedded %>
-    <% if user_signed_in? and grid.can_create_data?(filters) %>
-      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
-            {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
-            :filters => filters,
-            :page => -1,
-            :format => :xml} %>
-    <% end %>
-  <% end %>
 	<% if user_signed_in? and grid.can_create_data?(filters) %>
 		<span title="Create a new row of data for the corresponding data grid." class="button">
 			<%= link_to icon('plus') + ("&nbsp;" + I18n.t('actions.create')).html_safe, 
@@ -106,6 +92,15 @@
              :remote => true %>
 		</span>
 	<% end %>
+  <% if user_signed_in? and grid.can_create_data?(filters) %>
+    <span title="Export rows in an .xml file." class="button">
+      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+            {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+            :filters => filters,
+            :page => -1,
+            :format => :xml} %>
+    </span>
+  <% end %>
 </footer>
 
 <div id=<%=h "create-detail-row" + grid.uuid + get_filters_uuid(filters) %>></div>
