@@ -34,7 +34,7 @@ en:
     login:        "Log in"
     data:         "Display list of data"
     attach:       "Attach document"
-    wait:         "Wait..."
+    wait:         "Loading in progress..."
     
   devise:
     sign_in:            "Sign in"

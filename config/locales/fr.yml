@@ -34,7 +34,7 @@ fr:
     login:        "Connexion"
     data:         "Afficher la liste des données"
     attach:       "Attacher document"
-    wait:         "Patience..."
+    wait:         "Chargement en cours..."
 
   devise:
     sign_in:            "Se connecter"
