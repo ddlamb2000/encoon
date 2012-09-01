@@ -15,7 +15,15 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 errors = total_count = total_inserted = total_updated = total_skipped = total_elapsed = 0
-for file in ["administrator", "credentials", "system", "kinds", "roles", "countries"]
+
+for file in ["administrator", 
+             "credentials", 
+             "system", 
+             "kinds", 
+             "roles", 
+             "home", 
+             "welcome", 
+             "countries"]
   Entity.log_debug "rake db:seed upload #{file}.xml", true
   Thread.current[:session_locale] = 'en'
   Thread.current[:session_as_of_date] = Date.current
@@ -41,6 +49,7 @@ for file in ["administrator", "credentials", "system", "kinds", "roles", "countr
     errors = errors + 1
   end
 end
+
 Entity.log_debug "rake db:seed total " +
                  "#{errors} errors, " + 
                  "#{total_count} records, " + 
@@ -48,4 +57,3 @@ Entity.log_debug "rake db:seed total " +
                  "#{total_updated} updated, " +
                  "#{total_skipped} skipped, " +
                  "#{total_elapsed} elapsed (ms).", true
-                 
