@@ -106,6 +106,7 @@
 <% end %>
 
 <% content_for :document do %>
+  <section id="dialog-article"></section>
   <% unless @grid.blank? or @row.blank? %>
     <%= render :partial => 'entities/row', 
                :locals => { 

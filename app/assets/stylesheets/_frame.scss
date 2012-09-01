@@ -331,3 +331,16 @@ body {
     }
   }
 }
+
+.dialog {
+  position: absolute;
+  top: 20%;
+  left: 20%;
+  width: 60%;
+  z-index: 10;
+  padding: 2*$padding;
+  @include background-image(radial-gradient(50% 70%, adjust-lightness($background-color-article, 85%) 5%, $background-color-article));
+  background-color: $background-color-article;
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+  @include border-radius;
+}

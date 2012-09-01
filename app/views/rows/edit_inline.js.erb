@@ -1,2 +1,1 @@
-$("#<%=h "article-grid" + @grid.id.to_s + "-row" + @row.id.to_s %>").html("<%= escape_javascript(render :partial => "edit_inline") %>");
-$("#detail-actions").hide();
+$("#dialog-article").html("<%= escape_javascript(render :partial => "edit_inline") %>");

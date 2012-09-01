@@ -48,11 +48,10 @@
 }
 
 .actions {
-  margin-top: 2*$padding;
   padding: 2*$padding;
   vertical-align: middle;
   text-align: center;
-  background-color: $background-color-table-header;
+  height: 5*$padding;
   @include border-radius;
   .button { 
     display: inline;
