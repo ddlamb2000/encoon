@@ -116,6 +116,7 @@ private
     "users.create_user_uuid, users.update_user_uuid"
   end
   
+  # Creates a private workspace for the user being created. 
   def create_workspace_new_user
     log_debug "User#create_workspace_new_user workspace"
     workspace = Workspace.new
@@ -134,6 +135,12 @@ private
     workspace_loc.save!
     log_debug "User#create_workspace_new_user missing loc"
     workspace.create_missing_loc!
+    log_debug "User#create_workspace_new_user workspace sharing"
+    workspace_sharing = WorkspaceSharing.new
+    workspace_sharing.workspace_uuid = workspace.uuid
+    workspace_sharing.user_uuid = self.uuid
+    workspace_sharing.role_uuid = Role::ROLE_TOTAL_CONTROL_UUID
+    workspace_sharing.save!
     log_debug "User#create_workspace_new_user audit"
     workspace.make_audit(Audit::CREATE)
   end
