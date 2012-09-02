@@ -20,27 +20,27 @@
   <table class="form">
     <tr>
       <td class="header"><%= f.label :first_name %><span class="required">*</span></td>
-      <td class="string"><%= f.text_field :first_name %></td>
+      <td class="string"><%= f.text_field :first_name, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :last_name %><span class="required">*</span></td>
-      <td class="string"><%= f.text_field :last_name %></td>
+      <td class="string"><%= f.text_field :last_name, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
-      <td class="string"><%= f.email_field :email %></td>
+      <td class="string"><%= f.email_field :email, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :current_password %><span class="required">*</span></td>
-      <td class="string"><%= f.password_field :current_password %></td>
+      <td class="string"><%= f.password_field :current_password, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :password %><span class="required">*</span></td>
-      <td class="string"><%= f.password_field :password %></td>
+      <td class="string"><%= f.password_field :password, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :password_confirmation %><span class="required">*</span></td>
-      <td class="string"><%= f.password_field :password_confirmation %></td>
+      <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
     </tr>
   </table>
   <footer class="actions">

@@ -7,11 +7,11 @@
   <table class="form">
     <tr>
       <td class="header"><%= f.label :password, I18n.t('devise.new_passwd') %><span class="required">*</span></td>
-      <td class="string"><%= f.password_field :password %></td>
+      <td class="string"><%= f.password_field :password, :required => true %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :password_confirmation, I18n.t('devise.conf_new_passwd') %></td>
-      <td class="string"><%= f.password_field :password_confirmation %></td>
+      <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
     </tr>
   </table>
   <footer class="actions">

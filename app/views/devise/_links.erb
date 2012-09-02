@@ -1,48 +1,48 @@
 <section>
   <article>
     <ul>
-      <%- if controller_name != 'sessions' %>
+      <% if controller_name != 'sessions' %>
         <li class="button">
           <%= link_to new_session_path(resource_name) do %>
             <%= icon 'preferences' %>
             <%=t 'devise.sign_in' %>
           <% end %>
         </li>
-      <% end -%>
-      <%- if devise_mapping.registerable? && controller_name != 'registrations' %>
+      <% end %>
+      <% if devise_mapping.registerable? && controller_name != 'registrations' %>
         <li class="button">
           <%= link_to new_registration_path(resource_name) do %>
             <%= icon 'preferences' %>
             <%=t 'devise.sign_up' %>
           <% end %>
         </li>
-      <% end -%>
-      <%- if devise_mapping.recoverable? && controller_name != 'passwords' %>
+      <% end %>
+      <% if devise_mapping.recoverable? && controller_name != 'passwords' %>
         <li class="button">
           <%= link_to new_password_path(resource_name) do %>
             <%= icon 'warning' %>
             <%=t 'devise.forgot_password' %>
           <% end %>
         </li>
-      <% end -%>
-      <%- if devise_mapping.confirmable? && controller_name != 'confirmations' %>
+      <% end %>
+      <% if devise_mapping.confirmable? && controller_name != 'confirmations' %>
         <li class="button">
           <%= link_to new_confirmation_path(resource_name) do %>
             <%= icon 'warning' %>
             <%=t 'devise.no_confirmation' %>
           <% end %>
         </li>
-      <% end -%>
-      <%- if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
+      <% end %>
+      <% if devise_mapping.lockable? && resource_class.unlock_strategy_enabled?(:email) && controller_name != 'unlocks' %>
         <li class="button">
           <%= link_to new_unlock_path(resource_name) do %>
             <%= icon 'warning' %>
             <%=t 'devise.no_unlock' %>
           <% end %>
         </li>
-      <% end -%>
-      <%- if devise_mapping.omniauthable? %>
-        <%- resource_class.omniauth_providers.each do |provider| %>
+      <% end %>
+      <% if devise_mapping.omniauthable? %>
+        <% resource_class.omniauth_providers.each do |provider| %>
           <li class="button">
             <%= link_to omniauth_authorize_path(resource_name, provider) do %>
               <%= icon 'preferences' %>

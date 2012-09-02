@@ -1,13 +1,12 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-
 <header class="action-header"><%= I18n.t('devise.resend_unlock') %></header>
 <%= form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post }) do |f| %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
-      <td class="string"><%= f.email_field :email %></td>
+      <td class="string"><%= f.email_field :email, :required => true %></td>
     </tr>
   </table>
   <footer class="actions">
