@@ -1,28 +1,25 @@
-<div class="slideButton">
+<div id="show-navigator" class="slideButton">
   <input type="checkbox" id="navigator-button" <%= session[:hide_navigator] ? '' : 'checked' %> />
   <label for="navigator-button"></label>
 </div>
-
 <span class="button">
   <%= link_to_unless_current(I18n.t('general.home').html_safe, root_path) do |name| %>
     <span class="highlighted"><%= name %></span>
   <% end %>
 </span>
-
 <% if @workspaces.present? %>
-	<% for row in @workspaces.row_all %>
-	  | <span class="button" title="<%= row.description.html_safe %>">
-  		  <%= link_to_unless_current(row.name.html_safe, 
+  <% for row in @workspaces.row_all %>
+    | <span class="button" title="<%= row.description.html_safe %>">
+        <%= link_to_unless_current(row.name.html_safe, 
               {:controller => '/rows', 
                :action => 'show', 
                :grid_id => Workspace::ROOT_UUID, 
                :id => row.uuid }) do |name| %>
           <span class="highlighted"><%= name %></span>
         <% end %>
-    </span>																					    		
-	<% end %>
+    </span>
+  <% end %>
 <% end %>
-
 <script>
   function showNavigator(updateFlag) {
     if ($("#navigator-button").attr('checked')) {
