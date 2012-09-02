@@ -23,6 +23,8 @@ Encoon::Application.initialize!
 # Turns off auto TLS for e-mail.
 ActionMailer::Base.smtp_settings[:enable_starttls_auto] = false
 
+APPLICATION_TITLE = "εncooη"
+
 LANGUAGES = {
   "English" => 'en',
   "Français" => 'fr',

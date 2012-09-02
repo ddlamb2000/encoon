@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 module ApplicationHelper
-  # Defines special builder for data grid forms   
+  # Defines special builder for data grid forms
   def grid_form_for(name, *args, &block)
     options = args.last.is_a?(Hash) ? args.pop : {}
     options = options.merge(:builder => GridBuilder)
@@ -28,17 +28,11 @@ module ApplicationHelper
   end
   
   def current_application_title
-    "Encoon" + ('production' != Rails.env ? (" (" + Rails.env + ")") : "")
+    APPLICATION_TITLE + ('production' != Rails.env ? (" (" + Rails.env + ")") : "")
   end
   
   def trunc(value, limit=80)
-    if value.present?
-      if value.length > limit
-        return value[0..limit-1] + "&hellip;"
-      else
-        return value
-      end
-    end
+    return (value.length > limit) ? (value[0..limit-1] + "&hellip;") : value if value.present?
     ""
   end
 
