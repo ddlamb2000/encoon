@@ -3,7 +3,6 @@
 <% end %>
 <header class="action-header"><%= I18n.t('devise.send_instructions') %></header>
 <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
-  <%= devise_error_messages! %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
@@ -11,6 +10,7 @@
     </tr>
   </table>
   <footer class="actions">
+    <%= devise_error_messages! %>
     <span class="button"><%= f.submit I18n.t('devise.send_instructions') %></span>
   </footer>
 <% end %>

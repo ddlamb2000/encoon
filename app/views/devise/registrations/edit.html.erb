@@ -17,7 +17,6 @@
 <% end %>
 <header class="action-header"><%= I18n.t('devise.edit_user') %></header>
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= devise_error_messages! %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :first_name %><span class="required">*</span></td>
@@ -41,6 +40,7 @@
     </tr>
   </table>
   <footer class="actions">
+    <%= devise_error_messages! %>
     <span class="button"><%= f.submit I18n.t('actions.ok') %></span>
   </footer>
 <% end %>

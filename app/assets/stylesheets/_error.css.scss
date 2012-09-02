@@ -10,7 +10,7 @@
 #error_explanation {
   color:$title-color;
   h2 {
-    color:$title-color;
+    display:none;
   }
 }
 .field_with_errors {
