@@ -122,7 +122,7 @@ private
     workspace.create_user_uuid = self.uuid
     workspace.update_user_uuid = self.uuid
     workspace.public = false
-    workspace.uri = self.uuid
+    workspace.uri = self.email
     workspace.save!
     log_debug "User#create_workspace_new_user workspace_loc"
     workspace_loc = WorkspaceLoc.new
