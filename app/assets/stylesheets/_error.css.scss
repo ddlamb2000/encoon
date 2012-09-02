@@ -6,7 +6,7 @@
 .error {
   @include clearfix;
   margin-bottom: 0;
-  border-color: red;
+  border-color: $title-color;
 }
 
 #error_explanation {
@@ -17,15 +17,15 @@
 }
 
 .field_with_errors {
-  color: red;
+  color: $title-color;
   display: inline;
   input {
-    border-color: red;
+    border-color: $title-color;
   }
   select {
-    border-color: red;
+    border-color: $title-color;
   }
   textarea {
-    border-color: red;
+    border-color: $title-color;
   }
 }
