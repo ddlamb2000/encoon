@@ -27,6 +27,8 @@ class User < Entity
 
   validates_presence_of :first_name, :last_name
 
+  after_create :create_workspace_new_user
+
   devise :database_authenticatable, 
          :registerable, 
          :recoverable, 
@@ -112,5 +114,27 @@ private
     "users.email, users.first_name, users.last_name, " +
     "users.created_at, users.updated_at, " +
     "users.create_user_uuid, users.update_user_uuid"
+  end
+  
+  def create_workspace_new_user
+    log_debug "User#create_workspace_new_user workspace"
+    workspace = Workspace.new
+    workspace.create_user_uuid = self.uuid
+    workspace.update_user_uuid = self.uuid
+    workspace.public = false
+    workspace.uri = self.uuid
+    workspace.save!
+    log_debug "User#create_workspace_new_user workspace_loc"
+    workspace_loc = WorkspaceLoc.new
+    workspace_loc.uuid = workspace.uuid
+    workspace_loc.version = workspace.version
+    workspace_loc.base_locale = I18n.locale.to_s
+    workspace_loc.locale = I18n.locale.to_s
+    workspace_loc.name = "#{self.first_name} #{self.last_name}"
+    workspace_loc.save!
+    log_debug "User#create_workspace_new_user missing loc"
+    workspace.create_missing_loc!
+    log_debug "User#create_workspace_new_user audit"
+    workspace.make_audit(Audit::CREATE)
   end
 end

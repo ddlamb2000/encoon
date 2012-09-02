@@ -1,31 +1,28 @@
 .notice {
   @include clearfix;
-  margin-bottom: 0;
+  margin-bottom:0;
 }
-
 .error {
   @include clearfix;
-  margin-bottom: 0;
-  border-color: red;
+  margin-bottom:0;
+  border-color:$title-color;
 }
-
 #error_explanation {
-  color: $title-color;
+  color:$title-color;
   h2 {
-    color: $title-color;
+    display:none;
   }
 }
-
 .field_with_errors {
-  color: red;
-  display: inline;
+  color:$title-color;
+  display:inline;
   input {
-    border-color: red;
+    border-color:$title-color;
   }
   select {
-    border-color: red;
+    border-color:$title-color;
   }
   textarea {
-    border-color: red;
+    border-color:$title-color;
   }
 }

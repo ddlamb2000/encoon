@@ -56,12 +56,15 @@ class RowsController < ApplicationController
                                     :photo,
                                     :file]
 
+  # Renders the home page using hard-coded references.
   def home
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
     findGrid
     findRow
-    render :show
+    set_page_title
+    push_history
+    render :show, :status => @status
   end
 
   def history
@@ -106,7 +109,7 @@ class RowsController < ApplicationController
   
   def show
     log_debug "RowsController#show: params=#{params.inspect}"
-    if params[:format].nil? or params[:format] != 'xml'  
+    if params[:format].nil? or params[:format] != 'xml'
       set_page_title
       push_history
       render :show, :status => @status
@@ -475,12 +478,12 @@ private
       else
         @status = 404
         @page_title = I18n.t('error.no_data')
-        @page_icon = "exclamation"
+        @page_icon = "warning"
       end
     else
       @status = 404
       @page_title = I18n.t('error.no_grid')
-      @page_icon = "exclamation"
+      @page_icon = "warning"
     end
   end
 

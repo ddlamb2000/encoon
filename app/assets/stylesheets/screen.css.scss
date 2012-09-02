@@ -1,11 +1,11 @@
 /*
- * encoding: utf-8
+ * encoding:utf-8
  *
- * Encoon : data structuration, presentation and navigation.
+ * Encoon :data structuration, presentation and navigation.
  * 
  * Copyright (C) 2012 David Lambert
  * 
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software:you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -28,46 +28,41 @@
 @import "compass/typography/lists/bullets";
 @import "compass/typography/links/hover-link";
 @import "blueprint";
-
-$default-border-radius: 5px;
-$blueprint-font-family: "Trebuchet MS", Georgia, sans-serif;
-$blueprint-font-size: 12px;
-$background-color: #E0E0E0;
-$background-color-banner: #282828;
-$background-color-highlights: #556b2f;  // green 
-$background-color-article: white;
-$background-color-article-header: transparent;
-$background-color-article-header-level2: transparent;
-$background-color-table: #e8f0e3;
-$background-color-table-header: #F8F8F8;
-$background-color-buttons: #c0c0c0;
-$background-color-navigator-section: #404040;
-$title-color: #b50000;
-$color-highlight: white;
-$detail-color: black;
-$shadow-color: #606060;
-$text-shadow-color: #D0D0D0;
-$padding: 4px;
-
+$default-border-radius:5px;
+$blueprint-font-family:"Trebuchet MS", Georgia, sans-serif;
+$blueprint-font-size:12px;
+$background-color:#E0E0E0;
+$background-color-banner:#282828;
+$background-color-highlights:#556b2f; // green 
+$background-color-article:white;
+$background-color-article-header:transparent;
+$background-color-article-header-level2:transparent;
+$background-color-table:#e8f0e3;
+$background-color-table-header:#F8F8F8;
+$background-color-buttons:#c0c0c0;
+$background-color-navigator-section:#404040;
+$title-color:#b50000; // red
+$color-highlight:white;
+$detail-color:black;
+$shadow-color:#606060;
+$text-shadow-color:#D0D0D0;
+$padding:4px;
+@include blueprint;
 @mixin shade {
-  background-color: $background-color-table;
+  background-color:$background-color-table;
   @include background-image(linear-gradient(10% 50%, adjust-lightness($background-color-buttons, 80%) 5%, $background-color-buttons));
 }
-
 @mixin transition {
   @include transition-property(all);
   @include transition-duration(0.3s);
   @include transition-timing-function(ease); 
 }
-
 @mixin undecored-link {
-  text-decoration: none;
+  text-decoration:none;
   &:hover {
-    text-decoration: none; 
+    text-decoration:none; 
   } 
 }
-
-@include blueprint;
 @import "frame";
 @import "base";
 @import "form";

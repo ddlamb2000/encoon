@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="<%= I18n.locale.to_s %>">
+<html lang="<%= I18n.locale %>">
   <head>
     <meta charset="utf-8">
     <title><%= current_page_title.html_safe %></title>
@@ -8,10 +8,7 @@
     <meta name="generator" content="Ruby on Rails 3.2.6" />
     <meta name="robots" content="noindex,nofollow">
     <meta name="viewport" content="width=device-width" />
-    <link rel="apple-touch-icon" href="/images/encoon.gif" />
     <%= stylesheet_link_tag 'screen', :media => 'screen, projection' %>
-    <%= stylesheet_link_tag 'print', :media => 'print' %>
-    <%= stylesheet_link_tag 'jquery-ui-1.8.21.custom', :media => "all" %>
     <%= javascript_include_tag "application" %>
     <!--[if lt IE 9]>
     <%= javascript_include_tag "html5.js" %>
@@ -21,15 +18,11 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <% if session[:hide_navigator] %>
-        <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
-        <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
-      <% end %>
+      <%= render :partial => 'layouts/flash', :locals => {:flash => flash} if session[:hide_navigator] %>
     </header>
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
-        <% if flash[:notice] -%><section class='notice'><%= icon('information') %> <%= flash[:notice] %></section><% end -%>
-        <% if flash[:alert] -%><section class='error'><%= icon('exclamation') %> <%= flash[:alert] %></section><% end -%>
+        <%= render :partial => 'layouts/flash', :locals => {:flash => flash} %>
         <%= render :partial => "layouts/navigator" %>
       </section>
     </section>

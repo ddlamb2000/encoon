@@ -1,13 +1,12 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-
 <header class="action-header"><%= I18n.t('devise.sign_in') %></header>
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
-      <td class="string"><%= f.text_field :email %></td>
+      <td class="string"><%= f.email_field :email %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :password %><span class="required">*</span></td>
