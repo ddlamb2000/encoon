@@ -16,5 +16,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 require File.expand_path('../config/application', __FILE__)
+require 'rake'
+require 'rake/dsl_definition'
 
 Encoon::Application.load_tasks
