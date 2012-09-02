@@ -1,4 +1,5 @@
 <footer class="actions">
+  <div class="validation-error"></div>
   <span class="button">
     <%=t 'field.begin_date' %>
     <%= f.datepicker 'begin', 
@@ -17,15 +18,9 @@
                      :size => "10x1" %>
   </span>
   <span class="button">
-    <a id="cancel" href="#"><%=t 'actions.cancel' %></a>
+    <a id="cancel-row-dialog" href="#"><%=t 'actions.cancel' %></a>
   </span>
   <span class="button">
-    <%= f.submit I18n.t('actions.ok') %>
+    <%= f.submit I18n.t('actions.ok'), :id => "ok-row-dialog" %>
   </span>
 </footer>
-
-<script>
-  $("#cancel").click(function (event){
-    $("#row-dialog").empty();
-  });
-</script>

@@ -1,31 +1,26 @@
-<%= render :partial => 'entities/error_messages', :locals => { :item => @row } %>
 <table class="form">
   <% if @grid.has_translation? and @grid.has_name? %>
-    <tr>
-      <td class="header"><%= I18n.t('field.name') %><span class="required">*</span></td>
+    <tr id="header-name">
+      <td class="header"><%= f.label :name, :class => "required" %></td>
       <td class="string">
-        <% if not @row.errors.messages[:name].blank? %>
-          <div class="field_with_errors">
-        <% end %>
-        <%= text_field_tag :name, @row_loc.name, :size => "70x1" %>
-        <% if not @row.errors.messages[:name].blank? %>
-          </div>
-        <% end %>
+        <%= text_field_tag :name, 
+                           @row_loc.name, 
+                           :size => "70x1" %>
       </td>
     </tr>
 	<% end %>
   <% for column in parent.column_all %>
-    <%= f.edit_entity(@row,
-                      column, 
-                      column.description.present? ? 
-                        (("&nbsp;<span title=\"" + column.description + "\">").html_safe +
-                        icon("information") +
-                        "</span>".html_safe) : "") %>
+    <% description = column.description.present? ? 
+          ("<span title='#{column.description}'> " + icon("information") + "</span>") : 
+          "" %>
+    <%= f.edit_entity(@row, column, description) %>
   <% end %>
   <% if @grid.has_translation? and @grid.has_description? %>
-    <tr>
-      <td class="header"><%= I18n.t('field.description') %></td>
-      <td class="string"><%= text_area_tag :description, @row_loc.description, :size => "70x10" %></td>
+    <tr id="header-description">
+      <td class="header"><%= f.label :description %></td>
+      <td class="string"><%= text_area_tag :description, 
+                                           @row_loc.description, 
+                                           :size => "70x10" %></td>
     </tr>
   <% end %>
 </table>

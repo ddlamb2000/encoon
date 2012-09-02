@@ -16,15 +16,8 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class GridBuilder < ActionView::Helpers::FormBuilder
   def trunc(value, limit=150)
-    if value.present?
-      if value.length > limit
-        value[0..limit-1] + "&hellip;"
-      else
-        value
-      end
-    else
-      ""
-    end
+    return (value.length > limit) ? (value[0..limit-1] + "&hellip;") : value if value.present?
+    ""
   end
 
   def edit_string(attribute)
@@ -97,9 +90,9 @@ class GridBuilder < ActionView::Helpers::FormBuilder
     end
   end
 
-  def show_header_label(label)
+  def show_header_label(label, required, attribute)
     @template.content_tag("td",
-      @template.content_tag("dt", label + "&nbsp;".html_safe),
+      @template.content_tag("label", label, :for => attribute, :class => (required ? "required" : "")),
       :class => "header"
      )
   end
@@ -108,10 +101,9 @@ class GridBuilder < ActionView::Helpers::FormBuilder
     attribute = row.initialization? ? column.default_physical_column : column.physical_column
     value = row.read_value(column)
     @template.content_tag("tr",
-      show_header_label(column.name.html_safe + 
-                        (column.required ? "<span class=\"required\">*</span>".html_safe : "") + 
-                        description) +
-      edit(attribute, value, column.kind, column.grid_reference_uuid, true)
+      show_header_label(column.name.html_safe + description.html_safe, column.required, attribute) +
+      edit(attribute, value, column.kind, column.grid_reference_uuid, true),
+      :id => "header-" + attribute
     )
   end
 end

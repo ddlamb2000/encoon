@@ -11,7 +11,6 @@
                          :grid_id => @grid.uuid, 
                          :id => @row.uuid}, 
                 :html => {:multipart => true}) do |f| %>
-      <%= render :partial => 'entities/error_messages', :locals => { :item => @row_attachement } %>
       <aside class="actions">
         <% if @row.has_attachment? %>
           <table class="form">

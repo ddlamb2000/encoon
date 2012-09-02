@@ -7,7 +7,6 @@
                  :as => :upload,  
                  :url => {:action => 'upload', :grid_id => @grid.uuid, :id => 0}, 
                  :html => {:multipart => true}) do |f| %>
-      <%= render :partial => 'entities/error_messages', :locals => { :item => @upload } %>
       <table class="form">
         <tr>
            <td class="header">Data file</td>

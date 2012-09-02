@@ -199,11 +199,10 @@ class RowsController < ApplicationController
         flash[:notice] = I18n.t('transaction.created', 
                                 :type => @grid, 
                                 :name => name)
-        format.html { redirect_to session[:last_url] }
+        format.html { search_list }
       else
-        log_debug "RowsController#create: error, params=#{params.inspect}"
-        set_page_title
-        format.html { render :action => "_new_inline" }
+        log_debug "RowsController#create: error, @row.errors=#{@row.errors}"
+        format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end

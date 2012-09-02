@@ -3,12 +3,51 @@
     <%= I18n.t('actions.create') %>
     <%= @grid.to_s.html_safe %>
   </header> 
-  <%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
-  	 <%= render :partial => "edit", 
-               :locals => {:f => f, 
-                           :parent => @grid, 
-                           :entity => @row,
-                           :filters => @filters} %>
+  <%= grid_form_for([@grid, @row], 
+                    :remote => true, 
+                    :html => { :'data-type' => 'html', 
+                               :id => 'new_inline_form',
+                               :method => :post }) do |f| %>
+     <%= render :partial => "edit", 
+                :locals => {:f => f, 
+                            :parent => @grid, 
+                            :entity => @row,
+                            :filters => @filters} %>
     <%= render :partial => 'entities/actions_new_inline', :locals => {:f => f} %>
   <% end %>
 </section>
+<script>
+  $("#cancel-row-dialog").click(function (event){
+    $("#row-dialog").empty();
+  });
+  $(document).ready(function(){
+    $('#new_inline_form')
+      .bind("ajax:beforeSend", function(evt, xhr, settings){
+        $(this).find('div.validation-error').empty();
+        $(".field_with_errors").removeClass("field_with_errors");
+      })
+      .bind("ajax:success", function(evt, data, status, xhr){
+        $(this).find('div.validation-error').empty();
+        $(".field_with_errors").removeClass("field_with_errors");
+        $("#row-dialog").html(xhr.responseText);
+        $("#row-dialog").empty();
+      })
+      .bind('ajax:complete', function(evt, xhr, status){
+      })
+      .bind("ajax:error", function(evt, xhr, status, error){
+        var errors, errorText;
+        try {
+          errors = $.parseJSON(xhr.responseText);
+        } catch(err) {
+          errors = {message: err};
+        }
+        errorText = "<ul>";
+        for( error in errors ) {
+          errorText += "<li>" + errors[error] + "</li> ";
+          $("#header-" + error).addClass("field_with_errors");
+        }
+        errorText += "</ul>";
+        $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
+      });
+  });
+</script>
