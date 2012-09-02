@@ -2,15 +2,19 @@
   <section id="unhappy">
     <article>
       <ul>
-        <li>
+        <li class="button">
           <%= I18n.t('devise.unhappy') %> 
-          <%= link_to I18n.t('devise.cancel_account'), registration_path(resource_name), :confirm => I18n.t('message.delete', :name => current_user.to_s), :method => :delete %>.
+          <%= link_to registration_path(resource_name), 
+                      :confirm => I18n.t('message.delete', :name => current_user.to_s),
+                      :method => :delete do %>
+            <%= icon 'warning' %>
+            <%=t 'devise.cancel_account' %>
+          <% end %>
         </li>
       </ul>
     </article>
   </section>
 <% end %>
-
 <header class="action-header"><%= I18n.t('devise.edit_user') %></header>
 <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => { :method => :put }) do |f| %>
   <%= devise_error_messages! %>
@@ -25,7 +29,7 @@
     </tr>
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
-      <td class="string"><%= f.text_field :email %></td>
+      <td class="string"><%= f.email_field :email %></td>
     </tr>
     <tr>
       <td class="header"><%= f.label :password %><span class="required">*</span></td>

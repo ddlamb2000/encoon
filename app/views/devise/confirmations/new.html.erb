@@ -1,14 +1,13 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-
 <header class="action-header"><%= I18n.t('devise.resend_conf') %></header>
 <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
   <%= devise_error_messages! %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :email %><span class="required">*</span></td>
-      <td class="string"><%= f.text_field :email %></td>
+      <td class="string"><%= f.email_field :email %></td>
     </tr>
   </table>
   <footer class="actions">
