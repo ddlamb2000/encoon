@@ -28,6 +28,7 @@ class RowsController < ApplicationController
                                                :delete_attachment,
                                                :import,
                                                :upload]
+
   before_filter :findGrid, :only => [:search_list,
                                      :show, 
                                      :details,
@@ -81,7 +82,7 @@ class RowsController < ApplicationController
   end
 
   def refresh
-    log_debug "HomeController#refresh date=#{params[:home][:session_date]}"
+    log_debug "RowsController#refresh date=#{params[:home][:session_date]}"
     session[:as_of_date] = Date.strptime(params[:home][:session_date], I18n.t('datepicker.decode'))
     redirect_to session[:last_url]
   end
