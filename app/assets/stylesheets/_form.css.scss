@@ -5,7 +5,7 @@
     border:1px solid $background-color-table;
     vertical-align:middle;
     padding:$padding;
-    margin:$padding;
+    margin:1px;
     @include transition;
     @include border-radius;
     &[type=text], &[type=email] {
@@ -20,7 +20,7 @@
     border:1px solid $background-color-table;
     vertical-align:middle;
     padding:$padding;
-    margin:$padding;
+    margin:1px;
     @include transition;
     @include border-radius;
   }
@@ -32,11 +32,11 @@
     width:95%; 
     height:auto; 
     padding:$padding;
-    margin:$padding;
+    margin:1px;
     @include transition;
     @include border-radius;
   }
-  label.required:after {
+  label.required:before {
     content:"*";
     color:$title-color;
   }
