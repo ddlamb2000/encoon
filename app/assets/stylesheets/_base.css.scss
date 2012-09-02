@@ -1,143 +1,133 @@
 h1 {
-  font-size: 160%;
-  font-weight: bolder;
+  font-size:160%;
+  font-weight:bolder;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
   .title {
-    color: $title-color;
+    color:$title-color;
   }
   .detail {
-    display: inline;
-    font-size: 60%;
-    font-style: italic;
+    display:inline;
+    font-size:60%;
+    font-style:italic;
   }
 }
-
 h2 {
-  font-size: 130%;
-  font-weight: bolder;
+  font-size:130%;
+  font-weight:bolder;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
   .title {
-    color: $title-color;
+    color:$title-color;
   }
   .detail {
-    display: inline;
-    font-size: 60%;
-    font-style: italic;
+    display:inline;
+    font-size:60%;
+    font-style:italic;
   }
 }
-
 p {
-  margin-left: 0;
-  margin-right: 0;
-  margin-top: 0;
-  margin-bottom: 8px;
-  font-size: 105%;
-  text-align: left;
-  line-height: 140%;
+  margin-left:0;
+  margin-right:0;
+  margin-top:0;
+  margin-bottom:8px;
+  font-size:105%;
+  text-align:left;
+  line-height:140%;
 }
-
 a {
   @include link-colors($title-color, $detail-color, $detail-color, black);
   @include hover-link;
   @include transition;
-  text-decoration: underline;
+  text-decoration:underline;
 }
-
 img {
   @include border-radius;
 }
-
 ul {
   @include no-bullets;
-  padding: 0;
+  padding:0;
   margin:0;
 }
-
 li {
   @include no-bullets;
-  padding: 0;
+  padding:0;
   margin:0;
 }
-
 .slideButton {
-  width: 30px;
-  height: 8px;
-  background: $background-color-banner;
-  position: relative;
-  float: left;
-  top: 7px;
-  left: 2*$padding;
-  margin-right: 6*$padding;
+  width:30px;
+  height:8px;
+  background:$background-color-banner;
+  position:relative;
+  float:left;
+  top:7px;
+  left:2*$padding;
+  margin-right:6*$padding;
   @include border-radius;
   @include single-box-shadow(rgba(255,255,255,0.2), 0, 1px, 0); 
   input[type=checkbox] {
-    visibility: hidden;
+    visibility:hidden;
   }
   input[type=checkbox]:checked + label {
-    left: 18px;
+    left:18px;
   }
   label {
-    display: block;
-    width: 14px;
-    height: 14px;
-    cursor: pointer;
-    position: absolute;
-    top: -3px;
-    left: -3px;
+    display:block;
+    width:14px;
+    height:14px;
+    cursor:pointer;
+    position:absolute;
+    top:-3px;
+    left:-3px;
     @include border-radius(50px);
     @include transition;
     @include single-box-shadow(rgba(0,0,0,0.3), 0, 2px, 5px);
     @include shade; 
   }
 }
-
 .information {
-  display: inline;
-  font-size: 95%;
-  background: $background-color;
-  color: $title-color;
-  font-weight: normal;
+  display:inline;
+  font-size:95%;
+  background:$background-color;
+  color:$title-color;
+  font-weight:normal;
   img {
-    border: 0;
+    border:0;
   }
 }
-
 .detail {
-  display: inline;
-  font-size: 95%;
-  font-style: italic;
-  font-weight: normal;
+  display:inline;
+  font-size:95%;
+  font-style:italic;
+  font-weight:normal;
+  padding-left:$padding;
+  padding-right:$padding;
   img {
-    border: 0;
+    border:0;
   }
 }
-
 .small-description {
-  display: inline;
-  font-size: 95%;
-  font-weight: normal;
+  display:inline;
+  font-size:95%;
+  font-weight:normal;
+  padding-left:$padding;
+  padding-right:$padding;
   img {
-    border: 0;
+    border:0;
   }
 }
-
 .new {
-  font-size: 90%;
-  font-weight: bolder;
-  font-style: normal;
-  color: black;
-  background-color: yellow;
-  display: inline;
+  font-size:90%;
+  font-weight:bolder;
+  font-style:normal;
+  color:black;
+  background-color:yellow;
+  display:inline;
+  padding-left:$padding;
+  padding-right:$padding;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   @include border-radius;
 }
-
 .filter {
   td {
-    border-top: 0;
+    border-top:0;
   }
-}
-
-.mini-photo {
- display: inline;
 }
