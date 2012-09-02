@@ -84,10 +84,18 @@ body {
 .main-area {
   @include float-right;
   width:70%;
+  @media only screen and (max-width: 950px) {
+    width:100%;
+  }
 }
 .large-area {
   @include float-left;
   width:100%;
+}
+#show-navigator {
+  @media only screen and (max-width: 950px) {
+    display:none;
+  }
 }
 #navigator {
   @include float-left;
@@ -102,6 +110,9 @@ body {
   font-size:90%;
 }
 .tools {
+  @media only screen and (max-width: 950px) {
+    display:none;
+  }
   margin-left:2*$padding;
   margin-right:2*$padding;
   margin-top:4*$padding;
