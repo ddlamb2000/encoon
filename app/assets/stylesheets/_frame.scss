@@ -35,10 +35,10 @@ body {
   }
   #header-application {
     @include float-left;
-    font-size:120%;
     text-align:left;
     padding-left:2*$padding;
     font-weight:bolder;
+    color:$title-color;
   }
   #header-links {
     @include float-right;
