@@ -1,6 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <encoon>
-  <row title="Attribut" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
+  <row title="System" grid_uuid="f54309d0-ea30-012c-1054-00166f92f624" grid="Domain">
+    <uuid>eec10850-dd45-012c-aafe-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>53</revision>
+    <enabled>true</enabled>
+    <created_at>2009-12-17 17:43:45 UTC</created_at>
+    <updated_at>2012-06-27 09:56:48 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
+    <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public">f</data>
+    <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">57830c40-9c87-012f-089e-4417fe7fde95</data>
+    <data uuid="44b03b60-a26c-012f-de85-4417fe7fde95" name="Uri">system</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>System</name>
+      <description>Holds the definition of data used at low-level by the application. It's designed, developed and maintained for the development of the system itself in an iterative and recursive process. For instance the definition of workspaces and data grids is defined by a set of data grids.  
+It's used internally and it's not recommended to alter it.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Syst&amp;#232;me</name>
+      <description>Contient les d&amp;#233;finitions de donn&amp;#233;es utilis&amp;#233;es &amp;#224; bas-niveau par l'application. Il est con&amp;#231;u, mis au point et maintenu dans le cadre du d&amp;#233;veloppement du syst&amp;#232;me lui-m&amp;#234;me dans le cadre d'un processus it&amp;#233;ratif et r&amp;#233;cursif. Par exemple la d&amp;#233;finition des espaces de travail et des grilles de donn&amp;#233;es repose sur un jeu de grilles de donn&amp;#233;es. Il est utilis&amp;#233; de mani&amp;#232;re interne et il n'est pas recommand&amp;#233; de le modifier.</description>
+    </locale>
+  </row>
+  <row title="Attribute" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
     <uuid>03bfafe0-ea31-012c-105a-00166f92f624</uuid>
     <version>1</version>
     <revision>11</revision>
@@ -9,8 +36,8 @@
     <updated_at>2012-06-26 15:06:49 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <locale>
@@ -26,19 +53,19 @@
       <description>Un attribut définit une structure d'information attachée à une catégorie de données. Les attributs peuvent être de types variés, par exemple Chaine de caractères, Texte ou Nombre. Un grand nombre d'attributs peuvent être définies pour une catégorie de données mais ce nombre est limité, en fonction du type d'attribut.</description>
     </locale>
   </row>
-  <row title="Attribut | columns | column_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
+  <row title="Attribute | columns | column_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77b6e8a0-06c2-012d-c0b0-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">columns</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">column_locs</data>
   </row>
-  <row title="Catégorie de données" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="Data category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>461e5940-ea31-012c-106b-00166f92f624</uuid>
     <version>1</version>
     <revision>13</revision>
@@ -47,14 +74,14 @@
     <updated_at>2012-06-26 03:02:26 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -68,141 +95,18 @@
       <description>Catégorie de données à laquelle est attachée l'attribut.</description>
     </locale>
   </row>
-  <row title="Catégorie de données | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
+  <row title="Data category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3427a80-06cd-012d-c202-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">461e5940-ea31-012c-106b-00166f92f624</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">461e5940-ea31-012c-106b-00166f92f624</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">grid_uuid</data>
   </row>
-  <row title="Expression régulière" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>68792a30-1da5-012d-2556-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:10:21 UTC</created_at>
-    <updated_at>2010-04-06 12:39:41 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">10</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">10</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Regular expression</name>
-      <description>Defines a regular expression that is used to validate data in the column.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Expression régulière</name>
-      <description>Défini une expression régulière qui est utilisée afin de contrôler la donnée définie dans la colonne.</description>
-    </locale>
-  </row>
-  <row title="Expression régulière | regex" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>2d72bb91-1da6-012d-6655-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:15:51 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">68792a30-1da5-012d-2556-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">regex</data>
-  </row>
-  <row title="Numéro" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>42e7f000-06cd-012d-c1f8-0026b0d63708</uuid>
-    <version>1</version>
-    <revision>9</revision>
-    <enabled>true</enabled>
-    <created_at>2010-02-28 19:27:41 UTC</created_at>
-    <updated_at>2010-04-06 12:30:25 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">4</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">1</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Number</name>
-      <description>Number of the physical column where data is stored.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Numéro</name>
-      <description>Numéro de la colonne physique où est stockée la donnée.</description>
-    </locale>
-  </row>
-  <row title="Numéro | number" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>b343c550-06cd-012d-c202-0026b0d63708</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">42e7f000-06cd-012d-c1f8-0026b0d63708</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">number</data>
-  </row>
-  <row title="Obligatoire" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>8df46b61-1da3-012d-46db-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>4</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 20:57:05 UTC</created_at>
-    <updated_at>2010-04-06 12:21:43 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">7</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">6</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Required</name>
-      <description>Indicates data in the column is required.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Obligatoire</name>
-      <description>Indique si la données est obligatoire dans la colonne.</description>
-    </locale>
-  </row>
-  <row title="Obligatoire | required" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>dae4cf91-1da4-012d-7a05-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-29 21:06:23 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">8df46b61-1da3-012d-46db-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">required</data>
-  </row>
-  <row title="Ordre d'affichage" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="Display order" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>4c766f00-06cd-012d-c1fb-0026b0d63708</uuid>
     <version>1</version>
     <revision>6</revision>
@@ -211,14 +115,14 @@
     <updated_at>2012-06-26 03:01:47 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">4</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">5</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">4</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -232,59 +136,18 @@
       <description>Défini l'ordre de la colonne lorsqu'elle est affichée dans la grille de données.</description>
     </locale>
   </row>
-  <row title="Ordre d'affichage | display" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
+  <row title="Display order | display" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3441b00-06cd-012d-c202-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">4c766f00-06cd-012d-c1fb-0026b0d63708</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">4c766f00-06cd-012d-c1fb-0026b0d63708</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">display</data>
   </row>
-  <row title="Référence" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>5a5107e0-0990-012d-e81a-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>13</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-04 07:49:14 UTC</created_at>
-    <updated_at>2012-06-26 03:03:08 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">6</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">20</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Reference</name>
-      <description>Defines the data category the attribute is referring to. This is used to provide a prompt on data, when the attribute is of kind 'Reference'.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Référence</name>
-      <description>Défini la catégorie de données à laquelle l'attribut fait référence. Ceci est utilisé afin de fournir une aide à la saise, quand l'attribut est défini avec le type 'Référence'.</description>
-    </locale>
-  </row>
-  <row title="Référence | grid_reference_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>8bbfddb0-0a53-012d-9616-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">5a5107e0-0990-012d-e81a-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">grid_reference_uuid</data>
-  </row>
-  <row title="Type" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="Kind" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>50270360-ea31-012c-106f-00166f92f624</uuid>
     <version>1</version>
     <revision>11</revision>
@@ -293,14 +156,14 @@
     <updated_at>2010-04-06 12:21:04 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">03bfafe0-ea31-012c-105a-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">1</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">5a2e26e0-ea31-012c-1074-00166f92f624</data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">5a2e26e0-ea31-012c-1074-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -314,400 +177,182 @@
       <description>Défini le type de données (Chaîne de caractères, Nombre...).</description>
     </locale>
   </row>
-  <row title="Type | kind" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
+  <row title="Kind | kind" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3436d00-06cd-012d-c202-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">50270360-ea31-012c-106f-00166f92f624</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">50270360-ea31-012c-106f-00166f92f624</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">kind</data>
   </row>
-  <row title="Catégorie de données" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>fe92c430-ea30-012c-1057-00166f92f624</uuid>
+  <row title="Number" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>42e7f000-06cd-012d-c1f8-0026b0d63708</uuid>
     <version>1</version>
-    <revision>11</revision>
+    <revision>9</revision>
     <enabled>true</enabled>
-    <created_at>2010-01-23 09:38:32 UTC</created_at>
-    <updated_at>2012-06-26 02:50:38 UTC</updated_at>
+    <created_at>2010-02-28 19:27:41 UTC</created_at>
+    <updated_at>2010-04-06 12:30:25 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Data category</name>
-      <description>Data categories let users structure and enter data in the system in a completely transparent and flexible way. Data can be translatable and can be managed through dated versions. A data category is a kind of virtual table made of columns and rows ; it's based on several underlying physical tables that can be changed by database administrators. Because every single piece of data is managed in the application through data categories, users can navigate through data is a very consistent way.</description>
+      <name>Number</name>
+      <description>Number of the physical column where data is stored.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Catégorie de données</name>
-      <description>Les catégories de données permettent aux utilisateurs de structurer et d'entrer des données dans le système de façon transparente et flexible. Les données peuvent être traduisibles et peuvent être gérées au travers de versions datées. Une catégorie de données est une sorte de table virtuelle faite de colonnes et de lignes ; elle s'appuie sur plusieurs tables physiques qui peuvent être modifiées par les administrateurs de la base de données. Parce que toutes les données sont gérées au travers de catégories de données, les utilisateurs peuvent naviguer parmi les données de façon cohérente.</description>
+      <name>Numéro</name>
+      <description>Numéro de la colonne physique où est stockée la donnée.</description>
     </locale>
   </row>
-  <row title="Catégorie de données | grids | grid_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>77b56ab0-06c2-012d-c0b0-0026b0d63708</uuid>
+  <row title="Number | number" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>b343c550-06cd-012d-c202-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grids</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">grid_locs</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">42e7f000-06cd-012d-c1f8-0026b0d63708</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">number</data>
   </row>
-  <row title="Domaine" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>1fe00120-ea31-012c-1065-00166f92f624</uuid>
+  <row title="Reference" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>5a5107e0-0990-012d-e81a-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>10</revision>
+    <revision>13</revision>
     <enabled>true</enabled>
-    <created_at>2010-01-23 09:39:28 UTC</created_at>
-    <updated_at>2012-06-26 02:53:52 UTC</updated_at>
+    <created_at>2010-03-04 07:49:14 UTC</created_at>
+    <updated_at>2012-06-26 03:03:08 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">6</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">20</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Domain</name>
-      <description>Defines the domain the data category is attached to. Every data category must be defined within one domain.</description>
+      <name>Reference</name>
+      <description>Defines the data category the attribute is referring to. This is used to provide a prompt on data, when the attribute is of kind 'Reference'.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Domaine</name>
-      <description>Défini le domaine à laquel est attachée la catégorie de données. Chaque catégorie de données doit être définie dans un domaine.</description>
+      <name>Référence</name>
+      <description>Défini la catégorie de données à laquelle l'attribut fait référence. Ceci est utilisé afin de fournir une aide à la saise, quand l'attribut est défini avec le type 'Référence'.</description>
     </locale>
   </row>
-  <row title="Domaine | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>b33ffeb0-06cd-012d-c202-0026b0d63708</uuid>
+  <row title="Reference | grid_reference_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>8bbfddb0-0a53-012d-9616-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">1fe00120-ea31-012c-1065-00166f92f624</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">workspace_uuid</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">5a5107e0-0990-012d-e81a-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">grid_reference_uuid</data>
   </row>
-  <row title="Has description" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>8afbf6b1-293a-012d-1701-4417fe7fde95</uuid>
+  <row title="Regular expression" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>68792a30-1da5-012d-2556-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>2</revision>
+    <revision>3</revision>
     <enabled>true</enabled>
-    <created_at>2010-04-13 14:55:36 UTC</created_at>
-    <updated_at>2010-04-13 15:10:54 UTC</updated_at>
+    <created_at>2010-03-29 21:10:21 UTC</created_at>
+    <updated_at>2010-04-06 12:39:41 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">10</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">10</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Has description</name>
-      <description>Indicates each data in the grid has a description, which is translatable.</description>
+      <name>Regular expression</name>
+      <description>Defines a regular expression that is used to validate data in the column.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Expression régulière</name>
+      <description>Défini une expression régulière qui est utilisée afin de contrôler la donnée définie dans la colonne.</description>
     </locale>
   </row>
-  <row title="Has description | has_description" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>a5788301-293a-012d-d9f3-4417fe7fde95</uuid>
+  <row title="Regular expression | regex" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>2d72bb91-1da6-012d-6655-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-04-13 14:56:21 UTC</created_at>
+    <created_at>2010-03-29 21:15:51 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">8afbf6b1-293a-012d-1701-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_description</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">68792a30-1da5-012d-2556-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">regex</data>
   </row>
-  <row title="Has name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>78a7e2d1-293a-012d-2869-4417fe7fde95</uuid>
+  <row title="Required" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>8df46b61-1da3-012d-46db-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>2</revision>
+    <revision>4</revision>
     <enabled>true</enabled>
-    <created_at>2010-04-13 14:55:06 UTC</created_at>
-    <updated_at>2010-04-13 14:57:10 UTC</updated_at>
+    <created_at>2010-03-29 20:57:05 UTC</created_at>
+    <updated_at>2010-04-06 12:21:43 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">7</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Has name</name>
-      <description>Indicates each data in the grid has a name, which is translatable.</description>
+      <name>Required</name>
+      <description>Indicates data in the column is required.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Obligatoire</name>
+      <description>Indique si la données est obligatoire dans la colonne.</description>
     </locale>
   </row>
-  <row title="Has name | has_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>92a3cd71-293a-012d-a54f-4417fe7fde95</uuid>
+  <row title="Required | required" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>dae4cf91-1da4-012d-7a05-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-04-13 14:55:49 UTC</created_at>
+    <created_at>2010-03-29 21:06:23 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">8df46b61-1da3-012d-46db-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">required</data>
   </row>
-  <row title="Chargement" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>c306f4d0-14a2-012d-c0f4-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>7</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-18 09:58:44 UTC</created_at>
-    <updated_at>2012-06-26 15:12:22 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Upload</name>
-      <description>Keeps track of the uploads of data into the system.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Chargement</name>
-      <description>Enregistre les chargements effectués dans le système.</description>
-    </locale>
-  </row>
-  <row title="Chargement | uploads" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>ff979a01-1a54-012d-f23b-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:57:11 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">uploads</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
-  </row>
-  <row title="Enregistrements" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>89f824c0-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:21:13 UTC</created_at>
-    <updated_at>2012-08-08 07:10:10 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Records</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Enregistrements</name>
-    </locale>
-  </row>
-  <row title="Enregistrements | records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>8f95cec0-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:21:22 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">89f824c0-c2a7-012f-e9be-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">records</data>
-  </row>
-  <row title="Insertions" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>3e9db251-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:19:07 UTC</created_at>
-    <updated_at>2012-08-08 07:14:54 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Inserted</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Insertions</name>
-    </locale>
-  </row>
-  <row title="Insertions | inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>6252aa30-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:20:07 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">3e9db251-c2a7-012f-e9be-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">inserted</data>
-  </row>
-  <row title="Modifications" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>6c5f3380-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:20:23 UTC</created_at>
-    <updated_at>2012-08-08 07:15:09 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">4</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">4</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Updated</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Modifications</name>
-    </locale>
-  </row>
-  <row title="Modifications | updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>72edab00-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:20:34 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">6c5f3380-c2a7-012f-e9be-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">updated</data>
-  </row>
-  <row title="Nom de fichier" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>f3fa9441-1a54-012d-364e-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>2</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:56:52 UTC</created_at>
-    <updated_at>2012-08-08 07:09:53 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>File name</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Nom de fichier</name>
-    </locale>
-  </row>
-  <row title="Nom de fichier | file_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>079c5dd1-1a55-012d-32dd-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:57:25 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">f3fa9441-1a54-012d-364e-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">file_name</data>
-  </row>
-  <row title="Sans changement" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>9b8fdee0-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:21:43 UTC</created_at>
-    <updated_at>2012-08-08 07:18:46 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">5</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">5</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Skipped</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Sans changement</name>
-    </locale>
-  </row>
-  <row title="Sans changement | skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>a166c150-c2a7-012f-e9be-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-08-07 10:21:52 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">9b8fdee0-c2a7-012f-e9be-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">skipped</data>
-  </row>
-  <row title="Correspondance d'attribut" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
+  <row title="Attribute mapping" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
     <uuid>b800e230-042b-012d-0a08-0015c5091b01</uuid>
     <version>1</version>
     <revision>6</revision>
@@ -716,8 +361,8 @@
     <updated_at>2012-06-26 03:06:14 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <locale>
@@ -733,19 +378,19 @@
       <description>Définit le stockage physique des attributs de catégories de données. La mise en correspondance est basée sur des tables SQL qui dépendent de la base de données sous-jascente. La mise en correspondance d'attribut est utilisée uniquement lorsque la catégorie de données est mise en correspondance avec une table physique.</description>
     </locale>
   </row>
-  <row title="Correspondance d'attribut | column_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
+  <row title="Attribute mapping | column_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>b7c8cba0-0a54-012d-64b1-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">column_mappings</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
-  <row title="Attribut" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="Attribute" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>d0352c30-042b-012d-0a0c-0015c5091b01</uuid>
     <version>1</version>
     <revision>5</revision>
@@ -754,14 +399,14 @@
     <updated_at>2012-06-26 03:07:48 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">b800e230-042b-012d-0a08-0015c5091b01</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -773,18 +418,18 @@
       <name>Attribut</name>
     </locale>
   </row>
-  <row title="Attribut | column_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
+  <row title="Attribute | column_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81f79090-0a56-012d-64e2-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">d0352c30-042b-012d-0a0c-0015c5091b01</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">d0352c30-042b-012d-0a0c-0015c5091b01</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">column_uuid</data>
   </row>
-  <row title="Database column" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="Database column" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>eb71d430-042b-012d-0a11-0015c5091b01</uuid>
     <version>1</version>
     <revision>4</revision>
@@ -793,470 +438,32 @@
     <updated_at>2010-04-02 06:39:30 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">b800e230-042b-012d-0a08-0015c5091b01</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">1</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Database column</name>
     </locale>
   </row>
-  <row title="Database column | db_column" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
+  <row title="Database column | db_column" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81fa0190-0a56-012d-64e2-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">eb71d430-042b-012d-0a11-0015c5091b01</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">eb71d430-042b-012d-0a11-0015c5091b01</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">db_column</data>
   </row>
-  <row title="Correspondance de données" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>a6beb050-0427-012d-09bf-0015c5091b01</uuid>
-    <version>1</version>
-    <revision>22</revision>
-    <enabled>true</enabled>
-    <created_at>2010-02-25 10:37:09 UTC</created_at>
-    <updated_at>2012-06-26 03:05:27 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Data mapping</name>
-      <description>Defines physical storage mapping of data categories. The mapping is based on SQL tables that depend on the underlying database.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Correspondance de données</name>
-      <description>Définit le stockage physique d'une catégorie de données. La mise en correspondance est basée sur des tables SQL qui dépendent de la base de données sous-jascente. </description>
-    </locale>
-  </row>
-  <row title="Correspondance de données | grid_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>b7c681b0-0a54-012d-64b1-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">a6beb050-0427-012d-09bf-0015c5091b01</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grid_mappings</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
-  </row>
-  <row title="Catégorie de données" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>bdbcc440-0427-012d-09c5-0015c5091b01</uuid>
-    <version>1</version>
-    <revision>8</revision>
-    <enabled>true</enabled>
-    <created_at>2010-02-25 10:37:48 UTC</created_at>
-    <updated_at>2012-06-26 03:07:08 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">a6beb050-0427-012d-09bf-0015c5091b01</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Data category</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Catégorie de données</name>
-    </locale>
-  </row>
-  <row title="Catégorie de données | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>3125b701-0a56-012d-64db-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">bdbcc440-0427-012d-09c5-0015c5091b01</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">grid_uuid</data>
-  </row>
-  <row title="Database table" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>ce612c50-0427-012d-09c8-0015c5091b01</uuid>
-    <version>1</version>
-    <revision>4</revision>
-    <enabled>true</enabled>
-    <created_at>2010-02-25 10:38:16 UTC</created_at>
-    <updated_at>2010-04-02 06:40:30 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">a6beb050-0427-012d-09bf-0015c5091b01</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">1</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Database table</name>
-    </locale>
-  </row>
-  <row title="Database table | db_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>312800f0-0a56-012d-64db-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">ce612c50-0427-012d-09c8-0015c5091b01</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">db_table</data>
-  </row>
-  <row title="Database table for translation" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>d8badca0-0427-012d-09cb-0015c5091b01</uuid>
-    <version>1</version>
-    <revision>4</revision>
-    <enabled>true</enabled>
-    <created_at>2010-02-25 10:38:33 UTC</created_at>
-    <updated_at>2010-04-02 06:40:45 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">a6beb050-0427-012d-09bf-0015c5091b01</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Database table for translation</name>
-    </locale>
-  </row>
-  <row title="Database table for translation | db_loc_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>312800f1-0a56-012d-64db-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">d8badca0-0427-012d-09cb-0015c5091b01</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">db_loc_table</data>
-  </row>
-  <row title="Domaine" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
-    <version>1</version>
-    <revision>10</revision>
-    <enabled>true</enabled>
-    <created_at>2010-01-23 09:38:16 UTC</created_at>
-    <updated_at>2012-06-26 02:48:54 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Domain</name>
-      <description>Domains let you define data categories that are grouped together in a logical way. Domains can be private or be shared with others. You can define as many domains as you need to define large sets of data categories. Data categories can be moved from a domain to another. It's mandatory that each data category is attached to one domain.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Domaine</name>
-      <description>Les domaines permettent de regrouper des catégories de données de façon logique. Les domaines peuvent être privés ou partagés avec d'autres. Vous pouvez définir autant de domaines que vous avez besoin pour gérer un grand nombre de catégories de données. Les catégories de données peuvent être déplacées d'un domaine à un autre. Il est obligatoire que chaque catégorie de données soit attachée à un domaine.</description>
-    </locale>
-  </row>
-  <row title="Domaine | workspaces | workspace_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>77aa8520-06c2-012d-c0b0-0026b0d63708</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 15:54:40 UTC</created_at>
-    <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">f54309d0-ea30-012c-1054-00166f92f624</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspaces</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">workspace_locs</data>
-  </row>
-  <row title="Default role" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>0e1f4990-a26c-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:54:48 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">f54309d0-ea30-012c-1054-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Default role</name>
-      <description>Default role for registered users.</description>
-    </locale>
-  </row>
-  <row title="Default role | default_role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>186c3270-a26c-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:55:05 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">0e1f4990-a26c-012f-de85-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">default_role_uuid</data>
-  </row>
-  <row title="Public" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>f1ca9820-a26b-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:54:00 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">f54309d0-ea30-012c-1054-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Public</name>
-      <description>The domain is public so accessble to unregistered users.</description>
-    </locale>
-  </row>
-  <row title="Public | public" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>f93205a0-a26b-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:54:13 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">f1ca9820-a26b-012f-de85-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">public</data>
-  </row>
-  <row title="Uri" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>44b03b60-a26c-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:56:19 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">f54309d0-ea30-012c-1054-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Uri</name>
-      <description>Defines a uri used to provide meaningful web adresses.</description>
-    </locale>
-  </row>
-  <row title="Uri | uri" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>4a956bf0-a26c-012f-de85-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-27 09:56:29 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">44b03b60-a26c-012f-de85-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">uri</data>
-  </row>
-  <row title="Partage" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>4c2b6200-9a7a-012f-642b-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>5</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-17 07:16:36 UTC</created_at>
-    <updated_at>2012-06-26 15:09:11 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Sharing</name>
-      <description>Defines how a domain is shared with users.</description>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Partage</name>
-    </locale>
-  </row>
-  <row title="Partage | workspace_sharings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>e8677d90-9cfd-012f-fd19-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>2</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-20 12:03:44 UTC</created_at>
-    <updated_at>2012-06-20 12:08:58 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspace_sharings</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
-  </row>
-  <row title="Domaine" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>7e67ae50-9a7a-012f-642b-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>4</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-17 07:18:00 UTC</created_at>
-    <updated_at>2012-06-26 02:57:28 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">f54309d0-ea30-012c-1054-00166f92f624</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Domain</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Domaine</name>
-    </locale>
-  </row>
-  <row title="Domaine | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>18aa5760-9cfe-012f-fd19-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-20 12:05:05 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">7e67ae50-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">workspace_uuid</data>
-  </row>
-  <row title="Rôle" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>95d604f0-9c87-012f-089e-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>2</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-19 21:56:45 UTC</created_at>
-    <updated_at>2012-08-08 07:09:06 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Role</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Rôle</name>
-    </locale>
-  </row>
-  <row title="Rôle | role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>33996810-9cfe-012f-fd19-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-20 12:05:50 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">95d604f0-9c87-012f-089e-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">role_uuid</data>
-  </row>
-  <row title="Utilisateur" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>8c13aa60-9a7a-012f-642b-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-17 07:18:23 UTC</created_at>
-    <updated_at>2012-06-26 02:57:40 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>User</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Utilisateur</name>
-    </locale>
-  </row>
-  <row title="Utilisateur | user_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>295d2fc0-9cfe-012f-fd19-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-20 12:05:33 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">8c13aa60-9a7a-012f-642b-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">user_uuid</data>
-  </row>
-  <row title="Pays" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
+  <row title="Country" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
     <uuid>e1fa0830-dd46-012c-538a-0016cbad334a</uuid>
     <version>1</version>
     <revision>13</revision>
@@ -1265,8 +472,8 @@
     <updated_at>2010-04-21 18:08:20 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">1</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">1</data>
     <locale>
@@ -1284,21 +491,21 @@
 [http://fr.wikipedia.org/wiki/Pays]</description>
     </locale>
   </row>
-  <row title="Code ISO 2" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="ISO Code 2" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e1ff3f70-dd46-012c-538a-0016cbad334a</uuid>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:04 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">e1fa0830-dd46-012c-538a-0016cbad334a</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1312,21 +519,21 @@
       <description>ISO 3166-1 code pays &amp;#224; 2 lettres.</description>
     </locale>
   </row>
-  <row title="Code ISO 3" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="ISO Code 3" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e1ffc240-dd46-012c-538a-0016cbad334a</uuid>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:24 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">e1fa0830-dd46-012c-538a-0016cbad334a</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1340,21 +547,21 @@
       <description>ISO 3166-1 code pays &amp;#224; 3 lettres.</description>
     </locale>
   </row>
-  <row title="Num&amp;#233;ro ISO" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
+  <row title="ISO Num" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e2004620-dd46-012c-538a-0016cbad334a</uuid>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:33 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">e1fa0830-dd46-012c-538a-0016cbad334a</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1368,45 +575,156 @@
       <description>ISO 3166-1 code num&amp;#233;rique &amp;#224; trois chiffres, tel que d&amp;#233;finis par la Division statistique des Nations unies.</description>
     </locale>
   </row>
-  <row title="Rôle" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>62630550-0cb5-012d-bcb2-4417fe7fde95</uuid>
+  <row title="Data category" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>fe92c430-ea30-012c-1057-00166f92f624</uuid>
     <version>1</version>
-    <revision>3</revision>
+    <revision>11</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-08 07:51:53 UTC</created_at>
-    <updated_at>2012-06-26 15:10:28 UTC</updated_at>
+    <created_at>2010-01-23 09:38:32 UTC</created_at>
+    <updated_at>2012-06-26 02:50:38 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Role</name>
-      <description>Defines how users can interact with data.</description>
+      <name>Data category</name>
+      <description>Data categories let users structure and enter data in the system in a completely transparent and flexible way. Data can be translatable and can be managed through dated versions. A data category is a kind of virtual table made of columns and rows ; it's based on several underlying physical tables that can be changed by database administrators. Because every single piece of data is managed in the application through data categories, users can navigate through data is a very consistent way.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Rôle</name>
-      <description>Défini les modalités d'accès à un domaine.</description>
+      <name>Catégorie de données</name>
+      <description>Les catégories de données permettent aux utilisateurs de structurer et d'entrer des données dans le système de façon transparente et flexible. Les données peuvent être traduisibles et peuvent être gérées au travers de versions datées. Une catégorie de données est une sorte de table virtuelle faite de colonnes et de lignes ; elle s'appuie sur plusieurs tables physiques qui peuvent être modifiées par les administrateurs de la base de données. Parce que toutes les données sont gérées au travers de catégories de données, les utilisateurs peuvent naviguer parmi les données de façon cohérente.</description>
     </locale>
   </row>
-  <row title="Rôle | roles | role_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>6156e391-50b0-012d-3147-4417fe7fde95</uuid>
+  <row title="Data category | grids | grid_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>77b56ab0-06c2-012d-c0b0-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-06-02 20:07:23 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">roles</data>
-    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">role_locs</data>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grids</data>
+    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">grid_locs</data>
   </row>
-  <row title="Type de données" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
+  <row title="Domain" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>1fe00120-ea31-012c-1065-00166f92f624</uuid>
+    <version>1</version>
+    <revision>10</revision>
+    <enabled>true</enabled>
+    <created_at>2010-01-23 09:39:28 UTC</created_at>
+    <updated_at>2012-06-26 02:53:52 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Domain</name>
+      <description>Defines the domain the data category is attached to. Every data category must be defined within one domain.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Domaine</name>
+      <description>Défini le domaine à laquel est attachée la catégorie de données. Chaque catégorie de données doit être définie dans un domaine.</description>
+    </locale>
+  </row>
+  <row title="Domain | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>b33ffeb0-06cd-012d-c202-0026b0d63708</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">1fe00120-ea31-012c-1065-00166f92f624</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">workspace_uuid</data>
+  </row>
+  <row title="Has description" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>8afbf6b1-293a-012d-1701-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:55:36 UTC</created_at>
+    <updated_at>2010-04-13 15:10:54 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Has description</name>
+      <description>Indicates each data in the grid has a description, which is translatable.</description>
+    </locale>
+  </row>
+  <row title="Has description | has_description" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>a5788301-293a-012d-d9f3-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:56:21 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">8afbf6b1-293a-012d-1701-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_description</data>
+  </row>
+  <row title="Has name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>78a7e2d1-293a-012d-2869-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:55:06 UTC</created_at>
+    <updated_at>2010-04-13 14:57:10 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Has name</name>
+      <description>Indicates each data in the grid has a name, which is translatable.</description>
+    </locale>
+  </row>
+  <row title="Has name | has_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>92a3cd71-293a-012d-a54f-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:55:49 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
+  </row>
+  <row title="Data kind" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
     <uuid>5a2e26e0-ea31-012c-1074-00166f92f624</uuid>
     <version>1</version>
     <revision>8</revision>
@@ -1415,8 +733,8 @@
     <updated_at>2012-06-26 15:11:15 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <locale>
@@ -1432,280 +750,745 @@
       <description>Défini les types de données gérées au travers des attributes de catégories de données.</description>
     </locale>
   </row>
-  <row title="Utilisateur" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Catégorie de données">
-    <uuid>08beadc0-ea31-012c-105d-00166f92f624</uuid>
+  <row title="Data mapping" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>a6beb050-0427-012d-09bf-0015c5091b01</uuid>
     <version>1</version>
-    <revision>8</revision>
+    <revision>22</revision>
     <enabled>true</enabled>
-    <created_at>2010-01-23 09:38:49 UTC</created_at>
-    <updated_at>2010-05-25 20:01:25 UTC</updated_at>
+    <created_at>2010-02-25 10:37:09 UTC</created_at>
+    <updated_at>2012-06-26 03:05:27 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Catégorie de données">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
-    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domaine">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">0</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">0</data>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>User</name>
-      <description>Defines a user who is authorized or not to enter the application. Each user is identified by an Email address and has one personal password. Only users who are enabled at the time of the system date can enter the application.</description>
+      <name>Data mapping</name>
+      <description>Defines physical storage mapping of data categories. The mapping is based on SQL tables that depend on the underlying database.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Utilisateur</name>
-      <description>Défini un utilisateur qui est autorisé ou non à se connecter à l'application. Chaque utilisateur est identifié par une adresse électronique et un mot de passe individuel. Seuls les utilisateurs actifs à la date du système peuvent entrer dans l'application.</description>
+      <name>Correspondance de données</name>
+      <description>Définit le stockage physique d'une catégorie de données. La mise en correspondance est basée sur des tables SQL qui dépendent de la base de données sous-jascente. </description>
     </locale>
   </row>
-  <row title="Utilisateur | users" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Correspondance de données">
-    <uuid>77b7e550-06c2-012d-c0b0-0026b0d63708</uuid>
+  <row title="Data mapping | grid_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>b7c681b0-0a54-012d-64b1-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <create_user_uuid></create_user_uuid>
-    <grid_uuid title="Correspondance de données">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">users</data>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grid_mappings</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
-  <row title="Adresse électronique" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>e878a5b1-1a56-012d-50c9-4417fe7fde95</uuid>
+  <row title="Data category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>bdbcc440-0427-012d-09c5-0015c5091b01</uuid>
     <version>1</version>
     <revision>8</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-25 16:10:52 UTC</created_at>
-    <updated_at>2012-06-26 15:14:05 UTC</updated_at>
+    <created_at>2010-02-25 10:37:48 UTC</created_at>
+    <updated_at>2012-06-26 03:07:08 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">1</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">1</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">t</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière">[a-z0-9!#%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#%&amp;'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?</data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Email</name>
-      <description>The identifier is one Email adress.</description>
+      <name>Data category</name>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Adresse électronique</name>
-      <description>L'identifiant est une adresse électronique.</description>
+      <name>Catégorie de données</name>
     </locale>
   </row>
-  <row title="Adresse électronique | email" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>1014b911-1a57-012d-dda1-4417fe7fde95</uuid>
+  <row title="Data category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>3125b701-0a56-012d-64db-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>2</revision>
+    <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-25 16:11:58 UTC</created_at>
-    <updated_at>2012-06-24 08:04:24 UTC</updated_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">e878a5b1-1a56-012d-50c9-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">email</data>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">bdbcc440-0427-012d-09c5-0015c5091b01</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">grid_uuid</data>
   </row>
-  <row title="Confirmé le" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>7d099ad0-a001-012f-1096-4417fe7fde95</uuid>
+  <row title="Database table" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>ce612c50-0427-012d-09c8-0015c5091b01</uuid>
     <version>1</version>
     <revision>4</revision>
     <enabled>true</enabled>
-    <created_at>2012-06-24 08:06:55 UTC</created_at>
-    <updated_at>2012-06-26 15:12:47 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">4</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">4</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Confirmed</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Confirmé le</name>
-    </locale>
-  </row>
-  <row title="Confirmé le | confirmed_at" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>862ee010-a001-012f-1096-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-24 08:07:11 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">7d099ad0-a001-012f-1096-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">confirmed_at</data>
-  </row>
-  <row title="Dernière connexion" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>0a4365e0-a002-012f-46e8-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-24 08:10:52 UTC</created_at>
-    <updated_at>2012-06-26 15:13:02 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">5</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">5</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Last sign in</name>
-    </locale>
-    <locale>
-      <base_locale>fr</base_locale>
-      <locale>fr</locale>
-      <name>Dernière connexion</name>
-    </locale>
-  </row>
-  <row title="Dernière connexion | last_sign_in_at" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>11360030-a002-012f-46e8-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2012-06-24 08:11:04 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">0a4365e0-a002-012f-46e8-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">last_sign_in_at</data>
-  </row>
-  <row title="Nom" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>da06d511-1a56-012d-71ca-4417fe7fde95</uuid>
-    <version>1</version>
-    <revision>3</revision>
-    <enabled>true</enabled>
-    <created_at>2010-03-25 16:10:27 UTC</created_at>
-    <updated_at>2010-05-25 11:29:02 UTC</updated_at>
+    <created_at>2010-02-25 10:38:16 UTC</created_at>
+    <updated_at>2010-04-02 06:40:30 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">3</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">3</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">1</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Last name</name>
+      <name>Database table</name>
+    </locale>
+  </row>
+  <row title="Database table | db_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>312800f0-0a56-012d-64db-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">ce612c50-0427-012d-09c8-0015c5091b01</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">db_table</data>
+  </row>
+  <row title="Database table for translation" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>d8badca0-0427-012d-09cb-0015c5091b01</uuid>
+    <version>1</version>
+    <revision>4</revision>
+    <enabled>true</enabled>
+    <created_at>2010-02-25 10:38:33 UTC</created_at>
+    <updated_at>2010-04-02 06:40:45 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Database table for translation</name>
+    </locale>
+  </row>
+  <row title="Database table for translation | db_loc_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>312800f1-0a56-012d-64db-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">d8badca0-0427-012d-09cb-0015c5091b01</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">db_loc_table</data>
+  </row>
+  <row title="Domain" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
+    <version>1</version>
+    <revision>10</revision>
+    <enabled>true</enabled>
+    <created_at>2010-01-23 09:38:16 UTC</created_at>
+    <updated_at>2012-06-26 02:48:54 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Domain</name>
+      <description>Domains let you define data categories that are grouped together in a logical way. Domains can be private or be shared with others. You can define as many domains as you need to define large sets of data categories. Data categories can be moved from a domain to another. It's mandatory that each data category is attached to one domain.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Nom</name>
+      <name>Domaine</name>
+      <description>Les domaines permettent de regrouper des catégories de données de façon logique. Les domaines peuvent être privés ou partagés avec d'autres. Vous pouvez définir autant de domaines que vous avez besoin pour gérer un grand nombre de catégories de données. Les catégories de données peuvent être déplacées d'un domaine à un autre. Il est obligatoire que chaque catégorie de données soit attachée à un domaine.</description>
     </locale>
   </row>
-  <row title="Nom | last_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>fe200341-1a56-012d-63bf-4417fe7fde95</uuid>
+  <row title="Domain | workspaces | workspace_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>77aa8520-06c2-012d-c0b0-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-25 16:11:28 UTC</created_at>
-    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">da06d511-1a56-012d-71ca-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">last_name</data>
+    <created_at>2010-03-25 15:54:40 UTC</created_at>
+    <create_user_uuid></create_user_uuid>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspaces</data>
+    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">workspace_locs</data>
   </row>
-  <row title="Nombre de connexions" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>56d167c0-a002-012f-46e8-4417fe7fde95</uuid>
+  <row title="Default role" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>0e1f4990-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:48 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Default role</name>
+      <description>Default role for registered users.</description>
+    </locale>
+  </row>
+  <row title="Default role | default_role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>186c3270-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:55:05 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">0e1f4990-a26c-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">default_role_uuid</data>
+  </row>
+  <row title="Public" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>f1ca9820-a26b-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:00 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Public</name>
+      <description>The domain is public so accessble to unregistered users.</description>
+    </locale>
+  </row>
+  <row title="Public | public" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>f93205a0-a26b-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:54:13 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">f1ca9820-a26b-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">public</data>
+  </row>
+  <row title="Uri" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>44b03b60-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:56:19 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Uri</name>
+      <description>Defines a uri used to provide meaningful web adresses.</description>
+    </locale>
+  </row>
+  <row title="Uri | uri" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>4a956bf0-a26c-012f-de85-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-27 09:56:29 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">44b03b60-a26c-012f-de85-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">uri</data>
+  </row>
+  <row title="Role" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>62630550-0cb5-012d-bcb2-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-08 07:51:53 UTC</created_at>
+    <updated_at>2012-06-26 15:10:28 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Role</name>
+      <description>Defines how users can interact with data.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Rôle</name>
+      <description>Défini les modalités d'accès à un domaine.</description>
+    </locale>
+  </row>
+  <row title="Role | roles | role_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>6156e391-50b0-012d-3147-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-06-02 20:07:23 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">roles</data>
+    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">role_locs</data>
+  </row>
+  <row title="Sharing" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>4c2b6200-9a7a-012f-642b-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>5</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-17 07:16:36 UTC</created_at>
+    <updated_at>2012-06-26 15:09:11 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Sharing</name>
+      <description>Defines how a domain is shared with users.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Partage</name>
+    </locale>
+  </row>
+  <row title="Sharing | workspace_sharings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>e8677d90-9cfd-012f-fd19-4417fe7fde95</uuid>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
-    <created_at>2012-06-24 08:13:01 UTC</created_at>
-    <updated_at>2012-06-26 15:13:14 UTC</updated_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <created_at>2012-06-20 12:03:44 UTC</created_at>
+    <updated_at>2012-06-20 12:08:58 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspace_sharings</data>
+    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
+  </row>
+  <row title="Domain" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>7e67ae50-9a7a-012f-642b-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>4</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-17 07:18:00 UTC</created_at>
+    <updated_at>2012-06-26 02:57:28 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
     <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">f33188f0-06cc-012d-c1db-0026b0d63708</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">6</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">6</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">f</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Sign in count</name>
+      <name>Domain</name>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Nombre de connexions</name>
+      <name>Domaine</name>
     </locale>
   </row>
-  <row title="Nombre de connexions | sign_in_count" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>646f15c0-a002-012f-46e8-4417fe7fde95</uuid>
+  <row title="Domain | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>18aa5760-9cfe-012f-fd19-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2012-06-24 08:13:24 UTC</created_at>
-    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">56d167c0-a002-012f-46e8-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">sign_in_count</data>
+    <created_at>2012-06-20 12:05:05 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">7e67ae50-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">workspace_uuid</data>
   </row>
-  <row title="Prénom" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribut">
-    <uuid>d164bfd1-1a56-012d-2c94-4417fe7fde95</uuid>
+  <row title="Role" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>95d604f0-9c87-012f-089e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-19 21:56:45 UTC</created_at>
+    <updated_at>2012-08-08 07:09:06 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Role</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Rôle</name>
+    </locale>
+  </row>
+  <row title="Role | role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>33996810-9cfe-012f-fd19-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-06-20 12:05:50 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">95d604f0-9c87-012f-089e-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">role_uuid</data>
+  </row>
+  <row title="User" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>8c13aa60-9a7a-012f-642b-4417fe7fde95</uuid>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-25 16:10:13 UTC</created_at>
-    <updated_at>2010-05-25 11:28:17 UTC</updated_at>
+    <created_at>2012-06-17 07:18:23 UTC</created_at>
+    <updated_at>2012-06-26 02:57:40 UTC</updated_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <update_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</update_user_uuid>
-    <grid_uuid title="Attribut">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Catégorie de données">08beadc0-ea31-012c-105d-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Type">603286d0-ea31-012c-1079-00166f92f624</data>
-    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Numéro">2</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Ordre d'affichage">2</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Obligatoire">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Expression régulière"></data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Référence"></data>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">08beadc0-ea31-012c-105d-00166f92f624</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>First name</name>
+      <name>User</name>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Prénom</name>
+      <name>Utilisateur</name>
     </locale>
   </row>
-  <row title="Prénom | first_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Correspondance d'attribut">
-    <uuid>084906a1-1a57-012d-75bd-4417fe7fde95</uuid>
+  <row title="User | user_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>295d2fc0-9cfe-012f-fd19-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-03-25 16:11:45 UTC</created_at>
+    <created_at>2012-06-20 12:05:33 UTC</created_at>
     <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
-    <grid_uuid title="Correspondance d'attribut">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribut">d164bfd1-1a56-012d-2c94-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">first_name</data>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">8c13aa60-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">user_uuid</data>
+  </row>
+  <row title="Upload" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Data category">
+    <uuid>c306f4d0-14a2-012d-c0f4-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>7</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-18 09:58:44 UTC</created_at>
+    <updated_at>2012-06-26 15:12:22 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Data category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Upload</name>
+      <description>Keeps track of the uploads of data into the system.</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Chargement</name>
+      <description>Enregistre les chargements effectués dans le système.</description>
+    </locale>
+  </row>
+  <row title="Upload | uploads" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+    <uuid>ff979a01-1a54-012d-f23b-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:57:11 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">uploads</data>
+    <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
+  </row>
+  <row title="Elapsed" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>b38b5480-c9fd-012f-4735-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-16 18:25:38 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">6</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Elapsed</name>
+    </locale>
+  </row>
+  <row title="Elapsed | elapsed" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>b9cfe310-c9fd-012f-4735-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-16 18:25:48 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">b38b5480-c9fd-012f-4735-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">elapsed</data>
+  </row>
+  <row title="File name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>f3fa9441-1a54-012d-364e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:56:52 UTC</created_at>
+    <updated_at>2012-08-08 07:09:53 UTC</updated_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">1</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>File name</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Nom de fichier</name>
+    </locale>
+  </row>
+  <row title="File name | file_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>079c5dd1-1a55-012d-32dd-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-03-25 15:57:25 UTC</created_at>
+    <create_user_uuid>eeba1320-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">f3fa9441-1a54-012d-364e-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">file_name</data>
+  </row>
+  <row title="Inserted" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>3e9db251-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:19:07 UTC</created_at>
+    <updated_at>2012-08-08 07:14:54 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Inserted</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Insertions</name>
+    </locale>
+  </row>
+  <row title="Inserted | inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>6252aa30-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:07 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">3e9db251-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">inserted</data>
+  </row>
+  <row title="Records" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>89f824c0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:13 UTC</created_at>
+    <updated_at>2012-08-08 07:10:10 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">2</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Records</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Enregistrements</name>
+    </locale>
+  </row>
+  <row title="Records | records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>8f95cec0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:22 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">89f824c0-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">records</data>
+  </row>
+  <row title="Skipped" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>9b8fdee0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:43 UTC</created_at>
+    <updated_at>2012-08-08 07:18:46 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">5</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Skipped</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Sans changement</name>
+    </locale>
+  </row>
+  <row title="Skipped | skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>a166c150-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:21:52 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">9b8fdee0-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">skipped</data>
+  </row>
+  <row title="Updated" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>6c5f3380-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:23 UTC</created_at>
+    <updated_at>2012-08-08 07:15:09 UTC</updated_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <update_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</update_user_uuid>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
+    <data uuid="42e7f000-06cd-012d-c1f8-0026b0d63708" name="Number">4</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Updated</name>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Modifications</name>
+    </locale>
+  </row>
+  <row title="Updated | updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>72edab00-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-07 10:20:34 UTC</created_at>
+    <create_user_uuid>eebdc1a0-dd45-012c-aafe-0026b0d63708</create_user_uuid>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">6c5f3380-c2a7-012f-e9be-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">updated</data>
   </row>
 </encoon>
