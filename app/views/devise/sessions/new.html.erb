@@ -5,11 +5,11 @@
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
   <table class="form">
     <tr>
-      <td class="header"><%= f.label :email %><span class="required">*</span></td>
+      <td class="header"><%= f.label :email, :class => "required" %></td>
       <td class="string"><%= f.email_field :email, :required => true %></td>
     </tr>
     <tr>
-      <td class="header"><%= f.label :password %><span class="required">*</span></td>
+      <td class="header"><%= f.label :password, :class => "required" %></td>
       <td class="string"><%= f.password_field :password, :required => true %></td>
     </tr>
     <tr>

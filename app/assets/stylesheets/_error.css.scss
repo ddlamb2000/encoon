@@ -15,14 +15,7 @@
 }
 .field_with_errors {
   color:$title-color;
-  display:inline;
-  input {
-    border-color:$title-color;
-  }
-  select {
-    border-color:$title-color;
-  }
-  textarea {
+  input, select, textarea {
     border-color:$title-color;
   }
 }

@@ -6,11 +6,11 @@
   <%= f.hidden_field :reset_password_token %>
   <table class="form">
     <tr>
-      <td class="header"><%= f.label :password, I18n.t('devise.new_passwd') %><span class="required">*</span></td>
+      <td class="header"><%= f.label :password, I18n.t('devise.new_passwd'), :class => "required" %></td>
       <td class="string"><%= f.password_field :password, :required => true %></td>
     </tr>
     <tr>
-      <td class="header"><%= f.label :password_confirmation, I18n.t('devise.conf_new_passwd') %></td>
+      <td class="header"><%= f.label :password_confirmation, I18n.t('devise.conf_new_passwd'), :class => "required" %></td>
       <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
     </tr>
   </table>

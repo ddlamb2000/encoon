@@ -36,6 +36,10 @@
     @include transition;
     @include border-radius;
   }
+  label.required:after {
+    content:"*";
+    color:$title-color;
+  }
 }
 .actions {
   padding:2*$padding;
@@ -118,10 +122,6 @@
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
   background-color:$background-color-navigator-section;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
-}
-.required {
-  display:inline;
-  color:$title-color;
 }
 .dialog {
   position:fixed;
