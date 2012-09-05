@@ -5,7 +5,7 @@
       <article>
         <% if user_signed_in? %>
           <span id="more-title" class="button">
-            <%= icon('information') + ("&nbsp;" + I18n.t('actions.more')).html_safe %>
+            <%= icon('information') + ("&nbsp;" + t('actions.more')).html_safe %>
           </span>
           <div class="slideButton">
             <input type="checkbox" id="more-button" <%= session[:show_details] ? 'checked' : '' %> />
@@ -107,7 +107,7 @@
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
     <article>
       <header class="header-article-level2">
-        <h2><span class="title"><%=t 'rows.title' %></span></h2>
+        <h2><span class="title"><%= t 'rows.title' %></span></h2>
       </header>
       <div id="<%=h "list-grid" + @grid_cast.id.to_s %>">
         <%= render :partial => "layouts/loading" %>
@@ -150,5 +150,5 @@
 <% else %>
   <div class="bigicon"><%= bigicon @page_icon %></div>
   <h1><%= @page_title %></h1>
-  <p><%=t 'error.not_found' %><p>
+  <p><%= t 'error.not_found' %><p>
 <% end %>

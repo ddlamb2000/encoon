@@ -86,7 +86,7 @@ class RowsController < ApplicationController
 
   def refresh
     log_debug "RowsController#refresh date=#{params[:home][:session_date]}"
-    session[:as_of_date] = Date.strptime(params[:home][:session_date], I18n.t('datepicker.decode'))
+    session[:as_of_date] = Date.strptime(params[:home][:session_date], t('datepicker.decode'))
     redirect_to session[:last_url]
   end
 
@@ -196,7 +196,7 @@ class RowsController < ApplicationController
       if saved
         @row = @grid.row_select_entity_by_uuid(@row.uuid)
         name = @grid.row_title(@row)
-        flash[:notice] = I18n.t('transaction.created', 
+        flash[:notice] = t('transaction.created', 
                                 :type => @grid, 
                                 :name => name)
         format.html { search_list }
@@ -301,7 +301,7 @@ class RowsController < ApplicationController
     respond_to do |format|
       if saved
         name = @grid.row_title(@row)
-        flash[:notice] = I18n.t('transaction.updated', 
+        flash[:notice] = t('transaction.updated', 
                                 :type => @grid, :name => name)
         format.html { redirect_to :back }
       else
@@ -340,7 +340,7 @@ class RowsController < ApplicationController
     end
     respond_to do |format|
       if saved
-        flash[:notice] = I18n.t('transaction.deleted', 
+        flash[:notice] = t('transaction.deleted', 
                                 :type => @grid, :name => name)
         format.html { redirect_to session[params[:inline] ? :last_url : :prior_url] }
       else
@@ -377,7 +377,7 @@ class RowsController < ApplicationController
     respond_to do |format|
       if saved
         name = @grid.row_title(@row)
-        flash[:notice] = I18n.t('transaction.attached', 
+        flash[:notice] = t('transaction.attached', 
                                 :type => @grid, :name => name)
         format.html { redirect_to session[:last_url] }
       else
@@ -429,7 +429,7 @@ class RowsController < ApplicationController
       saved = false
     end
     if saved
-      flash[:notice] = I18n.t('transaction.deleted', 
+      flash[:notice] = t('transaction.deleted', 
                               :type => @row_attachment.content_type, 
                               :name => @row_attachment.file_name)
     end
@@ -466,7 +466,7 @@ private
     @status = 200
     unless @grid.nil?
       unless @row.nil?
-        @page_title = I18n.t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
+        @page_title = t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
         if @grid.uuid == Grid::ROOT_UUID
           @page_icon = "table"
         elsif @grid.uuid == Workspace::ROOT_UUID
@@ -476,12 +476,12 @@ private
         end
       else
         @status = 404
-        @page_title = I18n.t('error.no_data')
+        @page_title = t('error.no_data')
         @page_icon = "warning"
       end
     else
       @status = 404
-      @page_title = I18n.t('error.no_grid')
+      @page_title = t('error.no_grid')
       @page_icon = "warning"
     end
   end
@@ -509,11 +509,11 @@ private
     if params[:row][:enabled] == "0" and 
         !@grid.row_enabled_version_exists?(@row, 
                                            params[:mode] == 'new_version')
-      @row.errors.add_to_base(I18n.t('error.ena_record'))
+      @row.errors.add_to_base(t('error.ena_record'))
       return false
     elsif @grid.row_begin_duplicate_exists?(@row, 
                                             params[:begin_date])
-      @row.errors.add_to_base(I18n.t('error.dup_record', 
+      @row.errors.add_to_base(t('error.dup_record', 
                                      :date => params[:begin_date]))
       return false
     end

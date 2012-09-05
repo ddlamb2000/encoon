@@ -1,6 +1,6 @@
 <article class="document">
   <header class="action-header">
-    <%= I18n.t('field.attachments') %>
+    <%= t('field.attachments') %>
     <%= @page_title.html_safe %>
   </header> 
   <% if @grid.present? and @row.present? %>
@@ -25,9 +25,9 @@
                   </td>
                   <td class="string">
                     <%= document.file_name %>
-                    <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+                    <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
   		                       {:grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
-  		                       :confirm => I18n.t('message.delete',  :object => document.file_name),
+  		                       :confirm => t('message.delete',  :object => document.file_name),
   													 :method => :delete %>
   								</td>
   							</tr>
@@ -41,9 +41,9 @@
                   </td>
   				        <td class="string">
   				          <%= document.file_name %>
-  		              <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+  		              <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
   		                       {:grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
-  		                       :confirm => I18n.t('message.delete', :object => document.file_name),
+  		                       :confirm => t('message.delete', :object => document.file_name),
   		                       :method => :delete %>
   				        </td>
   				      </tr>
@@ -51,13 +51,13 @@
   				  <% end %>
   				</table>
   		  <% end %>
-        <a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + I18n.t('actions.cancel')).html_safe %></a>
+        <a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + t('actions.cancel')).html_safe %></a>
         <%= f.file_field :attach_document %>
-        <div class="button"><%= f.submit I18n.t('actions.attach') %></div>
+        <div class="button"><%= f.submit t('actions.attach') %></div>
   	  </aside>
     <% end %>
   <% else %>
     <%= icon "warning" %>
-    <%= I18n.t('error.no_data') %>
+    <%= t('error.no_data') %>
   <% end %>
 </article>

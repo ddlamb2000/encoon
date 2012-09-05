@@ -125,7 +125,7 @@ module ApplicationHelper
                                 hyperlink +
                                 "&nbsp;".html_safe + 
                                 content_tag("span", 
-                                    I18n.t('general.ago', 
+                                    t('general.ago', 
                                            :time => time_ago_in_words(link[:when], 
                                                      :include_seconds => true)), 
                                     :class => 'detail'), 
@@ -140,11 +140,11 @@ module ApplicationHelper
   end
 
   def display_begin_date(date)
-    date == Entity.begin_of_time ? I18n.t('general.undefined') : date
+    date == Entity.begin_of_time ? t('general.undefined') : date
   end
 
   def display_end_date(date)
-    date == Entity.end_of_time ? I18n.t('general.undefined') : date
+    date == Entity.end_of_time ? t('general.undefined') : date
   end
 
   def display_distance_date(date)
@@ -152,25 +152,25 @@ module ApplicationHelper
       now = Time.now
       today = Date::civil(now.year, now.month, now.day)
       if date > today
-        I18n.t('general.ahead', :time => time_ago_in_words(date))
+        t('general.ahead', :time => time_ago_in_words(date))
       else
-        I18n.t('general.ago', :time => time_ago_in_words(date))
+        t('general.ago', :time => time_ago_in_words(date))
       end
     end
   end
   
   def display_new
-    "&nbsp;" + content_tag("div", I18n.t('general.new'), :class => "new")
+    "&nbsp;" + content_tag("div", t('general.new'), :class => "new")
   end
     
   def display_updated_date(entity)
-    I18n.t(entity.revision == 1 ? 'general.created' : 'general.updated', 
+    t(entity.revision == 1 ? 'general.created' : 'general.updated', 
             :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
   
   def display_created_time_by(entity, who, who_uuid)
-    I18n.t('general.time_by', 
+    t('general.time_by', 
             :time => time_ago_in_words(
                                 entity.created_at, 
                                 :include_seconds => true),
@@ -180,11 +180,11 @@ module ApplicationHelper
                            :action => 'show',
                            :grid_id => User::ROOT_UUID,
                            :id => who_uuid) :
-                       I18n.t('general.unknown'))
+                       t('general.unknown'))
   end
 
   def display_updated_time_by(entity, who, who_uuid)
-    I18n.t('general.time_by', 
+    t('general.time_by', 
             :time => time_ago_in_words(
                                 entity.updated_at, 
                                 :include_seconds => true),
@@ -194,7 +194,7 @@ module ApplicationHelper
                            :action => 'show',
                            :grid_id => User::ROOT_UUID,
                            :id => who_uuid) :
-                       I18n.t('general.unknown')) +
+                       t('general.unknown')) +
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
 
@@ -207,19 +207,19 @@ module ApplicationHelper
   def information(entity, show_required=false)
     output = ""
     if entity.begin != Entity.begin_of_time
-      output << I18n.t('general.begins', :time => entity.begin.to_s)
+      output << t('general.begins', :time => entity.begin.to_s)
     end
     if entity.end != Entity.end_of_time
       output << " | " if output.length>0
-      output <<  I18n.t('general.ends', :time => entity.end.to_s)
+      output <<  t('general.ends', :time => entity.end.to_s)
     end
     if show_required
       output << " | " if output.length>0 and show_required
-      output << I18n.t('general.version', :version => entity.version.to_s)
+      output << t('general.version', :version => entity.version.to_s)
     end
     if not entity.enabled
       output << " " if output.length>0
-      output << I18n.t('general.inactive')
+      output << t('general.inactive')
       output << icon('exclamation')
     end
     output.length>0 ? output : ""  
@@ -274,7 +274,7 @@ module ApplicationHelper
         from = 1
         to = length
       end
-      I18n.t(length > 1 ? 'general.records' : 'general.record', 
+      t(length > 1 ? 'general.records' : 'general.record', 
              :count => length.to_s, 
              :total => total > 0 ? total : '?',
              :from => from,

@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<header class="action-header"><%= I18n.t('devise.sign_in') %></header>
+<header class="action-header"><%= t('devise.sign_in') %></header>
 <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
   <table class="form">
     <tr>
@@ -18,6 +18,6 @@
     </tr>
   </table>
   <footer class="actions">
-    <span class="button"><%= f.submit I18n.t('devise.sign_in') %></span>
+    <span class="button"><%= f.submit t('devise.sign_in') %></span>
   </footer>
 <% end %>

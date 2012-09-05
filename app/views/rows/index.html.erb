@@ -11,7 +11,7 @@
           <% end %>
         </li>
         <li>
-          <%= link_to_unless_current icon('table') + ("&nbsp;" + I18n.t('general.grid_design')).html_safe, 
+          <%= link_to_unless_current icon('table') + ("&nbsp;" + t('general.grid_design')).html_safe, 
                                      :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID, :id => @grid.uuid %>
         </li>
       </ul>
@@ -23,7 +23,7 @@
                           :remote => true,
                           :id => 'search-form') do %>
               <%= text_field_tag :search, params[:search], :size => "20x1" %>
-              <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag I18n.t("general.search") %></div>
+              <div class="button"><%= icon('lookup') %>&nbsp;<%= submit_tag t("general.search") %></div>
             <% end %>
           </aside>
         </article>

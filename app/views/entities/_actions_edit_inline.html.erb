@@ -1,33 +1,33 @@
 <footer class="actions">
   <span class="button">
-    <%=t 'field.begin_date' %>
+    <%= t 'field.begin_date' %>
     <%= f.datepicker 'begin_date', 
                      :showButtonPanel => true,
                      :numberOfMonths => 2,
                      :changeMonth => true,
                      :changeYear => true,
-                     :defaultDate => (entity.begin.nil? or entity.begin == Entity.begin_of_time) ? nil : entity.begin.strftime(I18n.t('datepicker.decode')), 
+                     :defaultDate => (entity.begin.nil? or entity.begin == Entity.begin_of_time) ? nil : entity.begin.strftime(t('datepicker.decode')), 
                      :value => (entity.begin.nil? or entity.begin == Entity.begin_of_time) ? nil : I18n.l(entity.begin),
-                     :dateFormat => I18n.t('datepicker.format'),
-                     :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
-                     :monthNames => I18n.t('datepicker.monthNames'),
-                     :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
-                     :currentText => I18n.t('datepicker.currentText'),
-                     :closeText => I18n.t('datepicker.closeText'),
+                     :dateFormat => t('datepicker.format'),
+                     :dayNamesMin => t('datepicker.dayNamesMin'),
+                     :monthNames => t('datepicker.monthNames'),
+                     :monthNamesShort => t('datepicker.monthNamesShort'),
+                     :currentText => t('datepicker.currentText'),
+                     :closeText => t('datepicker.closeText'),
                      :size => "10x1" %>
   </span>
   <span class="button">
-    <%= radio_button_tag :mode, :correction, true %>&nbsp;<%=t 'version.update' %>
-    <%= radio_button_tag :mode, :new_version %>&nbsp;<%=t 'version.new' %>
+    <%= radio_button_tag :mode, :correction, true %>&nbsp;<%= t 'version.update' %>
+    <%= radio_button_tag :mode, :new_version %>&nbsp;<%= t 'version.new' %>
   </span>
   <span class="button">
-    <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%=t 'field.active' %>
+    <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%= t 'field.active' %>
   </span>
   <span class="button">
-    <a id="cancel" href="#"><%=t 'actions.cancel' %></a>
+    <a id="cancel" href="#"><%= t 'actions.cancel' %></a>
   </span>
   <span class="button">
-    <%= f.submit I18n.t('actions.ok') %>
+    <%= f.submit t('actions.ok') %>
   </span>
 </footer>
 

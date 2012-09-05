@@ -1,7 +1,7 @@
 <footer class="actions">
   <div class="validation-error"></div>
   <span class="button">
-    <%=t 'field.begin_date' %>
+    <%= t 'field.begin_date' %>
     <%= f.datepicker 'begin', 
                      :showButtonPanel => true,
                      :numberOfMonths => 2,
@@ -9,18 +9,18 @@
                      :changeYear => true,
                      :defaultDate => nil, 
                      :value => nil,
-                     :dateFormat => I18n.t('datepicker.format'),
-                     :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
-                     :monthNames => I18n.t('datepicker.monthNames'),
-                     :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
-                     :currentText => I18n.t('datepicker.currentText'),
-                     :closeText => I18n.t('datepicker.closeText'),
+                     :dateFormat => t('datepicker.format'),
+                     :dayNamesMin => t('datepicker.dayNamesMin'),
+                     :monthNames => t('datepicker.monthNames'),
+                     :monthNamesShort => t('datepicker.monthNamesShort'),
+                     :currentText => t('datepicker.currentText'),
+                     :closeText => t('datepicker.closeText'),
                      :size => "10x1" %>
   </span>
   <span class="button">
-    <a id="cancel-row-dialog" href="#"><%=t 'actions.cancel' %></a>
+    <a id="cancel-row-dialog" href="#"><%= t 'actions.cancel' %></a>
   </span>
   <span class="button">
-    <%= f.submit I18n.t('actions.ok'), :id => "ok-row-dialog" %>
+    <%= f.submit t('actions.ok'), :id => "ok-row-dialog" %>
   </span>
 </footer>

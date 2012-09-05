@@ -3,17 +3,17 @@
   	<span class="button" title="Update current data or create a new version." style="display: none;">
       <a id="<%=h "update-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>" href="#">
         <%= icon('edit') %>
-        <%=t 'actions.edit' %>
+        <%= t 'actions.edit' %>
       </a>
   	</span>
     <span class="button" title="Delete current data." style="display: none;">
-      <%= link_to icon('remove') + ("&nbsp;" + I18n.t('actions.delete')).html_safe, 
+      <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
          {:grid_id => grid.uuid, :id => row.id, :action => "destroy"}, 
-          :confirm => I18n.t('message.delete', :name => row.to_s), 
+          :confirm => t('message.delete', :name => row.to_s), 
           :method => :delete %>
     </span>
   	<span class="button" title="Add or remove attachment (photo or document) to current data." style="display: none;">
-  		<%= link_to icon('attachments') + ("&nbsp;" + I18n.t('field.attachments')).html_safe, 
+  		<%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
          {:action => "attach_document", :grid_id => grid.uuid, :id => row.uuid},
          :remote => true %>
   	</span>
@@ -21,7 +21,7 @@
       <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => grid.uuid, :id => 0 %>
     </span>
     <span class="button" title="Export current data into a XML file." style="display: none;">
-      <%= link_to icon('export') + ("&nbsp;" + I18n.t('actions.export')).html_safe, 
+      <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
          {:format => :xml} %>
     </span>
   </footer>

@@ -1,7 +1,7 @@
 <article>
   <%= form_for :home, :url => refresh_path do |f| %>
     <span class="button highlighted">
-      <%= I18n.t('field.asof_date') %>
+      <%= t('field.asof_date') %>
       <%= display_warning_current_date(session[:as_of_date]) %>
     </span>
     <% if session[:lock_as_of_date] %>
@@ -12,14 +12,14 @@
                        :numberOfMonths => 2,
                        :changeMonth => true,
                        :changeYear => true,
-                       :defaultDate => session[:as_of_date].nil? ? nil : session[:as_of_date].strftime(I18n.t('datepicker.decode')), 
+                       :defaultDate => session[:as_of_date].nil? ? nil : session[:as_of_date].strftime(t('datepicker.decode')), 
                        :value => session[:as_of_date].nil? ? nil : I18n.l(session[:as_of_date]),
-                       :dateFormat => I18n.t('datepicker.format'),
-                       :dayNamesMin => I18n.t('datepicker.dayNamesMin'),
-                       :monthNames => I18n.t('datepicker.monthNames'),
-                       :monthNamesShort => I18n.t('datepicker.monthNamesShort'),
-                       :currentText => I18n.t('datepicker.currentText'),
-                       :closeText => I18n.t('datepicker.closeText'),
+                       :dateFormat => t('datepicker.format'),
+                       :dayNamesMin => t('datepicker.dayNamesMin'),
+                       :monthNames => t('datepicker.monthNames'),
+                       :monthNamesShort => t('datepicker.monthNamesShort'),
+                       :currentText => t('datepicker.currentText'),
+                       :closeText => t('datepicker.closeText'),
                        :size => "10x1", 
                        :onchange => 'this.form.submit()' %>
     <% end %>

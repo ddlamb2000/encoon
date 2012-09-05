@@ -22,14 +22,14 @@
     <span class="button">
       <%= link_to destroy_user_session_path, :method => :delete do %>
         <%= icon 'logout' %>
-        <%=t 'banner.signout' %>
+        <%= t 'banner.signout' %>
       <% end %>
     </span>
   <% else %>
     <span class="button">
       <%= link_to new_session_path("user") do %>
         <%= icon 'preferences' %>
-        <%=t 'devise.sign_in' %>
+        <%= t 'devise.sign_in' %>
       <% end %>
     </span>
   <% end %>

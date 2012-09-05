@@ -23,7 +23,7 @@
   $(document).ready(function(){
     $('#new_inline_form')
       .bind("ajax:beforeSend", function(evt, xhr, settings){
-        $(this).find('div.validation-error').empty();
+        $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $(".field_with_errors").removeClass("field_with_errors");
       })
       .bind("ajax:success", function(evt, data, status, xhr){

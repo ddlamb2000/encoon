@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<header class="action-header"><%= I18n.t('devise.resend_conf') %></header>
+<header class="action-header"><%= t('devise.resend_conf') %></header>
 <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
   <table class="form">
     <tr>
@@ -11,6 +11,6 @@
   </table>
   <footer class="actions">
     <%= devise_error_messages! %>
-    <span class="button"><%= f.submit I18n.t('devise.resend_conf') %></span>
+    <span class="button"><%= f.submit t('devise.resend_conf') %></span>
   </footer>
 <% end %>

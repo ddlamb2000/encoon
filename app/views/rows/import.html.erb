@@ -15,13 +15,13 @@
       </table>
       <aside class="actions">
         <center>
-          <a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + I18n.t('actions.cancel')).html_safe %></a>
-          <div class="button"><%= f.submit I18n.t('actions.import') %></div>
+          <a href="<%= session[:last_url] %>"><%= icon('close') + ("&nbsp;" + t('actions.cancel')).html_safe %></a>
+          <div class="button"><%= f.submit t('actions.import') %></div>
         </center>
       </aside>
     <% end %>
   <% else %>
     <%= icon "warning" %>
-    <%= I18n.t('error.no_data') %>
+    <%= t('error.no_data') %>
   <% end %>
 </article>

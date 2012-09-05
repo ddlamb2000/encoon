@@ -1,7 +1,7 @@
 <% if session[:history_table].present? %>
   <article>
     <span id="history-title" class="button">
-      <%= icon('history') + ("&nbsp;" + I18n.t('banner.history')).html_safe %>
+      <%= icon('history') + ("&nbsp;" + t('banner.history')).html_safe %>
     </span>
     <div class="slideButton">
       <input type="checkbox" id="history-button" <%= session[:show_history] ? 'checked' : '' %> />
