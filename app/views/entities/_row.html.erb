@@ -14,20 +14,22 @@
   <% columns = grid.column_all %>
   <% if not columns.empty? %>
     <table>
-      <% for column in grid.column_all %>
-        <%= show_entity(
-              column, 
-              row.read_value(column),
-              ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?  
-                link_to(row.read_referenced_name(column), 
-                            :controller => 'rows', 
-                            :action => 'show',  
-                            :grid_id => column.grid_reference_uuid, 
-                            :id => row.read_value(column)) : ""),
-              row.read_referenced_name(column),
-              row.read_referenced_description(column)
-         ) %>
-      <% end %>
+      <tbody>
+        <% for column in grid.column_all %>
+          <%= show_entity(
+                column, 
+                row.read_value(column),
+                ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?  
+                  link_to(row.read_referenced_name(column), 
+                              :controller => 'rows', 
+                              :action => 'show',  
+                              :grid_id => column.grid_reference_uuid, 
+                              :id => row.read_value(column)) : ""),
+                row.read_referenced_name(column),
+                row.read_referenced_description(column)
+           ) %>
+        <% end %>
+      </tbody>
     </table>
   <% end %>
   <% if grid.has_translation? and row_loc.description.present? %>

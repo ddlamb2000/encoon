@@ -5,60 +5,64 @@
 <% end %>
 <% if table_rows.length > 0 %>
   <table>
-    <tr>
-			<th class="list-header-string"><%=h grid.name %></th>
-	  	<% for column in table_columns %>
-	  		<%= show_header_label(column.kind, 
-	  		                       column.name.html_safe, 
-	  		                       column.description.html_safe, 
-	  		                       true) %>
-	  	<% end %>
-	  	<th class="list-header-string"></th>
-    </tr>
-		<% init_row_index(params[:page]) %>
-	  <% for row in table_rows %>
-		  <tr>
-	      <td class="list-description">
-          <span title="<%= trunc(row.description.html_safe) %>">
-            <% if grid.has_name? %>
-              <%= link_to grid.row_title(row).html_safe, 
+    <thead>
+      <tr>
+        <th class="list-header-string"><%=h grid.name %></th>
+        <% for column in table_columns %>
+          <%= show_header_label(column.kind, 
+                                column.name.html_safe, 
+                                column.description.html_safe, 
+                                true) %>
+        <% end %>
+        <th class="list-header-string"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <% init_row_index(params[:page]) %>
+      <% for row in table_rows %>
+        <tr>
+          <td class="list-description">
+            <span title="<%= trunc(row.description.html_safe) %>">
+              <% if grid.has_name? %>
+                <%= link_to grid.row_title(row).html_safe, 
+                              :controller => 'rows', 
+                              :action => 'show', 
+                              :grid_id => grid.uuid, 
+                              :id => row.uuid %>
+              <% else %>
+                <%= link_to icon('blueright'),
                             :controller => 'rows', 
                             :action => 'show', 
                             :grid_id => grid.uuid, 
                             :id => row.uuid %>
-            <% else %>
-              <%= link_to icon('blueright'),
-                          :controller => 'rows', 
-                          :action => 'show', 
-                          :grid_id => grid.uuid, 
-                          :id => row.uuid %>
-            <% end %>
-          </span>
-          <%= display_information(row) %>
-          <span class="detail"><%= display_updated_date(row).html_safe %></span>
-				</td>
-        <% init_column_index %>
-	      <% for column in table_columns %>
-          <%= show_entity_in_list(
-				  	      column, 
-                  row.read_value(column),
-                  ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
-                      link_to(row.read_referenced_name(column), 
-                      :controller => 'rows', 
-                      :action => 'show', 
-                      :grid_id => column.grid_reference_uuid, 
-                      :id => row.read_value(column)) :
-                      ""),
-									row.read_referenced_name(column)) %>
-			  <% end %>
-        <td class="column-header">
-          <%= render :partial => 'rows/index_row_actions', 
-                      :locals => {
-                        :row => row, 
-                        :grid => grid} %>
-        </td>
-		  </tr>
-		<% end %>
+              <% end %>
+            </span>
+            <%= display_information(row) %>
+            <span class="detail"><%= display_updated_date(row).html_safe %></span>
+          </td>
+          <% init_column_index %>
+          <% for column in table_columns %>
+            <%= show_entity_in_list(
+            	      column, 
+                    row.read_value(column),
+                    ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
+                        link_to(row.read_referenced_name(column), 
+                        :controller => 'rows', 
+                        :action => 'show', 
+                        :grid_id => column.grid_reference_uuid, 
+                        :id => row.read_value(column)) :
+                        ""),
+                    row.read_referenced_name(column)) %>
+          <% end %>
+          <td class="column-header">
+            <%= render :partial => 'rows/index_row_actions', 
+                        :locals => {
+                          :row => row, 
+                          :grid => grid} %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
   </table>
 <% end %>
 <%= show_collection_count(table_rows, table_row_count, params[:page]) %>
