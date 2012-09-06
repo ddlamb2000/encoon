@@ -37,7 +37,8 @@
       .bind("ajax:success", function(evt, data, status, xhr){
         $(this).find('div.validation-error').empty();
         $(".field_with_errors").removeClass("field_with_errors");
-        $("#row-dialog").html(xhr.responseText);
+        $("#<%=h "list" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").html(xhr.responseText);
+        $("#row-dialog").hide();
       })
       .bind('ajax:complete', function(evt, xhr, status){
       })
