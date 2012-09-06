@@ -7,19 +7,7 @@
     <% if session[:lock_as_of_date] %>
       <%= I18n.l(session[:as_of_date]) %>
     <% else %>
-      <%= f.datepicker 'session_date', 
-                       :showButtonPanel => true,
-                       :numberOfMonths => 2,
-                       :changeMonth => true,
-                       :changeYear => true,
-                       :defaultDate => session[:as_of_date].nil? ? nil : session[:as_of_date].strftime(t('datepicker.decode')), 
-                       :value => session[:as_of_date].nil? ? nil : I18n.l(session[:as_of_date]),
-                       :dateFormat => t('datepicker.format'),
-                       :dayNamesMin => t('datepicker.dayNamesMin'),
-                       :monthNames => t('datepicker.monthNames'),
-                       :monthNamesShort => t('datepicker.monthNamesShort'),
-                       :currentText => t('datepicker.currentText'),
-                       :closeText => t('datepicker.closeText'),
+      <%= f.text_field 'session_date',
                        :size => "10x1", 
                        :onchange => 'this.form.submit()' %>
     <% end %>

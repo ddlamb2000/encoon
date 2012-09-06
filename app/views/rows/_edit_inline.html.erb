@@ -14,19 +14,7 @@
         <div class="validation-error"></div>
         <span class="button">
           <%= t 'field.begin_date' %>
-          <%= f.datepicker 'begin_date', 
-                           :showButtonPanel => true,
-                           :numberOfMonths => 2,
-                           :changeMonth => true,
-                           :changeYear => true,
-                           :defaultDate => (@row.begin.nil? or @row.begin == Entity.begin_of_time) ? nil : @row.begin.strftime(t('datepicker.decode')), 
-                           :value => (@row.begin.nil? or @row.begin == Entity.begin_of_time) ? nil : I18n.l(entity.begin),
-                           :dateFormat => t('datepicker.format'),
-                           :dayNamesMin => t('datepicker.dayNamesMin'),
-                           :monthNames => t('datepicker.monthNames'),
-                           :monthNamesShort => t('datepicker.monthNamesShort'),
-                           :currentText => t('datepicker.currentText'),
-                           :closeText => t('datepicker.closeText'),
+          <%= f.text_field 'begin_date', 
                            :size => "10x1" %>
         </span>
         <span class="button">

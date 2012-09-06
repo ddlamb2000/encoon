@@ -98,7 +98,7 @@
   <% end %>
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
-  <section id="row-dialog"></section>
+  <section id="row-dialog" class="dialog" style="display: none;"></section>
   <%= render :partial => 'entities/row', 
              :locals => { 
                :grid => @grid, 
@@ -117,8 +117,7 @@
           "<%= url_for(:action => :search_list, 
                        :grid_id => @grid_cast.uuid,
                        :id => 0,
-                       :embedded => true
-                       ) %>");
+                       :embedded => true) %>");
       </script>
     </article>
   <% end %>
@@ -142,8 +141,7 @@
                        :grid_id => attached_grid.uuid,
                        :id => 0,
                        :filters => @filters,
-                       :embedded => true
-                       ) %>");
+                       :embedded => true) %>");
       </script>
     </article>
   <% end %>

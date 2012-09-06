@@ -1,52 +1,35 @@
-<section class="dialog">
-  <%= grid_form_for([@grid, @row], 
-                    :remote => true, 
-                    :html => { :'data-type' => 'html', 
-                               :id => 'new_inline_form',
-                               :method => :post }) do |f| %>
-    <header class="action-header">
-      <%= I18n.t('actions.create') %>
-      <%= @grid.to_s.html_safe %>
-    </header> 
-    <%= render :partial => "edit", 
-               :locals => {:f => f, 
-                           :parent => @grid, 
-                           :entity => @row,
-                           :filters => @filters} %>
-    <footer class="actions">
-      <div class="validation-error"></div>
-      <span class="button">
-        <%= t 'field.begin_date' %>
-        <%= f.datepicker 'begin', 
-                         :showButtonPanel => true,
-                         :numberOfMonths => 2,
-                         :changeMonth => true,
-                         :changeYear => true,
-                         :defaultDate => nil, 
-                         :value => nil,
-                         :dateFormat => t('datepicker.format'),
-                         :dayNamesMin => t('datepicker.dayNamesMin'),
-                         :monthNames => t('datepicker.monthNames'),
-                         :monthNamesShort => t('datepicker.monthNamesShort'),
-                         :currentText => t('datepicker.currentText'),
-                         :closeText => t('datepicker.closeText'),
-                         :size => "10x1" %>
-      </span>
-      <span class="button">
-        <a id="cancel-row-dialog" href="#"><%= t 'actions.cancel' %></a>
-      </span>
-      <span class="button">
-        <%= f.submit t('actions.ok'), :id => "ok-row-dialog" %>
-      </span>
-    </footer>
-  <% end %>
-</section>
-<script>
-  $("#cancel-row-dialog").click(function (event){
-    $("#row-dialog").empty();
-  });
+<%= grid_form_for([@grid, @row], 
+                  :remote => true, 
+                  :html => { :'data-type' => 'html', 
+                             :id => 'new-inline-form',
+                             :method => :post }) do |f| %>
+  <header class="action-header">
+    <%= I18n.t('actions.create') %>
+    <%= @grid.to_s.html_safe %>
+  </header> 
+  <%= render :partial => "edit", 
+             :locals => {:f => f, 
+                         :parent => @grid, 
+                         :entity => @row,
+                         :filters => @filters} %>
+  <footer class="actions">
+    <div class="validation-error"></div>
+    <span class="button">
+      <%= t 'field.begin_date' %>
+      <%= f.text_field 'begin', 
+                       :size => "10x1" %>
+    </span>
+    <span class="button">
+      <a id="cancel-row-dialog" href="#"><%= t 'actions.cancel' %></a>
+    </span>
+    <span class="button">
+      <%= f.submit t('actions.ok'), :id => "ok-row-dialog" %>
+    </span>
+  </footer>
+<% end %>
+<script type="text/javascript">
   $(document).ready(function(){
-    $('#new_inline_form')
+    $('#new-inline-form')
       .bind("ajax:beforeSend", function(evt, xhr, settings){
         $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $(".field_with_errors").removeClass("field_with_errors");
@@ -74,5 +57,8 @@
         errorText += "</ul>";
         $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
       });
+  });
+  $("#cancel-row-dialog").click(function (event){
+    $("#row-dialog").hide();
   });
 </script>
