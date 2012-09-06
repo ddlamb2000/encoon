@@ -98,22 +98,23 @@
   <% end %>
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
-  <section id="row-dialog" class="dialog" style="display: none;"></section>
-  <%= render :partial => 'row', 
-             :locals => { 
-               :grid => @grid, 
-               :row => @row, 
-               :row_loc => @row_loc } %>
+  <section id="details">
+    <%= render :partial => 'row', 
+               :locals => { 
+                 :grid => @grid, 
+                 :row => @row, 
+                 :row_loc => @row_loc } %>
+  </section>
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
     <article>
       <header class="header-article-level2">
         <h2><span class="title"><%= t 'rows.title' %></span></h2>
       </header>
-      <div id="<%=h "list" + @grid_cast.uuid + "-" %>">
+      <div id="<%=h "list-" + @grid_cast.uuid + "-" %>">
         <%= render :partial => "layouts/loading" %>
       </div>
       <script>
-        $("#<%=h "list" + @grid_cast.uuid + "-" %>").load(
+        $("#<%=h "list-" + @grid_cast.uuid + "-" %>").load(
           "<%= url_for(:action => :search_list, 
                        :grid_id => @grid_cast.uuid,
                        :id => 0,
@@ -144,6 +145,7 @@
       </script>
     </article>
   <% end %>
+  <section id="row-dialog" class="dialog" style="display: none;"></section>
 <% else %>
   <div class="bigicon"><%= bigicon @page_icon %></div>
   <h1><%= @page_title %></h1>
