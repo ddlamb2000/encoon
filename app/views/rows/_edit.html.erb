@@ -1,41 +1,93 @@
-<section class="dialog">
-  <% if @grid.present? and @row.present? %>
-  	<%= grid_form_for([@grid, @row], {:onsubmit=>'return false;'}) do |f| %>
-      <header class="action-header">
-        <%= t 'actions.edit' %>
-        <%=h @page_title %>
-      </header> 
-  	  <%= render :partial => "edit", 
-                 :locals => {:f => f, 
-                             :parent => @grid, 
-                             :entity => @row,
-                             :filters => params[:filters]} %>
-      <footer class="actions">
-        <div class="validation-error"></div>
-        <span class="button">
-          <%= t 'field.begin_date' %>
-          <%= f.text_field 'begin', 
-                           :size => "10x1" %>
-        </span>
-        <span class="button">
-          <%= radio_button_tag :mode, :correction, true %>&nbsp;<%= t 'version.update' %>
-          <%= radio_button_tag :mode, :new_version %>&nbsp;<%= t 'version.new' %>
-        </span>
-        <span class="button">
-          <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%= t 'field.active' %>
-        </span>
-        <span class="button">
-          <a id="cancel" href="#"><%= t 'actions.cancel' %></a>
-        </span>
-        <span class="button">
-          <%= f.submit t('actions.ok') %>
-        </span>
-      </footer>
-  	<% end %>
-  <% end %>
-</section>
+<%= grid_form_for([@grid, @row],
+                  :remote => true,
+                  :html => { :'data-type' => 'html',
+                             :id => 'edit-inline-form' }) do |f| %>
+  <header class="action-header">
+    <%= t(new_row ? 'actions.create' : 'actions.edit') %>
+    <%= @grid.to_s.html_safe %>
+  </header> 
+    <table class="form">
+      <% if @grid.has_translation? and @grid.has_name? %>
+        <tr id="header-name">
+          <td class="header"><%= f.label :name, :class => "required" %></td>
+          <td class="string">
+            <%= text_field_tag :name, 
+                               @row_loc.name, 
+                               :size => "70x1" %>
+          </td>
+        </tr>
+      <% end %>
+      <% for column in @grid.column_all %>
+        <% description = column.description.present? ? 
+            ("<span title='#{column.description}'> " + icon("information") + "</span>") : 
+            "" %>
+        <%= f.edit_entity(@row, column, description) %>
+      <% end %>
+      <% if @grid.has_translation? and @grid.has_description? %>
+        <tr id="header-description">
+          <td class="header"><%= f.label :description %></td>
+          <td class="string"><%= text_area_tag :description, 
+                                               @row_loc.description, 
+                                               :size => "70x10" %></td>
+        </tr>
+      <% end %>
+    </table>
+  <footer class="actions">
+    <div class="validation-error"></div>
+    <span class="button">
+      <%= t 'field.begin_date' %>
+      <%= f.text_field 'begin', 
+                       :size => "10x1" %>
+    </span>
+    <% if not new_row %>
+      <span class="button">
+        <%= radio_button_tag :mode, :correction, true %>&nbsp;<%= t 'version.update' %>
+        <%= radio_button_tag :mode, :new_version %>&nbsp;<%= t 'version.new' %>
+      </span>
+      <span class="button">
+        <%= f.check_box :enabled, {}, "t", "f" %>&nbsp;<%= t 'field.active' %>
+      </span>
+    <% end %>
+    <span class="button">
+      <a id="cancel-row-dialog" href="#"><%= t 'actions.cancel' %></a>
+    </span>
+    <span class="button">
+      <%= f.submit t('actions.ok'), :id => "ok-row-dialog" %>
+    </span>
+  </footer>
+<% end %>
 <script>
-  $("#cancel").click(function (event){
-    $("#row-dialog").empty();
+  $(document).ready(function(){
+    $('#edit-inline-form')
+      .bind("ajax:beforeSend", function(evt, xhr, settings){
+        $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+        $(".field_with_errors").removeClass("field_with_errors");
+      })
+      .bind("ajax:success", function(evt, data, status, xhr){
+        $(this).find('div.validation-error').empty();
+        $(".field_with_errors").removeClass("field_with_errors");
+        $("#<%=h "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").html(xhr.responseText);
+        $("#row-dialog").hide();
+      })
+      .bind('ajax:complete', function(evt, xhr, status){
+      })
+      .bind("ajax:error", function(evt, xhr, status, error){
+        var errors, errorText;
+        try {
+          errors = $.parseJSON(xhr.responseText);
+        } catch(err) {
+          errors = {message: err};
+        }
+        errorText = "<ul>";
+        for( error in errors ) {
+          errorText += "<li>" + errors[error] + "</li> ";
+          $("#header-" + error).addClass("field_with_errors");
+        }
+        errorText += "</ul>";
+        $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
+      });
+  });
+  $("#cancel-row-dialog").click(function (event){
+    $("#row-dialog").hide();
   });
 </script>

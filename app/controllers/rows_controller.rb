@@ -17,9 +17,7 @@
 class RowsController < ApplicationController
   before_filter :load_workspaces, :only => [:home, :show, :refresh]
 
-  before_filter :authenticate_user!, :only => [:edit_inline, 
-                                               :edit_row_inline, 
-                                               :new_inline,
+  before_filter :authenticate_user!, :only => [:edit, 
                                                :create,
                                                :update, 
                                                :destroy,
@@ -32,9 +30,7 @@ class RowsController < ApplicationController
   before_filter :findGrid, :only => [:search_list,
                                      :show, 
                                      :details,
-                                     :new_inline, 
-                                     :edit_inline, 
-                                     :edit_row_inline,
+                                     :edit, 
                                      :create, 
                                      :update, 
                                      :destroy,
@@ -46,8 +42,7 @@ class RowsController < ApplicationController
   
   before_filter :findRow, :only => [:show, 
                                     :details, 
-                                    :edit_inline, 
-                                    :edit_row_inline, 
+                                    :edit, 
                                     :update, 
                                     :destroy,
                                     :attach_document,
@@ -122,27 +117,19 @@ class RowsController < ApplicationController
     render :partial => "details"
   end
 
-  def new_inline
-    log_debug "RowsController#new_inline: params=#{params.inspect}"
-    @filters = params[:filters]
-    @filters_uuid = get_filters_uuid(@filters)
-    @grid.load_cached_grid_structure(@filters, true)
-    @row = @grid.rows.build
-    @row_loc = RowLoc.new
-    @grid.row_initialization(@row, @filters)
-    set_page_title
-    render :partial => "new_inline"
-  end
-
-  def edit_inline
-    log_debug "RowsController#edit_inline: params=#{params.inspect}"
-    set_page_title
-    render :partial => "edit_inline"
-  end
-
-  def edit_row_inline
-    log_debug "RowsController#edit_row_inline: params=#{params.inspect}"
-    set_page_title
+  def edit
+    log_debug "RowsController#edit: params=#{params.inspect}"
+    if @row.nil? or @row.uuid.nil?
+      @filters = params[:filters]
+      @filters_uuid = get_filters_uuid(@filters)
+      @grid.load_cached_grid_structure(@filters, true)
+      @row = @grid.rows.build
+      @row_loc = RowLoc.new
+      @grid.row_initialization(@row, @filters)
+      render :partial => "edit", :locals => {:new_row => true}
+    else
+      render :partial => "edit", :locals => {:new_row => false}
+    end
   end
 
   def create
@@ -194,14 +181,9 @@ class RowsController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        @row = @grid.row_select_entity_by_uuid(@row.uuid)
-        name = @grid.row_title(@row)
-        flash[:notice] = t('transaction.created', 
-                                :type => @grid, 
-                                :name => name)
         format.html { search_list }
       else
-        log_debug "RowsController#create: error, @row.errors=#{@row.errors}"
+        log_debug "RowsController#create: error, @row.errors=#{@row.errors.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
@@ -300,14 +282,10 @@ class RowsController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        name = @grid.row_title(@row)
-        flash[:notice] = t('transaction.updated', 
-                                :type => @grid, :name => name)
-        format.html { redirect_to :back }
+        format.html { search_list }
       else
         log_debug "RowsController#update: error, params=#{params.inspect}"
-        set_page_title
-        format.html { render :action => "_edit_inline" }
+        format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end

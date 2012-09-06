@@ -131,11 +131,11 @@
           <span class="detail"><%= attached_grid.column_name.html_safe %></span>
         </h2>
       </header>
-      <div id="<%=h "list" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
+      <div id="<%=h "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
         <%= render :partial => "layouts/loading" %>
       </div>
       <script>
-        $("#<%=h "list" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
+        $("#<%=h "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
           "<%= url_for(:action => :search_list, 
                        :grid_id => attached_grid.uuid,
                        :id => 0,

@@ -1,4 +1,4 @@
-<article id="<%=h "row-grid" + grid.id.to_s + "-row" + row.id.to_s %>">
+<article id="<%= "row-" + row.uuid %>">
   <header class="header-article">
     <div class="bigicon"><%= bigicon @page_icon %></div>
     <h1>
@@ -38,9 +38,9 @@
   <% end %>
   <div id="entity-upload-attachment"></div>
   <% if user_signed_in? and grid.can_update?(row) %>
-    <footer id="<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>" class="actions">
+    <footer id="<%=h "actions-" + row.uuid %>" class="actions">
       <span class="button" title="Update current data or create a new version." style="display: none;">
-        <a id="<%=h "update-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>" href="#">
+        <a id="<%=h "update-" + row.uuid %>" href="#">
           <%= icon('edit') %>
           <%= t 'actions.edit' %>
         </a>
@@ -65,18 +65,20 @@
       </span>
     </footer>
     <script>
-      $("#<%=h "row-grid" + grid.id.to_s + "-row" + row.id.to_s %>").hover(
+      $("#<%=h "row-" + row.uuid.to_s %>").hover(
         function (event){
-          $("#<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %> .button").show();
+          $("#<%=h "actions-" + row.uuid %> .button").show();
         },
         function (event){
-          $("#<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %> .button").hide();
+          $("#<%=h "actions-" + row.uuid %> .button").hide();
         }
       );
-      $("#<%=h "update-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>").click(function (event){
-        $("#row-dialog").load("<%= url_for({:action => "edit_inline", 
+      $("#<%=h "update-" + row.uuid %>").click(function (event){
+        $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+        $("#row-dialog").load("<%= url_for({:action => :edit, 
                                             :grid_id => grid.uuid, 
-                                            :id => row.id}) %>");
+                                            :id => row.uuid}) %>");
+        $("#row-dialog").show();
       });
     </script>
   <% end %>
