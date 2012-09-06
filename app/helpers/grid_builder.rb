@@ -40,19 +40,7 @@ class GridBuilder < ActionView::Helpers::FormBuilder
 
   def edit_date(attribute, value)
     @template.content_tag("td", 
-                          datepicker(attribute, {:showButtonPanel => true,
-                                                 :numberOfMonths => 2,
-                                                 :changeMonth => true,
-                                                 :changeYear => true,
-                                                 :defaultDate => value.nil? ? nil : value.strftime(t('datepicker.decode')), 
-                                                 :value => value.nil? ? nil : I18n.l(value),
-                                                 :dateFormat => t('datepicker.format'),
-                                                 :dayNamesMin => t('datepicker.dayNamesMin'),
-                                                 :monthNames => t('datepicker.monthNames'),
-                                                 :monthNamesShort => t('datepicker.monthNamesShort'),
-                                                 :currentText => t('datepicker.currentText'),
-                                                 :closeText => t('datepicker.closeText'),
-                                                 :size => "10x1"}),
+                          text_field(attribute, :size => "10x1"),
                           :class => "string")
   end
 
