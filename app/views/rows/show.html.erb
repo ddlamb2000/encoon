@@ -124,7 +124,6 @@
   <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
     <% @filters = [{:column_uuid => attached_grid.column_uuid, 
                     :row_uuid => @row.uuid, :row_name => @row.name}] %>
-    <% attached_grid.load_cached_grid_structure(@filters) %>
     <article>
       <header class="header-article-level2">
         <h2>
