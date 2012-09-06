@@ -36,8 +36,7 @@ class User < Entity
          :trackable, 
          :validatable, 
          :confirmable, 
-         :lockable, 
-         :omniauthable
+         :lockable
 
   attr_accessible :email, :first_name, :last_name, :password, :password_confirmation, :remember_me
 
