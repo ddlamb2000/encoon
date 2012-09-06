@@ -55,10 +55,24 @@
                     row.read_referenced_name(column)) %>
           <% end %>
           <td class="column-header">
-            <%= render :partial => 'rows/index_row_actions', 
-                        :locals => {
-                          :row => row, 
-                          :grid => grid} %>
+            <% if user_signed_in? and grid.can_update?(row) %>
+              <%= link_to(icon('edit'), 
+                    {:controller => 'rows', 
+                     :action => "edit", 
+                     :grid_id => grid.uuid, 
+                     :id => row.id},
+                    :remote => true) %>
+              <%= link_to(icon('remove'), 
+                    {:controller => 'rows', 
+                     :grid_id => grid.uuid, 
+                     :id => row.id, 
+                     :inline => true, :action => "destroy"}, 
+                    :confirm => t('message.delete', :name => row.to_s),
+                    :method => :delete) %>
+            <% else %>
+              <%= icon('locked') %>
+            <% end %>
+
           </td>
         </tr>
       <% end %>
