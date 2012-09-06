@@ -67,8 +67,48 @@
 <% end %>
 <%= show_collection_count(table_rows, table_row_count, params[:page]) %>
 <% if embedded and not_all_rows(table_row_count) %><%= icon('warning') %><% end %>
-<%= render :partial => 'entities/list_actions', 
-           :locals => { 
-             :grid => grid,
-             :filters => filters,
-             :table_row_count => table_row_count } %>
+<footer id=<%= "actions-rows"  + grid.uuid + get_filters_uuid(filters) %> class="actions">
+  <% if not_last_page(params[:page], table_row_count) %>
+    <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
+         :filters => filters,
+         :page => calc_next_page(params[:page]) %>
+  <% end %>
+  <% if not_first_page(params[:page]) %>
+    <%= link_to icon('up') + ("&nbsp;" + t('general.prev_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid,
+         :filters => filters,
+         :page => calc_previous_page(params[:page]) %>
+    <%= link_to icon('previous') + ("&nbsp;" + t('general.first_rows')).html_safe, 
+         :controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+         :filters => filters,
+         :page => 1 %>
+  <% end %>
+  <% if user_signed_in? and grid.can_create_data?(filters) %>
+    <span title="Create a new row of data for the corresponding data grid." class="button">
+      <a id="<%= "create-row-grid" + grid.id.to_s %>" href="#">
+        <%= icon('plus') %>
+        <%= t 'actions.create' %>
+      </a>
+    </span>
+    <script>
+      $("#<%= "create-row-grid" + grid.id.to_s %>").click(function (event){
+        $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+        $("#row-dialog").load("<%= url_for({:action => "new_inline", 
+                                            :grid_id => grid.uuid, 
+                                            :id => 0,
+                                            :filters => filters}) %>");
+        $("#row-dialog").show();
+      });
+    </script>
+  <% end %>
+  <% if user_signed_in? and grid.can_create_data?(filters) %>
+    <span title="Export rows in an .xml file." class="button">
+      <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
+            {:controller => 'rows', :action => 'index', :grid_id => grid.uuid, 
+            :filters => filters,
+            :page => -1,
+            :format => :xml} %>
+    </span>
+  <% end %>
+</footer>

@@ -1,0 +1,83 @@
+<article id="<%=h "row-grid" + grid.id.to_s + "-row" + row.id.to_s %>">
+  <header class="header-article">
+    <div class="bigicon"><%= bigicon @page_icon %></div>
+    <h1>
+      <span class="title"><%= grid.to_s.html_safe %></span>
+      <%= row.to_s.html_safe %>
+      <span class="detail">
+        <%= display_grid_next_versions(grid, row).html_safe %>
+        <%= display_locale(row).html_safe if grid.has_translation? %>
+        <% if not grid.can_update?(row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>
+      </span>
+    </h1>
+  </header>
+  <% columns = grid.column_all %>
+  <% if not columns.empty? %>
+    <table>
+      <tbody>
+        <% for column in grid.column_all %>
+          <%= show_entity(
+                column, 
+                row.read_value(column),
+                ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?  
+                  link_to(row.read_referenced_name(column), 
+                              :controller => 'rows', 
+                              :action => 'show',  
+                              :grid_id => column.grid_reference_uuid, 
+                              :id => row.read_value(column)) : ""),
+                row.read_referenced_name(column),
+                row.read_referenced_description(column)
+           ) %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <% if grid.has_translation? and row_loc.description.present? %>
+    <% if not columns.empty? %><br/><% end %>
+    <p><%= no_trunc(row_loc.description.html_safe) %></p>
+  <% end %>
+  <div id="entity-upload-attachment"></div>
+  <% if user_signed_in? and grid.can_update?(row) %>
+    <footer id="<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>" class="actions">
+      <span class="button" title="Update current data or create a new version." style="display: none;">
+        <a id="<%=h "update-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>" href="#">
+          <%= icon('edit') %>
+          <%= t 'actions.edit' %>
+        </a>
+      </span>
+      <span class="button" title="Delete current data." style="display: none;">
+        <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
+           {:grid_id => grid.uuid, :id => row.id, :action => "destroy"}, 
+            :confirm => t('message.delete', :name => row.to_s), 
+            :method => :delete %>
+      </span>
+      <span class="button" title="Add or remove attachment (photo or document) to current data." style="display: none;">
+        <%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
+           {:action => "attach_document", :grid_id => grid.uuid, :id => row.uuid},
+           :remote => true %>
+      </span>
+      <span class="button" style="display: none;">
+        <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => grid.uuid, :id => 0 %>
+      </span>
+      <span class="button" title="Export current data into a XML file." style="display: none;">
+        <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
+           {:format => :xml} %>
+      </span>
+    </footer>
+    <script>
+      $("#<%=h "row-grid" + grid.id.to_s + "-row" + row.id.to_s %>").hover(
+        function (event){
+          $("#<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %> .button").show();
+        },
+        function (event){
+          $("#<%=h "actions-row-grid" + grid.id.to_s + "-row" + row.id.to_s %> .button").hide();
+        }
+      );
+      $("#<%=h "update-row-grid" + grid.id.to_s + "-row" + row.id.to_s %>").click(function (event){
+        $("#row-dialog").load("<%= url_for({:action => "edit_inline", 
+                                            :grid_id => grid.uuid, 
+                                            :id => row.id}) %>");
+      });
+    </script>
+  <% end %>
+</article>

@@ -11,8 +11,8 @@
 	<% end %>
   <% for column in parent.column_all %>
     <% description = column.description.present? ? 
-          ("<span title='#{column.description}'> " + icon("information") + "</span>") : 
-          "" %>
+        ("<span title='#{column.description}'> " + icon("information") + "</span>") : 
+        "" %>
     <%= f.edit_entity(@row, column, description) %>
   <% end %>
   <% if @grid.has_translation? and @grid.has_description? %>
