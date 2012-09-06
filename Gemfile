@@ -16,17 +16,12 @@
 # See doc/COPYRIGHT.rdoc for more details.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.1'
+gem 'rails', '3.2.8'
 gem 'sqlite3', '1.3.5', :require => 'sqlite3'
 gem 'jquery-rails', '>=2.0.0'
-gem 'jquery_datepicker'
-gem 'execjs'
 gem "paperclip", "~> 2.4"
 gem 'truncate_html'
 gem 'devise'
-gem "omniauth-facebook"
-gem 'omniauth-openid'
-gem 'coffee-rails', '~> 3.2.1'
 gem 'uglifier', '>= 1.0.3'
 
 platforms :ruby do
@@ -37,4 +32,5 @@ end
 group :assets do
   gem 'sass-rails' # if running rails 3.1 or greater
   gem 'compass-rails'
+  gem 'coffee-rails', '~> 3.2.1'
 end
