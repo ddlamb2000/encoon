@@ -104,15 +104,13 @@
   <% end %>
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
-  <section id="details">
-    <%= render :partial => 'row', 
-               :locals => { 
-                 :grid => @grid, 
-                 :row => @row, 
-                 :row_loc => @row_loc } %>
-  </section>
+  <%= render :partial => 'row', 
+             :locals => { 
+               :grid => @grid, 
+               :row => @row, 
+               :row_loc => @row_loc } %>
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
-    <article>
+    <article id="<%=h "row-" + @grid_cast.uuid + "-" %>">
       <header class="header-article-level2">
         <h2><span class="title"><%= t 'rows.title' %></span></h2>
       </header>
@@ -130,7 +128,7 @@
   <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
     <% @filters = [{:column_uuid => attached_grid.column_uuid, 
                     :row_uuid => @row.uuid, :row_name => @row.name}] %>
-    <article>
+    <article id="<%= "row-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
       <header class="header-article-level2">
         <h2>
           <span class="title"><%= attached_grid.name.html_safe %></span>

@@ -81,7 +81,7 @@
 <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
   <footer id=<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %> 
-          class="actions" 
+          class="actions float-actions"
           style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
@@ -127,12 +127,17 @@
       </span>
     <% end %>
     <script>
-      $("#<%= "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
+      $("#<%= "row-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
-          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeIn(300);
+          var top = $(this).offset().top;
+          var left = $(this).offset().left;
+          var width = $(this).width();
+          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top, width:width }).fadeIn(300);
+          $(this).addClass("highlighted");
         },
         function (event){
           $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(300);
+          $(this).removeClass("highlighted");
         }
       );
     </script>

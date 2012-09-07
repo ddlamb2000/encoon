@@ -39,7 +39,7 @@
   <div id="entity-upload-attachment"></div>
   <% if user_signed_in? and grid.can_update?(row) %>
     <footer id="<%=h "actions-" + row.uuid %>" 
-            class="actions" 
+            class="actions float-actions" 
             style="display: none;">
       <span class="button" title="Update current data or create a new version.">
         <a id="<%=h "update-" + row.uuid %>">
@@ -68,10 +68,15 @@
       <script>
         $("#<%= "row-" + row.uuid %>").hover(
           function (event){
-            $("#<%= "actions-" + row.uuid %>").fadeIn(300);
+            var top = $(this).offset().top;
+            var left = $(this).offset().left;
+            var width = $(this).width();
+            $("#<%= "actions-" + row.uuid %>").css({left:left, top:top, width:width }).fadeIn(300);
+            $(this).addClass("highlighted");
           },
           function (event){
             $("#<%= "actions-" + row.uuid %>").fadeOut(300);
+            $(this).removeClass("highlighted");
           }
         );
         $("#<%= "update-" + row.uuid %>").click(function (event){

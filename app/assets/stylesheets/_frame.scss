@@ -219,10 +219,9 @@ body {
     padding:$padding;
     border:1px dashed transparent;
     @include border-radius;
-    @include transition;
-    &:hover {
-      background:$background-color-table-header;
-    }
+  }
+  .highlighted {
+    background:$background-color-table-header;
   }
   .bigicon {
   }
