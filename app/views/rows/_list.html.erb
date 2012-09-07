@@ -79,60 +79,62 @@
 <% end %>
 <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
 <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
-<footer id=<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %> 
-        class="actions" 
-        style="display: none;">
-  <% if not_last_page(params[:page], @table_row_count) %>
-    <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
-         :filters => @filters,
-         :page => calc_next_page(params[:page]) %>
-  <% end %>
-  <% if not_first_page(params[:page]) %>
-    <%= link_to icon('up') + ("&nbsp;" + t('general.prev_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
-         :filters => @filters,
-         :page => calc_previous_page(params[:page]) %>
-    <%= link_to icon('previous') + ("&nbsp;" + t('general.first_rows')).html_safe, 
-         :controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
-         :filters => @filters,
-         :page => 1 %>
-  <% end %>
-  <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-    <span title="Create a new row of data for the corresponding data grid." class="button">
-      <a id="<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-        <%= icon('plus') %>
-        <%= t 'actions.create' %>
-      </a>
-    </span>
+<% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
+  <footer id=<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %> 
+          class="actions" 
+          style="display: none;">
+    <% if not_last_page(params[:page], @table_row_count) %>
+      <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
+           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
+           :filters => @filters,
+           :page => calc_next_page(params[:page]) %>
+    <% end %>
+    <% if not_first_page(params[:page]) %>
+      <%= link_to icon('up') + ("&nbsp;" + t('general.prev_rows')).html_safe, 
+           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
+           :filters => @filters,
+           :page => calc_previous_page(params[:page]) %>
+      <%= link_to icon('previous') + ("&nbsp;" + t('general.first_rows')).html_safe, 
+           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
+           :filters => @filters,
+           :page => 1 %>
+    <% end %>
+    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+      <span title="Create a new row of data for the corresponding data grid." class="button">
+        <a id="<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <%= icon('plus') %>
+          <%= t 'actions.create' %>
+        </a>
+      </span>
+      <script>
+        $("#<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+          $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#row-dialog").load("<%= url_for({:action => :edit, 
+                                              :grid_id => @grid.uuid, 
+                                              :id => 0,
+                                              :filters => @filters}) %>");
+          $("#row-dialog").show(300);
+        });
+      </script>
+    <% end %>
+    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+      <span title="Export rows in an .xml file." class="button">
+        <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
+              {:controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
+              :filters => @filters,
+              :page => -1,
+              :format => :xml} %>
+      </span>
+    <% end %>
     <script>
-      $("#<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
-        $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-        $("#row-dialog").load("<%= url_for({:action => :edit, 
-                                            :grid_id => @grid.uuid, 
-                                            :id => 0,
-                                            :filters => @filters}) %>");
-        $("#row-dialog").show(300);
-      });
+      $("#<%= "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
+        function (event){
+          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeIn(300);
+        },
+        function (event){
+          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(300);
+        }
+      );
     </script>
-  <% end %>
-  <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-    <span title="Export rows in an .xml file." class="button">
-      <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-            {:controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
-            :filters => @filters,
-            :page => -1,
-            :format => :xml} %>
-    </span>
-  <% end %>
-</footer>
-<script>
-  $("#<%= "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
-    function (event){
-      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeIn(300);
-    },
-    function (event){
-      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(300);
-    }
-  );
-</script>
+  </footer>
+<% end %>

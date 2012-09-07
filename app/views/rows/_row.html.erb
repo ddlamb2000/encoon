@@ -65,23 +65,23 @@
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
            {:format => :xml} %>
       </span>
+      <script>
+        $("#<%= "row-" + row.uuid %>").hover(
+          function (event){
+            $("#<%= "actions-" + row.uuid %>").fadeIn(300);
+          },
+          function (event){
+            $("#<%= "actions-" + row.uuid %>").fadeOut(300);
+          }
+        );
+        $("#<%= "update-" + row.uuid %>").click(function (event){
+          $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#row-dialog").load("<%= url_for({:action => :edit, 
+                                              :grid_id => grid.uuid, 
+                                              :id => row.uuid}) %>");
+          $("#row-dialog").show(300);
+        });
+      </script>
     </footer>
-    <script>
-      $("#<%= "row-" + row.uuid %>").hover(
-        function (event){
-          $("#<%= "actions-" + row.uuid %>").fadeIn(300);
-        },
-        function (event){
-          $("#<%= "actions-" + row.uuid %>").fadeOut(300);
-        }
-      );
-      $("#<%= "update-" + row.uuid %>").click(function (event){
-        $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-        $("#row-dialog").load("<%= url_for({:action => :edit, 
-                                            :grid_id => grid.uuid, 
-                                            :id => row.uuid}) %>");
-        $("#row-dialog").show(300);
-      });
-    </script>
   <% end %>
 </article>
