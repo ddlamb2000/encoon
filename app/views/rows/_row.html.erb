@@ -1,9 +1,9 @@
 <header class="header-article">
-  <div class="bigicon"><%= bigicon @page_icon %></div>
   <h1>
-    <span class="title"><%= grid.to_s.html_safe %></span>
+    <%= bigicon @page_icon %>
     <%= row.to_s.html_safe %>
     <span class="detail">
+      <%= grid.to_s.html_safe %>
       <%= display_grid_next_versions(grid, row).html_safe %>
       <%= display_locale(row).html_safe if grid.has_translation? %>
       <% if not grid.can_update?(row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>
@@ -18,7 +18,7 @@
         <%= show_entity(
               column, 
               row.read_value(column),
-              ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?  
+              ((not column.grid_reference_uuid.nil? and not row.read_value(column).nil?) ?  
                 link_to(row.read_referenced_name(column), 
                             :controller => 'rows', 
                             :action => 'show',  

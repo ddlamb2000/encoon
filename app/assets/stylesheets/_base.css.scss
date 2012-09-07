@@ -2,10 +2,8 @@ h1 {
   font-size:160%;
   font-weight:bolder;
   margin-bottom:0;
+  color:$title-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
-  .title {
-    color:$title-color;
-  }
   .detail {
     display:inline;
     font-size:60%;
@@ -16,10 +14,8 @@ h2 {
   font-size:130%;
   font-weight:bolder;
   margin-bottom:0;
+  color:$title-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
-  .title {
-    color:$title-color;
-  }
   .detail {
     display:inline;
     font-size:60%;
@@ -110,6 +106,8 @@ li {
   display:inline;
   font-size:95%;
   font-weight:normal;
+  margin-left:$padding;
+  margin-right:$padding;
   padding-left:$padding;
   padding-right:$padding;
   img {
@@ -131,7 +129,5 @@ li {
   @include border-radius;
 }
 .filter {
-  td {
-    border-top:0;
-  }
+  font-size:95%;
 }

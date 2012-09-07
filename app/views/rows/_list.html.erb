@@ -1,7 +1,5 @@
 <% if @table_rows.length > 0 %>
-  <table class="filter">
-    <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-  </table>
+  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
   <table>
     <thead>
       <tr>

@@ -114,7 +114,10 @@
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
     <article id="<%=h "row-" + @grid_cast.uuid + "-" %>">
       <header class="header-article-level2">
-        <h2><span class="title"><%= t 'rows.title' %></span></h2>
+        <h2>
+          <%= t 'rows.title' %>
+          <span class="detail"><%= @row.to_s.html_safe %></span>
+        </h2>
       </header>
       <div id="<%=h "list-" + @grid_cast.uuid + "-" %>">
         <%= render :partial => "layouts/loading" %>
@@ -133,7 +136,7 @@
     <article id="<%= "row-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
       <header class="header-article-level2">
         <h2>
-          <span class="title"><%= attached_grid.name.html_safe %></span>
+          <%= attached_grid.name.html_safe %>
           <span class="detail"><%= attached_grid.column_name.html_safe %></span>
         </h2>
       </header>

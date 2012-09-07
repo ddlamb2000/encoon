@@ -60,9 +60,9 @@ module EntityHelper
 
   def show_reference(value, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
     content_tag("td", 
-                referenced_link.html_safe + 
+                (referenced_link.blank? ? "" : referenced_link.html_safe) + 
                 (not(referenced_description.blank?) ? 
-                  (("&nbsp;<span class=\"small-description\">" + 
+                  (("<span class=\"small-description\">" + 
                       trunc(referenced_description) + 
                       "</span>").html_safe) : ""), 
                 :class => (list ? "list-" : "") + "string")
@@ -93,8 +93,15 @@ module EntityHelper
   
   def show_entity(column, value, referenced_link, referenced_name, referenced_description)
     content_tag("tr",
-      show_header_label(column.kind, column.name.html_safe, column.description.html_safe) +
-      show(value, column.kind, column.grid_reference_uuid, referenced_link, referenced_name, referenced_description)
+      show_header_label(column.kind, 
+                        column.name.html_safe, 
+                        column.description.html_safe) +
+      show(value, 
+           column.kind, 
+           column.grid_reference_uuid, 
+           referenced_link, 
+           referenced_name, 
+           referenced_description)
     )
   end
 
