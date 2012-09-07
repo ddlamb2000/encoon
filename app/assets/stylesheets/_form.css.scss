@@ -42,15 +42,18 @@
   }
 }
 .actions {
-  padding:2*$padding;
+  padding:$padding;
   vertical-align:middle;
   text-align:center;
-  min-height:5*$padding;
   @include border-radius;
+  @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
+  background-color:$background-color-navigator-section;
+  color:$color-highlight;
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   .button { 
     display:inline;
     vertical-align:middle;
-    margin:2*$padding;
+    margin:$padding;
     cursor:pointer;
     a {
       display:inline;
@@ -65,7 +68,6 @@
       @include border-radius;
       @include transition;
       @include undecored-link;
-      @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
       &:hover {
         background-color:$background-color-highlights;
         border:1px solid $background-color-highlights;
@@ -88,7 +90,6 @@
         @include border-radius;
         @include transition;
         @include undecored-link;
-        @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
         &:hover {
           background-color:$background-color-highlights;
           border:1px solid $background-color-highlights;
@@ -118,11 +119,13 @@
 .action-header {
   color:$color-highlight;
   text-align:center;
+  font-weight:bolder;
   padding:$padding;
   margin-bottom:$padding;
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
   background-color:$background-color-navigator-section;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+  @include border-radius;
 }
 .dialog {
   position:fixed;

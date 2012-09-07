@@ -25,6 +25,8 @@ body {
       @include hover-link;
       @include undecored-link;
       padding:$padding;
+      margin-left:$padding;
+      margin-right:$padding;
       font-weight:bolder;
       @include border-radius;
       @include transition;
@@ -38,7 +40,6 @@ body {
     text-align:left;
     padding-left:2*$padding;
     font-weight:bolder;
-    color:$title-color;
   }
   #header-links {
     @include float-right;
