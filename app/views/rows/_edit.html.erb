@@ -67,7 +67,7 @@
         $(this).find('div.validation-error').empty();
         $(".field_with_errors").removeClass("field_with_errors");
         $("#<%=h "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").html(xhr.responseText);
-        $("#row-dialog").hide();
+        $("#row-dialog").hide(300);
       })
       .bind('ajax:complete', function(evt, xhr, status){
       })
@@ -88,6 +88,6 @@
       });
   });
   $("#cancel-row-dialog").click(function (event){
-    $("#row-dialog").hide();
+    $("#row-dialog").hide(300);
   });
 </script>

@@ -38,20 +38,22 @@
   <% end %>
   <div id="entity-upload-attachment"></div>
   <% if user_signed_in? and grid.can_update?(row) %>
-    <footer id="<%=h "actions-" + row.uuid %>" class="actions">
-      <span class="button" title="Update current data or create a new version." style="display: none;">
+    <footer id="<%=h "actions-" + row.uuid %>" 
+            class="actions" 
+            style="display: none;">
+      <span class="button" title="Update current data or create a new version.">
         <a id="<%=h "update-" + row.uuid %>">
           <%= icon('edit') %>
           <%= t 'actions.edit' %>
         </a>
       </span>
-      <span class="button" title="Delete current data." style="display: none;">
+      <span class="button" title="Delete current data.">
         <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
            {:grid_id => grid.uuid, :id => row.id, :action => "destroy"}, 
             :confirm => t('message.delete', :name => row.to_s), 
             :method => :delete %>
       </span>
-      <span class="button" title="Add or remove attachment (photo or document) to current data." style="display: none;">
+      <span class="button" title="Add or remove attachment (photo or document) to current data.">
         <%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
            {:action => "attach_document", :grid_id => grid.uuid, :id => row.uuid},
            :remote => true %>
@@ -59,26 +61,26 @@
       <span class="button" style="display: none;">
         <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => grid.uuid, :id => 0 %>
       </span>
-      <span class="button" title="Export current data into a XML file." style="display: none;">
+      <span class="button" title="Export current data into a XML file.">
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
            {:format => :xml} %>
       </span>
     </footer>
     <script>
-      $("#<%=h "row-" + row.uuid.to_s %>").hover(
+      $("#<%= "row-" + row.uuid %>").hover(
         function (event){
-          $("#<%=h "actions-" + row.uuid %> .button").show();
+          $("#<%= "actions-" + row.uuid %>").show(300);
         },
         function (event){
-          $("#<%=h "actions-" + row.uuid %> .button").hide();
+          $("#<%= "actions-" + row.uuid %>").hide(300);
         }
       );
-      $("#<%=h "update-" + row.uuid %>").click(function (event){
+      $("#<%= "update-" + row.uuid %>").click(function (event){
         $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $("#row-dialog").load("<%= url_for({:action => :edit, 
                                             :grid_id => grid.uuid, 
                                             :id => row.uuid}) %>");
-        $("#row-dialog").show();
+        $("#row-dialog").show(300);
       });
     </script>
   <% end %>

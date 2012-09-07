@@ -16,13 +16,13 @@
             function showDetails() {
               if ($("#more-button").attr('checked')) {
                 $("#more-content").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-                $("#more-content").show();
+                $("#more-content").show(300);
                 $("#more-content").load("<%= url_for(:action => "details", :grid_id => @grid.uuid, :id => @row.id) %>");
                 $("#more-title").addClass("highlighted");
               } 
               else {
                 $("#more-title").removeClass("highlighted");
-                $("#more-content").hide();
+                $("#more-content").hide(300);
                 $.ajax("<%= url_for(unset_path(:flag => "show_details")) %>");
               }
             };
@@ -116,9 +116,7 @@
       <header class="header-article-level2">
         <h2><span class="title"><%= t 'rows.title' %></span></h2>
       </header>
-      <div id="<%=h "list-" + @grid_cast.uuid + "-" %>">
-        <%= render :partial => "layouts/loading" %>
-      </div>
+      <div id="<%=h "list-" + @grid_cast.uuid + "-" %>"></div>
       <script>
         $("#<%=h "list-" + @grid_cast.uuid + "-" %>").load(
           "<%= url_for(:action => :list, 
@@ -137,11 +135,9 @@
           <span class="detail"><%= attached_grid.column_name.html_safe %></span>
         </h2>
       </header>
-      <div id="<%=h "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
-        <%= render :partial => "layouts/loading" %>
-      </div>
+      <div id="<%= "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>"></div>
       <script>
-        $("#<%=h "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
+        $("#<%= "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
           "<%= url_for(:action => :list, 
                        :grid_id => attached_grid.uuid,
                        :id => 0,

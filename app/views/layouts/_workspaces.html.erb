@@ -26,12 +26,12 @@
       if(updateFlag) {
         $.ajax("<%= url_for(unset_path(:flag => "hide_navigator")) %>");
       }
-      $("#navigator").show();
+      $("#navigator").show(300);
       $("#main-area").removeClass("large-area");
       $("#main-area").addClass("main-area");
     } 
     else {
-      $("#navigator").hide();
+      $("#navigator").hide(300);
       $("#main-area").removeClass("main-area");
       $("#main-area").addClass("large-area");
       if(updateFlag) {
