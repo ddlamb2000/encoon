@@ -61,10 +61,8 @@ module EntityHelper
   def show_reference(value, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
     content_tag("td", 
                 (referenced_link.blank? ? "" : referenced_link.html_safe) + 
-                (not(referenced_description.blank?) ? 
-                  (("<span class=\"small-description\">" + 
-                      trunc(referenced_description) + 
-                      "</span>").html_safe) : ""), 
+                (referenced_description.blank? ? "" : 
+                  "<span class='small-description'>#{trunc(referenced_description)}</span>".html_safe), 
                 :class => (list ? "list-" : "") + "string")
   end
 
