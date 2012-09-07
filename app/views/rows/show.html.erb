@@ -104,11 +104,13 @@
   <% end %>
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
-  <%= render :partial => 'row', 
-             :locals => { 
-               :grid => @grid, 
-               :row => @row, 
-               :row_loc => @row_loc } %>
+  <article id="<%= "row-" + @row.uuid %>">
+    <%= render :partial => 'row', 
+               :locals => { 
+                 :grid => @grid, 
+                 :row => @row, 
+                 :row_loc => @row_loc } %>
+  </article>
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
     <article id="<%=h "row-" + @grid_cast.uuid + "-" %>">
       <header class="header-article-level2">
@@ -147,6 +149,7 @@
       </script>
     </article>
   <% end %>
+  <section id="row-dialog" class="dialog" style="display: none;"></section>
 <% else %>
   <div class="bigicon"><%= bigicon @page_icon %></div>
   <h1><%= @page_title %></h1>
