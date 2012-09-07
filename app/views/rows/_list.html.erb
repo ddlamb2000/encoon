@@ -129,10 +129,10 @@
 <script>
   $("#<%= "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
     function (event){
-      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").show(300);
+      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeIn(300);
     },
     function (event){
-      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hide(300);
+      $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(300);
     }
   );
 </script>

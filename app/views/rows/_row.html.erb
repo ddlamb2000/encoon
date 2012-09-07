@@ -69,10 +69,10 @@
     <script>
       $("#<%= "row-" + row.uuid %>").hover(
         function (event){
-          $("#<%= "actions-" + row.uuid %>").show(300);
+          $("#<%= "actions-" + row.uuid %>").fadeIn(300);
         },
         function (event){
-          $("#<%= "actions-" + row.uuid %>").hide(300);
+          $("#<%= "actions-" + row.uuid %>").fadeOut(300);
         }
       );
       $("#<%= "update-" + row.uuid %>").click(function (event){
