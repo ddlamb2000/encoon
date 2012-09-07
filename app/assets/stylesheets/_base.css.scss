@@ -121,6 +121,8 @@ li {
   color:black;
   background-color:yellow;
   display:inline;
+  margin-left:$padding;
+  margin-right:$padding;
   padding-left:$padding;
   padding-right:$padding;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 

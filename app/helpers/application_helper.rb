@@ -160,7 +160,7 @@ module ApplicationHelper
   end
   
   def display_new
-    "&nbsp;" + content_tag("div", t('general.new'), :class => "new")
+    content_tag("div", t('general.new'), :class => "new")
   end
     
   def display_updated_date(entity)
