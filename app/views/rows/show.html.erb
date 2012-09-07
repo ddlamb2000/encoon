@@ -52,7 +52,10 @@
                 <% for document in @row.row_attachments %>
                   <% if document.photo? %>
                     <li>
-                      <img src="<%= url_for(:action => 'photo', :grid_id => @grid.uuid, :id => @row.uuid, :photo_id => document.id) %>", height=128/>
+                      <img src="<%= url_for(:action => 'photo', 
+                                            :grid_id => @grid.uuid, 
+                                            :id => @row.uuid, 
+                                            :photo_id => document.id) %>", height=128/>
                     </li>
                   <% end %>
                 <% end %>
@@ -62,7 +65,10 @@
                   <% if document.document? %>
                     <li>
                       <%= icon "document" %>
-                      <a href="<%= url_for(:action => 'file', :grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id) %>">
+                      <a href="<%= url_for(:action => 'file', 
+                                           :grid_id => @grid.uuid, 
+                                           :id => @row.uuid, 
+                                           :file_id => document.id) %>">
                         <%= document.file_name %></a>
                     </li>
                   <% end %>
@@ -115,10 +121,9 @@
       </div>
       <script>
         $("#<%=h "list-" + @grid_cast.uuid + "-" %>").load(
-          "<%= url_for(:action => :search_list, 
+          "<%= url_for(:action => :list, 
                        :grid_id => @grid_cast.uuid,
-                       :id => 0,
-                       :embedded => true) %>");
+                       :id => 0) %>");
       </script>
     </article>
   <% end %>
@@ -137,11 +142,10 @@
       </div>
       <script>
         $("#<%=h "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
-          "<%= url_for(:action => :search_list, 
+          "<%= url_for(:action => :list, 
                        :grid_id => attached_grid.uuid,
                        :id => 0,
-                       :filters => @filters,
-                       :embedded => true) %>");
+                       :filters => @filters) %>");
       </script>
     </article>
   <% end %>

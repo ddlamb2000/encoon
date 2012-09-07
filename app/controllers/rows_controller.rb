@@ -27,7 +27,7 @@ class RowsController < ApplicationController
                                                :import,
                                                :upload]
 
-  before_filter :findGrid, :only => [:search_list,
+  before_filter :findGrid, :only => [:list,
                                      :show, 
                                      :details,
                                      :edit, 
@@ -86,20 +86,15 @@ class RowsController < ApplicationController
   end
 
   # Renders the content of a list through an Ajax request  
-  def search_list
+  def list
     log_debug "RowsController#list: params=#{params.inspect}"
-    @embedded = params[:embedded]
     @filters = params[:filters]
     @search = params[:search]
     @page = params[:page]
     @table_row_count = @grid.row_count(@filters)
     @table_rows = @grid.row_all(@filters, @search, @page, true) 
     @table_columns = @grid.filtered_columns
-    render :partial => "search_list"
-  end
-  
-  def search
-    log_debug "RowsController#search: params=#{params.inspect}"
+    render :partial => "list"
   end
   
   def show
@@ -181,7 +176,7 @@ class RowsController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        format.html { search_list }
+        format.html { list }
       else
         log_debug "RowsController#create: error, @row.errors=#{@row.errors.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
@@ -282,7 +277,7 @@ class RowsController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        format.html { search_list }
+        format.html { list }
       else
         log_debug "RowsController#update: error, params=#{params.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
