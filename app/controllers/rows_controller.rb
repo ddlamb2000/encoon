@@ -30,6 +30,7 @@ class RowsController < ApplicationController
   before_filter :findGrid, :only => [:list,
                                      :show, 
                                      :details,
+                                     :row,
                                      :edit, 
                                      :create, 
                                      :update, 
@@ -41,7 +42,8 @@ class RowsController < ApplicationController
                                      :file]
   
   before_filter :findRow, :only => [:show, 
-                                    :details, 
+                                    :details,
+                                    :row, 
                                     :edit, 
                                     :update, 
                                     :destroy,
@@ -110,6 +112,12 @@ class RowsController < ApplicationController
   def details
     session[:show_details] = true
     render :partial => "details"
+  end
+
+  # Renders the details of an article through an Ajax request  
+  def row
+    set_page_title
+    render :partial => "row"
   end
 
   def edit

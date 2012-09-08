@@ -1,5 +1,5 @@
+<%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
 <% if @table_rows.length > 0 %>
-  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
   <table>
     <thead>
       <tr>
@@ -10,13 +10,12 @@
                                 column.description.html_safe, 
                                 true) %>
         <% end %>
-        <th class="list-header-string"></th>
       </tr>
     </thead>
     <tbody>
       <% init_row_index(params[:page]) %>
       <% for row in @table_rows %>
-        <tr id="<%= "row-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>">
+        <tr id="row-<%= row.uuid %>">
           <td class="list-description">
             <span title="<%= trunc(row.description.html_safe) %>">
               <% if @grid.has_name? %>
@@ -35,6 +34,51 @@
             </span>
             <%= display_information(row) %>
             <span class="detail"><%= display_updated_date(row).html_safe %></span>
+            <% if user_signed_in? and not @grid.can_update?(row) %>
+              <span title="Data is locked"><%= icon "locked" %></span>
+            <% end %>
+            <% if user_signed_in? and @grid.can_update?(row) %>
+              <div id="actions-<%= row.uuid %>"
+                  class="actions float-actions" 
+                  style="display: none;">
+                <span class="button" title="Update current data or create a new version.">
+                  <a id="update-<%= row.uuid %>"><%= icon('edit') %> <%= t 'actions.edit' %></a>
+                </span>
+                <span class="button" title="Delete current data.">
+                  <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
+                        {:controller => 'rows', 
+                         :grid_id => @grid.uuid, 
+                         :id => row.uuid, 
+                         :inline => true, :action => "destroy"}, 
+                        :confirm => t('message.delete', :name => row.to_s),
+                        :method => :delete %>
+                </span>
+                <script>
+                  $("#row-<%= row.uuid %>").hover(
+                    function (event){
+                      var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= row.uuid %>").width()/2;
+                      var top = $(this).offset().bottom;
+                      $("#actions-<%= row.uuid %>").css({left:left,top:top}).show();
+                      $(this).addClass("highlighted");
+                    },
+                    function (event){
+                      $("#actions-<%= row.uuid %>").hide();
+                      $(this).removeClass("highlighted");
+                    }
+                  );
+                  $("#update-<%= row.uuid %>").click(function (event){
+                    var top = $("#row-<%= row.uuid %>").offset().top+15;
+                    var left = $("#main-area").offset().left+5;
+                    var width = $("#row-<%= row.uuid %>").innerWidth()-10;
+                    $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+                    $("#row-dialog").css({left:left,top:top,width:width}).show(300);
+                    $("#row-dialog").load("<%= url_for({:action => :edit,
+                                                        :grid_id => @grid.uuid,
+                                                        :id => row.uuid}) %>");
+                  });
+                </script>
+              </div>
+            <% end %>
           </td>
           <% init_column_index %>
           <% for column in @table_columns %>
@@ -50,41 +94,6 @@
                         ""),
                     row.read_referenced_name(column)) %>
           <% end %>
-          <td class="column-header">
-            <% if user_signed_in? and @grid.can_update?(row) %>
-              <span id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>" 
-                   class="actions"
-                   style="display: none;">
-                <%= link_to(icon('edit'), 
-                      {:controller => 'rows', 
-                       :action => "edit", 
-                       :grid_id => @grid.uuid, 
-                       :id => row.uuid},
-                      :remote => true) %>
-                <%= link_to(icon('remove'), 
-                      {:controller => 'rows', 
-                       :grid_id => @grid.uuid, 
-                       :id => row.uuid, 
-                       :inline => true, :action => "destroy"}, 
-                      :confirm => t('message.delete', :name => row.to_s),
-                      :method => :delete) %>
-              </span>
-              <script>
-                $("#row-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hover(
-                  function (event){
-                    $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").show();
-                    $(this).addClass("highlighted");
-                  },
-                  function (event){
-                    $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hide();
-                    $(this).removeClass("highlighted");
-                  }
-                );
-              </script>
-            <% else %>
-              <span title="Data is locked"><%= icon "locked" %></span>
-            <% end %>
-          </td>
         </tr>
       <% end %>
     </tbody>
@@ -93,6 +102,9 @@
 <span class="detail">
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
   <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
+  <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+    <span title="Data is locked"><%= icon "locked" %></span>
+  <% end %>
 </span>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
   <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" 
@@ -122,7 +134,7 @@
         $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
           var left = $("#main-area").offset().left+5;
-          var width = $("#<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %>").innerWidth()-10;
+          var width = $("#<%= "list-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %>").innerWidth()-10;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width }).show(300);
           $("#row-dialog").load("<%= url_for({:action => :edit, 
@@ -144,10 +156,9 @@
     <script>
       $("#row-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
-          var top = $(this).offset().top;
-          var left = $(this).offset().left;
-          var width = $(this).width();
-          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top, width:width }).fadeIn(300);
+          var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width()/2;
+          var top = $(this).offset().top+5;
+          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left,top:top}).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){

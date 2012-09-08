@@ -104,53 +104,67 @@
   <% end %>
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
-  <article id="<%= "row-" + @row.uuid %>">
-    <%= render :partial => 'row', 
-               :locals => { 
-                 :grid => @grid, 
-                 :row => @row, 
-                 :row_loc => @row_loc } %>
+  <article id="row-<%= @row.uuid %>">
+    <header class="header-article">
+      <h1>
+        <%= @row.to_s.html_safe %>
+        <span class="detail"><%= icon @page_icon %></span>
+      </h1>
+    </header>
+    <%= render :partial => "layouts/loading" %>
   </article>
+  <script>
+    $("#row-<%= @row.uuid %>").load(
+      "<%= url_for(:action => :row, 
+                   :grid_id => @grid.uuid,
+                   :id => @row.uuid) %>");
+  </script>
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
-    <article id="<%=h "row-" + @grid_cast.uuid + "-" %>">
+    <article id="row-<%= @grid_cast.uuid + "-" %>">
       <header class="header-article-level2">
         <h2>
           <%= t 'rows.title' %>
-          <span class="detail"><%= @row.to_s.html_safe %></span>
+          <span class="detail">
+            <%= icon 'table' %>
+            <%= @row.to_s.html_safe %>
+          </span>
         </h2>
       </header>
-      <div id="<%=h "list-" + @grid_cast.uuid + "-" %>">
+      <div id="list-<%= @grid_cast.uuid + "-" %>">
         <%= render :partial => "layouts/loading" %>
       </div>
-      <script>
-        $("#<%=h "list-" + @grid_cast.uuid + "-" %>").load(
-          "<%= url_for(:action => :list, 
-                       :grid_id => @grid_cast.uuid,
-                       :id => 0) %>");
-      </script>
     </article>
+    <script>
+      $("#list-<%= @grid_cast.uuid + "-" %>").load(
+        "<%= url_for(:action => :list, 
+                     :grid_id => @grid_cast.uuid,
+                     :id => 0) %>");
+    </script>
   <% end %>
   <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
     <% @filters = [{:column_uuid => attached_grid.column_uuid, 
                     :row_uuid => @row.uuid, :row_name => @row.name}] %>
-    <article id="<%= "row-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
+    <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
       <header class="header-article-level2">
         <h2>
           <%= attached_grid.name.html_safe %>
-          <span class="detail"><%= attached_grid.column_name.html_safe %></span>
+          <span class="detail">
+            <%= icon 'table' %>
+            <%= attached_grid.column_name.html_safe %>
+          </span>
         </h2>
       </header>
-      <div id="<%= "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
+      <div id="list-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
         <%= render :partial => "layouts/loading" %>
       </div>
-      <script>
-        $("#<%= "list-" + attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
-          "<%= url_for(:action => :list, 
-                       :grid_id => attached_grid.uuid,
-                       :id => 0,
-                       :filters => @filters) %>");
-      </script>
     </article>
+    <script>
+      $("#list-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
+        "<%= url_for(:action => :list, 
+                     :grid_id => attached_grid.uuid,
+                     :id => 0,
+                     :filters => @filters) %>");
+    </script>
   <% end %>
 <% else %>
   <div class="bigicon"><%= bigicon @page_icon %></div>

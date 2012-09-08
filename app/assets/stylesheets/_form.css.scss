@@ -44,7 +44,7 @@
 .actions {
   padding:$padding;
   vertical-align:middle;
-  text-align:right;
+  text-align:center;
   @include border-radius;
   background-color:transparent;
   .button { 
@@ -118,6 +118,8 @@
 .float-actions {
   position:absolute;
   z-index:10;
+  opacity: 0.8;
+  filter: alpha(opacity=80);
 }
 .action-header {
   color:$color-highlight;
