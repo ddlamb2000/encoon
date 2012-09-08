@@ -16,7 +16,7 @@
     <tbody>
       <% init_row_index(params[:page]) %>
       <% for row in @table_rows %>
-        <tr>
+        <tr id="<%= "row-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>">
           <td class="list-description">
             <span title="<%= trunc(row.description.html_safe) %>">
               <% if @grid.has_name? %>
@@ -39,7 +39,7 @@
           <% init_column_index %>
           <% for column in @table_columns %>
             <%= show_entity_in_list(
-            	      column, 
+                    column, 
                     row.read_value(column),
                     ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
                         link_to(row.read_referenced_name(column), 
@@ -52,31 +52,48 @@
           <% end %>
           <td class="column-header">
             <% if user_signed_in? and @grid.can_update?(row) %>
-              <%= link_to(icon('edit'), 
-                    {:controller => 'rows', 
-                     :action => "edit", 
-                     :grid_id => @grid.uuid, 
-                     :id => row.id},
-                    :remote => true) %>
-              <%= link_to(icon('remove'), 
-                    {:controller => 'rows', 
-                     :grid_id => @grid.uuid, 
-                     :id => row.id, 
-                     :inline => true, :action => "destroy"}, 
-                    :confirm => t('message.delete', :name => row.to_s),
-                    :method => :delete) %>
+              <span id="<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>" 
+                   class="actions"
+                   style="display: none;">
+                <%= link_to(icon('edit'), 
+                      {:controller => 'rows', 
+                       :action => "edit", 
+                       :grid_id => @grid.uuid, 
+                       :id => row.uuid},
+                      :remote => true) %>
+                <%= link_to(icon('remove'), 
+                      {:controller => 'rows', 
+                       :grid_id => @grid.uuid, 
+                       :id => row.uuid, 
+                       :inline => true, :action => "destroy"}, 
+                      :confirm => t('message.delete', :name => row.to_s),
+                      :method => :delete) %>
+              </span>
+              <script>
+                $("#<%= "row-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hover(
+                  function (event){
+                    $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").show();
+                    $(this).addClass("highlighted");
+                  },
+                  function (event){
+                    $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hide();
+                    $(this).removeClass("highlighted");
+                  }
+                );
+              </script>
             <% else %>
               <%= icon('locked') %>
             <% end %>
-
           </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 <% end %>
-<%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
-<% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
+<span class="detail">
+  <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
+  <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
+</span>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
   <footer id=<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %> 
           class="actions float-actions"
@@ -134,7 +151,7 @@
           $(this).addClass("highlighted");
         },
         function (event){
-          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(300);
+          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
           $(this).removeClass("highlighted");
         }
       );

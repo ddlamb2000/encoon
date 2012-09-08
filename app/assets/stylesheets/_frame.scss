@@ -238,9 +238,9 @@ body {
     tr {
       padding:2px;
       vertical-align:text-top;
-      &:hover {
-        background:$background-color-table;
-      }
+    }
+    .highlighted {
+      background:$background-color-table;
     }
     td {
       padding-top:0;
@@ -293,30 +293,25 @@ body {
     .list-date {
       width:80px;
       text-align:center;
-      border-left:1px solid $background-color-table;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
     .list-number {
       width:80px;
       text-align:right;
-      border-left:1px solid $background-color-table;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
     .list-string {
       text-align:left;
-      border-left:1px solid $background-color-table;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
     .list-boolean {
       width:15px;
       text-align:center;
-      border-left:1px solid $background-color-table;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
     .list-description {
       text-align:left;
-      border-left:1px solid $background-color-table;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
     .list-information {
       width:100%;
@@ -328,7 +323,7 @@ body {
       max-width:40px;
       text-align:right;
       vertical-align:middle;
-      border-top:1px solid $background-color-table;
+      border-bottom:1px solid $background-color-table;
     }
   }
 }
