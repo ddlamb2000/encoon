@@ -1,4 +1,3 @@
-<%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
 <% if @table_rows.length > 0 %>
   <table>
     <thead>
@@ -58,7 +57,7 @@
                     function (event){
                       var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= row.uuid %>").width()/2;
                       var top = $(this).offset().bottom;
-                      $("#actions-<%= row.uuid %>").css({left:left,top:top}).show();
+                      $("#actions-<%= row.uuid %>").css({left:left, top:top}).show();
                       $(this).addClass("highlighted");
                     },
                     function (event){
@@ -68,10 +67,10 @@
                   );
                   $("#update-<%= row.uuid %>").click(function (event){
                     var top = $("#row-<%= row.uuid %>").offset().top+15;
-                    var left = $("#main-area").offset().left+5;
-                    var width = $("#row-<%= row.uuid %>").innerWidth()-10;
+                    var left = $("#document").offset().left+5;
+                    var width = 0.95*$("#document").width();
                     $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-                    $("#row-dialog").css({left:left,top:top,width:width}).show(300);
+                    $("#row-dialog").css({left:left, top:top, width:width}).show(300);
                     $("#row-dialog").load("<%= url_for({:action => :edit,
                                                         :grid_id => @grid.uuid,
                                                         :id => row.uuid}) %>");
@@ -105,6 +104,7 @@
   <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
     <span title="Data is locked"><%= icon "locked" %></span>
   <% end %>
+  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
 </span>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
   <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" 
@@ -133,8 +133,8 @@
       <script>
         $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
-          var left = $("#main-area").offset().left+5;
-          var width = $("#<%= "list-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %>").innerWidth()-10;
+          var left = $("#document").offset().left+5;
+          var width = 0.95*$("#document").width();
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width }).show(300);
           $("#row-dialog").load("<%= url_for({:action => :edit, 

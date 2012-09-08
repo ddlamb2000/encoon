@@ -75,18 +75,15 @@ module ApplicationHelper
         row_name = filter[:row_name]
         column = grid.column_select_entity_by_uuid(column_uuid)
         if column.present? and column.kind == Column::REFERENCE
-          output << content_tag("p", 
-                                "#{column.name} equals to <i>#{row_name}</i>".html_safe,
-                                :class => "filter")
+          output << ", " if output != ""
+          output << "#{column.name} equals to #{row_name}".html_safe
         end
       end
     end
     if search.present?
-          output << content_tag("p",
-                                icon('yellowlight') + 
-                                "Name or description contains <u>#{search}</u>".html_safe,
-                                :class => "filter"
-             )
+      output << ", " if output != ""
+      output << icon('yellowlight') + 
+                "Name or description contains <u>#{search}</u>".html_safe
     end
     output
   end

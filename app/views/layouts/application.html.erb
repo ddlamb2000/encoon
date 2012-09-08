@@ -27,7 +27,7 @@
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
-      <section class="document"><%= yield %></section>
+      <section id="document" class="document"><%= yield %></section>
     </section>
     <section id="row-dialog" class="dialog document" style="display: none;"></section>
   </body>

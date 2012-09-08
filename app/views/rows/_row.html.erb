@@ -75,8 +75,8 @@
       );
       $("#update-<%= @row.uuid %>").click(function (event){
         var top = $("#actions-<%= @row.uuid %>").offset().top+15;
-        var left = $("#row-<%= @row.uuid %>").offset().left;
-        var width = $("#row-<%= @row.uuid %>").innerWidth()-20;
+        var left = $("#document").offset().left+5;
+        var width = 0.95*$("#document").width();
         $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $("#row-dialog").css({left:left, top:top, width:width}).show(300);
         $("#row-dialog").load("<%= url_for({:action => :edit, 
