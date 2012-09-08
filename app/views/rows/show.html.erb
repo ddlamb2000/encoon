@@ -105,7 +105,7 @@
 <% end %>
 <% unless @grid.blank? or @row.blank? %>
   <article id="row-<%= @row.uuid %>">
-    <header class="header-article">
+    <header>
       <h1>
         <%= @row.to_s.html_safe %>
         <span class="detail"><%= icon @page_icon %></span>
@@ -121,7 +121,7 @@
   </script>
   <% if @grid_cast.present? and @grid_cast.can_select_data? %>
     <article id="row-<%= @grid_cast.uuid + "-" %>">
-      <header class="header-article-level2">
+      <header>
         <h2>
           <%= t 'rows.title' %>
           <span class="detail">
@@ -145,7 +145,7 @@
     <% @filters = [{:column_uuid => attached_grid.column_uuid, 
                     :row_uuid => @row.uuid, :row_name => @row.name}] %>
     <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
-      <header class="header-article-level2">
+      <header>
         <h2>
           <%= attached_grid.name.html_safe %>
           <span class="detail">

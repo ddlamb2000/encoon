@@ -1,11 +1,13 @@
+<header class="action-header">
+  <%= t(new_row ? 'actions.create' : 'actions.edit') %>
+  <%= @grid.to_s.html_safe %>
+</header> 
 <%= grid_form_for([@grid, @row],
                   :remote => true,
                   :html => { :'data-type' => 'html',
                              :id => 'edit-inline-form' }) do |f| %>
-  <header class="action-header">
-    <%= t(new_row ? 'actions.create' : 'actions.edit') %>
-    <%= @grid.to_s.html_safe %>
-  </header> 
+  <%= hidden_field_tag "container", @container %>
+  <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
   <table class="form">
     <% if @grid.has_translation? and @grid.has_name? %>
       <tr id="header-name">
@@ -67,8 +69,8 @@
       .bind("ajax:success", function(evt, data, status, xhr){
         $(this).find('div.validation-error').empty();
         $(".field_with_errors").removeClass("field_with_errors");
-        $("#<%=h "list-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").html(xhr.responseText);
-        $("#row-dialog").hide(300);
+        $("#row-dialog").hide();
+        $("<%= @container %>").html(xhr.responseText);
       })
       .bind('ajax:complete', function(evt, xhr, status){
       })

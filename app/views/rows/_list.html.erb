@@ -73,7 +73,9 @@
                     $("#row-dialog").css({left:left, top:top, width:width}).show(300);
                     $("#row-dialog").load("<%= url_for({:action => :edit,
                                                         :grid_id => @grid.uuid,
-                                                        :id => row.uuid}) %>");
+                                                        :id => row.uuid,
+                                                        :container => "#list-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                                        :refresh_list => true}) %>");
                   });
                 </script>
               </div>
@@ -136,11 +138,13 @@
           var left = $("#document").offset().left+5;
           var width = 0.95*$("#document").width();
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-          $("#row-dialog").css({left:left, top:top, width:width }).show(300);
+          $("#row-dialog").css({left:left, top:top, width:width}).show(300);
           $("#row-dialog").load("<%= url_for({:action => :edit, 
                                               :grid_id => @grid.uuid, 
                                               :id => 0,
-                                              :filters => @filters}) %>");
+                                              :filters => @filters,
+                                              :container => "#list-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                              :refresh_list => true}) %>");
         });
       </script>
     <% end %>
@@ -158,7 +162,7 @@
         function (event){
           var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width()/2;
           var top = $(this).offset().top+5;
-          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left,top:top}).fadeIn(300);
+          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top}).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){

@@ -1,4 +1,4 @@
-<header class="header-article">
+<header>
   <h1>
     <%= @row.to_s.html_safe %>
     <span class="detail">
@@ -81,7 +81,8 @@
         $("#row-dialog").css({left:left, top:top, width:width}).show(300);
         $("#row-dialog").load("<%= url_for({:action => :edit, 
                                             :grid_id => @grid.uuid, 
-                                            :id => @row.uuid}) %>");
+                                            :id => @row.uuid,
+                                            :container => "#row-#{@row.uuid}"}) %>");
       });
     </script>
   </div>

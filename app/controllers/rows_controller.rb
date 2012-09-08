@@ -122,6 +122,8 @@ class RowsController < ApplicationController
 
   def edit
     log_debug "RowsController#edit: params=#{params.inspect}"
+    @container = params[:container]
+    @refresh_list = params[:refresh_list]
     if @row.nil? or @row.uuid.nil?
       @filters = params[:filters]
       @filters_uuid = get_filters_uuid(@filters)
@@ -195,6 +197,7 @@ class RowsController < ApplicationController
   def update
     log_debug "RowsController#update: params=#{params.inspect}"
     saved = false
+    @refresh_list = params[:refresh_list]
     @grid.load_cached_grid_structure(params[:filters])
     begin
       @grid.transaction do
@@ -285,7 +288,7 @@ class RowsController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        format.html { list }
+        format.html { @refresh_list ? list : row }
       else
         log_debug "RowsController#update: error, params=#{params.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
