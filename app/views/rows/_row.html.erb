@@ -37,14 +37,11 @@
 <% end %>
 <div id="entity-upload-attachment"></div>
 <% if user_signed_in? and grid.can_update?(row) %>
-  <footer id="<%=h "actions-" + row.uuid %>" 
+  <footer id="actions-<%= row.uuid %>" 
           class="actions float-actions" 
           style="display: none;">
     <span class="button" title="Update current data or create a new version.">
-      <a id="<%=h "update-" + row.uuid %>">
-        <%= icon('edit') %>
-        <%= t 'actions.edit' %>
-      </a>
+      <a id="update-<%= row.uuid %>"><%= icon('edit') %> <%= t 'actions.edit' %></a>
     </span>
     <span class="button" title="Delete current data.">
       <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
@@ -65,25 +62,28 @@
          {:format => :xml} %>
     </span>
     <script>
-      $("#<%= "row-" + row.uuid %>").hover(
+      $("#row-<%= row.uuid %>").hover(
         function (event){
           var top = $(this).offset().top;
           var left = $(this).offset().left;
           var width = $(this).width();
-          $("#<%= "actions-" + row.uuid %>").css({left:left, top:top, width:width }).fadeIn(300);
+          $("#actions-<%= row.uuid %>").css({left:left, top:top, width:width }).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){
-          $("#<%= "actions-" + row.uuid %>").fadeOut(3);
+          $("#actions-<%= row.uuid %>").fadeOut(3);
           $(this).removeClass("highlighted");
         }
       );
-      $("#<%= "update-" + row.uuid %>").click(function (event){
+      $("#update-<%= row.uuid %>").click(function (event){
+        var top = $("#actions-<%= row.uuid %>").offset().top+15;
+        var left = $("#main-area").offset().left+5;
+        var width = $("#actions-<%= row.uuid %>").innerWidth()-10;
         $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+        $("#row-dialog").css({left:left, top:top, width:width }).show(300);
         $("#row-dialog").load("<%= url_for({:action => :edit, 
                                             :grid_id => grid.uuid, 
                                             :id => row.uuid}) %>");
-        $("#row-dialog").show(300);
       });
     </script>
   </footer>

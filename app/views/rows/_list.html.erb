@@ -52,7 +52,7 @@
           <% end %>
           <td class="column-header">
             <% if user_signed_in? and @grid.can_update?(row) %>
-              <span id="<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>" 
+              <span id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>" 
                    class="actions"
                    style="display: none;">
                 <%= link_to(icon('edit'), 
@@ -70,19 +70,19 @@
                       :method => :delete) %>
               </span>
               <script>
-                $("#<%= "row-"  + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hover(
+                $("#row-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hover(
                   function (event){
-                    $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").show();
+                    $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").show();
                     $(this).addClass("highlighted");
                   },
                   function (event){
-                    $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hide();
+                    $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) + "-" + row.uuid %>").hide();
                     $(this).removeClass("highlighted");
                   }
                 );
               </script>
             <% else %>
-              <%= icon('locked') %>
+              <span title="Data is locked"><%= icon "locked" %></span>
             <% end %>
           </td>
         </tr>
@@ -95,7 +95,7 @@
   <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
 </span>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
-  <footer id=<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %> 
+  <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" 
           class="actions float-actions"
           style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
@@ -116,19 +116,19 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Create a new row of data for the corresponding data grid." class="button">
-        <a id="<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-          <%= icon('plus') %>
-          <%= t 'actions.create' %>
-        </a>
+        <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>"><%= icon('plus') %> <%= t 'actions.create' %></a>
       </span>
       <script>
-        $("#<%= "create-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+        $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+          var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
+          var left = $("#main-area").offset().left+5;
+          var width = $("#<%= "actions-"  + @grid.uuid + "-" + get_filters_uuid(@filters) %>").innerWidth()-10;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#row-dialog").css({left:left, top:top, width:width }).show(300);
           $("#row-dialog").load("<%= url_for({:action => :edit, 
                                               :grid_id => @grid.uuid, 
                                               :id => 0,
                                               :filters => @filters}) %>");
-          $("#row-dialog").show(300);
         });
       </script>
     <% end %>
@@ -142,16 +142,16 @@
       </span>
     <% end %>
     <script>
-      $("#<%= "row-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
+      $("#row-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
           var top = $(this).offset().top;
           var left = $(this).offset().left;
           var width = $(this).width();
-          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top, width:width }).fadeIn(300);
+          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top, width:width }).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){
-          $("#<%= "actions-" + @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
+          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
           $(this).removeClass("highlighted");
         }
       );

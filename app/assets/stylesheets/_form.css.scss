@@ -131,7 +131,7 @@
   @include border-radius;
 }
 .dialog {
-  position:fixed;
+  position:absolute;
   top:15%;
   left:20%;
   width:60%;
