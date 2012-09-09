@@ -62,7 +62,7 @@ class RowsController < ApplicationController
 
   # Renders the content of a list through an Ajax request  
   def list
-    log_debug "RowsController#list: params=#{params.inspect}"
+    log_debug "RowsController#list"
     @filters = params[:filters]
     @search = params[:search]
     @page = params[:page]
@@ -74,7 +74,7 @@ class RowsController < ApplicationController
   end
   
   def show
-    log_debug "RowsController#show: params=#{params.inspect}"
+    log_debug "RowsController#show"
     @filters = params[:filters]
     selectGrid
     selectRow
@@ -91,7 +91,7 @@ class RowsController < ApplicationController
 
   # Renders the details of an article through an Ajax request  
   def details
-    log_debug "RowsController#details: params=#{params.inspect}"
+    log_debug "RowsController#details"
     selectGrid
     selectRow
     if @grid.present? and @row.present?
@@ -105,7 +105,7 @@ class RowsController < ApplicationController
 
   # Renders the details of an article through an Ajax request  
   def row
-    log_debug "RowsController#row: params=#{params.inspect}, name=#{@row.to_s.html_safe}"
+    log_debug "RowsController#row"
     selectGrid
     selectRow
     @columns = @grid.column_all
@@ -114,7 +114,7 @@ class RowsController < ApplicationController
   end
 
   def edit
-    log_debug "RowsController#edit: params=#{params.inspect}"
+    log_debug "RowsController#edit"
     @container = params[:container]
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
@@ -132,7 +132,7 @@ class RowsController < ApplicationController
   end
 
   def create
-    log_debug "RowsController#create: params=#{params.inspect}"
+    log_debug "RowsController#create"
     saved = false
     @filters = params[:filters]
     selectGrid
@@ -189,7 +189,7 @@ class RowsController < ApplicationController
   end
   
   def update
-    log_debug "RowsController#update: params=#{params.inspect}"
+    log_debug "RowsController#update"
     saved = false
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
@@ -333,7 +333,7 @@ class RowsController < ApplicationController
   end
 
   def attach_document
-    log_debug "RowsController#attach_document: params=#{params.inspect}"
+    log_debug "RowsController#attach_document"
     selectGrid
     selectRow
     @row_attachment = @row.row_attachments.new
@@ -341,7 +341,7 @@ class RowsController < ApplicationController
   end
 
   def save_attachment
-    log_debug "RowsController#save_attachment: params=#{params.inspect}"
+    log_debug "RowsController#save_attachment"
     selectGrid
     selectRow
     saved = false
@@ -374,7 +374,7 @@ class RowsController < ApplicationController
   end
 
   def photo
-    log_debug "RowsController#photo: params=#{params.inspect}"
+    log_debug "RowsController#photo"
     selectGrid
     selectRow
     if params[:photo_id].present?
@@ -388,7 +388,7 @@ class RowsController < ApplicationController
   end
 
   def file
-    log_debug "RowsController#file: params=#{params.inspect}"
+    log_debug "RowsController#file"
     selectGrid
     selectRow
     @row_attachment = @row.row_attachments.find(params[:file_id])
@@ -400,7 +400,7 @@ class RowsController < ApplicationController
   end
 
   def delete_attachment
-    log_debug "RowsController#delete_attachment: params=#{params.inspect}"
+    log_debug "RowsController#delete_attachment"
     selectGrid
     selectRow
     saved = false
@@ -515,7 +515,7 @@ private
   end
   
   def selectGrid
-    Entity.log_debug "RowsController#selectGrid: params=#{params.inspect}"
+    Entity.log_debug "RowsController#selectGrid"
     @grid = nil
     if Entity.uuid?(params[:grid_id])
       @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
@@ -532,7 +532,7 @@ private
   end
 
   def selectRow
-    Entity.log_debug "RowsController#selectRow: params=#{params.inspect}"
+    Entity.log_debug "RowsController#selectRow"
     @row = nil
     if params[:id].present? and params[:id] != "0"
       if @grid.present?
