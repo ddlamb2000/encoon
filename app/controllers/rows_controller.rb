@@ -75,9 +75,12 @@ class RowsController < ApplicationController
   
   def show
     log_debug "RowsController#show: params=#{params.inspect}"
+    @filters = params[:filters]
     selectGrid
     selectRow
-    if params[:format].nil? or params[:format] != 'xml'
+    if params[:format] == 'xml'
+      @rows = @grid.row_all(@filters, '', 1, true) if @row.nil?
+    else
       set_page_title
       push_history
       render :show, :status => @status
@@ -106,12 +109,11 @@ class RowsController < ApplicationController
     log_debug "RowsController#edit: params=#{params.inspect}"
     @container = params[:container]
     @refresh_list = params[:refresh_list]
+    @filters = params[:filters]
     selectGrid
     selectRow
     if @row.nil? or @row.uuid.nil?
-      @filters = params[:filters]
       @filters_uuid = get_filters_uuid(@filters)
-      @grid.load_cached_grid_structure(@filters, true)
       @row = @grid.rows.build
       @row_loc = RowLoc.new
       @grid.row_initialization(@row, @filters)
@@ -124,8 +126,8 @@ class RowsController < ApplicationController
   def create
     log_debug "RowsController#create: params=#{params.inspect}"
     saved = false
+    @filters = params[:filters]
     selectGrid
-    @grid.load_cached_grid_structure(params[:filters], true)
     @row = @grid.rows.new
     @row.initialization
     begin
@@ -134,7 +136,6 @@ class RowsController < ApplicationController
         @row.create_user_uuid = current_user.uuid
         @row.update_user_uuid = current_user.uuid
         populate_from_params
-        @grid.load_cached_grid_structure(params[:filters], false)
         if @grid.has_translation?
           LANGUAGES.each do |lang, locale|
             @row_loc = @row.new_loc
@@ -183,9 +184,9 @@ class RowsController < ApplicationController
     log_debug "RowsController#update: params=#{params.inspect}"
     saved = false
     @refresh_list = params[:refresh_list]
+    @filters = params[:filters]
     selectGrid
     selectRow
-    @grid.load_cached_grid_structure(params[:filters])
     begin
       @grid.transaction do
         version = @row.version
@@ -506,6 +507,7 @@ private
   end
   
   def selectGrid
+    Entity.log_debug "RowsController#selectGrid: params=#{params.inspect}"
     @grid = nil
     if Entity.uuid?(params[:grid_id])
       @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
@@ -513,27 +515,36 @@ private
       @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
     end
     if @grid.nil?
-      Entity.log_debug "RowsController#findGrid " + 
+      Entity.log_debug "RowsController#selectGrid " + 
                        "Invalid: can't find data grid #{params[:grid_id]}"
     else
-      @grid.load_cached_grid_structure(params[:filters])    
+      Entity.log_debug "RowsController#selectGrid: grid found name=#{@grid.name}"
+      @grid.load_cached_grid_structure(params[:filters])
     end
   end
 
   def selectRow
-    if @grid.present?
-      if Entity.uuid?(params[:id])
-        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
-        unlock_as_of_date
-      else
-        @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
-        lock_as_of_date
+    Entity.log_debug "RowsController#selectRow: params=#{params.inspect}"
+    @row = nil
+    if params[:id].present? and params[:id] != "0"
+      if @grid.present?
+        if Entity.uuid?(params[:id])
+          @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
+          unlock_as_of_date
+        else
+          @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
+          lock_as_of_date
+        end
+        if @row.nil?
+          Entity.log_debug "RowsController#selectRow " + 
+                           "Invalid: can't find row with " +
+                           "grid_id=#{params[:grid_id].to_s}" +
+                           " and id=#{params[:id].to_s}"
+        else
+          Entity.log_debug "RowsController#selectRow: row found name=#{@row.name}"
+          change_as_of_date(@row)
+        end
       end
-      Entity.log_debug "RowsController#findRow " + 
-                       "Invalid: can't find row with " +
-                       "grid_id=#{params[:grid_id].to_s}" +
-                       " and id=#{params[:id].to_s}" if @row.nil?
-      change_as_of_date(@row) if @row.present?
     end
   end
 end

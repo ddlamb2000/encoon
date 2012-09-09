@@ -151,10 +151,12 @@
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Export rows in an .xml file." class="button">
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-              {:controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
-              :filters => @filters,
-              :page => -1,
-              :format => :xml} %>
+              {:action => :show, 
+               :grid_id => @grid.uuid,
+               :id => 0,
+               :filters => @filters,
+               :page => -1,
+               :format => :xml} %>
       </span>
     <% end %>
     <script>

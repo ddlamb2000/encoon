@@ -58,7 +58,10 @@
     </span>
     <span class="button" title="Export current data into a XML file.">
       <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-         {:format => :xml} %>
+         {:grid_id => @grid.uuid, 
+          :id => @row.uuid, 
+          :action => :show, 
+          :format => :xml} %>
     </span>
     <script>
       $("#row-<%= @row.uuid %>").hover(
