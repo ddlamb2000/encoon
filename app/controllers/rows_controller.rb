@@ -103,6 +103,7 @@ class RowsController < ApplicationController
     log_debug "RowsController#row: params=#{params.inspect}, name=#{@row.to_s.html_safe}"
     selectGrid
     selectRow
+    @columns = @grid.column_all
     set_page_title
     render :partial => "row"
   end

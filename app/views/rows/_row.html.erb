@@ -10,11 +10,10 @@
     </span>
   </h1>
 </header>
-<% columns = @grid.column_all %>
-<% if not columns.empty? %>
+<% if not @columns.empty? %>
   <table>
     <tbody>
-      <% for column in @grid.column_all %>
+      <% for column in @columns %>
         <%= show_entity(
               column, 
               @row.read_value(column),
@@ -32,8 +31,8 @@
   </table>
 <% end %>
 <% if @grid.has_translation? and @row_loc.description.present? %>
-  <% if not columns.empty? %><br/><% end %>
-  <p><%= no_trunc(@row_loc.description.html_safe) %></p>
+  <% if not @columns.empty? %><br/><% end %>
+  <p><%= @row_loc.description.html_safe %></p>
 <% end %>
 <% if user_signed_in? and @grid.can_update?(@row) %>
   <div id="actions-<%= @row.uuid %>" 
