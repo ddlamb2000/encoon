@@ -1,4 +1,3 @@
-<% @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present? %>
 <% content_for :navigator do %>
   <% unless @grid.blank? or @row.blank? %>
     <% if @grid.present? and @row.present? %>
@@ -75,28 +74,23 @@
                 <% end %>
               <% end %>
           <% end %>
-           <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
-              <% @filters = [{:column_uuid => attached_grid.column_uuid, :row_uuid => @row.uuid, :row_name => @row.name}] %>
+           <% for attached_grid in @attached_grids %>
+              <% filters = [{:column_uuid => attached_grid.column_uuid, 
+                             :row_uuid => @row.uuid, 
+                             :row_name => @row.name}] %>
               <li>
                 <span class="button">
                   <span class="highlighted">
-                    <%= link_to_unless_current attached_grid.name, :controller => 'rows', :action => 'index', :grid_id => attached_grid.uuid, :filters => @filters %>
+                    <%= link_to_unless_current attached_grid.name, 
+                                               :controller => 'rows', 
+                                               :action => 'index', 
+                                               :grid_id => attached_grid.uuid, 
+                                               :filters => filters %>
                     <%= icon "external" %> 
                   </span>
                 </span>
                 <span class="detail"><%= attached_grid.column_name.html_safe %></span>
               </li>
-          <% end %>
-          <% if @grid.uuid == Grid::ROOT_UUID %>
-            <% for attached_grid in Grid.select_referenced_grids(@row.uuid) %>
-              <li>
-                <%= icon "table" %> 
-                <%= link_to_unless_current attached_grid.name, 
-                                           :controller => 'rows', :action => 'show', :grid_id => Grid::ROOT_UUID,
-                                         :id => attached_grid.uuid %>
-                <span class="detail"><%= attached_grid.column_name.html_safe %></span>
-              </li>
-            <% end %>
           <% end %>
         <% end %>
       </ul>
@@ -141,10 +135,11 @@
                      :id => 0) %>");
     </script>
   <% end %>
-  <% for attached_grid in Grid.select_referenced_grids(@grid.uuid) %>
-    <% @filters = [{:column_uuid => attached_grid.column_uuid, 
-                    :row_uuid => @row.uuid, :row_name => @row.name}] %>
-    <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
+  <% for attached_grid in @attached_grids %>
+    <% filters = [{:column_uuid => attached_grid.column_uuid,
+                   :row_uuid => @row.uuid,
+                   :row_name => @row.name}] %>
+    <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
       <header>
         <h2>
           <%= attached_grid.name.html_safe %>
@@ -154,16 +149,16 @@
           </span>
         </h2>
       </header>
-      <div id="list-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>">
+      <div id="list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
         <%= render :partial => "layouts/loading" %>
       </div>
     </article>
     <script>
-      $("#list-<%= attached_grid.uuid + "-" + get_filters_uuid(@filters) %>").load(
+      $("#list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>").load(
         "<%= url_for(:action => :list, 
                      :grid_id => attached_grid.uuid,
                      :id => 0,
-                     :filters => @filters) %>");
+                     :filters => filters) %>");
     </script>
   <% end %>
 <% else %>

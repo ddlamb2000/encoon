@@ -81,6 +81,8 @@ class RowsController < ApplicationController
     if params[:format] == 'xml'
       @rows = @grid.row_all(@filters, '', 1, true) if @row.nil?
     else
+      @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present?
+      @attached_grids = Grid.select_referenced_grids(@grid.uuid)
       set_page_title
       push_history
       render :show, :status => @status
