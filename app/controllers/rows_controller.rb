@@ -17,48 +17,21 @@
 class RowsController < ApplicationController
   before_filter :load_workspaces, :only => [:home, :show, :refresh]
 
-  before_filter :authenticate_user!, :only => [:edit, 
-                                               :create,
-                                               :update, 
-                                               :destroy,
+  before_filter :authenticate_user!, :only => [:create,
+                                               :update,
+                                               :destrroy,
                                                :attach_document,
                                                :save_attachment,
                                                :delete_attachment,
                                                :import,
                                                :upload]
 
-  before_filter :findGrid, :only => [:list,
-                                     :show, 
-                                     :details,
-                                     :row,
-                                     :edit, 
-                                     :create, 
-                                     :update, 
-                                     :destroy,
-                                     :attach_document,
-                                     :save_attachment,
-                                     :delete_attachment,
-                                     :photo,
-                                     :file]
-  
-  before_filter :findRow, :only => [:show, 
-                                    :details,
-                                    :row, 
-                                    :edit, 
-                                    :update, 
-                                    :destroy,
-                                    :attach_document,
-                                    :save_attachment,
-                                    :delete_attachment,
-                                    :photo,
-                                    :file]
-
   # Renders the home page using hard-coded references.
   def home
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
-    findGrid
-    findRow
+    selectGrid
+    selectRow
     set_page_title
     push_history
     render :show, :status => @status
@@ -93,6 +66,7 @@ class RowsController < ApplicationController
     @filters = params[:filters]
     @search = params[:search]
     @page = params[:page]
+    selectGrid
     @table_row_count = @grid.row_count(@filters)
     @table_rows = @grid.row_all(@filters, @search, @page, true) 
     @table_columns = @grid.filtered_columns
@@ -101,6 +75,8 @@ class RowsController < ApplicationController
   
   def show
     log_debug "RowsController#show: params=#{params.inspect}"
+    selectGrid
+    selectRow
     if params[:format].nil? or params[:format] != 'xml'
       set_page_title
       push_history
@@ -110,12 +86,18 @@ class RowsController < ApplicationController
 
   # Renders the details of an article through an Ajax request  
   def details
+    log_debug "RowsController#details: params=#{params.inspect}"
+    selectGrid
+    selectRow
     session[:show_details] = true
     render :partial => "details"
   end
 
   # Renders the details of an article through an Ajax request  
   def row
+    log_debug "RowsController#row: params=#{params.inspect}, name=#{@row.to_s.html_safe}"
+    selectGrid
+    selectRow
     set_page_title
     render :partial => "row"
   end
@@ -124,6 +106,8 @@ class RowsController < ApplicationController
     log_debug "RowsController#edit: params=#{params.inspect}"
     @container = params[:container]
     @refresh_list = params[:refresh_list]
+    selectGrid
+    selectRow
     if @row.nil? or @row.uuid.nil?
       @filters = params[:filters]
       @filters_uuid = get_filters_uuid(@filters)
@@ -140,6 +124,7 @@ class RowsController < ApplicationController
   def create
     log_debug "RowsController#create: params=#{params.inspect}"
     saved = false
+    selectGrid
     @grid.load_cached_grid_structure(params[:filters], true)
     @row = @grid.rows.new
     @row.initialization
@@ -198,6 +183,8 @@ class RowsController < ApplicationController
     log_debug "RowsController#update: params=#{params.inspect}"
     saved = false
     @refresh_list = params[:refresh_list]
+    selectGrid
+    selectRow
     @grid.load_cached_grid_structure(params[:filters])
     begin
       @grid.transaction do
@@ -298,6 +285,8 @@ class RowsController < ApplicationController
 
   def destroy
     log_debug "RowsController#destroy: params=#{params.inspect}"
+    selectGrid
+    selectRow
     saved = false
     name = @grid.row_title(@row)
     begin
@@ -336,12 +325,16 @@ class RowsController < ApplicationController
 
   def attach_document
     log_debug "RowsController#attach_document: params=#{params.inspect}"
+    selectGrid
+    selectRow
     @row_attachment = @row.row_attachments.new
     set_page_title 
   end
 
   def save_attachment
     log_debug "RowsController#save_attachment: params=#{params.inspect}"
+    selectGrid
+    selectRow
     saved = false
     begin
       @row.transaction do
@@ -373,6 +366,8 @@ class RowsController < ApplicationController
 
   def photo
     log_debug "RowsController#photo: params=#{params.inspect}"
+    selectGrid
+    selectRow
     if params[:photo_id].present?
       @row_attachment = @row.row_attachments.find(params[:photo_id])
     else
@@ -385,6 +380,8 @@ class RowsController < ApplicationController
 
   def file
     log_debug "RowsController#file: params=#{params.inspect}"
+    selectGrid
+    selectRow
     @row_attachment = @row.row_attachments.find(params[:file_id])
     if @row_attachment.present?
       send_data @row_attachment.document, 
@@ -395,6 +392,8 @@ class RowsController < ApplicationController
 
   def delete_attachment
     log_debug "RowsController#delete_attachment: params=#{params.inspect}"
+    selectGrid
+    selectRow
     saved = false
     begin
       @row.transaction do
@@ -424,6 +423,7 @@ class RowsController < ApplicationController
 
   def import
     log_debug "RowsController#import"
+    selectGrid
     @page_title = "Import Data"
     @page_icon = "import"
     @upload = Upload.new
@@ -431,6 +431,7 @@ class RowsController < ApplicationController
   
   def upload
     log_debug "RowsController#upload"
+    selectGrid
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
     @upload.update_user_uuid = session[:user_uuid]
@@ -504,7 +505,7 @@ private
     true
   end
   
-  def findGrid
+  def selectGrid
     @grid = nil
     if Entity.uuid?(params[:grid_id])
       @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
@@ -519,7 +520,7 @@ private
     end
   end
 
-  def findRow
+  def selectRow
     if @grid.present?
       if Entity.uuid?(params[:id])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
