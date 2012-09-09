@@ -68,7 +68,7 @@
                   $("#update-<%= row.uuid %>").click(function (event){
                     var top = $("#row-<%= row.uuid %>").offset().top+15;
                     var left = $("#document").offset().left+5;
-                    var width = 0.95*$("#document").width();
+                    var width = $("#document").width()-35;
                     $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
                     $("#row-dialog").css({left:left, top:top, width:width}).show(300);
                     $("#row-dialog").load("<%= url_for({:action => :edit,
@@ -136,7 +136,7 @@
         $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
           var left = $("#document").offset().left+5;
-          var width = 0.95*$("#document").width();
+          var width = $("#document").width()-35;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
           $("#row-dialog").load("<%= url_for({:action => :edit, 
