@@ -31,6 +31,7 @@ class RowsController < ApplicationController
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     set_page_title
     push_history
@@ -67,6 +68,7 @@ class RowsController < ApplicationController
     @search = params[:search]
     @page = params[:page]
     selectGrid
+    @grid.load_cached_grid_structure(@filters)
     @table_row_count = @grid.row_count(@filters)
     @table_rows = @grid.row_all(@filters, @search, @page, true) 
     @table_columns = @grid.filtered_columns
@@ -77,6 +79,7 @@ class RowsController < ApplicationController
     log_debug "RowsController#show"
     @filters = params[:filters]
     selectGrid
+    @grid.load_cached_grid_structure(@filters)
     selectRow
     if params[:format] == 'xml'
       @rows = @grid.row_all(@filters, '', 1, true) if @row.nil?
@@ -93,6 +96,7 @@ class RowsController < ApplicationController
   def details
     log_debug "RowsController#details"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     if @grid.present? and @row.present?
       @versions = @grid.row_all_versions(@row.uuid)
@@ -107,6 +111,7 @@ class RowsController < ApplicationController
   def row
     log_debug "RowsController#row"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     @columns = @grid.column_all
     set_page_title
@@ -119,6 +124,7 @@ class RowsController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGrid
+    @grid.load_cached_grid_structure(@filters)
     selectRow
     if @row.nil? or @row.uuid.nil?
       @filters_uuid = get_filters_uuid(@filters)
@@ -136,6 +142,7 @@ class RowsController < ApplicationController
     saved = false
     @filters = params[:filters]
     selectGrid
+    @grid.load_cached_grid_structure(@filters, true)
     @row = @grid.rows.new
     @row.initialization
     begin
@@ -144,6 +151,7 @@ class RowsController < ApplicationController
         @row.create_user_uuid = current_user.uuid
         @row.update_user_uuid = current_user.uuid
         populate_from_params
+        @grid.load_cached_grid_structure(@filters)
         if @grid.has_translation?
           LANGUAGES.each do |lang, locale|
             @row_loc = @row.new_loc
@@ -194,6 +202,7 @@ class RowsController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGrid
+    @grid.load_cached_grid_structure(@filters)
     selectRow
     begin
       @grid.transaction do
@@ -295,6 +304,7 @@ class RowsController < ApplicationController
   def destroy
     log_debug "RowsController#destroy: params=#{params.inspect}"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     saved = false
     name = @grid.row_title(@row)
@@ -335,6 +345,7 @@ class RowsController < ApplicationController
   def attach_document
     log_debug "RowsController#attach_document"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.new
     set_page_title 
@@ -343,6 +354,7 @@ class RowsController < ApplicationController
   def save_attachment
     log_debug "RowsController#save_attachment"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     saved = false
     begin
@@ -376,6 +388,7 @@ class RowsController < ApplicationController
   def photo
     log_debug "RowsController#photo"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     if params[:photo_id].present?
       @row_attachment = @row.row_attachments.find(params[:photo_id])
@@ -390,6 +403,7 @@ class RowsController < ApplicationController
   def file
     log_debug "RowsController#file"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.find(params[:file_id])
     if @row_attachment.present?
@@ -402,6 +416,7 @@ class RowsController < ApplicationController
   def delete_attachment
     log_debug "RowsController#delete_attachment"
     selectGrid
+    @grid.load_cached_grid_structure
     selectRow
     saved = false
     begin
@@ -433,6 +448,7 @@ class RowsController < ApplicationController
   def import
     log_debug "RowsController#import"
     selectGrid
+    @grid.load_cached_grid_structure
     @page_title = "Import Data"
     @page_icon = "import"
     @upload = Upload.new
@@ -441,6 +457,7 @@ class RowsController < ApplicationController
   def upload
     log_debug "RowsController#upload"
     selectGrid
+    @grid.load_cached_grid_structure
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
     @upload.update_user_uuid = session[:user_uuid]
@@ -461,12 +478,10 @@ private
     unless @grid.nil?
       unless @row.nil?
         @page_title = t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
-        if @grid.uuid == Grid::ROOT_UUID
-          @page_icon = "table"
-        elsif @grid.uuid == Workspace::ROOT_UUID
-          @page_icon = "workspace"
-        else
-          @page_icon = "entity"
+        case @grid.uuid
+          when Grid::ROOT_UUID then @page_icon = "table"
+          when Workspace::ROOT_UUID then @page_icon = "workspace"
+          else @page_icon = "entity"
         end
       else
         @status = 404
@@ -482,7 +497,11 @@ private
 
   def populate_from_params
     for column in @grid.column_all
-      @row.write_value(column, params[:row][column.physical_column])
+      log_debug "RowsController#populate_from_params" +
+                " column.physical_column=#{column.physical_column}" +
+                " value=#{params[:row][column.physical_column]}"
+      @row.write_value(column,
+                       params[:row][column.physical_column])
     end
   end
 
@@ -527,7 +546,6 @@ private
                        "Invalid: can't find data grid #{params[:grid_id]}"
     else
       Entity.log_debug "RowsController#selectGrid: grid found name=#{@grid.name}"
-      @grid.load_cached_grid_structure(params[:filters])
     end
   end
 
