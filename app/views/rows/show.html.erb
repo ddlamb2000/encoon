@@ -14,7 +14,7 @@
                    :grid_id => @grid.uuid,
                    :id => @row.uuid) %>");
   </script>
-  <% if @grid_cast.present? and @grid_cast.can_select_data? %>
+  <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
     <article id="row-<%= @grid_cast.uuid + "-" %>">
       <header>
         <h2>
@@ -36,31 +36,33 @@
                      :id => 0) %>");
     </script>
   <% end %>
-  <% for attached_grid in @attached_grids %>
-    <% filters = [{:column_uuid => attached_grid.column_uuid,
-                   :row_uuid => @row.uuid,
-                   :row_name => @row.name}] %>
-    <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
-      <header>
-        <h2>
-          <%= attached_grid.name.html_safe %>
-          <span class="detail">
-            <%= icon 'table' %>
-            <%= attached_grid.column_name.html_safe %>
-          </span>
-        </h2>
-      </header>
-      <div id="list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
-        <%= render :partial => "layouts/loading" %>
-      </div>
-    </article>
-    <script>
-      $("#list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>").load(
-        "<%= url_for(:action => :list, 
-                     :grid_id => attached_grid.uuid,
-                     :id => 0,
-                     :filters => filters) %>");
-    </script>
+  <% unless @attached_grids.nil? or @attached_grids.empty? %>
+    <% for attached_grid in @attached_grids %>
+      <% filters = [{:column_uuid => attached_grid.column_uuid,
+                     :row_uuid => @row.uuid,
+                     :row_name => @row.name}] %>
+      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
+        <header>
+          <h2>
+            <%= attached_grid.name.html_safe %>
+            <span class="detail">
+              <%= icon 'table' %>
+              <%= attached_grid.column_name.html_safe %>
+            </span>
+          </h2>
+        </header>
+        <div id="list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
+          <%= render :partial => "layouts/loading" %>
+        </div>
+      </article>
+      <script>
+        $("#list-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>").load(
+          "<%= url_for(:action => :list, 
+                       :grid_id => attached_grid.uuid,
+                       :id => 0,
+                       :filters => filters) %>");
+      </script>
+    <% end %>
   <% end %>
   <%= render :partial => 'navigation' %>
 <% else %>
