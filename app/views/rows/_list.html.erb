@@ -1,4 +1,6 @@
-<% if not @table_rows.empty? %>
+<% unless @table_rows.nil? or 
+          @table_rows.empty? or 
+          @table_columns.nil? %>
   <table>
     <thead>
       <tr>

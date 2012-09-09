@@ -251,14 +251,14 @@ class Grid < Entity
   end
   
   def column_all
-    log_error "Data grid structure " + 
-          "#{self.uuid} isn't preloaded!!!" if @all_columns.nil?
+    log_error "Grid#column_all Data grid structure " + 
+              "#{self.uuid} isn't preloaded!!!" if @all_columns.nil?
     @all_columns
   end
 
   def filtered_columns
-    log_error "Data grid structure " + 
-          "#{self.uuid} isn't preloaded!!!" if @columns.nil?
+    log_error "Grid#filtered_columns Data grid structure " + 
+              "#{self.uuid} isn't preloaded!!!" if @columns.nil?
     @columns
   end
 

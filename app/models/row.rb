@@ -73,13 +73,9 @@ class Row < Entity
   end
   
   def write_value(column, value)
-    log_debug "Row#write_value column.physical_column=#{column.name}, " +
-              "value=#{value.inspect}"
-    send((@initialization ? 
-           column.default_physical_column : 
-           column.physical_column) + 
-         '=', 
-         value)
+    attribute = @initialization ? column.default_physical_column : column.physical_column
+    log_debug "Row#write_value #{attribute}=#{value.inspect}"
+    send("#{attribute}=", value)
   end
   
   def read_referenced_name(column)
