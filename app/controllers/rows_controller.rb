@@ -94,6 +94,11 @@ class RowsController < ApplicationController
     log_debug "RowsController#details: params=#{params.inspect}"
     selectGrid
     selectRow
+    if @grid.present? and @row.present?
+      @versions = @grid.row_all_versions(@row.uuid)
+      @locales = @grid.row_all_locales(@row.uuid, @row.version)
+      @audits = @row.all_audits
+    end
     session[:show_details] = true
     render :partial => "details"
   end
