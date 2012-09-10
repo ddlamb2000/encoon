@@ -952,48 +952,33 @@ class Grid < Entity
     end
   end
 
-  def row_pre_validate(row, phase)
-    column_all.each do |column|
-      attribute = phase == Grid::PHASE_CREATE ? 
-                    column.default_physical_column : 
-                    column.physical_column
-      value = row.read_value(column)
-      if self.uuid == Column::ROOT_UUID and
-         column.uuid == Column::ROOT_NUMBER_UUID and
-         value.blank?
-        value = 1
-        column_all.each do |other_column|
-          if other_column.kind == column.kind
-            value += 1
-          end
-        end
-        row.write_value(column, value)
-      end
-    end
-  end
-  
   def row_validate(row, phase)
     log_debug "Grid#row_validate(phase=#{phase}) [grid #{to_s}]"
     validated = true
     if phase != Grid::PHASE_DESTROY
-      row_pre_validate(row, phase)
-      column_all.each do |column|
-        attribute = phase == Grid::PHASE_CREATE ? 
-                      column.default_physical_column : 
+      for column in column_all
+        attribute = phase == Grid::PHASE_CREATE ?
+                      column.default_physical_column :
                       column.physical_column
+        log_debug "Grid#row_validate column=#{column.name}"
         value = row.read_value(column)
+        log_debug "Grid#row_validate(phase=#{phase}) control" +
+                  " column=#{column.name}" +
+                  " attribute=#{attribute} <=> #{value}"
         if column.required
+          log_debug "Grid#row_validate(phase=#{phase}) required"
           if value.blank?
             validated = false
-            row.errors.add(attribute, I18n.t('error.required', 
-                                              :column => column))
+            row.errors.add(attribute, I18n.t('error.required',
+                                             :column => column))
           end
         end
         if column.regex.present?
+          log_debug "Grid#row_validate(phase=#{phase}) regex"
           if not Regexp.new(column.regex).match(value)
             validated = false
             row.errors.add(attribute, I18n.t('error.badformat', 
-                                              :column => column))
+                                             :column => column))
           end
         end
       end
