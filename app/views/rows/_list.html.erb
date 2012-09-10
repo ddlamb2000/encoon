@@ -2,7 +2,11 @@
   <h2>
     <%= @grid.name.html_safe %>
     <span class="detail">
+      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       (<%= @workspace.to_s.html_safe %>)
+      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+      <% end %>
     </span>
   </h2>
 </header>
@@ -29,14 +33,16 @@
             <span title="<%= trunc(row.description.html_safe) %>">
               <% if @grid.has_name? %>
                 <%= link_to @grid.row_title(row).html_safe, 
-                              :controller => 'rows', 
-                              :action => 'show', 
-                              :grid_id => @grid.uuid, 
+                              :controller => :rows,
+                              :action => :show,
+                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                              :grid_id => @grid.uuid,
                               :id => row.uuid %>
               <% else %>
                 <%= link_to icon('blueright'),
-                            :controller => 'rows', 
-                            :action => 'show', 
+                            :controller => :rows,
+                            :action => :show,
+                            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
                             :grid_id => @grid.uuid, 
                             :id => row.uuid %>
               <% end %>
@@ -44,7 +50,7 @@
             <%= display_information(row) %>
             <span class="detail"><%= display_updated_date(row).html_safe %></span>
             <% if user_signed_in? and not @grid.can_update?(row) %>
-              <span title="Data is locked"><%= icon "locked" %></span>
+              <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
             <% end %>
             <% if user_signed_in? and @grid.can_update?(row) %>
               <div id="actions-<%= row.uuid %>"
@@ -55,10 +61,12 @@
                 </span>
                 <span class="button" title="Delete current data.">
                   <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-                        {:controller => 'rows', 
-                         :grid_id => @grid.uuid, 
-                         :id => row.uuid, 
-                         :inline => true, :action => "destroy"}, 
+                        {:controller => :rows,
+                         :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                         :grid_id => @grid.uuid,
+                         :id => row.uuid,
+                         :inline => true,
+                         :action => :destroy}, 
                         :confirm => t('message.delete', :name => row.to_s),
                         :method => :delete %>
                 </span>
@@ -81,7 +89,9 @@
                     var width = $("#document").width()-35;
                     $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
                     $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-                    $("#row-dialog").load("<%= url_for({:action => :edit,
+                    $("#row-dialog").load("<%= url_for({:controller => :rows,
+                                                        :action => :edit,
+                                                        :workspace => @grid.workspace.uri || @grid.workspace_uuid,
                                                         :grid_id => @grid.uuid,
                                                         :id => row.uuid,
                                                         :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
@@ -97,11 +107,11 @@
                     column, 
                     row.read_value(column),
                     ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
-                        link_to(row.read_referenced_name(column), 
-                        :controller => 'rows', 
-                        :action => 'show', 
-                        :grid_id => column.grid_reference_uuid, 
-                        :id => row.read_value(column)) :
+                        link_to(row.read_referenced_name(column),
+                                :controller => :rows,
+                                :action => :show,
+                                :grid_id => column.grid_reference_uuid,
+                                :id => row.read_value(column)) :
                         ""),
                     row.read_referenced_name(column)) %>
           <% end %>
@@ -113,10 +123,6 @@
 <span class="detail">
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
   <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
-  <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
-    <span title="Data is locked"><%= icon "locked" %></span>
-  <% end %>
-  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
 </span>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
   <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" 
@@ -124,17 +130,26 @@
           style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
+           :controller => :rows,
+           :action => :index,
+           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+           :grid_id => @grid.uuid,
            :filters => @filters,
            :page => calc_next_page(params[:page]) %>
     <% end %>
     <% if not_first_page(params[:page]) %>
       <%= link_to icon('up') + ("&nbsp;" + t('general.prev_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid,
+           :controller => :rows,
+           :action => :index,
+           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+           :grid_id => @grid.uuid,
            :filters => @filters,
            :page => calc_previous_page(params[:page]) %>
       <%= link_to icon('previous') + ("&nbsp;" + t('general.first_rows')).html_safe, 
-           :controller => 'rows', :action => 'index', :grid_id => @grid.uuid, 
+           :controller => :rows,
+           :action => :index,
+           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+           :grid_id => @grid.uuid,
            :filters => @filters,
            :page => 1 %>
     <% end %>
@@ -149,7 +164,9 @@
           var width = $("#document").width()-35;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-          $("#row-dialog").load("<%= url_for({:action => :edit, 
+          $("#row-dialog").load("<%= url_for({:controller => :rows,
+                                              :action => :edit, 
+                                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
                                               :grid_id => @grid.uuid, 
                                               :id => 0,
                                               :filters => @filters,
@@ -161,7 +178,9 @@
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Export rows in an .xml file." class="button">
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-              {:action => :show, 
+              {:controller => :rows,
+               :action => :show,
+               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
                :grid_id => @grid.uuid,
                :id => 0,
                :filters => @filters,

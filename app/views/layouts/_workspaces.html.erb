@@ -20,27 +20,3 @@
     </span>
   <% end %>
 <% end %>
-<script>
-  function showNavigator(updateFlag) {
-    if ($("#navigator-button").attr('checked')) {
-      if(updateFlag) {
-        $.ajax("<%= url_for(unset_path(:flag => "hide_navigator")) %>");
-      }
-      $("#navigator").show(300);
-      $("#main-area").removeClass("large-area");
-      $("#main-area").addClass("main-area");
-    } 
-    else {
-      $("#navigator").hide(300);
-      $("#main-area").removeClass("main-area");
-      $("#main-area").addClass("large-area");
-      if(updateFlag) {
-        $.ajax("<%= url_for(set_path(:flag => "hide_navigator")) %>");
-      }
-    }
-  };
-  showNavigator(false);
-  $("#navigator-button").click(function (event){
-    showNavigator(true);
-  });
-</script>

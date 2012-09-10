@@ -30,12 +30,7 @@ class RowsController < ApplicationController
   def home
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
-    selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure
-    selectRow
-    set_page_title
-    push_history
-    render :show, :status => @status
+    show
   end
 
   def history
@@ -84,6 +79,7 @@ class RowsController < ApplicationController
     if params[:format] == 'xml'
       @rows = @grid.row_all(@filters, '', 1, true) if @row.nil?
     else
+      @columns = @grid.column_all
       @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present?
       @attached_grids = Grid.select_referenced_grids(@grid.uuid)
       set_page_title

@@ -1,42 +1,19 @@
 <% unless @grid.blank? or @row.blank? %>
   <article id="row-<%= @row.uuid %>">
-    <%= @row.name %>
-    <%= render :partial => "layouts/loading" %>
+    <%= render :partial => "row" %>
   </article>
-  <script>
-    $("#row-<%= @row.uuid %>").load(
-      "<%= url_for(:action => :row, 
-                   :grid_id => @grid.uuid,
-                   :id => @row.uuid) %>");
-  </script>
   <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
     <article id="row-<%= @grid_cast.uuid + "-" %>">
-      <%= @grid_cast.name %>
-      <%= render :partial => "layouts/loading" %>
+      <%= icon 'loading' %> <%= @grid_cast.name %>
     </article>
-    <script>
-      $("#row-<%= @grid_cast.uuid + "-" %>").load(
-        "<%= url_for(:action => :list, 
-                     :grid_id => @grid_cast.uuid,
-                     :id => 0) %>");
-    </script>
   <% end %>
   <% unless @attached_grids.nil? or @attached_grids.empty? %>
     <% for attached_grid in @attached_grids %>
-      <% filters = [{:column_uuid => attached_grid.column_uuid,
-                     :row_uuid => @row.uuid,
-                     :row_name => @row.name}] %>
-      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
-        <%= attached_grid.name %>
-        <%= render :partial => "layouts/loading" %>
+      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid([{:column_uuid => attached_grid.column_uuid,
+                                                                         :row_uuid => @row.uuid,
+                                                                         :row_name => @row.name}]) %>">
+        <%= icon 'loading' %> <%= attached_grid.name %>
       </article>
-      <script>
-        $("#row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>").load(
-          "<%= url_for(:action => :list, 
-                       :grid_id => attached_grid.uuid,
-                       :id => 0,
-                       :filters => filters) %>");
-      </script>
     <% end %>
   <% end %>
   <%= render :partial => 'navigation' %>

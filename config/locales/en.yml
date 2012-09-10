@@ -110,6 +110,7 @@ en:
     search:       "Search"
     design:       "Design"
     attached_row: "%{grid} (%{column})"
+    locked:       "Data can't be modified."
 
   datepicker:
     format:           "yy-mm-dd"

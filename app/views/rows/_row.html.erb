@@ -5,9 +5,11 @@
       <%= icon @page_icon %>
       <%= @grid.to_s.html_safe %>
       (<%= @workspace.to_s.html_safe %>)
+      <% if not @grid.can_update?(@row) %>
+        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+      <% end %>
       <%= display_grid_next_versions(@grid, @row).html_safe %>
       <%= display_locale(@row).html_safe if @grid.has_translation? %>
-      <% if not @grid.can_update?(@row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>
     </span>
   </h1>
 </header>
@@ -20,9 +22,9 @@
               @row.read_value(column),
               ((not column.grid_reference_uuid.nil? and not @row.read_value(column).nil?) ?  
                 link_to(@row.read_referenced_name(column), 
-                            :controller => 'rows', 
-                            :action => 'show',  
-                            :grid_id => column.grid_reference_uuid, 
+                            :controller => :rows,
+                            :action => :show,
+                            :grid_id => column.grid_reference_uuid,
                             :id => @row.read_value(column)) : ""),
               @row.read_referenced_name(column),
               @row.read_referenced_description(column)
@@ -44,13 +46,19 @@
     </span>
     <span class="button" title="Delete current data.">
       <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-         {:grid_id => @grid.uuid, :id => @row.id, :action => "destroy"}, 
+         {:controller => :rows,
+          :grid_id => @grid.uuid,
+          :id => @row.id,
+          :action => :destroy}, 
           :confirm => t('message.delete', :name => @row.to_s), 
           :method => :delete %>
     </span>
     <span class="button" title="Add or remove attachment (photo or document) to current data.">
       <%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
-         {:action => "attach_document", :grid_id => @grid.uuid, :id => @row.uuid},
+         {:controller => :rows,
+          :action => :attach_document,
+          :grid_id => @grid.uuid,
+          :id => @row.uuid},
          :remote => true %>
     </span>
     <span class="button" style="display: none;">
@@ -82,8 +90,10 @@
         var width = $("#document").width()-35;
         $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-        $("#row-dialog").load("<%= url_for({:action => :edit, 
-                                            :grid_id => @grid.uuid, 
+        $("#row-dialog").load("<%= url_for({:controller => :rows,
+                                            :action => :edit,
+                                            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                                            :grid_id => @grid.uuid,
                                             :id => @row.uuid,
                                             :container => "#row-#{@row.uuid}"}) %>");
       });

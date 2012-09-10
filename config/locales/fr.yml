@@ -110,6 +110,7 @@ fr:
     search:       "Recherche"
     design:       "Définition"
     attached_row: "%{grid} (%{column})"
+    locked:       "La données ne peut pas être modifiée."
     
   datepicker:
     format:           "dd/mm/yy"
