@@ -53,6 +53,7 @@ class Grid < Entity
   def load_cached_grid_structure(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
               "filters=#{filters.inspect}) [grid #{inspect}]"
+    load_workspace
     load_cached_mapping
     load_cached_columns
     load_cached_column_information(filters, false, skip_mapping)
@@ -62,6 +63,7 @@ class Grid < Entity
   def load_cached_grid_structure_reference(filters=nil)
     log_debug "Grid#load_cached_grid_structure_reference(" +
               "filters=#{filters.inspect}) [grid #{to_s}]"
+    load_workspace
     load_cached_mapping
     load_cached_columns
     load_cached_column_information(filters, true)
@@ -1180,6 +1182,11 @@ private
         end
       end
     end
+  end
+  
+  def load_workspace
+    log_debug "Grid#load_workspace [grid #{to_s}]"
+    self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
   end
   
   def load_security_workspace(uuid)
