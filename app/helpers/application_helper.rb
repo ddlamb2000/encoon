@@ -76,14 +76,14 @@ module ApplicationHelper
         column = grid.column_select_entity_by_uuid(column_uuid)
         if column.present? and column.kind == Column::REFERENCE
           output << ", " if output != ""
-          output << "#{column.name} equals to #{row_name}".html_safe
+          output << "\"#{column.name}\" equals to \"#{row_name}\"".html_safe
         end
       end
     end
     if search.present?
       output << ", " if output != ""
       output << icon('yellowlight') + 
-                "Name or description contains <u>#{search}</u>".html_safe
+                "\"Name\" or \"description\" contains \"#{search}\"".html_safe
     end
     output
   end
