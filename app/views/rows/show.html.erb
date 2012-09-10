@@ -1,5 +1,6 @@
 <% unless @grid.blank? or @row.blank? %>
   <article id="row-<%= @row.uuid %>">
+    <%= @row.name %>
     <%= render :partial => "layouts/loading" %>
   </article>
   <script>
@@ -10,6 +11,7 @@
   </script>
   <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
     <article id="row-<%= @grid_cast.uuid + "-" %>">
+      <%= @grid_cast.name %>
       <%= render :partial => "layouts/loading" %>
     </article>
     <script>
@@ -25,6 +27,7 @@
                      :row_uuid => @row.uuid,
                      :row_name => @row.name}] %>
       <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
+        <%= attached_grid.name %>
         <%= render :partial => "layouts/loading" %>
       </article>
       <script>

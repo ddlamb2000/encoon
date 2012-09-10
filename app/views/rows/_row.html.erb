@@ -3,8 +3,8 @@
     <%= @row.to_s.html_safe %>
     <span class="detail">
       <%= icon @page_icon %>
-      <%= @workspace.to_s.html_safe %> |
       <%= @grid.to_s.html_safe %>
+      (<%= @workspace.to_s.html_safe %>)
       <%= display_grid_next_versions(@grid, @row).html_safe %>
       <%= display_locale(@row).html_safe if @grid.has_translation? %>
       <% if not @grid.can_update?(@row) %><span title="Data is locked"><%= icon "locked" %></span><% end %>

@@ -2,8 +2,7 @@
   <h2>
     <%= @grid.name.html_safe %>
     <span class="detail">
-      <%= icon 'table' %>
-      <%= @workspace.to_s.html_safe %>
+      (<%= @workspace.to_s.html_safe %>)
     </span>
   </h2>
 </header>
