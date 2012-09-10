@@ -32,7 +32,6 @@ fr:
     more:         "Détails..."
     hide:         "Masquer"
     login:        "Connexion"
-    data:         "Afficher la liste des données"
     attach:       "Attacher document"
     wait:         "Chargement en cours..."
 
@@ -77,27 +76,8 @@ fr:
     language:     "Langue"
     languages:    "Langues"
     attachments:  "Documents"
+    data:         "Données"
       
-  workspaces:
-    title:        "Domaines"
-    name:         "Domaine"
-    
-  grids:
-    title:        "Catégorie de données"
-    name:         "Catégorie de données"
-    
-  columns:
-    title:        "Colonnes"
-    name:         "Colonne"
-    
-  rows:
-    title:        "Données"
-    name:         "Données"
-    
-  users:
-    title:        "Utilisateurs"
-    name:         "Utilisateur"
-    
   general:
     home:         "Accueil"
     undefined:    "(non défini)"
@@ -113,8 +93,6 @@ fr:
     version:      "Version %{version}"
     inactive:     "Inactif"
     object_name:  "%{type} : %{name}"
-    here:         "ici"
-    show_table:   "Plus"
     record:       "%{count} ligne / %{total}"
     records:      "%{count} lignes / %{total}"
     audit_create: "Création de la version %{version} (%{language})"
@@ -126,13 +104,11 @@ fr:
     audit_pass:   "Mot de passe modifié"
     new:          "Nouveau"
     unknown:      "inconnu"
-    full_table:   "Afficher le tableau complet..."
     next_rows:    "Lignes suivantes"
     prev_rows:    "Lignes précédentes"
     first_rows:   "Premières lignes"
     search:       "Recherche"
     design:       "Définition"
-    grid_design:  "Afficher la définition de la catégorie de données"
     attached_row: "%{grid} (%{column})"
     
   datepicker:
@@ -148,11 +124,7 @@ fr:
     created:      "%{name} (%{type}) créé."
     updated:      "%{name} (%{type}) modifié."
     deleted:      "%{name} (%{type}) supprimé."
-    not_created:  "%{name} (%{type}) non créé."
-    not_updated:  "%{name} (%{type}) non modifié."
-    not_deleted:  "%{name} (%{type}) non supprimé."
     attached:     "Document attaché à %{name} (%{type})."
-    pass_created: "Mot de passe créé pour %{name}."
 
   error:
     ena_record:   "Au moins un enregistrement doit être actif."
@@ -163,8 +135,8 @@ fr:
     mis_password: "Le mot de passe est obligatoire."
     mis_name:     "Le nom est obligatoire."
     pass_conf:    "La confirmation du mot de passe n’est pas conforme."
-    no_grid:      "Erreur: catégorie de données non disponible"
-    no_data:      "Erreur: données non disponible"
+    no_grid:      "Erreur: catégorie non trouvée"
+    no_data:      "Erreur: données non trouvée"
     not_found:    "Nous sommes désolés, mais la page demandée est introuvable et ne correspond à aucune information répertoriée."
         
   message:
