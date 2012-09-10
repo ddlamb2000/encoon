@@ -45,9 +45,7 @@ class Row < Entity
   end
 
   def name
-    attribute_present?(:name) ? 
-      read_attribute(:name) : 
-      ""
+    attribute_present?(:name) ? read_attribute(:name) : ""
   end
 
   def title
@@ -59,22 +57,15 @@ class Row < Entity
   end
 
   def description
-    attribute_present?(:description) ? 
-      read_attribute(:description) : 
-      ""
+    attribute_present?(:description) ? read_attribute(:description) : ""
   end
 
   def read_value(column)
-    attribute = @initialization ? column.default_physical_column : column.physical_column
-    value = read_attribute(attribute)
-    log_debug "Row#read_value #{attribute}=#{value.inspect}"
-    value
+    read_attribute(@initialization ? column.default_physical_column : column.physical_column)
   end
   
   def write_value(column, value)
-    attribute = @initialization ? column.default_physical_column : column.physical_column
-    log_debug "Row#write_value #{attribute}=#{value.inspect}"
-    send("#{attribute}=", value)
+    send("#{@initialization ? column.default_physical_column : column.physical_column}=", value)
   end
   
   def read_referenced_name(column)
@@ -86,7 +77,7 @@ class Row < Entity
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
         grid = column.loaded_grid_reference
         if grid.present?
-          grid.load_cached_grid_structure
+          grid.load_cached_grid_structure_reference if not grid.is_preloaded?
           return grid.select_reference_row_name(value)  
         end
       end
@@ -105,7 +96,7 @@ class Row < Entity
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
         grid = column.loaded_grid_reference
         if grid.present?
-          grid.load_cached_grid_structure
+          grid.load_cached_grid_structure_reference if not grid.is_preloaded?
           return grid.select_reference_row_description(value)  
         end
       end
