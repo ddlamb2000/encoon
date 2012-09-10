@@ -30,7 +30,7 @@ class RowsController < ApplicationController
   def home
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     set_page_title
@@ -67,7 +67,7 @@ class RowsController < ApplicationController
     @filters = params[:filters]
     @search = params[:search]
     @page = params[:page]
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters)
     @table_row_count = @grid.row_count(@filters)
     @table_rows = @grid.row_all(@filters, @search, @page, true) 
@@ -78,7 +78,7 @@ class RowsController < ApplicationController
   def show
     log_debug "RowsController#show"
     @filters = params[:filters]
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters)
     selectRow
     if params[:format] == 'xml'
@@ -95,7 +95,7 @@ class RowsController < ApplicationController
   # Renders the details of an article through an Ajax request  
   def details
     log_debug "RowsController#details"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     if @grid.present? and @row.present?
@@ -110,7 +110,7 @@ class RowsController < ApplicationController
   # Renders the details of an article through an Ajax request  
   def row
     log_debug "RowsController#row"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     @columns = @grid.column_all
@@ -123,7 +123,7 @@ class RowsController < ApplicationController
     @container = params[:container]
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters)
     selectRow
     if @row.nil? or @row.uuid.nil?
@@ -141,7 +141,7 @@ class RowsController < ApplicationController
     log_debug "RowsController#create"
     saved = false
     @filters = params[:filters]
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters, true)
     @row = @grid.rows.new
     @row.initialization
@@ -201,7 +201,7 @@ class RowsController < ApplicationController
     saved = false
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters)
     selectRow
     begin
@@ -303,7 +303,7 @@ class RowsController < ApplicationController
 
   def destroy
     log_debug "RowsController#destroy: params=#{params.inspect}"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -344,7 +344,7 @@ class RowsController < ApplicationController
 
   def attach_document
     log_debug "RowsController#attach_document"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.new
@@ -353,7 +353,7 @@ class RowsController < ApplicationController
 
   def save_attachment
     log_debug "RowsController#save_attachment"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -387,7 +387,7 @@ class RowsController < ApplicationController
 
   def photo
     log_debug "RowsController#photo"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     if params[:photo_id].present?
@@ -402,7 +402,7 @@ class RowsController < ApplicationController
 
   def file
     log_debug "RowsController#file"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.find(params[:file_id])
@@ -415,7 +415,7 @@ class RowsController < ApplicationController
 
   def delete_attachment
     log_debug "RowsController#delete_attachment"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -447,7 +447,7 @@ class RowsController < ApplicationController
 
   def import
     log_debug "RowsController#import"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     @page_title = "Import Data"
     @page_icon = "import"
@@ -456,7 +456,7 @@ class RowsController < ApplicationController
   
   def upload
     log_debug "RowsController#upload"
-    selectGrid
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
@@ -533,43 +533,51 @@ private
     true
   end
   
-  def selectGrid
-    Entity.log_debug "RowsController#selectGrid"
+  def selectWorkspaceAndGrid
+    Entity.log_debug "RowsController#selectWorkspaceAndGrid"
+    @workspace = nil
     @grid = nil
-    if Entity.uuid?(params[:grid_id])
-      @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
-    else
-      @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
-    end
-    if @grid.nil?
-      Entity.log_debug "RowsController#selectGrid " + 
-                       "Invalid: can't find data grid #{params[:grid_id]}"
-    else
-      Entity.log_debug "RowsController#selectGrid: grid found name=#{@grid.name}"
+    if params[:grid_id].present? and params[:grid_id] != "0"
+      if Entity.uuid?(params[:grid_id])
+        @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
+      else
+        @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
+      end
+      if @grid.nil?
+        Entity.log_debug "RowsController#selectWorkspaceAndGrid " + 
+                         "Invalid: can't find grid #{params[:grid_id]}"
+      else
+        Entity.log_debug "RowsController#selectWorkspaceAndGrid: grid found name=#{@grid.name}"
+        @workspace = Workspace.select_entity_by_uuid(Workspace, @grid.workspace_uuid)
+        if @workspace.nil?
+          Entity.log_debug "RowsController#selectWorkspaceAndGrid " + 
+                           "Invalid: can't find workspace #{@grid.workspace_uuid}"
+        else
+          Entity.log_debug "RowsController#selectWorkspaceAndGrid: workspace found name=#{@workspace.name}"
+        end
+      end
     end
   end
 
   def selectRow
     Entity.log_debug "RowsController#selectRow"
     @row = nil
-    if params[:id].present? and params[:id] != "0"
-      if @grid.present?
-        if Entity.uuid?(params[:id])
-          @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
-          unlock_as_of_date
-        else
-          @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
-          lock_as_of_date
-        end
-        if @row.nil?
-          Entity.log_debug "RowsController#selectRow " + 
-                           "Invalid: can't find row with " +
-                           "grid_id=#{params[:grid_id].to_s}" +
-                           " and id=#{params[:id].to_s}"
-        else
-          Entity.log_debug "RowsController#selectRow: row found name=#{@row.name}"
-          change_as_of_date(@row)
-        end
+    if @grid.present? and params[:id].present? and params[:id] != "0"
+      if Entity.uuid?(params[:id])
+        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
+        unlock_as_of_date
+      else
+        @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
+        lock_as_of_date
+      end
+      if @row.nil?
+        Entity.log_debug "RowsController#selectRow " + 
+                         "Invalid: can't find row with " +
+                         "grid_id=#{params[:grid_id].to_s}" +
+                         " and id=#{params[:id].to_s}"
+      else
+        Entity.log_debug "RowsController#selectRow: row found name=#{@row.name}"
+        change_as_of_date(@row)
       end
     end
   end

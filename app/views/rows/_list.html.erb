@@ -1,3 +1,12 @@
+<header>
+  <h2>
+    <%= @grid.name.html_safe %>
+    <span class="detail">
+      <%= icon 'table' %>
+      <%= @workspace.to_s.html_safe %>
+    </span>
+  </h2>
+</header>
 <% unless @table_rows.nil? or 
           @table_rows.empty? or 
           @table_columns.nil? %>
@@ -76,7 +85,7 @@
                     $("#row-dialog").load("<%= url_for({:action => :edit,
                                                         :grid_id => @grid.uuid,
                                                         :id => row.uuid,
-                                                        :container => "#list-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                                        :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                                         :refresh_list => true}) %>");
                   });
                 </script>
@@ -145,7 +154,7 @@
                                               :grid_id => @grid.uuid, 
                                               :id => 0,
                                               :filters => @filters,
-                                              :container => "#list-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                              :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                               :refresh_list => true}) %>");
         });
       </script>
