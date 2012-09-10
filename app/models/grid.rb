@@ -69,12 +69,10 @@ class Grid < Entity
   end
   
   def is_preloaded? ; @columns.present? ; end
-  def has_translation? ; @has_translation and (has_name? or has_description?) ; end
-  def has_mapping? ; @has_mapping ; end
-  def db_table ; @db_table ; end
-  def db_loc_table ; @db_loc_table ; end
   def has_name? ; self.has_name ; end
   def has_description? ; self.has_description ; end
+  def has_translation? ; @db_loc_table.present? and (has_name? or has_description?) ; end
+  def has_mapping? ; @has_mapping ; end
   def can_select_data? ; @can_select_data ; end
   def can_update_data? ; @can_update_data ; end
 
@@ -360,8 +358,8 @@ class Grid < Entity
     end
     sql = "SELECT " + 
           (count ? "count(*)" : "#{row_all_select_columns}") + 
-          " FROM grids grids, #{db_table} rows" + 
-          (has_translation? ? ", #{db_loc_table} row_locs" : "") +
+          " FROM grids grids, #{@db_table} rows" + 
+          (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
           " WHERE grids.uuid = #{quote(self.uuid)}" +
           " AND " + as_of_date_clause("grids") +
           " AND " + Grid::grid_security_clause("grids") + 
@@ -393,8 +391,8 @@ class Grid < Entity
       return nil
     end
     sql = "SELECT #{row_all_select_columns}" + 
-          " FROM grids grids, #{db_table} rows" + 
-          (has_translation? ? ", #{db_loc_table} row_locs" : "") +
+          " FROM grids grids, #{@db_table} rows" + 
+          (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
           " WHERE grids.uuid = #{quote(self.uuid)}" +
           " AND " + as_of_date_clause("grids") +
           " AND " + Grid::grid_security_clause("grids") + 
@@ -425,8 +423,8 @@ class Grid < Entity
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
-                     " FROM grids grids, #{db_table} rows" + 
-                     (has_translation? ? ", #{db_loc_table} row_locs" : "") +
+                     " FROM grids grids, #{@db_table} rows" + 
+                     (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
                      " WHERE grids.uuid = #{quote(self.uuid)}" +
                      " AND " + as_of_date_clause("grids") +
                      " AND " + Grid::grid_security_clause("grids") + 
@@ -458,8 +456,8 @@ class Grid < Entity
       return nil
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
-                     " FROM grids grids, #{db_table} rows" + 
-                     (has_translation? ? ", #{db_loc_table} row_locs" : "") +
+                     " FROM grids grids, #{@db_table} rows" + 
+                     (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
                      " WHERE grids.uuid = #{quote(self.uuid)}" +
                      " AND " + as_of_date_clause("grids") +
                      " AND " + Grid::grid_security_clause("grids") + 
@@ -486,8 +484,8 @@ class Grid < Entity
       return []
     end
     Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
-                     " FROM grids grids, #{db_table} rows" + 
-                     (has_translation? ? ", #{db_loc_table} row_locs" : "") +
+                     " FROM grids grids, #{@db_table} rows" + 
+                     (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
                      " WHERE grids.uuid = #{quote(self.uuid)}" +
                      " AND " + as_of_date_clause("grids") +
                      " AND " + Grid::grid_security_clause("grids") + 
@@ -514,7 +512,7 @@ class Grid < Entity
       return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
-                        " FROM grids grids, #{db_loc_table} row_locs" +
+                        " FROM grids grids, #{@db_loc_table} row_locs" +
                         " WHERE grids.uuid = #{quote(self.uuid)}" +
                         " AND " + as_of_date_clause("grids") +
                         " AND " + Grid::grid_security_clause("grids") + 
@@ -529,7 +527,7 @@ class Grid < Entity
   def row_begin_duplicate_exists?(row, begin_date)
     log_debug "Grid#row_begin_duplicate_exists?(begin_date=#{begin_date})"
     sql = "SELECT id" + 
-          " FROM #{db_table}" + 
+          " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(row.uuid)}" +
           (has_mapping? ? "" : " AND grid_uuid = #{quote(self.uuid)}") +
           " AND begin = #{quote(begin_date)}" +
@@ -541,7 +539,7 @@ class Grid < Entity
     log_debug "Grid#row_enabled_version_exists?(" + 
               "new_version=#{new_version.to_s})"
     sql = "SELECT id" + 
-          " FROM #{db_table}" + 
+          " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(row.uuid)}" +
           (has_mapping? ? "" : " AND grid_uuid = #{quote(self.uuid)}") +
           " AND enabled = #{quote(true)}" +
@@ -553,7 +551,7 @@ class Grid < Entity
   def row_max_version(uuid)
     log_debug "Grid#row_max_version(uuid=#{uuid}) [grid #{to_s}]"
     sql = "SELECT max(version)" + 
-          " FROM #{db_table}" + 
+          " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(uuid)}" +
           (has_mapping? ? "" : " AND grid_uuid = #{quote(self.uuid)}")
     connection.select_value(sql).to_i
@@ -591,7 +589,7 @@ class Grid < Entity
       return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
-                        " FROM grids grids, #{db_loc_table} row_locs" + 
+                        " FROM grids grids, #{@db_loc_table} row_locs" + 
                         " WHERE grids.uuid = #{quote(self.uuid)}" +
                         " AND " + as_of_date_clause("grids") +
                         " AND " + Grid::grid_security_clause("grids") + 
@@ -606,7 +604,7 @@ class Grid < Entity
   def row_select_next_version(row)
     log_debug "Grid#row_select_next_version"
     sql = "SELECT id" + 
-          " FROM #{db_table}" + 
+          " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(row.uuid)}" +
           " AND id != #{quote(row.id)}" +
           " AND (begin > #{quote(row.begin)}" +
@@ -620,7 +618,7 @@ class Grid < Entity
   def row_select_previous_version(row)
     log_debug "Grid#row_select_previous_version"
     sql = "SELECT id" + 
-          " FROM #{db_table}" + 
+          " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(row.uuid)}" +
           " AND id != #{quote(row.id)}" +
           " AND (begin < #{quote(row.begin)}" +
@@ -815,7 +813,7 @@ class Grid < Entity
     end
     row.created_at = Time.now
     row.updated_at = Time.now
-    sql = "INSERT INTO #{db_table}" +
+    sql = "INSERT INTO #{@db_table}" +
           "(#{row_all_insert_columns})" +
           " VALUES(#{row_all_insert_values(row)})"
     self.id = connection.insert(sql, 
@@ -833,7 +831,7 @@ class Grid < Entity
       log_security_warning "Grid#create_row_loc! Can't create data"
       return false
     end
-    sql = "INSERT INTO #{db_loc_table}" +
+    sql = "INSERT INTO #{@db_loc_table}" +
           "(#{row_all_insert_loc_columns})" +
           " VALUES(#{row_all_insert_loc_values(row)})"
     self.id = connection.insert(sql, 
@@ -851,7 +849,7 @@ class Grid < Entity
       return false
     end
     row.updated_at = Time.now
-    sql = "UPDATE #{db_table}" +
+    sql = "UPDATE #{@db_table}" +
           " SET #{row_all_update_values(row)}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
@@ -867,7 +865,7 @@ class Grid < Entity
       log_security_warning "Grid#update_row_loc! Can't update data"
       return false
     end
-    sql = "UPDATE #{db_loc_table}" +
+    sql = "UPDATE #{@db_loc_table}" +
           " SET #{row_loc_update_values(row)}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
@@ -881,7 +879,7 @@ class Grid < Entity
       log_security_warning "Grid#destroy_row! Can't delete data"
       return false
     end
-    sql = "DELETE FROM #{db_table}" +
+    sql = "DELETE FROM #{@db_table}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
     connection.delete(sql, "#{self.class.name} Delete")
@@ -895,7 +893,7 @@ class Grid < Entity
       log_security_warning "Grid#destroy_row_loc! Can't delete data"
       return false
     end
-    sql = "DELETE FROM #{db_loc_table}" +
+    sql = "DELETE FROM #{@db_loc_table}" +
           " WHERE id = #{quote(row.id)}" +
           " AND lock_version = #{quote(row.lock_version)}"
     connection.delete(sql, "#{self.class.name} Delete")
@@ -1132,22 +1130,21 @@ private
 
   # Loads in memory information about database mapping
   def load_cached_mapping
+    log_debug "Grid#load_cached_mapping [grid #{to_s}]"
     grid_mapping = grid_mapping_read
     if grid_mapping.present?
-      @db_table = 
-        grid_mapping.db_table if grid_mapping.db_table.present?
-      @db_loc_table = 
-        grid_mapping.db_loc_table if grid_mapping.db_loc_table.present?
+      @db_table = grid_mapping.db_table if grid_mapping.db_table.present?
+      @db_loc_table = grid_mapping.db_loc_table if grid_mapping.db_loc_table.present?
     else
       @db_table = "rows"
       @db_loc_table = "row_locs"
     end
     @has_mapping = grid_mapping.present?
-    @has_translation = @db_loc_table.present?
   end
 
   # Loads in memory information about columns
   def load_cached_columns
+    log_debug "Grid#load_cached_columns [grid #{to_s}]"
     @all_columns = columns.find(:all, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -1164,17 +1161,20 @@ private
   def load_cached_column_information(filters, 
                                      skip_reference=false, 
                                      skip_mapping=false)
+    log_debug "Grid#load_cached_column_information [grid #{to_s}]"
     column_all.each do |column|
       if not column.is_preloaded?
+        log_debug "Grid#load_cached_column_information column=#{column.name}"
         column.load_cached_information(self.uuid, 
                                        self, 
                                        skip_reference, 
                                        skip_mapping)
+        log_debug "Grid#load_cached_column_information column.physical_column=#{column.physical_column}"
         if filters.present?
           filters.each do |filter|
             column_uuid = filter[:column_uuid]
             if column_uuid == column.uuid
-              @columns.delete(column)            
+              @columns.delete(column)
             end
           end
         end

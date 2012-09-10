@@ -42,6 +42,7 @@ class Column < Entity
   validates_presence_of :grid_uuid, :number, :display, :kind
   validates :number, :inclusion => { :in => 1..20 }
   validates_associated :grid
+  attr_reader :physical_column, :default_physical_column, :loaded_grid_reference
   
   def before_destroy
     log_debug "Column#before_destroy [column #{to_s}]"
@@ -55,14 +56,12 @@ class Column < Entity
   end
   
   def is_preloaded?
-    @physical_column.present?
-  end
-  
-  def has_mapping?
-    @has_mapping
+    physical_column.present?
   end
   
   def load_cached_information(grid_uuid, grid, skip_reference, skip_mapping)
+    log_debug "Column#load_cached_information(grid_uuid=#{grid_uuid}, " + 
+              "grid=#{grid.to_s})"
     case self.kind
       when REFERENCE then 
         @default_physical_column = "row_uuid" + self.number.to_s
@@ -79,9 +78,10 @@ class Column < Entity
     if not skip_mapping and db_column.present?
       @physical_column = db_column
     else
-      @physical_column = @default_physical_column
+      @physical_column = default_physical_column
     end
-    @has_mapping = db_column.present?
+    log_debug "Column#load_cached_information " + 
+              "physical_column=#{physical_column}"
     if not skip_reference
       if self.kind == REFERENCE and 
          self.grid_reference_uuid.present?
@@ -100,27 +100,6 @@ class Column < Entity
         end
       end
     end
-  end
-  
-  def physical_column
-    if @physical_column.nil?
-      log_error "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
-    end
-    @physical_column 
-  end
-  
-  def default_physical_column
-    if @default_physical_column.nil?
-      log_error "Column #{to_s} for data grid #{grid.to_s} isn't preloaded."
-    end
-    @default_physical_column 
-  end
-  
-  def loaded_grid_reference
-    if @loaded_grid_reference.nil?
-      log_error "Column#loaded_grid_reference column #{to_s} isn't preloaded."
-    end
-    @loaded_grid_reference
   end
   
   # Returns the name of the grid used as a reference
