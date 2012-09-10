@@ -18,7 +18,6 @@ class Row < Entity
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   has_many :row_locs, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :row_attachments, :foreign_key => "uuid", :primary_key => "uuid"
-  has_many :row_passwords, :foreign_key => "uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid
   validates_associated :grid
   
@@ -39,7 +38,6 @@ class Row < Entity
     RowLoc.destroy_all(["uuid = :uuid and version = :version", 
                        {:uuid => self.uuid, :version => self.version}])
     row_attachments.destroy_all
-    row_passwords.destroy_all
   end
   
   def to_s
@@ -67,9 +65,10 @@ class Row < Entity
   end
 
   def read_value(column)
-    read_attribute(@initialization ? 
-      column.default_physical_column : 
-      column.physical_column)
+    attribute = @initialization ? column.default_physical_column : column.physical_column
+    value = read_attribute(attribute)
+    log_debug "Row#read_value #{attribute}=#{value.inspect}"
+    value
   end
   
   def write_value(column, value)
@@ -255,7 +254,7 @@ class Row < Entity
       if base_loc.present?
         LANGUAGES.each do |lang, locale|
           if (base_locs.find {|value| locale.to_s == value}).nil?
-            loc = new_loc        
+            loc = new_loc
             base_loc.copy_attributes(loc)
             loc.locale = locale.to_s
             loc.base_locale = base_loc.base_locale
@@ -295,25 +294,12 @@ class Row < Entity
     false
   end
   
-  def has_password?
-    for password in row_passwords
-      return true if password.salt.present? and password.password.present? 
-    end
-    false
-  end
-
   def remove_attachment!(input_file)
     for attachment in row_attachments
       if attachment.content_type == input_file.content_type.chomp and 
          attachment.file_name == input_file.original_filename
         attachment.destroy
       end
-    end
-  end
-
-  def remove_password!
-    for password in row_passwords
-      password.delete
     end
   end
 end
