@@ -577,6 +577,11 @@ private
                          " and id=#{params[:id].to_s}"
       else
         Entity.log_debug "RowsController#selectRow: row found name=#{@row.name}"
+        if @grid.uuid == Workspace::ROOT_UUID 
+          @workspace = Workspace.select_entity_by_uuid(Workspace, @row.uuid)
+        elsif @grid.uuid == Grid::ROOT_UUID 
+          @workspace = Workspace.select_entity_by_uuid(Workspace, @row.workspace_uuid)
+        end
         change_as_of_date(@row)
       end
     end
