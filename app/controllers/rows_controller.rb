@@ -370,10 +370,10 @@ class RowsController < ApplicationController
       if saved
         flash[:notice] = t('transaction.deleted', 
                                 :type => @grid, :name => name)
-        format.html { redirect_to session[params[:inline] ? :last_url : :prior_url] }
+        format.html { redirect_to session[:last_url] }
       else
         log_debug "RowsController#destroy: error, params=#{params.inspect}"
-        format.html { render :action => "show" }
+        format.html { render :action => :show }
       end
     end
   end

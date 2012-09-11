@@ -25,7 +25,7 @@ Encoon::Application.routes.draw do
   match '/*grid_id/*id/_details' => 'rows#details', :as => 'details'
   match '/*grid_id/*id/_edit' => 'rows#edit', :as => 'edit'
   match '/*grid_id/*id/_update' => 'rows#update', :as => 'update', :via => [:post]
-  match '/*grid_id/*id/_destroy' => 'rows#destroy', :as => 'destroy', :via => [:post]
+  match '/*grid_id/*id/_destroy' => 'rows#destroy', :as => 'destroy', :via => [:delete]
   match '/*grid_id/*id/_attach_document' => 'rows#attach_document', :as => 'attach_document'
   match '/*grid_id/*id/_save_attachment' => 'rows#save_attachment', :as => 'save_attachment'
   match '/*grid_id/*id/_delete_attachment' => 'rows#delete_attachment', :as => 'delete_attachment'

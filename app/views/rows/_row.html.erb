@@ -47,10 +47,9 @@
     </span>
     <span class="button" title="Delete current data.">
       <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-         {:controller => :rows,
+         destroy_path(
           :grid_id => @grid.uuid,
-          :id => @row.id,
-          :action => :destroy}, 
+          :id => @row.id),
           :confirm => t('message.delete', :name => @row.to_s), 
           :method => :delete %>
     </span>
