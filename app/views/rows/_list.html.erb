@@ -128,29 +128,11 @@
           class="actions float-actions"
           style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
-      <%= link_to icon('down') + ("&nbsp;" + t('general.next_rows')).html_safe, 
-           :controller => :rows,
-           :action => :index,
-           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-           :grid_id => @grid.uuid,
-           :filters => @filters,
-           :page => calc_next_page(params[:page]) %>
+      <%= calc_next_page(params[:page]) %>
     <% end %>
     <% if not_first_page(params[:page]) %>
-      <%= link_to icon('up') + ("&nbsp;" + t('general.prev_rows')).html_safe, 
-           :controller => :rows,
-           :action => :index,
-           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-           :grid_id => @grid.uuid,
-           :filters => @filters,
-           :page => calc_previous_page(params[:page]) %>
-      <%= link_to icon('previous') + ("&nbsp;" + t('general.first_rows')).html_safe, 
-           :controller => :rows,
-           :action => :index,
-           :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-           :grid_id => @grid.uuid,
-           :filters => @filters,
-           :page => 1 %>
+      <%= calc_previous_page(params[:page]) %>
+      <%= icon('previous') %>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Create a new row of data for the corresponding data grid." class="button">
