@@ -22,11 +22,10 @@
               @row.read_value(column),
               ((column.grid_reference_uuid.present? and @row.read_value(column).present?) ?  
                 link_to(@row.read_referenced_name(column),
-                        :controller => :rows,
-                        :action => :show,
-                        :workspace => column.grid_reference_uuid,
-                        :grid_id => column.grid_reference_uuid,
-                        :id => @row.read_value(column)) : ""),
+                        show_path(
+                          :workspace => column.grid_reference_uuid,
+                          :grid_id => column.grid_reference_uuid,
+                          :id => @row.read_value(column))) : ""),
               @row.read_referenced_name(column),
               @row.read_referenced_description(column)
          ) %>
@@ -55,14 +54,14 @@
     </span>
     <span class="button" title="Add or remove attachment (photo or document) to current data.">
       <%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
-         {:controller => :rows,
-          :action => :attach_document,
-          :grid_id => @grid.uuid,
-          :id => @row.uuid},
+         attach_document_path(
+            :grid_id => @grid.uuid,
+            :id => @row.uuid),
          :remote => true %>
     </span>
-    <span class="button" style="display: none;">
-      <%= link_to icon('import') + "&nbsp;Import data".html_safe, :action => 'import', :grid_id => @grid.uuid, :id => 0 %>
+    <span class="button">
+      <%= link_to icon('import') + "&nbsp;Import data".html_safe, 
+                  import_path(:grid_id => @grid.uuid) %>
     </span>
     <span class="button" title="Export current data into a XML file.">
       <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
@@ -90,12 +89,9 @@
         var width = $("#document").width()-35;
         $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
         $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-        $("#row-dialog").load("<%= url_for({:controller => :rows,
-                                            :action => :edit,
-                                            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                                            :grid_id => @grid.uuid,
-                                            :id => @row.uuid,
-                                            :container => "#row-#{@row.uuid}"}) %>");
+        $("#row-dialog").load("<%= url_for(edit_path(:grid_id => @grid.uuid,
+                                                     :id => @row.uuid,
+                                                     :container => "#row-#{@row.uuid}")) %>");
       });
     </script>
   </div>

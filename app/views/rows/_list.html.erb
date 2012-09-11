@@ -85,13 +85,11 @@
                     var width = $("#document").width()-35;
                     $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
                     $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-                    $("#row-dialog").load("<%= url_for({:controller => :rows,
-                                                        :action => :edit,
-                                                        :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                    $("#row-dialog").load("<%= url_for(edit_path(
                                                         :grid_id => @grid.uuid,
                                                         :id => row.uuid,
                                                         :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                                        :refresh_list => true}) %>");
+                                                        :refresh_list => true)) %>");
                   });
                 </script>
               </div>
@@ -104,11 +102,10 @@
                     row.read_value(column),
                     ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
                         link_to(row.read_referenced_name(column),
-                                :controller => :rows,
-                                :action => :show,
-                                :workspace => column.grid_reference_uuid,
-                                :grid_id => column.grid_reference_uuid,
-                                :id => row.read_value(column)) :
+                                show_path(
+                                  :workspace => column.grid_reference_uuid,
+                                  :grid_id => column.grid_reference_uuid,
+                                  :id => row.read_value(column))) :
                         ""),
                     row.read_referenced_name(column)) %>
           <% end %>
