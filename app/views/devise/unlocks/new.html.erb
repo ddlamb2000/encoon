@@ -3,6 +3,7 @@
 <% end %>
 <header class="action-header"><%= t('devise.resend_unlock') %></header>
 <%= form_for(resource, :as => resource_name, :url => unlock_path(resource_name), :html => { :method => :post }) do |f| %>
+  <%= devise_error_messages! %>
   <table class="form">
     <tr>
       <td class="header"><%= f.label :email, :class => "required" %></td>
@@ -10,7 +11,6 @@
     </tr>
   </table>
   <footer class="actions">
-    <%= devise_error_messages! %>
     <span class="button"><%= f.submit t('devise.resend_unlock') %></span>
   </footer>
 <% end %>

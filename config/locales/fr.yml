@@ -134,7 +134,7 @@ fr:
     required:     "’%{column}’ est obligatoire."
     badformat:    "’%{column}’ n’utilise pas un bon format."
     mis_password: "Le mot de passe est obligatoire."
-    mis_name:     "Le nom est obligatoire."
+    mis_name:     "’Nom’ est obligatoire."
     pass_conf:    "La confirmation du mot de passe n’est pas conforme."
     no_grid:      "Erreur: catégorie non trouvée"
     no_data:      "Erreur: données non trouvée"

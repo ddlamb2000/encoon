@@ -9,6 +9,7 @@
              :id => 'edit-inline-form') do |f| %>
   <%= hidden_field_tag "container", @container %>
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
+  <div class="validation-error"></div>
   <table class="form">
     <% if @grid.has_translation? and @grid.has_name? %>
       <tr id="header-name">
@@ -37,7 +38,6 @@
       </tr>
     <% end %>
   </table>
-  <div class="validation-error"></div>
   <footer class="actions">
     <span class="button">
       <%= label_tag :begin, t('field.begin_date') %>

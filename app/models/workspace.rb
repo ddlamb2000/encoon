@@ -81,7 +81,7 @@ class Workspace < Entity
                       ["workspace_locs.version = workspaces.version " + 
                        " AND " + Grid::workspace_security_clause("workspaces") +
                        " AND " + locale_clause("workspace_locs")], 
-                    :order => "workspaces.begin")
+                    :order => "workspace_locs.name")
   end
   
   def new_loc
