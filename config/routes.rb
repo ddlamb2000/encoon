@@ -16,6 +16,7 @@
 # See doc/COPYRIGHT.rdoc for more details.
 Encoon::Application.routes.draw do
   root :to => 'rows#home'
+  devise_for :users
   match '/*grid_id/_list' => 'rows#list', :as => 'list'
   match '/*grid_id/_new' => 'rows#new', :as => 'new'
   match '/*grid_id/_create' => 'rows#create', :as => 'create', :via => [:post]
@@ -35,5 +36,4 @@ Encoon::Application.routes.draw do
   match '/set' => 'rows#set', :as => 'set'
   match '/unset' => 'rows#unset', :as => 'unset'
   match '/refresh' => 'rows#refresh', :as => 'refresh'
-  devise_for :users
 end
