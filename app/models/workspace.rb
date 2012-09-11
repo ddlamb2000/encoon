@@ -67,9 +67,20 @@ class Workspace < Entity
                     :conditions => 
                       ["workspaces.uuid = :uuid " +
                        " AND workspace_locs.version = workspaces.version " + 
-                       " AND " + security_clause("workspaces"), 
+                       " AND " + Grid::workspace_security_clause("workspaces") +
                        " AND " + locale_clause("workspace_locs"), 
                        {:uuid => uuid}], 
+                    :order => "workspaces.begin")
+  end
+  
+  def self.user_workspaces(collection)
+    collection.find(:all, 
+                    :joins => :workspace_locs,
+                    :select => self.all_select_columns,
+                    :conditions => 
+                      ["workspace_locs.version = workspaces.version " + 
+                       " AND " + Grid::workspace_security_clause("workspaces") +
+                       " AND " + locale_clause("workspace_locs")], 
                     :order => "workspaces.begin")
   end
   
