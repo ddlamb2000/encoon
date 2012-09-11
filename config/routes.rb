@@ -16,14 +16,24 @@
 # See doc/COPYRIGHT.rdoc for more details.
 Encoon::Application.routes.draw do
   root :to => 'rows#home'
-  resources :grids do
-    resources :rows
-  end  
-  devise_for :users
+  match '/*grid_id/_list' => 'rows#list', :as => 'list'
+  match '/*grid_id/_new' => 'rows#new', :as => 'new'
+  match '/*grid_id/_create' => 'rows#create', :as => 'create', :via => [:post]
+  match '/*grid_id/_import' => 'rows#import', :as => 'import'
+  match '/*grid_id/_upload' => 'rows#upload', :as => 'upload'
+  match '/*grid_id/*id/_details' => 'rows#details', :as => 'details'
+  match '/*grid_id/*id/_edit' => 'rows#edit', :as => 'edit'
+  match '/*grid_id/*id/_update' => 'rows#update', :as => 'update', :via => [:post]
+  match '/*grid_id/*id/_destroy' => 'rows#destroy', :as => 'destroy', :via => [:post]
+  match '/*grid_id/*id/_attach_document' => 'rows#attach_document', :as => 'attach_document'
+  match '/*grid_id/*id/_save_attachment' => 'rows#save_attachment', :as => 'save_attachment'
+  match '/*grid_id/*id/_delete_attachment' => 'rows#delete_attachment', :as => 'delete_attachment'
+  match '/*workspace/*grid_id.xml' => 'rows#export_list', :format => :xml, :as => 'export_list_xml'
+  match '/*workspace/*grid_id/*id.xml' => 'rows#export_row', :format => :xml, :as => 'export_row_xml'
+  match '/*workspace/*grid_id/*id' => 'rows#show', :as => 'show'
   match '/history' => 'rows#history', :as => 'history'
   match '/set' => 'rows#set', :as => 'set'
   match '/unset' => 'rows#unset', :as => 'unset'
   match '/refresh' => 'rows#refresh', :as => 'refresh'
-  match ':controller/:action/:id'
-  match ':controller/:action/:id.:format'
+  devise_for :users
 end

@@ -42,7 +42,10 @@ class Column < Entity
   validates_presence_of :grid_uuid, :number, :display, :kind
   validates :number, :inclusion => { :in => 1..20 }
   validates_associated :grid
-  attr_reader :physical_column, :default_physical_column, :loaded_grid_reference
+  attr_reader :physical_column,
+              :default_physical_column,
+              :loaded_grid_reference,
+              :grid_reference_workspace
   
   def before_destroy
     log_debug "Column#before_destroy [column #{to_s}]"
@@ -90,12 +93,13 @@ class Column < Entity
           log_error "Column#load_cached_information circular reference " +
                     "for data grid '#{self.grid_reference_uuid}'"
           @loaded_grid_reference = grid
+          @grid_reference_workspace = @loaded_grid_reference.workspace_uuid
         else
           @loaded_grid_reference = 
             Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
-          if @loaded_grid_reference.present? and 
-              not @loaded_grid_reference.is_preloaded?
-            @loaded_grid_reference.load_cached_grid_structure_reference
+          if @loaded_grid_reference.present? 
+            @loaded_grid_reference.load_cached_grid_structure_reference if not @loaded_grid_reference.is_preloaded?
+            @grid_reference_workspace = @loaded_grid_reference.workspace_uuid
           end
         end
       end

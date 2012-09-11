@@ -960,11 +960,10 @@ class Grid < Entity
         attribute = phase == Grid::PHASE_CREATE ?
                       column.default_physical_column :
                       column.physical_column
-        log_debug "Grid#row_validate column=#{column.name}"
         value = row.read_value(column)
         log_debug "Grid#row_validate(phase=#{phase}) control" +
                   " column=#{column.name}" +
-                  " attribute=#{attribute} <=> #{value}"
+                  " attribute=#{attribute}<=>#{value}"
         if column.required
           log_debug "Grid#row_validate(phase=#{phase}) required"
           if value.blank?

@@ -60,7 +60,7 @@ en:
   field:
     uuid:         "Identifier"
     name:         "Name"
-    description:  "Description"
+    description:  "Text"
     active:       "Active"    
     begin_date:   "Begin date"
     end_date:     "End date"

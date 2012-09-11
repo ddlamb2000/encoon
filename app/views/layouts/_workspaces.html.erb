@@ -2,21 +2,24 @@
   <input type="checkbox" id="navigator-button" <%= session[:hide_navigator] ? '' : 'checked' %> />
   <label for="navigator-button"></label>
 </div>
-<span class="button">
-  <%= link_to_unless_current(t('general.home').html_safe, root_path) do |name| %>
-    <span class="highlighted"><%= name %></span>
+<nav>
+  <span class="button">
+    <%= link_to_unless_current(t('general.home').html_safe, root_path) do |name| %>
+      <span class="highlighted"><%= name %></span>
+    <% end %>
+  </span>
+  <% unless @workspaces.nil? %>
+    <% for row in @workspaces %>
+      | <span class="button" title="<%= row.description.html_safe %>">
+          <%= link_to_unless_current(
+                row.name.html_safe,
+                show_path(
+                  :workspace => row.uri || row.uuid,
+                  :grid_id => Workspace::ROOT_UUID,
+                  :id => row.uuid)) do |name| %>
+            <span class="highlighted"><%= name %></span>
+          <% end %>
+      </span>
+    <% end %>
   <% end %>
-</span>
-<% if @workspaces.present? %>
-  <% for row in @workspaces.row_all %>
-    | <span class="button" title="<%= row.description.html_safe %>">
-        <%= link_to_unless_current(row.name.html_safe, 
-              {:controller => '/rows', 
-               :action => 'show', 
-               :grid_id => Workspace::ROOT_UUID, 
-               :id => row.uuid }) do |name| %>
-          <span class="highlighted"><%= name %></span>
-        <% end %>
-    </span>
-  <% end %>
-<% end %>
+</nav>

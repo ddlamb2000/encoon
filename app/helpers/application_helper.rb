@@ -164,10 +164,9 @@ module ApplicationHelper
                                 :include_seconds => true),
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
-                           :controller => 'rows', 
-                           :action => 'show',
-                           :grid_id => User::ROOT_UUID,
-                           :id => who_uuid) :
+                           show_path(:workspace => "system",
+                                     :grid_id => User::ROOT_UUID,
+                                     :id => who_uuid)) :
                        t('general.unknown'))
   end
 
@@ -178,10 +177,9 @@ module ApplicationHelper
                                 :include_seconds => true),
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
-                           :controller => 'rows', 
-                           :action => 'show',
-                           :grid_id => User::ROOT_UUID,
-                           :id => who_uuid) :
+                           show_path(:workspace => "system",
+                                     :grid_id => User::ROOT_UUID,
+                                     :id => who_uuid)) :
                        t('general.unknown')) +
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
@@ -223,15 +221,11 @@ module ApplicationHelper
     previous_entity_id = grid.row_select_previous_version(entity)
     next_entity_id = grid.row_select_next_version(entity)
     if previous_entity_id > 0
-      output << "&nbsp;".html_safe + link_to(icon('greenprevious'), 
-                                    :action => 'show', 
-                                    :id => previous_entity_id)
+      output << "&nbsp;".html_safe + previous_entity_id.to_s
     end
     output << "&nbsp;".html_safe + display_information(entity) + "&nbsp;".html_safe
     if next_entity_id > 0
-      output << link_to(icon('greennext'), 
-                          :action => 'show', 
-                          :id => next_entity_id) + "&nbsp;".html_safe
+      output << next_entity_id.to_s + "&nbsp;".html_safe
     end
     output
   end

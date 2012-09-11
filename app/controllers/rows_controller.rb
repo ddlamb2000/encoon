@@ -19,7 +19,7 @@ class RowsController < ApplicationController
 
   before_filter :authenticate_user!, :only => [:create,
                                                :update,
-                                               :destrroy,
+                                               :destroy,
                                                :attach_document,
                                                :save_attachment,
                                                :delete_attachment,
@@ -28,6 +28,7 @@ class RowsController < ApplicationController
 
   # Renders the home page using hard-coded references.
   def home
+    params[:workspace] = "system"
     params[:grid_id] = Grid::HOME_GRID_UUID
     params[:id] = Grid::HOME_ROW_UUID
     show
@@ -56,6 +57,28 @@ class RowsController < ApplicationController
     redirect_to session[:last_url]
   end
 
+  def show
+    log_debug "RowsController#show"
+    @filters = params[:filters]
+    selectWorkspaceAndGrid
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    selectRow
+    @columns = @grid.column_all if @grid.present?
+    @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present?
+    @attached_grids = Grid.select_referenced_grids(@grid.uuid) if @grid.present?
+    set_page_title
+    push_history
+    render :show, :status => @status
+  end
+
+  def export_row
+    log_debug "RowsController#export_row_xml"
+    @filters = params[:filters]
+    selectWorkspaceAndGrid
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    selectRow
+  end
+
   # Renders the content of a list through an Ajax request  
   def list
     log_debug "RowsController#list"
@@ -63,29 +86,19 @@ class RowsController < ApplicationController
     @search = params[:search]
     @page = params[:page]
     selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure(@filters)
-    @table_row_count = @grid.row_count(@filters)
-    @table_rows = @grid.row_all(@filters, @search, @page, true) 
-    @table_columns = @grid.filtered_columns
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    @table_row_count = @grid.row_count(@filters) if @grid.present?
+    @table_rows = @grid.row_all(@filters, @search, @page, true) if @grid.present?
+    @table_columns = @grid.filtered_columns if @grid.present?
     render :partial => "list"
   end
   
-  def show
-    log_debug "RowsController#show"
+  def export_list
+    log_debug "RowsController#export_list_xml"
     @filters = params[:filters]
     selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure(@filters)
-    selectRow
-    if params[:format] == 'xml'
-      @rows = @grid.row_all(@filters, '', 1, true) if @row.nil?
-    else
-      @columns = @grid.column_all
-      @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present?
-      @attached_grids = Grid.select_referenced_grids(@grid.uuid)
-      set_page_title
-      push_history
-      render :show, :status => @status
-    end
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    @rows = @grid.row_all(@filters, '', 1, true) if @grid.present?
   end
 
   # Renders the details of an article through an Ajax request  
@@ -143,13 +156,16 @@ class RowsController < ApplicationController
     @row.initialization
     begin
       @row.transaction do
+        log_debug "RowsController#create: initialize transaction"
         @row.begin = param_begin_date
         @row.create_user_uuid = current_user.uuid
         @row.update_user_uuid = current_user.uuid
+        log_debug "RowsController#create: populate from parameter values"
         populate_from_params
         @grid.load_cached_grid_structure(@filters)
         if @grid.has_translation?
           LANGUAGES.each do |lang, locale|
+            log_debug "RowsController#create: locale=#{locale}"
             @row_loc = @row.new_loc
             @row_loc.uuid = @row.uuid
             @row_loc.version = @row.version
@@ -157,7 +173,9 @@ class RowsController < ApplicationController
             @row_loc.locale = locale
             @row_loc.name = params[:name]
             @row_loc.description = params[:description]
+            log_debug "RowsController#create: row_loc_validate"
             if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_CREATE)
+              log_debug "RowsController#create: create_row_loc!"
               @grid.create_row_loc!(@row_loc)
             else
               @grid.row_validate(@row, Grid::PHASE_CREATE)
@@ -166,7 +184,9 @@ class RowsController < ApplicationController
             end
           end
         end
+        log_debug "RowsController#create: row_validate"
         if @grid.row_validate(@row, Grid::PHASE_CREATE)
+          log_debug "RowsController#create: create_row!"
           @grid.create_row!(@row)
           saved = true
         else
@@ -202,36 +222,47 @@ class RowsController < ApplicationController
     selectRow
     begin
       @grid.transaction do
+        log_debug "RowsController#update initialize transaction"
         version = @row.version
         if params[:mode] == Grid::PHASE_NEW_VERSION then
+          log_debug "RowsController#update new version"
           new_version = @grid.row_max_version(@row.uuid)+1
           @row = @row.clone
           @row.version = new_version
           @row.lock_version = 0
           @row.begin = param_begin_date
           if multiple_versions_ok?
-            @row.enabled = params[:row][:enabled]
+            @row.enabled = params[:enabled]
             @row.create_user_uuid = current_user.uuid
             @row.update_user_uuid = current_user.uuid
+            log_debug "RowsController#update populate from parameter values"
             populate_from_params
+            log_debug "RowsController#update row_validate"
             if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
+              log_debug "RowsController#update create_row!"
               @grid.create_row!(@row)
               if @grid.has_translation?
                 for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
+                  log_debug "RowsController#update update row_loc values"
                   @row_loc = @row_loc.clone
                   @row_loc.version = new_version
                   @row_loc.lock_version = 0
+                  log_debug "RowsController#update locale=#{@row_loc.locale}"
                   if @row_loc.locale == I18n.locale.to_s or 
                      @row_loc.base_locale == I18n.locale.to_s
+                    log_debug "RowsController#update update row_loc values"
                     @row_loc.base_locale = I18n.locale.to_s
                     @row_loc.name = params[:name]
                     @row_loc.description = params[:description]
                   end
+                  log_debug "RowsController#update row_loc_validate"
                   if @grid.row_loc_validate(@row, 
                                             @row_loc, 
                                             Grid::PHASE_NEW_VERSION)
+                    log_debug "RowsController#update create_row_loc!"
                     @grid.create_row_loc!(@row_loc)
                   else
+                    log_debug "RowsController#update row_validate"
                     @grid.row_validate(@row, Grid::PHASE_UPDATE)
                     log_debug "RowsController#update: rollback!"
                     raise ActiveRecord::Rollback
@@ -244,24 +275,32 @@ class RowsController < ApplicationController
             end
           end
         else
+          log_debug "RowsController#update update existing version"
           @row.begin = param_begin_date
           @row.update_user_uuid = current_user.uuid
           if multiple_versions_ok?
-            @row.enabled = params[:row][:enabled]
+            log_debug "RowsController#update versions OK"
+            @row.enabled = params[:enabled]
+            log_debug "RowsController#update populate from parameter values"
             populate_from_params
+            log_debug "RowsController#update row_validate"
             if @grid.row_validate(@row, Grid::PHASE_UPDATE)
+              log_debug "RowsController#update update_row!"
               @grid.update_row!(@row)
               if @grid.has_translation?
-                for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, 
-                                                                    version)
+                for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
+                  log_debug "RowsController#update locale=#{@row_loc.locale}"
                   if @row_loc.locale == I18n.locale.to_s or 
                      @row_loc.base_locale == I18n.locale.to_s
+                    log_debug "RowsController#update update row_loc values"
                     @row_loc.base_locale = I18n.locale.to_s
                     @row_loc.name = params[:name]
                     @row_loc.description = params[:description]
+                    log_debug "RowsController#update row_loc_validate"
                     if @grid.row_loc_validate(@row, 
                                               @row_loc, 
                                               Grid::PHASE_UPDATE)
+                      log_debug "RowsController#update update_row_loc!"
                       @grid.update_row_loc!(@row_loc)
                     else
                       log_debug "RowsController#update: rollback!(3)"
@@ -278,6 +317,7 @@ class RowsController < ApplicationController
           end
         end
       end
+      log_debug "RowsController#update row_update_dates!"
       @grid.row_update_dates!(@row.uuid)
     rescue ActiveRecord::RecordInvalid => invalid
       log_debug "RowsController#update: invalid=#{invalid.inspect}"
@@ -492,6 +532,7 @@ private
   end
 
   def populate_from_params
+    return if params[:row].nil?
     for column in @grid.column_all
       log_debug "RowsController#populate_from_params" +
                 " column.physical_column=#{column.physical_column}" +
@@ -515,15 +556,12 @@ private
   end
 
   def multiple_versions_ok?
-    if params[:row][:enabled] == "0" and 
-        !@grid.row_enabled_version_exists?(@row, 
-                                           params[:mode] == 'new_version')
+    if params[:enabled] == "0" and 
+        !@grid.row_enabled_version_exists?(@row, params[:mode] == 'new_version')
       @row.errors.add_to_base(t('error.ena_record'))
       return false
-    elsif @grid.row_begin_duplicate_exists?(@row, 
-                                            params[:begin_date])
-      @row.errors.add_to_base(t('error.dup_record', 
-                                     :date => params[:begin_date]))
+    elsif @grid.row_begin_duplicate_exists?(@row, params[:begin_date])
+      @row.errors.add_to_base(t('error.dup_record', :date => params[:begin_date]))
       return false
     end
     true

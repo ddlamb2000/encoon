@@ -20,12 +20,13 @@
         <%= show_entity(
               column, 
               @row.read_value(column),
-              ((not column.grid_reference_uuid.nil? and not @row.read_value(column).nil?) ?  
-                link_to(@row.read_referenced_name(column), 
-                            :controller => :rows,
-                            :action => :show,
-                            :grid_id => column.grid_reference_uuid,
-                            :id => @row.read_value(column)) : ""),
+              ((column.grid_reference_uuid.present? and @row.read_value(column).present?) ?  
+                link_to(@row.read_referenced_name(column),
+                        :controller => :rows,
+                        :action => :show,
+                        :workspace => column.grid_reference_uuid,
+                        :grid_id => column.grid_reference_uuid,
+                        :id => @row.read_value(column)) : ""),
               @row.read_referenced_name(column),
               @row.read_referenced_description(column)
          ) %>
@@ -66,10 +67,10 @@
     </span>
     <span class="button" title="Export current data into a XML file.">
       <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-         {:grid_id => @grid.uuid, 
-          :id => @row.uuid, 
-          :action => :show, 
-          :format => :xml} %>
+         export_row_xml_path(
+            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+            :grid_id => @grid.uuid,
+            :id => @row.uuid) %>
     </span>
     <script>
       $("#row-<%= @row.uuid %>").hover(

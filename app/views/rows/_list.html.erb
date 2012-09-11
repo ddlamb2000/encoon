@@ -18,9 +18,9 @@
       <tr>
         <th class="list-header-string"><%=h @grid.name %></th>
         <% for column in @table_columns %>
-          <%= show_header_label(column.kind, 
-                                column.name.html_safe, 
-                                column.description.html_safe, 
+          <%= show_header_label(column.kind,
+                                column.name.html_safe,
+                                column.description.html_safe,
                                 true) %>
         <% end %>
       </tr>
@@ -32,19 +32,17 @@
           <td class="list-description">
             <span title="<%= trunc(row.description.html_safe) %>">
               <% if @grid.has_name? %>
-                <%= link_to @grid.row_title(row).html_safe, 
-                              :controller => :rows,
-                              :action => :show,
+                <%= link_to @grid.row_title(row).html_safe,
+                            show_path(
                               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
                               :grid_id => @grid.uuid,
-                              :id => row.uuid %>
+                              :id => row.uuid) %>
               <% else %>
                 <%= link_to icon('blueright'),
-                            :controller => :rows,
-                            :action => :show,
-                            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                            :grid_id => @grid.uuid, 
-                            :id => row.uuid %>
+                            show_path(
+                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                              :grid_id => @grid.uuid, 
+                              :id => row.uuid) %>
               <% end %>
             </span>
             <%= display_information(row) %>
@@ -74,7 +72,7 @@
                   $("#row-<%= row.uuid %>").hover(
                     function (event){
                       var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= row.uuid %>").width()/2;
-                      var top = $(this).offset().bottom;
+                      var top = $(this).offset().top+10;
                       $("#actions-<%= row.uuid %>").css({left:left, top:top}).show();
                       $(this).addClass("highlighted");
                     },
@@ -104,12 +102,13 @@
           <% init_column_index %>
           <% for column in @table_columns %>
             <%= show_entity_in_list(
-                    column, 
+                    column,
                     row.read_value(column),
                     ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
                         link_to(row.read_referenced_name(column),
                                 :controller => :rows,
                                 :action => :show,
+                                :workspace => column.grid_reference_uuid,
                                 :grid_id => column.grid_reference_uuid,
                                 :id => row.read_value(column)) :
                         ""),
@@ -164,35 +163,31 @@
           var width = $("#document").width()-35;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-          $("#row-dialog").load("<%= url_for({:controller => :rows,
-                                              :action => :edit, 
+          $("#row-dialog").load("<%= url_for(edit_path(
                                               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                                              :grid_id => @grid.uuid, 
+                                              :grid_id => @grid.uuid,
                                               :id => 0,
                                               :filters => @filters,
                                               :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                              :refresh_list => true}) %>");
+                                              :refresh_list => true)) %>");
         });
       </script>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Export rows in an .xml file." class="button">
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-              {:controller => :rows,
-               :action => :show,
-               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-               :grid_id => @grid.uuid,
-               :id => 0,
-               :filters => @filters,
-               :page => -1,
-               :format => :xml} %>
+              export_list_xml_path(
+                :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                :grid_id => @grid.uuid,
+                :filters => @filters,
+                :page => -1) %>
       </span>
     <% end %>
     <script>
       $("#row-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
           var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width()/2;
-          var top = $(this).offset().top+5;
+          var top = $(this).offset().top;
           $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top}).fadeIn(300);
           $(this).addClass("highlighted");
         },

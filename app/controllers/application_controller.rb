@@ -46,8 +46,9 @@ protected
   def load_workspaces
     log_debug "ApplicationController#load_workspaces: " + 
                 "user_uuid=#{Entity.session_user_uuid}?"
-    @workspaces = Grid.select_entity_by_uuid(Grid, Workspace::ROOT_UUID)
-    @workspaces.load_cached_grid_structure if @workspaces.present?
+    workspace_grid = Grid.select_entity_by_uuid(Grid, Workspace::ROOT_UUID)
+    workspace_grid.load_cached_grid_structure if workspace_grid.present?
+    @workspaces = workspace_grid.row_all if workspace_grid.present?
   end
 
   def push_history
