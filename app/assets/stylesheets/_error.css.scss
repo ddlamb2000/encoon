@@ -8,7 +8,11 @@
   border-color:$title-color;
 }
 #error_explanation, .error_explanation {
-  color:$title-color;
+  color:$color-highlight;
+  background-color:$title-color;
+  margin:$padding;
+  padding:$padding;
+  text-align:left;
   h2 {
     display:none;
   }
