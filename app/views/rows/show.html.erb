@@ -9,16 +9,23 @@
   <% end %>
   <% unless @attached_grids.nil? or @attached_grids.empty? %>
     <% for attached_grid in @attached_grids %>
-      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid([{:column_uuid => attached_grid.column_uuid,
-                                                                         :row_uuid => @row.uuid,
-                                                                         :row_name => @row.name}]) %>">
+      <% filters = [{:column_uuid => attached_grid.column_uuid,
+                     :row_uuid => @row.uuid,
+                     :row_name => @row.name}] %>
+      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
         <%= icon 'loading' %> <%= attached_grid.name %>
       </article>
     <% end %>
   <% end %>
   <%= render :partial => 'navigation' %>
 <% else %>
-  <div class="bigicon"><%= bigicon @page_icon %></div>
-  <h1><%= @page_title %></h1>
+  <h1>
+    <%= @page_title %>
+    <span class="detail">
+      <%= icon @page_icon %>
+      <%= @grid.to_s.html_safe if @grid.present?%>
+      <% if @workspace.present? %>(<%= @workspace.to_s.html_safe %>)<% end %>
+    </span>
+  </h1>
   <p><%= t 'error.not_found' %><p>
 <% end %>
