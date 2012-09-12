@@ -165,8 +165,8 @@ module ApplicationHelper
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
                            show_path(:workspace => "system",
-                                     :grid_id => User::ROOT_UUID,
-                                     :id => who_uuid)) :
+                                     :grid => User::ROOT_UUID,
+                                     :row => who_uuid)) :
                        t('general.unknown'))
   end
 
@@ -178,8 +178,8 @@ module ApplicationHelper
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
                            show_path(:workspace => "system",
-                                     :grid_id => User::ROOT_UUID,
-                                     :id => who_uuid)) :
+                                     :grid => User::ROOT_UUID,
+                                     :row => who_uuid)) :
                        t('general.unknown')) +
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
@@ -234,8 +234,7 @@ module ApplicationHelper
     if entity.locale != entity.base_locale
       language = LANGUAGES.find {|lang, locale| entity.base_locale == locale}
       icon('warning') + ("&nbsp;" + link_to(language[0], 
-                                           :action => 'show', 
-                                           :id => entity.uuid, 
+                                           refresh_path,
                                            :locale => language[1])).html_safe
     else
       ""

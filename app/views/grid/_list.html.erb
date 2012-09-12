@@ -35,14 +35,14 @@
                 <%= link_to @grid.row_title(row).html_safe,
                             show_path(
                               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                              :grid_id => @grid.uuid,
-                              :id => row.uuid) %>
+                              :grid => @grid.uuid,
+                              :row => row.uuid) %>
               <% else %>
                 <%= link_to icon('blueright'),
                             show_path(
                               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                              :grid_id => @grid.uuid, 
-                              :id => row.uuid) %>
+                              :grid => @grid.uuid, 
+                              :row => row.uuid) %>
               <% end %>
             </span>
             <%= display_information(row) %>
@@ -60,8 +60,8 @@
                 <span class="button" title="Delete current data.">
                   <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
                         destroy_path(
-                          :grid_id => @grid.uuid,
-                          :id => row.uuid,
+                          :grid => @grid.uuid,
+                          :row => row.uuid,
                           :inline => true), 
                         :confirm => t('message.delete', :name => row.to_s),
                         :method => :delete %>
@@ -86,8 +86,8 @@
                     $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
                     $("#row-dialog").css({left:left, top:top, width:width}).show(300);
                     $("#row-dialog").load("<%= url_for(edit_path(
-                                                        :grid_id => @grid.uuid,
-                                                        :id => row.uuid,
+                                                        :grid => @grid.uuid,
+                                                        :row => row.uuid,
                                                         :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                                         :refresh_list => true)) %>");
                   });
@@ -104,8 +104,8 @@
                         link_to(row.read_referenced_name(column),
                                 show_path(
                                   :workspace => column.grid_reference_uuid,
-                                  :grid_id => column.grid_reference_uuid,
-                                  :id => row.read_value(column))) :
+                                  :grid => column.grid_reference_uuid,
+                                  :row => row.read_value(column))) :
                         ""),
                     row.read_referenced_name(column)) %>
           <% end %>
@@ -140,10 +140,9 @@
           var width = $("#document").width()-35;
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-          $("#row-dialog").load("<%= url_for(edit_path(
+          $("#row-dialog").load("<%= url_for(new_path(
                                               :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                                              :grid_id => @grid.uuid,
-                                              :id => 0,
+                                              :grid => @grid.uuid,
                                               :filters => @filters,
                                               :container => "#row-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                               :refresh_list => true)) %>");
@@ -155,7 +154,7 @@
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
               export_list_xml_path(
                 :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                :grid_id => @grid.uuid,
+                :grid => @grid.uuid,
                 :filters => @filters,
                 :page => -1) %>
       </span>

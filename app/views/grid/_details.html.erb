@@ -55,8 +55,8 @@
             <li>
               <%= link_to information(row, true),
                           show_path(:workspace => @grid.workspace_uuid,
-                                    :grid_id => @grid.uuid,
-                                    :id => row.id) %>
+                                    :grid => @grid.uuid,
+                                    :row => row.uuid) %>
               <%= trunc(row.description).html_safe %>
               <span class="detail"><%= display_updated_date(row).html_safe %></span>
             </li>
@@ -74,8 +74,8 @@
               <li>
                 <%= link_to get_language(row.base_locale), 
                             show_path(:workspace => @grid.workspace_uuid,
-                                      :grid_id => @grid.uuid,
-                                      :id => row.id,
+                                      :grid => @grid.uuid,
+                                      :row => row.uuid,
                                       :locale => row.base_locale) %>
                 <%= row.name %>
               </li>

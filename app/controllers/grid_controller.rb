@@ -29,8 +29,8 @@ class GridController < ApplicationController
   # Renders the home page using hard-coded references.
   def home
     params[:workspace] = "system"
-    params[:grid_id] = Grid::HOME_GRID_UUID
-    params[:id] = Grid::HOME_ROW_UUID
+    params[:grid] = Grid::HOME_GRID_UUID
+    params[:row] = Grid::HOME_ROW_UUID
     show
   end
 
@@ -127,6 +127,20 @@ class GridController < ApplicationController
     render :partial => "row"
   end
 
+  def new
+    log_debug "GridController#edit"
+    @container = params[:container]
+    @refresh_list = params[:refresh_list]
+    @filters = params[:filters]
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure(@filters)
+    @filters_uuid = get_filters_uuid(@filters)
+    @row = @grid.rows.build
+    @row_loc = RowLoc.new
+    @grid.row_initialization(@row, @filters)
+    render :partial => "edit", :locals => {:new_row => true}
+  end
+
   def edit
     log_debug "GridController#edit"
     @container = params[:container]
@@ -135,15 +149,7 @@ class GridController < ApplicationController
     selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters)
     selectRow
-    if @row.nil? or @row.uuid.nil?
-      @filters_uuid = get_filters_uuid(@filters)
-      @row = @grid.rows.build
-      @row_loc = RowLoc.new
-      @grid.row_initialization(@row, @filters)
-      render :partial => "edit", :locals => {:new_row => true}
-    else
-      render :partial => "edit", :locals => {:new_row => false}
-    end
+    render :partial => "edit", :locals => {:new_row => false}
   end
 
   def create
@@ -532,13 +538,12 @@ private
   end
 
   def populate_from_params
-    return if params[:row].nil?
     for column in @grid.column_all
+      value = params["row_#{column.physical_column}"]
       log_debug "GridController#populate_from_params" +
                 " column.physical_column=#{column.physical_column}" +
-                " value=#{params[:row][column.physical_column]}"
-      @row.write_value(column,
-                       params[:row][column.physical_column])
+                " value=#{value}"
+      @row.write_value(column, value)
     end
   end
 
@@ -571,15 +576,15 @@ private
     Entity.log_debug "GridController#selectGridAndWorkspace"
     @workspace = nil
     @grid = nil
-    if params[:grid_id].present? and params[:grid_id] != "0"
-      if Entity.uuid?(params[:grid_id])
-        @grid = Grid.select_entity_by_uuid(Grid, params[:grid_id])
+    if params[:grid].present? and params[:grid] != "0"
+      if Entity.uuid?(params[:grid])
+        @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
       else
-        @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
+        @grid = Grid.select_entity_by_id(Grid, params[:grid])
       end
       if @grid.nil?
         Entity.log_debug "GridController#selectGridAndWorkspace " + 
-                         "Invalid: can't find grid #{params[:grid_id]}"
+                         "Invalid: can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
         @workspace = Workspace.select_entity_by_uuid(Workspace, @grid.workspace_uuid)
@@ -596,19 +601,19 @@ private
   def selectRow
     Entity.log_debug "GridController#selectRow"
     @row = nil
-    if @grid.present? and params[:id].present? and params[:id] != "0"
-      if Entity.uuid?(params[:id])
-        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:id])
+    if @grid.present? and params[:row].present? and params[:row] != "0"
+      if Entity.uuid?(params[:row])
+        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
         unlock_as_of_date
       else
-        @row = @row_loc = @grid.row_select_entity_by_id(params[:id])
+        @row = @row_loc = @grid.row_select_entity_by_id(params[:row])
         lock_as_of_date
       end
       if @row.nil?
-        Entity.log_debug "GridController#selectRow " + 
+        Entity.log_debug "GridController#selectRow " +
                          "Invalid: can't find row with " +
-                         "grid_id=#{params[:grid_id].to_s}" +
-                         " and id=#{params[:id].to_s}"
+                         "grid_uuid=#{@grid.uuid} " +
+                         "and uuid=#{params[:row]}"
       else
         Entity.log_debug "GridController#selectRow: row found name=#{@row.name}"
         if @grid.uuid == Workspace::ROOT_UUID 

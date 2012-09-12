@@ -8,8 +8,8 @@
                 @row_attachment,
                 :as => :row_attachment,  
                 :url => {:action => 'save_attachment',
-                         :grid_id => @grid.uuid, 
-                         :id => @row.uuid}, 
+                         :grid => @grid.uuid, 
+                         :row => @row.uuid}, 
                 :html => {:multipart => true}) do |f| %>
       <aside class="actions">
         <% if @row.has_attachment? %>
@@ -19,14 +19,14 @@
                 <tr>
                   <td class="header">
                     <img src="<%= url_for(:action => 'photo', 
-                                          :grid_id => @grid.uuid,
-                                          :id => @row.uuid,
+                                          :grid => @grid.uuid,
+                                          :row => @row.uuid,
                                           :photo_id => document.id) %>", height=12 />
                   </td>
                   <td class="string">
                     <%= document.file_name %>
                     <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-  		                       {:grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
+  		                       {:grid => @grid.uuid, :row => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
   		                       :confirm => t('message.delete',  :object => document.file_name),
   													 :method => :delete %>
   								</td>
@@ -42,7 +42,7 @@
   				        <td class="string">
   				          <%= document.file_name %>
   		              <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-  		                       {:grid_id => @grid.uuid, :id => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
+  		                       {:grid => @grid.uuid, :row => @row.uuid, :file_id => document.id, :action => "delete_attachment"}, 
   		                       :confirm => t('message.delete', :object => document.file_name),
   		                       :method => :delete %>
   				        </td>

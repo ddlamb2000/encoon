@@ -4,8 +4,8 @@
   </header> 
   <% if @grid.present? %>
     <%= form_for(@upload, 
-                 :as => :upload,  
-                 :url => {:action => 'upload', :grid_id => @grid.uuid, :id => 0}, 
+                 :as => :upload,
+                 :url => {:action => 'upload', :grid => @grid.uuid, :row => 0}, 
                  :html => {:multipart => true}) do |f| %>
       <table class="form">
         <tr>

@@ -17,25 +17,23 @@
 Encoon::Application.routes.draw do
   root :to => 'grid#home'
   devise_for :users
-  match '/*grid_id/__list' => 'grid#list', :as => 'list'
-  match '/*grid_id/__new' => 'grid#new', :as => 'new'
-  match '/*grid_id/__create' => 'grid#create', :as => 'create', :via => [:post]
-  match '/*grid_id/__import' => 'grid#import', :as => 'import'
-  match '/*grid_id/__upload' => 'grid#upload', :as => 'upload'
-  match '/*grid_id/*id/_details' => 'grid#details', :as => 'details'
-  match '/*grid_id/*id/_edit' => 'grid#edit', :as => 'edit'
-  match '/*grid_id/*id/_update' => 'grid#update', :as => 'update', :via => [:post]
-  match '/*grid_id/*id/_destroy' => 'grid#destroy', :as => 'destroy', :via => [:delete]
-  match '/*grid_id/*id/_attach_document' => 'grid#attach_document', :as => 'attach_document'
-  match '/*grid_id/*id/_save_attachment' => 'grid#save_attachment', :as => 'save_attachment'
-  match '/*grid_id/*id/_delete_attachment' => 'grid#delete_attachment', :as => 'delete_attachment'
-  match '/*workspace/*grid_id/*id.xml' => 'grid#export_row', :format => :xml, :as => 'export_row_xml'
-  match '/*workspace/*grid_id.xml' => 'grid#export_list', :format => :xml, :as => 'export_list_xml'
-  match '/*workspace/*grid_id/*id' => 'grid#show', :as => 'show'
-  match '/*workspace/*grid_id' => 'grid#show', :as => 'show'
+  match '/*grid/__list' => 'grid#list', :as => 'list'
+  match '/*grid/__new' => 'grid#new', :as => 'new'
+  match '/*grid/__create' => 'grid#create', :as => 'create', :via => [:post]
+  match '/*grid/__import' => 'grid#import', :as => 'import'
+  match '/*grid/__upload' => 'grid#upload', :as => 'upload'
+  match '/*grid/*row/__details' => 'grid#details', :as => 'details'
+  match '/*grid/*row/__edit' => 'grid#edit', :as => 'edit'
+  match '/*grid/*row/__update' => 'grid#update', :as => 'update', :via => [:post]
+  match '/*grid/*row/__destroy' => 'grid#destroy', :as => 'destroy', :via => [:delete]
+  match '/*grid/*row/__attach_document' => 'grid#attach_document', :as => 'attach_document'
+  match '/*grid/*row/__save_attachment' => 'grid#save_attachment', :as => 'save_attachment'
+  match '/*grid/*row/__delete_attachment' => 'grid#delete_attachment', :as => 'delete_attachment'
+  match '/*workspace/*grid/*row.xml' => 'grid#export_row', :format => :xml, :as => 'export_row_xml'
+  match '/*workspace/*grid/*row' => 'grid#show', :as => 'show'
+  match '/*workspace/*grid.xml' => 'grid#export_list', :format => :xml, :as => 'export_list_xml'
   match '/__history' => 'grid#history', :as => 'history'
   match '/__set' => 'grid#set', :as => 'set'
   match '/__unset' => 'grid#unset', :as => 'unset'
   match '/__refresh' => 'grid#refresh', :as => 'refresh'
-  match '/*workspace' => 'grid#show', :as => 'show'
 end

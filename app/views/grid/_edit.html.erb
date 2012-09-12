@@ -3,8 +3,8 @@
   <%= @grid.to_s.html_safe %>
 </header> 
 <%= form_tag(new_row ?
-              create_path(:grid_id => @grid.uuid) :
-              update_path(:grid_id => @grid.uuid, :id => @row.uuid),
+              create_path(:grid => @grid.uuid) :
+              update_path(:grid => @grid.uuid, :row => @row.uuid),
              :remote => true,
              :id => 'edit-inline-form') do |f| %>
   <%= hidden_field_tag "container", @container %>

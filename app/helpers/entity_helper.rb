@@ -118,7 +118,7 @@ module EntityHelper
                                value,
                                {:size => "70x1",
                                 :id => "row_#{attribute}",
-                                :name => "row[#{attribute}]"}),
+                                :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -128,7 +128,7 @@ module EntityHelper
                                  value,
                                  {:size => "10x1",
                                   :id => "row_#{attribute}",
-                                  :name => "row[#{attribute}]"}),
+                                  :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -138,7 +138,7 @@ module EntityHelper
                                value,
                                {:size => "70x10",
                                 :id => "row_#{attribute}",
-                                :name => "row[#{attribute}]"}),
+                                :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -149,7 +149,7 @@ module EntityHelper
                               value,
                               {:size => "70x10",
                                :id => "row_#{attribute}",
-                               :name => "row[#{attribute}]"}),
+                               :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -160,7 +160,7 @@ module EntityHelper
                                {:size => "10x1",
                                 :type => "date",
                                 :id => "row_#{attribute}",
-                                :name => "row[#{attribute}]"}),
+                                :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -170,7 +170,7 @@ module EntityHelper
                                    value,
                                    {:size => "70x1",
                                     :id => "row_#{attribute}",
-                                    :name => "row[#{attribute}]"}),
+                                    :name => "row_#{attribute}"}),
                 :class => "string")
   end
 
@@ -182,7 +182,7 @@ module EntityHelper
                              options_from_collection_for_select(collection, :uuid, :title, value),
                              {:include_blank => include_blanks,
                               :id => "row_#{attribute}",
-                              :name => "row[#{attribute}]"}),
+                              :name => "row_#{attribute}"}),
                   :class => "string")
     end
   end
