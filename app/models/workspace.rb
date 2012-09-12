@@ -22,7 +22,7 @@ class Workspace < Entity
 
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
-  
+
   def before_destroy
     log_debug "Workspace#before_destroy"
     super
@@ -74,7 +74,7 @@ class Workspace < Entity
   end
   
   def self.all_versions(collection, uuid)
-    collection.find(:all, 
+    collection.find(:all,
                     :joins => :workspace_locs,
                     :select => self.all_select_columns,
                     :conditions => 
@@ -86,14 +86,16 @@ class Workspace < Entity
                     :order => "workspaces.begin")
   end
   
+  # Selects the workspaces the current user can access to.
   def self.user_workspaces(collection)
-    collection.find(:all, 
+    collection.find(:all,
                     :joins => :workspace_locs,
                     :select => self.all_select_columns,
-                    :conditions => 
-                      ["workspace_locs.version = workspaces.version " + 
+                    :conditions =>
+                      ["workspace_locs.version = workspaces.version " +
+                       " AND " + as_of_date_clause("workspaces") +
                        " AND " + Grid::workspace_security_clause("workspaces") +
-                       " AND " + locale_clause("workspace_locs")], 
+                       " AND " + locale_clause("workspace_locs")],
                     :order => "workspace_locs.name")
   end
   

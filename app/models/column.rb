@@ -44,8 +44,8 @@ class Column < Entity
   validates_associated :grid
   attr_reader :physical_column,
               :default_physical_column,
-              :loaded_grid_reference,
-              :grid_reference_workspace
+              :grid_reference,
+              :workspace_reference
   
   def before_destroy
     log_debug "Column#before_destroy [column #{to_s}]"
@@ -89,29 +89,30 @@ class Column < Entity
       if self.kind == REFERENCE and 
          self.grid_reference_uuid.present?
         # this is used to avoid circular references
+        log_debug "Column#load_cached_information reference " +
+                  "grid_reference_uuid=#{self.grid_reference_uuid}"
         if self.grid_reference_uuid == grid_uuid
           log_error "Column#load_cached_information circular reference " +
                     "for data grid '#{self.grid_reference_uuid}'"
-          @loaded_grid_reference = grid
-          @grid_reference_workspace = @loaded_grid_reference.workspace_uuid
+          @grid_reference = grid
+          @workspace_reference = 
+            Workspace.select_entity_by_uuid(Workspace,
+                                            grid.workspace_uuid) if grid.present?
         else
-          @loaded_grid_reference = 
+          @grid_reference = 
             Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
-          if @loaded_grid_reference.present? 
-            @loaded_grid_reference.load_cached_grid_structure_reference if not @loaded_grid_reference.is_preloaded?
-            @grid_reference_workspace = @loaded_grid_reference.workspace_uuid
+          log_debug "Column#load_cached_information " +
+                    "@grid_reference=#{@grid_reference.to_s}"
+          if @grid_reference.present? 
+            @grid_reference.load_cached_grid_structure_reference if not @grid_reference.is_preloaded?
+            @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
+                                                                   @grid_reference.workspace_uuid)
           end
         end
       end
     end
   end
   
-  # Returns the name of the grid used as a reference
-  def grid_reference_name
-    grid = Grid.select_entity_by_uuid(Grid, grid_reference_uuid)
-    grid.present? ? grid.reference_name : ""
-  end
-
   def self.all_locales(collection, uuid, version)
     collection.find(:all, 
                     :select => self.loc_select_columns,

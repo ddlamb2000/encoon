@@ -52,7 +52,8 @@ class Grid < Entity
   # definition, table mapping).
   def load_cached_grid_structure(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
-              "filters=#{filters.inspect}) [grid #{inspect}]"
+              "filters=#{filters.inspect},"+
+              "skip_mapping=#{skip_mapping}) [grid #{to_s}]"
     load_workspace
     load_cached_mapping
     load_cached_columns
@@ -60,13 +61,12 @@ class Grid < Entity
     load_security
   end
   
-  def load_cached_grid_structure_reference(filters=nil)
-    log_debug "Grid#load_cached_grid_structure_reference(" +
-              "filters=#{filters.inspect}) [grid #{to_s}]"
+  def load_cached_grid_structure_reference
+    log_debug "Grid#load_cached_grid_structure_reference [grid #{to_s}]"
     load_workspace
     load_cached_mapping
     load_cached_columns
-    load_cached_column_information(filters, true)
+    load_cached_column_information(nil, true)
     load_security
   end
   
@@ -560,19 +560,20 @@ class Grid < Entity
   end
 
   def row_title(row, full=false)
-    summary = (row.present? and self.has_name?) ? row.name : ""  
+    log_debug "Grid#row_title(row=#{row}) [grid #{to_s}]"
+    summary = (row.present? and self.has_name?) ? row.name : ""
     if not full and row.present?
       return summary if summary.length > 0
       count = 0
-      load_cached_grid_structure if not is_preloaded?
+      load_cached_grid_structure_reference if not is_preloaded?
       @columns.each do |column|
-        if ([Column::REFERENCE, 
-             Column::STRING, 
-             Column::TEXT].find {|kind| kind == column.kind}).present?
+        if [Column::REFERENCE, 
+            Column::STRING, 
+            Column::TEXT].include?(column.kind)
           value = row.read_referenced_name(column)
           if value.length > 0
             summary = summary + " | " if count > 0
-            summary = summary + row.read_referenced_name(column)
+            summary = summary + value
             count += 1
           end
         end
@@ -737,11 +738,6 @@ class Grid < Entity
     create_missing_loc_base!(Grid.all_locales(grid_locs, 
                                               self.uuid, 
                                               self.version))
-  end
-
-  def grid_reference_name(grid_reference_uuid)
-    grid = Grid.select_entity_by_uuid(Grid, grid_reference_uuid)
-    grid.present? ? grid.name : ""
   end
 
   def row_export(xml, row)
@@ -999,6 +995,11 @@ class Grid < Entity
     validated
   end
   
+  def load_workspace
+    log_debug "Grid#load_workspace [grid #{to_s}]"
+    self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
+  end
+  
 private
 
   def quote(sql)
@@ -1162,30 +1163,25 @@ private
   def load_cached_column_information(filters, 
                                      skip_reference=false, 
                                      skip_mapping=false)
-    log_debug "Grid#load_cached_column_information [grid #{to_s}]"
+    log_debug "Grid#load_cached_column_information " +
+              "filters=#{filters},"+
+              "skip_reference=#{skip_reference}," +
+              "skip_mapping=#{skip_mapping}) [grid #{to_s}]"
     column_all.each do |column|
-      if not column.is_preloaded?
+      unless column.is_preloaded?
         log_debug "Grid#load_cached_column_information column=#{column.name}"
         column.load_cached_information(self.uuid, 
                                        self, 
                                        skip_reference, 
                                        skip_mapping)
         log_debug "Grid#load_cached_column_information column.physical_column=#{column.physical_column}"
-        if filters.present?
+        unless filters.nil?
           filters.each do |filter|
-            column_uuid = filter[:column_uuid]
-            if column_uuid == column.uuid
-              @columns.delete(column)
-            end
+            @columns.delete(column) if filter[:column_uuid] == column.uuid
           end
         end
       end
     end
-  end
-  
-  def load_workspace
-    log_debug "Grid#load_workspace [grid #{to_s}]"
-    self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
   end
   
   def load_security_workspace(uuid)

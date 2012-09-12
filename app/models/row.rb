@@ -51,9 +51,7 @@ class Row < Entity
   def title
     attribute_present?(:name) ? 
       read_attribute(:name) : 
-      (grid.present? ? 
-        grid.row_title(self) : 
-        "")
+      (grid.present? ? grid.row_title(self) : "")
   end
 
   def description
@@ -75,8 +73,9 @@ class Row < Entity
          column.grid_reference_uuid.present?
         log_debug "Row#read_referenced_name value=#{value}, " +
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
-        grid = column.loaded_grid_reference
+        grid = column.grid_reference
         if grid.present?
+          log_debug "Row#read_referenced_name grid=#{grid.to_s}"
           grid.load_cached_grid_structure_reference if not grid.is_preloaded?
           return grid.select_reference_row_name(value)  
         end
@@ -94,7 +93,7 @@ class Row < Entity
       if value.present? 
         log_debug "Row#read_referenced_description value=#{value}, " +
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
-        grid = column.loaded_grid_reference
+        grid = column.grid_reference
         if grid.present?
           grid.load_cached_grid_structure_reference if not grid.is_preloaded?
           return grid.select_reference_row_description(value)  

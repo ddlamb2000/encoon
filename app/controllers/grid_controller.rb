@@ -611,7 +611,7 @@ private
                          "Invalid: can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
-        @workspace = Workspace.select_entity_by_uuid(Workspace, @grid.workspace_uuid)
+        @workspace = @grid.load_workspace
         if @workspace.nil?
           Entity.log_debug "GridController#selectGridAndWorkspace " + 
                            "Invalid: can't find workspace #{@grid.workspace_uuid}"

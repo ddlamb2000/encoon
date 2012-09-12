@@ -2,8 +2,8 @@
   <h2>
     <%= @grid.name.html_safe %>
     <span class="detail">
+      <%= @workspace.to_s.html_safe %> »
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      (<%= @workspace.to_s.html_safe %>)
       <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
         <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
       <% end %>
@@ -34,15 +34,15 @@
               <% if @grid.has_name? %>
                 <%= link_to @grid.row_title(row).html_safe,
                             show_path(
-                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                              :grid => @grid.uuid,
-                              :row => row.uuid) %>
+                              :workspace => @grid.workspace.display_uri,
+                              :grid => @grid.display_uri,
+                              :row => row.display_uri) %>
               <% else %>
                 <%= link_to icon('blueright'),
                             show_path(
-                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                              :grid => @grid.uuid, 
-                              :row => row.uuid) %>
+                              :workspace => @grid.workspace.display_uri,
+                              :grid => @grid.display_uri,
+                              :row => row.display_uri) %>
               <% end %>
             </span>
             <%= display_information(row) %>
@@ -100,11 +100,13 @@
             <%= show_entity_in_list(
                     column,
                     row.read_value(column),
-                    ((column.grid_reference_uuid.present? and row.read_value(column).present?) ?
+                    ((column.workspace_reference.present? and
+                      column.grid_reference.present? and
+                      row.read_value(column).present?) ?
                         link_to(row.read_referenced_name(column),
                                 show_path(
-                                  :workspace => column.grid_reference_uuid,
-                                  :grid => column.grid_reference_uuid,
+                                  :workspace => column.workspace_reference.display_uri,
+                                  :grid => column.grid_reference.display_uri,
                                   :row => row.read_value(column))) :
                         ""),
                     row.read_referenced_name(column)) %>
@@ -141,7 +143,7 @@
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
           $("#row-dialog").load("<%= url_for(new_path(
-                                              :workspace => @grid.workspace.uri || @grid.workspace_uuid,
+                                              :workspace => @grid.workspace_uuid,
                                               :grid => @grid.uuid,
                                               :filters => @filters,
                                               :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
@@ -153,8 +155,8 @@
       <span title="Export rows in an .xml file." class="button">
         <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
               export_list_xml_path(
-                :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-                :grid => @grid.uuid,
+                :workspace => @grid.workspace.display_uri,
+                :grid => @grid.display_uri,
                 :filters => @filters,
                 :page => -1) %>
       </span>

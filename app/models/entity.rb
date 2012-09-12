@@ -136,6 +136,12 @@ class Entity < ActiveRecord::Base
     attribute_present?(:description) ? read_attribute(:description) : ""
   end
 
+  # Returns the URI that should be used in URLs.  
+  def display_uri
+    uri = attribute_present?(:uri) ? read_attribute(:uri) : nil
+    uri || self.uuid
+  end
+  
   # Indicates if the given uuid is a valid uuid
   def self.uuid?(uuid)
     uuid.present? and uuid.length == 36

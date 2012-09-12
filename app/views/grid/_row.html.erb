@@ -3,8 +3,8 @@
     <%= @row.to_s.html_safe %>
     <span class="detail">
       <%= icon @page_icon %>
+      <%= @workspace.to_s.html_safe %> »
       <%= @grid.to_s.html_safe %>
-      (<%= @workspace.to_s.html_safe %>)
       <% if not @grid.can_update?(@row) %>
         <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
       <% end %>
@@ -35,11 +35,13 @@
         <%= show_entity(
               column, 
               @row.read_value(column),
-              ((column.grid_reference_uuid.present? and @row.read_value(column).present?) ?  
+              ((column.workspace_reference.present? and
+                column.grid_reference.present? and
+                @row.read_value(column).present?) ?  
                 link_to(@row.read_referenced_name(column),
                         show_path(
-                          :workspace => column.grid_reference_uuid,
-                          :grid => column.grid_reference_uuid,
+                          :workspace => column.workspace_reference.display_uri,
+                          :grid => column.grid_reference.display_uri,
                           :row => @row.read_value(column))) : ""),
               @row.read_referenced_name(column),
               @row.read_referenced_description(column)
@@ -81,9 +83,9 @@
     <span class="button" title="Export current data into a XML file.">
       <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
          export_row_xml_path(
-            :workspace => @grid.workspace.uri || @grid.workspace_uuid,
-            :grid => @grid.uuid,
-            :row => @row.uuid) %>
+            :workspace => @grid.workspace.display_uri,
+            :grid => @grid.display_uri,
+            :row => @row.display_uri) %>
     </span>
     <script>
       $("#row-<%= @row.uuid %>").hover(
