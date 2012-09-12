@@ -10,7 +10,7 @@
     @include border-radius;
     &[type=text], &[type=email] {
       vertical-align:middle;
-      width:auto;        
+      width:auto;
       border-spacing:0;
     }
   }
@@ -114,8 +114,8 @@
 .float-actions {
   position:absolute;
   z-index:10;
-  opacity:0.95;
-  filter:alpha(opacity=95);
+  opacity:0.8;
+  filter:alpha(opacity=80);
 }
 .action-header {
   color:$color-highlight;
@@ -137,7 +137,7 @@
   border:0;
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
   background-color:$background-color-navigator-section;
-  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px);
   @include border-radius;
   opacity:0.95;
   filter:alpha(opacity=95);
