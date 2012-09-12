@@ -14,7 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # 
 # See doc/COPYRIGHT.rdoc for more details.
-class RowsController < ApplicationController
+class GridController < ApplicationController
   before_filter :load_workspaces, :only => [:home, :show, :refresh]
 
   before_filter :authenticate_user!, :only => [:create,
@@ -52,15 +52,15 @@ class RowsController < ApplicationController
   end
 
   def refresh
-    log_debug "RowsController#refresh date=#{params[:home][:session_date]}"
+    log_debug "GridController#refresh date=#{params[:home][:session_date]}"
     session[:as_of_date] = Date.strptime(params[:home][:session_date], t('datepicker.decode'))
     redirect_to session[:last_url]
   end
 
   def show
-    log_debug "RowsController#show"
+    log_debug "GridController#show"
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
     @columns = @grid.column_all if @grid.present?
@@ -72,20 +72,20 @@ class RowsController < ApplicationController
   end
 
   def export_row
-    log_debug "RowsController#export_row_xml"
+    log_debug "GridController#export_row_xml"
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
   end
 
   # Renders the content of a list through an Ajax request  
   def list
-    log_debug "RowsController#list"
+    log_debug "GridController#list"
     @filters = params[:filters]
     @search = params[:search]
     @page = params[:page]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     @table_row_count = @grid.row_count(@filters) if @grid.present?
     @table_rows = @grid.row_all(@filters, @search, @page, true) if @grid.present?
@@ -94,17 +94,17 @@ class RowsController < ApplicationController
   end
   
   def export_list
-    log_debug "RowsController#export_list_xml"
+    log_debug "GridController#export_list_xml"
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     @rows = @grid.row_all(@filters, '', 1, true) if @grid.present?
   end
 
   # Renders the details of an article through an Ajax request  
   def details
-    log_debug "RowsController#details"
-    selectWorkspaceAndGrid
+    log_debug "GridController#details"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     if @grid.present? and @row.present?
@@ -118,8 +118,8 @@ class RowsController < ApplicationController
 
   # Renders the details of an article through an Ajax request  
   def row
-    log_debug "RowsController#row"
-    selectWorkspaceAndGrid
+    log_debug "GridController#row"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     @columns = @grid.column_all
@@ -128,11 +128,11 @@ class RowsController < ApplicationController
   end
 
   def edit
-    log_debug "RowsController#edit"
+    log_debug "GridController#edit"
     @container = params[:container]
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters)
     selectRow
     if @row.nil? or @row.uuid.nil?
@@ -147,25 +147,25 @@ class RowsController < ApplicationController
   end
 
   def create
-    log_debug "RowsController#create"
+    log_debug "GridController#create"
     saved = false
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters, true)
     @row = @grid.rows.new
     @row.initialization
     begin
       @row.transaction do
-        log_debug "RowsController#create: initialize transaction"
+        log_debug "GridController#create: initialize transaction"
         @row.begin = param_begin_date
         @row.create_user_uuid = current_user.uuid
         @row.update_user_uuid = current_user.uuid
-        log_debug "RowsController#create: populate from parameter values"
+        log_debug "GridController#create: populate from parameter values"
         populate_from_params
         @grid.load_cached_grid_structure(@filters)
         if @grid.has_translation?
           LANGUAGES.each do |lang, locale|
-            log_debug "RowsController#create: locale=#{locale}"
+            log_debug "GridController#create: locale=#{locale}"
             @row_loc = @row.new_loc
             @row_loc.uuid = @row.uuid
             @row_loc.version = @row.version
@@ -173,32 +173,32 @@ class RowsController < ApplicationController
             @row_loc.locale = locale
             @row_loc.name = params[:name]
             @row_loc.description = params[:description]
-            log_debug "RowsController#create: row_loc_validate"
+            log_debug "GridController#create: row_loc_validate"
             if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_CREATE)
-              log_debug "RowsController#create: create_row_loc!"
+              log_debug "GridController#create: create_row_loc!"
               @grid.create_row_loc!(@row_loc)
             else
               @grid.row_validate(@row, Grid::PHASE_CREATE)
-              log_debug "RowsController#create: rollback!"
+              log_debug "GridController#create: rollback!"
               raise ActiveRecord::Rollback
             end
           end
         end
-        log_debug "RowsController#create: row_validate"
+        log_debug "GridController#create: row_validate"
         if @grid.row_validate(@row, Grid::PHASE_CREATE)
-          log_debug "RowsController#create: create_row!"
+          log_debug "GridController#create: create_row!"
           @grid.create_row!(@row)
           saved = true
         else
-          log_debug "RowsController#create: rollback!(2)"
+          log_debug "GridController#create: rollback!(2)"
           raise ActiveRecord::Rollback
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowsController#create: invalid=#{invalid.inspect}"
+      log_debug "GridController#create: invalid=#{invalid.inspect}"
       saved = false
     rescue Exception => invalid
-      log_error "RowsController#create", invalid
+      log_error "GridController#create", invalid
       saved = false
     end
     change_as_of_date(@row)
@@ -206,26 +206,26 @@ class RowsController < ApplicationController
       if saved
         format.html { list }
       else
-        log_debug "RowsController#create: error, @row.errors=#{@row.errors.inspect}"
+        log_debug "GridController#create: error, @row.errors=#{@row.errors.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end
   
   def update
-    log_debug "RowsController#update"
+    log_debug "GridController#update"
     saved = false
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure(@filters)
     selectRow
     begin
       @grid.transaction do
-        log_debug "RowsController#update initialize transaction"
+        log_debug "GridController#update initialize transaction"
         version = @row.version
         if params[:mode] == Grid::PHASE_NEW_VERSION then
-          log_debug "RowsController#update new version"
+          log_debug "GridController#update new version"
           new_version = @grid.row_max_version(@row.uuid)+1
           @row = @row.clone
           @row.version = new_version
@@ -235,36 +235,36 @@ class RowsController < ApplicationController
             @row.enabled = params[:enabled]
             @row.create_user_uuid = current_user.uuid
             @row.update_user_uuid = current_user.uuid
-            log_debug "RowsController#update populate from parameter values"
+            log_debug "GridController#update populate from parameter values"
             populate_from_params
-            log_debug "RowsController#update row_validate"
+            log_debug "GridController#update row_validate"
             if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
-              log_debug "RowsController#update create_row!"
+              log_debug "GridController#update create_row!"
               @grid.create_row!(@row)
               if @grid.has_translation?
                 for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
-                  log_debug "RowsController#update update row_loc values"
+                  log_debug "GridController#update update row_loc values"
                   @row_loc = @row_loc.clone
                   @row_loc.version = new_version
                   @row_loc.lock_version = 0
-                  log_debug "RowsController#update locale=#{@row_loc.locale}"
+                  log_debug "GridController#update locale=#{@row_loc.locale}"
                   if @row_loc.locale == I18n.locale.to_s or 
                      @row_loc.base_locale == I18n.locale.to_s
-                    log_debug "RowsController#update update row_loc values"
+                    log_debug "GridController#update update row_loc values"
                     @row_loc.base_locale = I18n.locale.to_s
                     @row_loc.name = params[:name]
                     @row_loc.description = params[:description]
                   end
-                  log_debug "RowsController#update row_loc_validate"
+                  log_debug "GridController#update row_loc_validate"
                   if @grid.row_loc_validate(@row, 
                                             @row_loc, 
                                             Grid::PHASE_NEW_VERSION)
-                    log_debug "RowsController#update create_row_loc!"
+                    log_debug "GridController#update create_row_loc!"
                     @grid.create_row_loc!(@row_loc)
                   else
-                    log_debug "RowsController#update row_validate"
+                    log_debug "GridController#update row_validate"
                     @grid.row_validate(@row, Grid::PHASE_UPDATE)
-                    log_debug "RowsController#update: rollback!"
+                    log_debug "GridController#update: rollback!"
                     raise ActiveRecord::Rollback
                   end
                 end
@@ -275,35 +275,35 @@ class RowsController < ApplicationController
             end
           end
         else
-          log_debug "RowsController#update update existing version"
+          log_debug "GridController#update update existing version"
           @row.begin = param_begin_date
           @row.update_user_uuid = current_user.uuid
           if multiple_versions_ok?
-            log_debug "RowsController#update versions OK"
+            log_debug "GridController#update versions OK"
             @row.enabled = params[:enabled]
-            log_debug "RowsController#update populate from parameter values"
+            log_debug "GridController#update populate from parameter values"
             populate_from_params
-            log_debug "RowsController#update row_validate"
+            log_debug "GridController#update row_validate"
             if @grid.row_validate(@row, Grid::PHASE_UPDATE)
-              log_debug "RowsController#update update_row!"
+              log_debug "GridController#update update_row!"
               @grid.update_row!(@row)
               if @grid.has_translation?
                 for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
-                  log_debug "RowsController#update locale=#{@row_loc.locale}"
+                  log_debug "GridController#update locale=#{@row_loc.locale}"
                   if @row_loc.locale == I18n.locale.to_s or 
                      @row_loc.base_locale == I18n.locale.to_s
-                    log_debug "RowsController#update update row_loc values"
+                    log_debug "GridController#update update row_loc values"
                     @row_loc.base_locale = I18n.locale.to_s
                     @row_loc.name = params[:name]
                     @row_loc.description = params[:description]
-                    log_debug "RowsController#update row_loc_validate"
+                    log_debug "GridController#update row_loc_validate"
                     if @grid.row_loc_validate(@row, 
                                               @row_loc, 
                                               Grid::PHASE_UPDATE)
-                      log_debug "RowsController#update update_row_loc!"
+                      log_debug "GridController#update update_row_loc!"
                       @grid.update_row_loc!(@row_loc)
                     else
-                      log_debug "RowsController#update: rollback!(3)"
+                      log_debug "GridController#update: rollback!(3)"
                       raise ActiveRecord::Rollback
                     end
                   end
@@ -311,19 +311,19 @@ class RowsController < ApplicationController
               end
               saved = true
             else
-              log_debug "RowsController#update: rollback!(4)"
+              log_debug "GridController#update: rollback!(4)"
               raise ActiveRecord::Rollback
             end
           end
         end
       end
-      log_debug "RowsController#update row_update_dates!"
+      log_debug "GridController#update row_update_dates!"
       @grid.row_update_dates!(@row.uuid)
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowsController#update: invalid=#{invalid.inspect}"
+      log_debug "GridController#update: invalid=#{invalid.inspect}"
       saved = false
     rescue Exception => invalid
-      log_error "RowsController#update", invalid
+      log_error "GridController#update", invalid
       saved = false
     end
     change_as_of_date(@row)
@@ -331,15 +331,15 @@ class RowsController < ApplicationController
       if saved
         format.html { @refresh_list ? list : row }
       else
-        log_debug "RowsController#update: error, params=#{params.inspect}"
+        log_debug "GridController#update: error, params=#{params.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end
 
   def destroy
-    log_debug "RowsController#destroy: params=#{params.inspect}"
-    selectWorkspaceAndGrid
+    log_debug "GridController#destroy: params=#{params.inspect}"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -360,10 +360,10 @@ class RowsController < ApplicationController
         end
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowsController#destroy: invalid=#{invalid.inspect}"
+      log_debug "GridController#destroy: invalid=#{invalid.inspect}"
       saved = false
     rescue Exception => invalid
-      log_error "RowsController#destroy", invalid
+      log_error "GridController#destroy", invalid
       saved = false
     end
     respond_to do |format|
@@ -372,15 +372,15 @@ class RowsController < ApplicationController
                                 :type => @grid, :name => name)
         format.html { redirect_to session[:last_url] }
       else
-        log_debug "RowsController#destroy: error, params=#{params.inspect}"
+        log_debug "GridController#destroy: error, params=#{params.inspect}"
         format.html { render :action => :show }
       end
     end
   end
 
   def attach_document
-    log_debug "RowsController#attach_document"
-    selectWorkspaceAndGrid
+    log_debug "GridController#attach_document"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.new
@@ -388,8 +388,8 @@ class RowsController < ApplicationController
   end
 
   def save_attachment
-    log_debug "RowsController#save_attachment"
-    selectWorkspaceAndGrid
+    log_debug "GridController#save_attachment"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -402,10 +402,10 @@ class RowsController < ApplicationController
         saved = true
       end
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowsController#save_attachment: invalid=#{invalid.inspect}"
+      log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
       saved = false
     rescue Exception => invalid
-      log_error "RowsController#save_attachment", invalid
+      log_error "GridController#save_attachment", invalid
       saved = false
     end
     respond_to do |format|
@@ -415,15 +415,15 @@ class RowsController < ApplicationController
                                 :type => @grid, :name => name)
         format.html { redirect_to session[:last_url] }
       else
-        log_debug "RowsController#save_document: error"
+        log_debug "GridController#save_document: error"
         format.html { render :action => "attach_document" }
       end
     end
   end
 
   def photo
-    log_debug "RowsController#photo"
-    selectWorkspaceAndGrid
+    log_debug "GridController#photo"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     if params[:photo_id].present?
@@ -437,8 +437,8 @@ class RowsController < ApplicationController
   end
 
   def file
-    log_debug "RowsController#file"
-    selectWorkspaceAndGrid
+    log_debug "GridController#file"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     @row_attachment = @row.row_attachments.find(params[:file_id])
@@ -450,8 +450,8 @@ class RowsController < ApplicationController
   end
 
   def delete_attachment
-    log_debug "RowsController#delete_attachment"
-    selectWorkspaceAndGrid
+    log_debug "GridController#delete_attachment"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
     saved = false
@@ -465,10 +465,10 @@ class RowsController < ApplicationController
       end
       saved = true
     rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "RowsController#delete_attachment: invalid=#{invalid.inspect}"
+      log_debug "GridController#delete_attachment: invalid=#{invalid.inspect}"
       saved = false
     rescue Exception => invalid
-      log_error "RowsController#delete_attachment", invalid
+      log_error "GridController#delete_attachment", invalid
       saved = false
     end
     if saved
@@ -482,8 +482,8 @@ class RowsController < ApplicationController
   end
 
   def import
-    log_debug "RowsController#import"
-    selectWorkspaceAndGrid
+    log_debug "GridController#import"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     @page_title = "Import Data"
     @page_icon = "import"
@@ -491,8 +491,8 @@ class RowsController < ApplicationController
   end
   
   def upload
-    log_debug "RowsController#upload"
-    selectWorkspaceAndGrid
+    log_debug "GridController#upload"
+    selectGridAndWorkspace
     @grid.load_cached_grid_structure
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
@@ -534,7 +534,7 @@ private
   def populate_from_params
     return if params[:row].nil?
     for column in @grid.column_all
-      log_debug "RowsController#populate_from_params" +
+      log_debug "GridController#populate_from_params" +
                 " column.physical_column=#{column.physical_column}" +
                 " value=#{params[:row][column.physical_column]}"
       @row.write_value(column,
@@ -567,8 +567,8 @@ private
     true
   end
   
-  def selectWorkspaceAndGrid
-    Entity.log_debug "RowsController#selectWorkspaceAndGrid"
+  def selectGridAndWorkspace
+    Entity.log_debug "GridController#selectGridAndWorkspace"
     @workspace = nil
     @grid = nil
     if params[:grid_id].present? and params[:grid_id] != "0"
@@ -578,23 +578,23 @@ private
         @grid = Grid.select_entity_by_id(Grid, params[:grid_id])
       end
       if @grid.nil?
-        Entity.log_debug "RowsController#selectWorkspaceAndGrid " + 
+        Entity.log_debug "GridController#selectGridAndWorkspace " + 
                          "Invalid: can't find grid #{params[:grid_id]}"
       else
-        Entity.log_debug "RowsController#selectWorkspaceAndGrid: grid found name=#{@grid.name}"
+        Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
         @workspace = Workspace.select_entity_by_uuid(Workspace, @grid.workspace_uuid)
         if @workspace.nil?
-          Entity.log_debug "RowsController#selectWorkspaceAndGrid " + 
+          Entity.log_debug "GridController#selectGridAndWorkspace " + 
                            "Invalid: can't find workspace #{@grid.workspace_uuid}"
         else
-          Entity.log_debug "RowsController#selectWorkspaceAndGrid: workspace found name=#{@workspace.name}"
+          Entity.log_debug "GridController#selectGridAndWorkspace: workspace found name=#{@workspace.name}"
         end
       end
     end
   end
 
   def selectRow
-    Entity.log_debug "RowsController#selectRow"
+    Entity.log_debug "GridController#selectRow"
     @row = nil
     if @grid.present? and params[:id].present? and params[:id] != "0"
       if Entity.uuid?(params[:id])
@@ -605,12 +605,12 @@ private
         lock_as_of_date
       end
       if @row.nil?
-        Entity.log_debug "RowsController#selectRow " + 
+        Entity.log_debug "GridController#selectRow " + 
                          "Invalid: can't find row with " +
                          "grid_id=#{params[:grid_id].to_s}" +
                          " and id=#{params[:id].to_s}"
       else
-        Entity.log_debug "RowsController#selectRow: row found name=#{@row.name}"
+        Entity.log_debug "GridController#selectRow: row found name=#{@row.name}"
         if @grid.uuid == Workspace::ROOT_UUID 
           @workspace = Workspace.select_entity_by_uuid(Workspace, @row.uuid)
         elsif @grid.uuid == Grid::ROOT_UUID 
