@@ -3,7 +3,7 @@
     <%= render :partial => "row" %>
   </article>
   <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
-    <article id="row-<%= @grid_cast.uuid + "-" %>">
+    <article id="grid-<%= @grid_cast.uuid + "-" %>">
       <%= icon 'loading' %> <%= @grid_cast.name %>
     </article>
   <% end %>
@@ -12,7 +12,7 @@
       <% filters = [{:column_uuid => attached_grid.column_uuid,
                      :row_uuid => @row.uuid,
                      :row_name => @row.name}] %>
-      <article id="row-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
+      <article id="grid-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
         <%= icon 'loading' %> <%= attached_grid.name %>
       </article>
     <% end %>
