@@ -47,6 +47,19 @@ class Workspace < Entity
                        {:uuid => uuid}]) 
   end
   
+  # Selects data based on uri
+  def self.select_entity_by_uri(collection, uri)
+    collection.find(:first, 
+                    :joins => :workspace_locs,
+                    :select => self.all_select_columns,
+                    :conditions => 
+                      ["workspaces.uri = :uri " + 
+                       " AND " + as_of_date_clause("workspaces") +
+                       " AND workspace_locs.version = workspaces.version " +
+                       " AND " + locale_clause("workspace_locs"), 
+                       {:uri => uri}]) 
+  end
+  
   def self.select_entity_by_uuid_version(collection, uuid, version)
     collection.find(:first, 
                     :joins => :workspace_locs,

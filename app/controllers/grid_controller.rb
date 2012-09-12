@@ -60,7 +60,7 @@ class GridController < ApplicationController
   def show
     log_debug "GridController#show"
     @filters = params[:filters]
-    selectGridAndWorkspace
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
     @columns = @grid.column_all if @grid.present?
@@ -74,7 +74,7 @@ class GridController < ApplicationController
   def export_row
     log_debug "GridController#export_row_xml"
     @filters = params[:filters]
-    selectGridAndWorkspace
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
   end
@@ -96,7 +96,7 @@ class GridController < ApplicationController
   def export_list
     log_debug "GridController#export_list_xml"
     @filters = params[:filters]
-    selectGridAndWorkspace
+    selectWorkspaceAndGrid
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     @rows = @grid.row_all(@filters, '', 1, true) if @grid.present?
   end
@@ -572,15 +572,39 @@ private
     true
   end
   
+  def selectWorkspaceAndGrid
+    Entity.log_debug "GridController#selectWorkspaceAndGrid"
+    @workspace = nil
+    @grid = nil
+    if params[:workspace].present?
+      if Entity.uuid?(params[:workspace])
+        @workspace = Workspace.select_entity_by_uuid(Workspace, params[:workspace])
+      else
+        @workspace = Workspace.select_entity_by_uri(Workspace, params[:workspace])
+      end
+      if @workspace.nil?
+        Entity.log_debug "GridController#selectWorkspaceAndGrid " + 
+                         "Invalid: can't find workspace #{params[:workspace]}"
+      else
+        Entity.log_debug "GridController#selectWorkspaceAndGrid workspace found name=#{@workspace.name}"
+        @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
+        if @grid.nil?
+          Entity.log_debug "GridController#selectWorkspaceAndGrid " + 
+                           "Invalid: can't find grid #{params[:grid]}"
+        else
+          Entity.log_debug "GridController#selectWorkspaceAndGrid grid found name=#{@grid.name}"
+        end
+      end
+    end
+  end
+
   def selectGridAndWorkspace
     Entity.log_debug "GridController#selectGridAndWorkspace"
     @workspace = nil
     @grid = nil
-    if params[:grid].present? and params[:grid] != "0"
+    if params[:grid].present?
       if Entity.uuid?(params[:grid])
         @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
-      else
-        @grid = Grid.select_entity_by_id(Grid, params[:grid])
       end
       if @grid.nil?
         Entity.log_debug "GridController#selectGridAndWorkspace " + 
@@ -601,13 +625,10 @@ private
   def selectRow
     Entity.log_debug "GridController#selectRow"
     @row = nil
-    if @grid.present? and params[:row].present? and params[:row] != "0"
+    if @grid.present? and params[:row].present?
       if Entity.uuid?(params[:row])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
         unlock_as_of_date
-      else
-        @row = @row_loc = @grid.row_select_entity_by_id(params[:row])
-        lock_as_of_date
       end
       if @row.nil?
         Entity.log_debug "GridController#selectRow " +
