@@ -88,6 +88,7 @@
                     $("#row-dialog").load("<%= url_for(edit_path(
                                                         :grid => @grid.uuid,
                                                         :row => row.uuid,
+                                                        :filters => @filters,
                                                         :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                                         :refresh_list => true)) %>");
                   });
@@ -143,7 +144,6 @@
           $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
           $("#row-dialog").css({left:left, top:top, width:width}).show(300);
           $("#row-dialog").load("<%= url_for(new_path(
-                                              :workspace => @grid.workspace_uuid,
                                               :grid => @grid.uuid,
                                               :filters => @filters,
                                               :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
