@@ -1,34 +1,29 @@
 <header>
-  <h1>
-    <%= @row.to_s.html_safe %>
-    <span class="detail">
-      <%= icon @page_icon %>
-      <%= @workspace.to_s.html_safe %> »
-      <%= @grid.to_s.html_safe %>
-      <% if not @grid.can_update?(@row) %>
-        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-      <% end %>
+  <hgroup>
+    <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <%= link_to(@workspace,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Workspace::ROOT_UUID,
+                    :row => @workspace.uuid)) %> »
+    <% end %>
+    <%= link_to(@grid,
+                show_path(
+                  :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                  :grid => Grid::ROOT_UUID,
+                  :row => @grid.uuid)) %> »
+    <small>
       <%= display_grid_next_versions(@grid, @row).html_safe %>
       <%= display_locale(@row).html_safe if @grid.has_translation? %>
-      <% if @row.was_updated? %>
-        <span class="detail">
-          <%= t 'field.updated' %>
-          <%= display_updated_time_by(@row,
-                                      @row.who_updated,
-                                      @row.update_user_uuid).html_safe %>
-        </span>
-      <% else %>
-        <span class="detail">
-          <%= t 'field.created' %>
-          <%= display_created_time_by(@row,
-                                      @row.who_created,
-                                      @row.create_user_uuid).html_safe %>
-        </span>
+      <%= display_updated_date(@row).html_safe %>
+      <% if user_signed_in? and not @grid.can_update?(@row) %>
+        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
       <% end %>
-    </span>
-  </h1>
+    </small>
+  </hgroup>
+  <h1><%= icon @page_icon %> <%= @row %></h1>
 </header>
-<% if not @columns.empty? %>
+<% if @grid.uuid != Workspace::ROOT_UUID and not @columns.empty? %>
   <table>
     <tbody>
       <% for column in @columns %>
@@ -104,9 +99,9 @@
         var top = $("#actions-<%= @row.uuid %>").offset().top+15;
         var left = $("#document").offset().left+5;
         var width = $("#document").width()-35;
-        $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-        $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-        $("#row-dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
+        $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+        $("#dialog").css({left:left, top:top, width:width}).show(300);
+        $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
                                                      :row => @row.uuid,
                                                      :container => "#row-#{@row.uuid}")) %>");
       });

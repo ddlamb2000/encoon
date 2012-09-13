@@ -109,6 +109,8 @@ body {
 #footer {
   text-align:center;
   font-size:90%;
+  width:100%;
+  @include float-left;
 }
 .tools {
   @media only screen and (max-width: 320px) {
@@ -305,11 +307,6 @@ body {
     .list-description {
       text-align:left;
       border-bottom:1px solid $background-color-table;
-    }
-    .list-information {
-      width:100%;
-      text-align:left;
-      border-bottom:0;
     }
     .column-header {
       width:15px;

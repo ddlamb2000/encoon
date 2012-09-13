@@ -58,7 +58,7 @@ module EntityHelper
     content_tag("td", 
                 (referenced_link.blank? ? "" : referenced_link.html_safe) + 
                 (referenced_description.blank? ? "" : 
-                  "<span class='small-description'>#{trunc(referenced_description)}</span>".html_safe), 
+                  " <small>#{trunc(referenced_description)}</small>".html_safe), 
                 :class => (list ? "list-" : "") + "string")
   end
 

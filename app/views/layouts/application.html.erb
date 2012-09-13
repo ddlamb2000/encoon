@@ -20,17 +20,19 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <%= render :partial => 'layouts/flash', :locals => {:flash => flash} if session[:hide_navigator] %>
+      <%= render :partial => 'layouts/flash', :locals => {:flash => flash}  %>
     </header>
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
-        <%= render :partial => 'layouts/flash', :locals => {:flash => flash} %>
-        <%= render :partial => "layouts/navigator" %>
+        <%= render :partial => "layouts/asofdate" %>
+        <%= render :partial => 'layouts/history' %>
+        <%= yield :navigator %>
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
       <section id="document" class="document"><%= yield %></section>
     </section>
-    <section id="row-dialog" class="dialog document" style="display: none;"></section>
+    <footer id="footer"><a><%= t 'banner.copyright' %></a></footer>
+    <div id="dialog" class="dialog document" style="display: none;"></div>
   </body>
 </html>

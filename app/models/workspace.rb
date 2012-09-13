@@ -20,6 +20,9 @@ class Workspace < Entity
   ROOT_PUBLIC_UUID = 'f1ca9820-a26b-012f-de85-4417fe7fde95'
   ROOT_URI_UUID = '44b03b60-a26c-012f-de85-4417fe7fde95'
 
+  SYSTEM_WORKSPACE_UUID = 'eec10850-dd45-012c-aafe-0026b0d63708'
+  SYSTEM_WORKSPACE_URI = 'system'
+
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
 

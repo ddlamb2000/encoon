@@ -1,7 +1,9 @@
 <% unless @grid.blank? or @row.blank? %>
-  <article id="row-<%= @row.uuid %>">
-    <%= render :partial => "row" %>
-  </article>
+  <% if @grid.uuid != Grid::ROOT_UUID %>
+    <article id="row-<%= @row.uuid %>">
+      <%= render :partial => "row" %>
+    </article>
+  <% end %>
   <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
     <article id="grid-<%= @grid_cast.uuid + "-" %>">
       <%= icon 'loading' %> <%= @grid_cast.name %>
@@ -21,11 +23,11 @@
 <% else %>
   <h1>
     <%= @page_title %>
-    <span class="detail">
+    <small>
       <%= icon @page_icon %>
       <%= @grid.to_s.html_safe if @grid.present?%>
       <% if @workspace.present? %>(<%= @workspace.to_s.html_safe %>)<% end %>
-    </span>
+    </small>
   </h1>
   <p><%= t 'error.not_found' %><p>
 <% end %>

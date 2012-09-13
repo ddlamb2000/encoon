@@ -13,7 +13,7 @@
         <td class="header"><%= t 'field.begin_date' %></td>
         <td class="string">
           <%= display_begin_date(@row.begin) %>
-          <span class="detail"><%= display_distance_date(@row.begin) %></span>
+          <small><%= display_distance_date(@row.begin) %></small>
         </td>
       </tr>
     <% end %>
@@ -22,7 +22,7 @@
         <td class="header"><%= t 'field.end_date' %></td>
         <td class="string">
           <%= display_end_date(@row.end) %>
-          <span class="detail"><%= display_distance_date(@row.end) %></span>
+          <small><%= display_distance_date(@row.end) %></small>
         </td>
       </tr>
     <% end %>
@@ -30,9 +30,9 @@
       <td class="header"><%= t 'field.created' %></td>
       <td class="string">
         <%= @row.created_at %>
-        <span class="detail">
+        <small>
           <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
-        </span>
+        </small>
       </td>
     </tr>
     <% if @row.was_updated? %>
@@ -40,9 +40,9 @@
         <td class="header"><%= t 'field.updated' %></td>
         <td class="string">
           <%= @row.updated_at %>
-          <span class="detail">
+          <small>
             <%= display_updated_time_by( @row, @row.who_updated, @row.update_user_uuid).html_safe %>
-          </span>
+          </small>
         </td>
       </tr>
     <% end %>
@@ -58,7 +58,7 @@
                                     :grid => @grid.uuid,
                                     :row => row.uuid) %>
               <%= trunc(row.description).html_safe %>
-              <span class="detail"><%= display_updated_date(row).html_safe %></span>
+              <small><%= display_updated_date(row).html_safe %></small>
             </li>
           </ul>
           <% end %>
@@ -92,9 +92,9 @@
             <% for row in @audits %>
               <li>
                 <%= row.kind_name.html_safe %>
-                <span class="detail">
+                <small>
                   <%= display_updated_time_by(row, row.who_updated, row.update_user_uuid).html_safe %>
-                </span>
+                </small>
               </li>
             <% end %>
           </ul>

@@ -164,7 +164,7 @@ module ApplicationHelper
                                 :include_seconds => true),
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
-                           show_path(:workspace => "system",
+                           show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
                                      :grid => User::ROOT_UUID,
                                      :row => who_uuid)) :
                        t('general.unknown'))
@@ -177,7 +177,7 @@ module ApplicationHelper
                                 :include_seconds => true),
             :by => (who.present? and who_uuid.present?) ? 
                        link_to_unless_current(who, 
-                           show_path(:workspace => "system",
+                           show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
                                      :grid => User::ROOT_UUID,
                                      :row => who_uuid)) :
                        t('general.unknown')) +
@@ -213,7 +213,7 @@ module ApplicationHelper
   
   def display_information(entity, show_required=false)
     output = information(entity, show_required)
-    output.length>0 ? content_tag("div", output, :class => 'information') : ""  
+    output.length>0 ? content_tag("small", output) : ""  
   end
   
   def display_grid_next_versions(grid, entity)

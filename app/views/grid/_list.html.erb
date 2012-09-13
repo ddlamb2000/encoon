@@ -1,14 +1,15 @@
 <header>
-  <h2>
-    <%= @grid.name.html_safe %>
-    <span class="detail">
-      <%= @workspace.to_s.html_safe %> »
-      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
-        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-      <% end %>
-    </span>
-  </h2>
+  <hgroup>
+    <% if @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <%= link_to(@workspace,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Workspace::ROOT_UUID,
+                    :row => @workspace.uuid)) %> »
+    <% end %>
+  </hgroup>
+  <h1><%= icon 'table' %> <%= @grid %></h1>
+  <small><%= trunc(@grid.description).html_safe %></small>
 </header>
 <% unless @table_rows.nil? or 
           @table_rows.empty? or 
@@ -46,14 +47,12 @@
               <% end %>
             </span>
             <%= display_information(row) %>
-            <span class="detail"><%= display_updated_date(row).html_safe %></span>
+            <small><%= display_updated_date(row).html_safe %></small>
             <% if user_signed_in? and not @grid.can_update?(row) %>
               <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
             <% end %>
             <% if user_signed_in? and @grid.can_update?(row) %>
-              <div id="actions-<%= row.uuid %>"
-                  class="actions float-actions" 
-                  style="display: none;">
+              <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
                 <span class="button" title="Update current data or create a new version.">
                   <a id="update-<%= row.uuid %>"><%= icon('edit') %> <%= t 'actions.edit' %></a>
                 </span>
@@ -83,9 +82,9 @@
                     var top = $("#row-<%= row.uuid %>").offset().top+15;
                     var left = $("#document").offset().left+5;
                     var width = $("#document").width()-35;
-                    $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-                    $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-                    $("#row-dialog").load("<%= url_for(edit_path(
+                    $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+                    $("#dialog").css({left:left, top:top, width:width}).show(300);
+                    $("#dialog").load("<%= url_for(edit_path(
                                                         :grid => @grid.uuid,
                                                         :row => row.uuid,
                                                         :filters => @filters,
@@ -117,14 +116,16 @@
     </tbody>
   </table>
 <% end %>
-<span class="detail">
+<small>
+  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
+  <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+    <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+  <% end %>
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
   <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
-</span>
+</small>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
-  <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" 
-          class="actions float-actions"
-          style="display: none;">
+  <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" class="actions float-actions" style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= calc_next_page(params[:page]) %>
     <% end %>
@@ -134,16 +135,19 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="Create a new row of data for the corresponding data grid." class="button">
-        <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>"><%= icon('plus') %> <%= t 'actions.create' %></a>
+        <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <%= icon('plus') %>
+          <%= t 'actions.create' %>
+        </a>
       </span>
       <script>
         $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
           var left = $("#document").offset().left+5;
           var width = $("#document").width()-35;
-          $("#row-dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-          $("#row-dialog").css({left:left, top:top, width:width}).show(300);
-          $("#row-dialog").load("<%= url_for(new_path(
+          $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#dialog").css({left:left, top:top, width:width}).show(300);
+          $("#dialog").load("<%= url_for(new_path(
                                               :grid => @grid.uuid,
                                               :filters => @filters,
                                               :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
@@ -160,6 +164,28 @@
                 :filters => @filters,
                 :page => -1) %>
       </span>
+    <% end %>
+    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+      <span title="Update grid definition." class="button">
+        <a id="update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <%= icon('table') %>
+          <%= t 'actions.update' %>
+        </a>
+      </span>
+      <script>
+        $("#update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+          var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
+          var left = $("#document").offset().left+5;
+          var width = $("#document").width()-35;
+          $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#dialog").css({left:left, top:top, width:width}).show(300);
+          $("#dialog").load("<%= url_for(edit_path(
+                                              :grid => Grid::ROOT_UUID,
+                                              :row => @grid.uuid,
+                                              :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                              :refresh_list => true)) %>");
+        });
+      </script>
     <% end %>
     <script>
       $("#grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(

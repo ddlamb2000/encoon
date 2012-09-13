@@ -1,7 +1,10 @@
 <header class="action-header">
-  <%= t(new_row ? 'actions.create' : 'actions.edit') %>
-  <%= @grid.to_s.html_safe %>
+  <%= @workspace %> » <%= @grid %>
+  <% if not new_row%> » <%= @row %><% end %>
 </header> 
+<small>
+  <% if @row.was_updated? %><%= display_updated_date(@row).html_safe %><% end %>
+</small>
 <%= form_tag(new_row ?
               create_path(:grid => @grid.uuid, :filters => @filters) :
               update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
@@ -56,10 +59,10 @@
       </span>
     <% end %>
     <span class="button">
-      <a id="cancel-row-dialog"><%= t 'actions.cancel' %></a>
+      <a id="cancel-dialog"><%= t 'actions.cancel' %></a>
     </span>
     <span class="button">
-      <%= submit_tag t('actions.ok'), :id => "ok-row-dialog" %>
+      <%= submit_tag t(new_row ? 'actions.create' : 'actions.edit'), :id => "ok-dialog" %>
     </span>
   </footer>
 <% end %>
@@ -73,7 +76,7 @@
       $(this).find('div.validation-error').empty();
       $(".field_with_errors").removeClass("field_with_errors");
       $("<%= @container %>").html(xhr.responseText);
-      $("#row-dialog").hide(300);
+      $("#dialog").hide(300);
     })
     .bind('ajax:complete', function(evt, xhr, status){
     })
@@ -92,7 +95,7 @@
       errorText += "</ul>";
       $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
     });
-  $("#cancel-row-dialog").click(function (event){
-    $("#row-dialog").hide(300);
+  $("#cancel-dialog").click(function (event){
+    $("#dialog").hide(300);
   });
 </script>

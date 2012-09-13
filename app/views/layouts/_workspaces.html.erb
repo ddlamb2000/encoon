@@ -14,7 +14,7 @@
           <%= link_to_unless_current(
                 row.name.html_safe,
                 show_path(
-                  :workspace => "system",
+                  :workspace => Workspace::SYSTEM_WORKSPACE_URI,
                   :grid => Workspace::ROOT_UUID,
                   :row => row.uuid)) do |name| %>
             <span class="highlighted"><%= name %></span>

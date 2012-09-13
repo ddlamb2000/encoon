@@ -28,7 +28,7 @@ class GridController < ApplicationController
 
   # Renders the home page using hard-coded references.
   def home
-    params[:workspace] = "system"
+    params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
     params[:grid] = Grid::HOME_GRID_UUID
     params[:row] = Grid::HOME_ROW_UUID
     show
@@ -637,11 +637,6 @@ private
                          "and uuid=#{params[:row]}"
       else
         Entity.log_debug "GridController#selectRow: row found name=#{@row.name}"
-        if @grid.uuid == Workspace::ROOT_UUID 
-          @workspace = Workspace.select_entity_by_uuid(Workspace, @row.uuid)
-        elsif @grid.uuid == Grid::ROOT_UUID 
-          @workspace = Workspace.select_entity_by_uuid(Workspace, @row.workspace_uuid)
-        end
         change_as_of_date(@row)
       end
     end
