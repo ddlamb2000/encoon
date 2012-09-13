@@ -53,34 +53,38 @@
   <div id="actions-<%= @row.uuid %>" 
           class="actions float-actions" 
           style="display: none;">
-    <span class="button" title="Update current data or create a new version.">
-      <a id="update-<%= @row.uuid %>"><%= icon('edit') %> <%= t 'actions.edit' %></a>
+    <span class="button" title="<%= t 'actions.update_help' %>">
+      <a id="update-<%= @row.uuid %>">
+        <%= icon('edit') %>
+        <%= t 'actions.update' %>
+      </a>
     </span>
-    <span class="button" title="Delete current data.">
-      <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-         destroy_path(
-          :grid => @grid.uuid,
-          :row => @row.uuid),
-          :confirm => t('message.delete', :name => @row.to_s), 
-          :method => :delete %>
+    <span class="button" title="<%= t 'actions.delete_help' %>">
+      <%= link_to destroy_path(:grid => @grid.uuid,
+                               :row => @row.uuid),
+                  :confirm => t('message.delete', :name => @row.to_s), 
+                  :method => :delete do %>
+        <%= icon('remove') %>
+        <%= t('actions.delete') %>
+      <% end %>
     </span>
-    <span class="button" title="Add or remove attachment (photo or document) to current data.">
-      <%= link_to icon('attachments') + ("&nbsp;" + t('field.attachments')).html_safe, 
-         attach_document_path(
-            :grid => @grid.uuid,
-            :row => @row.uuid),
-         :remote => true %>
+    <span class="button" title="<%= t 'actions.attach_help' %>">
+      <%= link_to attach_document_path(
+                    :grid => @grid.uuid,
+                    :row => @row.uuid),
+                  :remote => true do %>
+        <%= icon('attachments') %>
+        <%= t 'actions.attach' %>
+      <% end %>
     </span>
-    <span class="button">
-      <%= link_to icon('import') + "&nbsp;Import data".html_safe, 
-                  import_path(:grid => @grid.uuid) %>
-    </span>
-    <span class="button" title="Export current data into a XML file.">
-      <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-         export_row_xml_path(
-            :workspace => @grid.workspace.display_uri,
-            :grid => @grid.display_uri,
-            :row => @row.display_uri) %>
+    <span class="button" title="<%= t 'actions.export_help' %>">
+      <%= link_to export_row_xml_path(
+                    :workspace => @grid.workspace.display_uri,
+                    :grid => @grid.display_uri,
+                    :row => @row.display_uri) do %>
+        <%= icon('export') %>
+        <%= t 'actions.export' %>
+      <% end %>
     </span>
     <script>
       $("#row-<%= @row.uuid %>").hover(

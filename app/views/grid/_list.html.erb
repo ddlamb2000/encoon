@@ -53,17 +53,21 @@
             <% end %>
             <% if user_signed_in? and @grid.can_update?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
-                <span class="button" title="Update current data or create a new version.">
-                  <a id="update-<%= row.uuid %>"><%= icon('edit') %> <%= t 'actions.edit' %></a>
+                <span class="button" title="<%= t 'actions.update_help' %>">
+                  <a id="update-<%= row.uuid %>">
+                    <%= icon('edit') %>
+                    <%= t 'actions.update' %>
+                  </a>
                 </span>
-                <span class="button" title="Delete current data.">
-                  <%= link_to icon('remove') + ("&nbsp;" + t('actions.delete')).html_safe, 
-                        destroy_path(
-                          :grid => @grid.uuid,
-                          :row => row.uuid,
-                          :inline => true), 
-                        :confirm => t('message.delete', :name => row.to_s),
-                        :method => :delete %>
+                <span class="button" title="<%= t 'actions.delete_help' %>">
+                  <%= link_to destroy_path(:grid => @grid.uuid,
+                                           :row => row.uuid,
+                                           :inline => true), 
+                              :confirm => t('message.delete', :name => row.to_s),
+                              :method => :delete do %>
+                    <%= icon('remove') %>
+                    <%= t('actions.delete') %>
+                  <% end %>
                 </span>
                 <script>
                   $("#row-<%= row.uuid %>").hover(
@@ -134,7 +138,7 @@
       <%= icon('previous') %>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="Create a new row of data for the corresponding data grid." class="button">
+      <span title="<%= t 'actions.create_help' %>" class="button">
         <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= icon('plus') %>
           <%= t 'actions.create' %>
@@ -156,20 +160,22 @@
       </script>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="Export rows in an .xml file." class="button">
-        <%= link_to icon('export') + ("&nbsp;" + t('actions.export')).html_safe, 
-              export_list_xml_path(
-                :workspace => @grid.workspace.display_uri,
-                :grid => @grid.display_uri,
-                :filters => @filters,
-                :page => -1) %>
+      <span title="<%= t 'actions.export_help' %>" class="button">
+        <%= link_to export_list_xml_path(
+                      :workspace => @grid.workspace.display_uri,
+                      :grid => @grid.display_uri,
+                      :filters => @filters,
+                      :page => -1) do %>
+          <%= icon('export') %>
+          <%= t 'actions.export' %>
+        <% end %>
       </span>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="Update grid definition." class="button">
+      <span title="<%= t 'actions.update_grid_help' %>" class="button">
         <a id="update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= icon('table') %>
-          <%= t 'actions.update' %>
+          <%= t 'actions.update_grid' %>
         </a>
       </span>
       <script>
@@ -182,6 +188,28 @@
           $("#dialog").load("<%= url_for(edit_path(
                                               :grid => Grid::ROOT_UUID,
                                               :row => @grid.uuid,
+                                              :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                              :refresh_list => true)) %>");
+        });
+      </script>
+    <% end %>
+    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+      <span title="<%= t 'actions.create_column_help' %>" class="button">
+        <a id="new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <%= icon('plus') %>
+          <%= t 'actions.create_column' %>
+        </a>
+      </span>
+      <script>
+        $("#new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+          var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
+          var left = $("#document").offset().left+5;
+          var width = $("#document").width()-35;
+          $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#dialog").css({left:left, top:top, width:width}).show(300);
+          $("#dialog").load("<%= url_for(new_path(
+                                              :grid => Column::ROOT_UUID,
+                                              :filters => @filters,
                                               :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
                                               :refresh_list => true)) %>");
         });

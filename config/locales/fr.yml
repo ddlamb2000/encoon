@@ -19,22 +19,28 @@ fr:
     history:      "Historique"
     signout:      "Déconnection"
     copyright:    "© David Lambert 2012. Tous droits réservés."
-
   actions:
-    create:       "Nouveau"
-    update:       "Modifier"
-    import:       "Importer"
-    export:       "Exporter (.xml)"
-    cancel:       "Annuler"
-    ok:           "OK"
-    edit:         "Modifier"
-    delete:       "Supprimer"
-    more:         "Détails..."
-    hide:         "Masquer"
-    login:        "Connexion"
-    attach:       "Attacher document"
-    wait:         "Chargement en cours..."
-
+    create:               "Nouveau"
+    create_help:          "Créez une nouvelle données pour la catégorie."
+    create_column:        "Nouvel attribut"
+    create_column_help:   "Créez un nouvel attribute pour la catégorie."
+    update:               "Modifier"
+    update_help:          "Modifiez la données sélectionnée."
+    update_grid:          "Modifier catégorie"
+    update_grid_help:     "Changez les propritétés de la catégorie."
+    import:               "Importer"
+    export:               "Exporter (.xml)"
+    export_help:          "Exportez les données dans un fichier .xml."
+    cancel:               "Annuler"
+    ok:                   "OK"
+    delete:               "Supprimer"
+    delete_help:          "Supprimez la donnée sélectionée."
+    attach:               "Attach"
+    attach_help:          "Ajoutez un document ou une photo à la donnée sélectionnée."
+    more:                 "Détails"
+    login:                "Connexion"
+    attach:               "Attacher document"
+    wait:                 "Chargement en cours…"
   devise:
     sign_in:            "Se connecter"
     sign_up:            "S’enregistrer"
@@ -51,12 +57,10 @@ fr:
     unhappy:            "Mécontent ?"
     cancel_account:     "Supprimer mon compte"
     edit_user:          "Mise à jour des préférences"
-
   version:
     mode:         "Mode"
     update:       "Modifier"
     new:          "Nouvelle version"
-      
   field:
     uuid:         "Identifiant"
     name:         "Nom"
@@ -77,7 +81,6 @@ fr:
     languages:    "Langues"
     attachments:  "Documents"
     data:         "Données"
-      
   general:
     home:         "Accueil"
     undefined:    "(non défini)"
@@ -111,7 +114,6 @@ fr:
     design:       "Définition"
     attached_row: "%{grid} (%{column})"
     locked:       "La données ne peut pas être modifiée."
-    
   datepicker:
     format:           "dd/mm/yy"
     decode:           "%d/%m/%Y"
@@ -120,13 +122,11 @@ fr:
     monthNamesShort:  [Jan, Fév, Mar, Avr, Mai, Juin, Juil, Août, Sept, Oct, Nov, Déc]
     currentText:      "Aujourd’hui"
     closeText:        "Fermer"
-          
   transaction:
     created:      "%{name} (%{type}) créé."
     updated:      "%{name} (%{type}) modifié."
     deleted:      "%{name} (%{type}) supprimé."
     attached:     "Document attaché à %{name} (%{type})."
-
   error:
     ena_record:   "Au moins un enregistrement doit être actif."
     dup_record:   "Il existe un autre enregistrement actif à la même date %{date}."
@@ -139,10 +139,8 @@ fr:
     no_grid:      "Erreur: catégorie non trouvée"
     no_data:      "Erreur: données non trouvée"
     not_found:    "Nous sommes désolés, mais la page demandée est introuvable et ne correspond à aucune information répertoriée."
-        
   message:
     delete:       "Etes vous sûr de vouloir supprimer ’%{name}’ ?"
-    
   date:
     formats:
       default: "%d/%m/%Y"
@@ -150,7 +148,6 @@ fr:
       long: "%e %B %Y"
       long_ordinal: "%e %B %Y"
       only_day: "%e"
- 
     day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
     abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
     month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
@@ -159,7 +156,6 @@ fr:
         - :day
         - :month
         - :year
-  
   time:
     formats:
       default: "%d %B %Y %H:%M"
@@ -170,7 +166,6 @@ fr:
       only_second: "%S"
     am: "am"
     pm: "pm"
- 
   datetime:
     distance_in_words:
       half_a_minute: "une demi-minute"
@@ -216,7 +211,6 @@ fr:
       hour:   "Heure"
       minute: "Minute"
       second: "Seconde"
-  
   number:
     format:
       precision: 3
@@ -241,7 +235,6 @@ fr:
           mb: "Mo"
           gb: "Go"
           tb: "To"
- 
   support:
     array:
       sentence_connector: "et"
@@ -249,7 +242,6 @@ fr:
       words_connector: ", "
       two_words_connector: " et "
       last_word_connector: " et "
-  
   activerecord:
     errors:
       full_messages:
