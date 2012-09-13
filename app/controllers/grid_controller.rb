@@ -64,8 +64,11 @@ class GridController < ApplicationController
     @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
     @columns = @grid.column_all if @grid.present?
-    @grid_cast = Row.select_grid_cast(@grid.uuid, @row.uuid) if @grid.present? and @row.present?
-    @attached_grids = Grid.select_referenced_grids(@grid.uuid) if @grid.present?
+    if @grid.uuid == Grid::ROOT_UUID
+      @attached_grids = [@grid.select_grid_cast(@row.uuid)] if @grid.present? and @row.present?
+    else
+      @attached_grids = Grid.select_referenced_grids(@grid.uuid) if @grid.present?
+    end
     set_page_title
     push_history
     render :show, :status => @status

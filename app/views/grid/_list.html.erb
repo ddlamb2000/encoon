@@ -8,7 +8,7 @@
                     :row => @workspace.uuid)) %> »
     <% end %>
   </hgroup>
-  <h1><%= icon 'table' %> <%= @grid %></h1>
+  <h2><%= icon 'table' %> <%= @grid %></h2>
   <small><%= trunc(@grid.description).html_safe %></small>
 </header>
 <% unless @table_rows.nil? or 

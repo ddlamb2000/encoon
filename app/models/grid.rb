@@ -50,7 +50,7 @@ class Grid < Entity
   def load_cached_grid_structure(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
               "filters=#{filters.inspect},"+
-              "skip_mapping=#{skip_mapping}) [grid #{to_s}]"
+              "skip_mapping=#{skip_mapping}) [#{to_s}]"
     load_workspace
     load_cached_mapping
     load_cached_columns
@@ -59,7 +59,7 @@ class Grid < Entity
   end
   
   def load_cached_grid_structure_reference
-    log_debug "Grid#load_cached_grid_structure_reference [grid #{to_s}]"
+    log_debug "Grid#load_cached_grid_structure_reference [#{to_s}]"
     load_workspace
     load_cached_mapping
     load_cached_columns
@@ -114,7 +114,7 @@ class Grid < Entity
   end
 
   def before_destroy
-    log_debug "Grid#before_destroy [grid #{to_s}]"
+    log_debug "Grid#before_destroy [#{to_s}]"
     super
     GridLoc.destroy_all(["uuid = :uuid AND version = :version", 
                         {:uuid => self.uuid, :version => self.version}])
@@ -211,9 +211,36 @@ class Grid < Entity
     workspace.present? ? workspace.name : ""
   end
 
+  def select_grid_cast(row_uuid)
+    log_debug "Grid#select_grid_cast(row_uuid=#{row_uuid}) [#{to_s}]"
+    if self.uuid == ROOT_UUID
+      grid = Grid::select_entity_by_uuid(Grid, row_uuid)
+      grid.load_cached_grid_structure if grid.present?
+      grid
+    end
+  end
+
+  def filter_column_uuid
+    attribute_present?(:filter_column_uuid) ? read_attribute(:filter_column_uuid) : nil
+  end
+
+  def filter_column_name
+    attribute_present?(:filter_column_name) ? read_attribute(:filter_column_name) : nil
+  end
+  
+  def get_filters_on_row(row)
+    unless self.filter_column_uuid.nil?
+      [{:column_uuid => self.filter_column_uuid,
+        :row_uuid => row.uuid,
+        :row_name => row.name}]
+    else
+      []
+    end
+  end
+  
   # Selects the grids attached to one row via one or more columns
   def self.select_referenced_grids(uuid)
-    log_debug "Grid#select_referenced_grids(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#select_referenced_grids(uuid=#{uuid}) [#{to_s}]"
     Grid.find_by_sql(["SELECT grids.id," + 
                       " grids.uuid," + 
                       " grid_locs.name," + 
@@ -226,8 +253,8 @@ class Grid < Entity
                       " grids.has_name," + 
                       " grids.has_description," + 
                       " grids.create_user_uuid," + 
-                      " columns.uuid as column_uuid," +
-                      " column_locs.name as column_name" +
+                      " columns.uuid as filter_column_uuid," +
+                      " column_locs.name as filter_column_name" +
                       " FROM grids, grid_locs, columns, column_locs" +
                       " WHERE " + as_of_date_clause("grids") + 
                       " AND grids.uuid = grid_locs.uuid" + 
@@ -267,7 +294,7 @@ class Grid < Entity
 
   # Selects data based on uuid
   def column_select_entity_by_uuid(uuid)
-    log_debug "Grid#column_select_entity_by_uuid(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#column_select_entity_by_uuid(uuid=#{uuid}) [#{to_s}]"
     columns.find(:first, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -281,7 +308,7 @@ class Grid < Entity
   
   def column_select_entity_by_uuid_version(uuid, version)
     log_debug "Grid#column_select_entity_by_uuid_version(uuid=#{uuid}," + 
-              "version=#{version}) [grid #{to_s}]"
+              "version=#{version}) [#{to_s}]"
     columns.find(:first, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -296,7 +323,7 @@ class Grid < Entity
   
   # Selects data based on id
   def column_select_entity_by_id(id)
-    log_debug "Grid#column_select_entity_by_id(id=#{id}) [grid #{to_s}]"
+    log_debug "Grid#column_select_entity_by_id(id=#{id}) [#{to_s}]"
     columns.find(:first, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -308,7 +335,7 @@ class Grid < Entity
   end
   
   def column_all_versions(uuid)
-    log_debug "Grid#column_all_versions(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#column_all_versions(uuid=#{uuid}) [#{to_s}]"
     columns.find(:all, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -327,7 +354,7 @@ class Grid < Entity
   def row_all(filters=nil, search=nil, page=nil, full=false, count=false)
     log_debug "Grid#row_all(filters=#{filters.inspect}, " +
               "search=#{search}, page=#{page}, " +
-              "count=#{count}) [grid #{to_s}]"
+              "count=#{count}) [#{to_s}]"
     conditions = ""
     if filters.present?
       filters.each do |filter|
@@ -384,7 +411,7 @@ class Grid < Entity
 
   # Selects data based on uuid
   def row_select_entity_by_uuid(uuid)
-    log_debug "Grid#row_select_entity_by_uuid(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#row_select_entity_by_uuid(uuid=#{uuid}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_select_entity_by_uuid Can't select data"
       return nil
@@ -416,7 +443,7 @@ class Grid < Entity
   def row_select_entity_by_uuid_version(uuid, version)
     load_cached_grid_structure if not is_preloaded?
     log_debug "Grid#row_select_entity_by_uuid_version(uuid=#{uuid}, " + 
-              "version=#{version}) [grid #{to_s}]"
+              "version=#{version}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_select_entity_by_uuid_version Can't select data"
       return nil
@@ -449,7 +476,7 @@ class Grid < Entity
   
   # Selects data based on id
   def row_select_entity_by_id(id)
-    log_debug "Grid#row_select_entity_by_id(id=#{id}) [grid #{to_s}]"
+    log_debug "Grid#row_select_entity_by_id(id=#{id}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_select_entity_by_id Can't select data"
       return nil
@@ -477,7 +504,7 @@ class Grid < Entity
   end
   
   def row_all_versions(uuid)
-    log_debug "Grid#row_all_versions(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#row_all_versions(uuid=#{uuid}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_all_versions Can't select data"
       return []
@@ -505,7 +532,7 @@ class Grid < Entity
   
   def row_all_locales(uuid, version)
     log_debug "Grid#row_all_locales(uuid=#{uuid}, " + 
-              "version=#{version.to_s}) [grid #{to_s}]"
+              "version=#{version.to_s}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_all_locales Can't select data"
       return []
@@ -548,7 +575,7 @@ class Grid < Entity
 
   # Selects greatest version number of data based on uuid
   def row_max_version(uuid)
-    log_debug "Grid#row_max_version(uuid=#{uuid}) [grid #{to_s}]"
+    log_debug "Grid#row_max_version(uuid=#{uuid}) [#{to_s}]"
     sql = "SELECT max(version)" + 
           " FROM #{@db_table}" + 
           " WHERE uuid = #{quote(uuid)}" +
@@ -557,7 +584,7 @@ class Grid < Entity
   end
 
   def row_title(row, full=false)
-    log_debug "Grid#row_title(row=#{row}) [grid #{to_s}]"
+    log_debug "Grid#row_title(row=#{row}) [#{to_s}]"
     summary = (row.present? and self.has_name?) ? row.name : ""
     if not full and row.present?
       return summary if summary.length > 0
@@ -583,7 +610,7 @@ class Grid < Entity
   
   def row_loc_select_entity_by_uuid(uuid, version=0)
     log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, " +
-              "version=#{version}) [grid #{to_s}]"
+              "version=#{version}) [#{to_s}]"
     if not can_select_data?
       log_security_warning "Grid#row_loc_select_entity_by_uuid Can't select data"
       return []
@@ -662,7 +689,7 @@ class Grid < Entity
   end
   
   def export(xml)
-    log_debug "Grid#export [grid #{to_s}]"
+    log_debug "Grid#export [#{to_s}]"
     xml.grid(:title => self.name) do
       super(xml)
       xml.workspace_uuid(self.workspace_uuid, :title => self.workspace_name)
@@ -738,7 +765,7 @@ class Grid < Entity
   end
 
   def row_export(xml, row)
-    log_debug "Grid#row_export(row=#{row}) [grid #{to_s}]"
+    log_debug "Grid#row_export(row=#{row}) [#{to_s}]"
     if row.present?
       xml.row(:title => row_title(row), :grid_uuid => self.uuid, :grid => to_s) do
         row.export(xml)
@@ -914,7 +941,7 @@ class Grid < Entity
 
   def row_initialization(row, filters)
     log_debug "Grid#row_initialization(filters=#{filters.inspect}) " + 
-              "[grid #{to_s}]"
+              "[#{to_s}]"
     row.initialization
     column_all.each do |column|
       log_debug "Grid#default_row_value column=#{column.to_s}"
@@ -946,7 +973,7 @@ class Grid < Entity
   end
 
   def row_validate(row, phase)
-    log_debug "Grid#row_validate(phase=#{phase}) [grid #{to_s}]"
+    log_debug "Grid#row_validate(phase=#{phase}) [#{to_s}]"
     validated = true
     if phase != Grid::PHASE_DESTROY
       for column in column_all
@@ -979,7 +1006,7 @@ class Grid < Entity
   end
 
   def row_loc_validate(row, row_loc, phase)
-    log_debug "Grid#row_loc_validate(phase=#{phase}) [grid #{to_s}]"
+    log_debug "Grid#row_loc_validate(phase=#{phase}) [#{to_s}]"
     validated = true
     if phase != Grid::PHASE_DESTROY
       if self.has_name?
@@ -993,7 +1020,7 @@ class Grid < Entity
   end
   
   def load_workspace
-    log_debug "Grid#load_workspace [grid #{to_s}]"
+    log_debug "Grid#load_workspace [#{to_s}]"
     self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
   end
   
@@ -1129,7 +1156,7 @@ private
 
   # Loads in memory information about database mapping
   def load_cached_mapping
-    log_debug "Grid#load_cached_mapping [grid #{to_s}]"
+    log_debug "Grid#load_cached_mapping [#{to_s}]"
     grid_mapping = grid_mapping_read
     if grid_mapping.present?
       @db_table = grid_mapping.db_table if grid_mapping.db_table.present?
@@ -1143,7 +1170,7 @@ private
 
   # Loads in memory information about columns
   def load_cached_columns
-    log_debug "Grid#load_cached_columns [grid #{to_s}]"
+    log_debug "Grid#load_cached_columns [#{to_s}]"
     @all_columns = columns.find(:all, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -1163,7 +1190,7 @@ private
     log_debug "Grid#load_cached_column_information " +
               "filters=#{filters},"+
               "skip_reference=#{skip_reference}," +
-              "skip_mapping=#{skip_mapping}) [grid #{to_s}]"
+              "skip_mapping=#{skip_mapping}) [#{to_s}]"
     column_all.each do |column|
       unless column.is_preloaded?
         log_debug "Grid#load_cached_column_information column=#{column.name}"
@@ -1182,7 +1209,7 @@ private
   end
   
   def load_security_workspace(uuid)
-    log_debug "Grid#load_security_workspace [grid #{to_s}]"
+    log_debug "Grid#load_security_workspace [#{to_s}]"
     
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
@@ -1215,7 +1242,7 @@ private
   end
 
   def load_security
-    log_debug "Grid#load_security [grid #{to_s}]"
+    log_debug "Grid#load_security [#{to_s}]"
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
           " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
@@ -1253,7 +1280,7 @@ private
               "@can_select_data=#{@can_select_data}," +
               "@can_create_data=#{@can_create_data}," +
               "@can_update_data=#{@can_update_data}," +
-              "[grid #{to_s}]"
+              "[#{to_s}]"
   end
 end
 

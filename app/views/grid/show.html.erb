@@ -4,16 +4,9 @@
       <%= render :partial => "row" %>
     </article>
   <% end %>
-  <% unless @grid_cast.nil? or not @grid_cast.can_select_data? %>
-    <article id="grid-<%= @grid_cast.uuid + "-" %>">
-      <%= icon 'loading' %> <%= @grid_cast.name %>
-    </article>
-  <% end %>
   <% unless @attached_grids.nil? or @attached_grids.empty? %>
     <% for attached_grid in @attached_grids %>
-      <% filters = [{:column_uuid => attached_grid.column_uuid,
-                     :row_uuid => @row.uuid,
-                     :row_name => @row.name}] %>
+      <% filters = attached_grid.get_filters_on_row(@row) %>
       <article id="grid-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
         <%= icon 'loading' %> <%= attached_grid.name %>
       </article>
@@ -21,13 +14,22 @@
   <% end %>
   <%= render :partial => 'navigation' %>
 <% else %>
-  <h1>
-    <%= @page_title %>
-    <small>
-      <%= icon @page_icon %>
-      <%= @grid.to_s.html_safe if @grid.present?%>
-      <% if @workspace.present? %>(<%= @workspace.to_s.html_safe %>)<% end %>
-    </small>
-  </h1>
+  <hgroup>
+    <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <%= link_to(@workspace,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Workspace::ROOT_UUID,
+                    :row => @workspace.uuid)) %> »
+    <% end %>
+    <% if @grid.present? %>
+      <%= link_to(@grid,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Grid::ROOT_UUID,
+                    :row => @grid.uuid)) %> »
+    <% end %>
+  </hgroup>
+  <h1><%= bigicon @page_icon %> <%= @page_title %></h1>
   <p><%= t 'error.not_found' %><p>
 <% end %>

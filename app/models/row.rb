@@ -103,16 +103,6 @@ class Row < Entity
     ""
   end
 
-  def self.select_grid_cast(grid_uuid, row_uuid)
-    log_debug "Row#select_grid_cast grid_uuid=#{grid_uuid}, " + 
-              "row_uuid=#{row_uuid}"
-    if grid_uuid == Grid::ROOT_UUID
-      grid = Grid.select_entity_by_uuid(Grid, row_uuid)
-      grid.load_cached_grid_structure if grid.present?
-      grid
-    end
-  end
-
   def self.loc_select_columns
     "row_locs.id, row_locs.uuid, " + 
     "row_locs.version, row_locs.lock_version, " + 
