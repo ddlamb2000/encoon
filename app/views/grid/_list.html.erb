@@ -187,9 +187,7 @@
           $("#dialog").css({left:left, top:top, width:width}).show(300);
           $("#dialog").load("<%= url_for(edit_path(
                                               :grid => Grid::ROOT_UUID,
-                                              :row => @grid.uuid,
-                                              :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                              :refresh_list => true)) %>");
+                                              :row => @grid.uuid)) %>");
         });
       </script>
     <% end %>
@@ -209,9 +207,10 @@
           $("#dialog").css({left:left, top:top, width:width}).show(300);
           $("#dialog").load("<%= url_for(new_path(
                                               :grid => Column::ROOT_UUID,
-                                              :filters => @filters,
-                                              :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                              :refresh_list => true)) %>");
+                                              :filters => [{
+                                                :column_uuid => Column::ROOT_GRID_UUID,
+                                                :row_uuid => @grid.uuid,
+                                                :row_name => @grid.name}])) %>");
         });
       </script>
     <% end %>

@@ -75,10 +75,14 @@
     .bind("ajax:success", function(evt, data, status, xhr){
       $(this).find('div.validation-error').empty();
       $(".field_with_errors").removeClass("field_with_errors");
-      $("<%= @container %>").html(xhr.responseText);
+      var container = "<%= @container %>";
+      if(container == ""){
+        window.location.reload(true);
+      }
+      else {
+        $(container).html(xhr.responseText);
+      }
       $("#dialog").hide(300);
-    })
-    .bind('ajax:complete', function(evt, xhr, status){
     })
     .bind("ajax:error", function(evt, xhr, status, error){
       var errors, errorText;
@@ -88,7 +92,7 @@
         errors = {message: err};
       }
       errorText = "<ul>";
-      for( error in errors ) {
+      for(error in errors) {
         errorText += "<li>" + errors[error] + "</li> ";
         $("#header-" + error).addClass("field_with_errors");
       }

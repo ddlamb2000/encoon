@@ -338,7 +338,11 @@ class GridController < ApplicationController
     change_as_of_date(@row)
     respond_to do |format|
       if saved
-        format.html { @refresh_list ? list : row }
+        if @container == ""
+          render :nothing => true
+        else
+          format.html { @refresh_list ? list : row }
+        end
       else
         log_debug "GridController#update: error, params=#{params.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
