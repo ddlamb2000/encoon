@@ -118,6 +118,14 @@ class GridController < ApplicationController
     session[:show_details] = true
     render :partial => "details"
   end
+  
+  def attributes
+    log_debug "GridController#attributes"
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure
+    @columns = @grid.column_all
+    render :partial => "attributes"
+  end
 
   # Renders the details of an article through an Ajax request  
   def row

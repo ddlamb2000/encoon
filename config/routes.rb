@@ -22,6 +22,7 @@ Encoon::Application.routes.draw do
   match '/*grid/__create' => 'grid#create', :as => 'create', :via => [:post]
   match '/*grid/__import' => 'grid#import', :as => 'import'
   match '/*grid/__upload' => 'grid#upload', :as => 'upload'
+  match '/*grid/__attributes' => 'grid#attributes', :as => 'attributes'
   match '/*grid/*row/__details' => 'grid#details', :as => 'details'
   match '/*grid/*row/__edit' => 'grid#edit', :as => 'edit'
   match '/*grid/*row/__update' => 'grid#update', :as => 'update', :via => [:post]

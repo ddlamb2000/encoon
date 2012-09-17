@@ -193,24 +193,20 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="<%= t 'actions.create_column_help' %>" class="button">
-        <a id="new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-          <%= icon('plus') %>
-          <%= t 'actions.create_column' %>
+        <a id="attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <%= icon('edit') %>
+          <%= "Attributes" %>
         </a>
       </span>
       <script>
-        $("#new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
-          var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
-          var left = $("#document").offset().left+5;
-          var width = $("#document").width()-35;
-          $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-          $("#dialog").css({left:left, top:top, width:width}).show(300);
-          $("#dialog").load("<%= url_for(new_path(
-                                              :grid => Column::ROOT_UUID,
-                                              :filters => [{
-                                                :column_uuid => Column::ROOT_GRID_UUID,
-                                                :row_uuid => @grid.uuid,
-                                                :row_name => @grid.name}])) %>");
+        $("#attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+            var top = $(this).offset().top+20;
+            var left = $(this).offset().left;
+            var width = 250;
+            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+            $("#dialog").css({left:left, top:top, width:width}).show(300);
+            $("#dialog").load("<%= url_for(attributes_path(
+                                                :grid => @grid.uuid)) %>");
         });
       </script>
     <% end %>
