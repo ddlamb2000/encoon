@@ -1216,7 +1216,7 @@ private
         end
       end
     end
-    @columns.sort_by! {|column| column[:display]}
+    @columns.sort! {|a, b| a.display <=> b.display}
   end
   
   def load_security_workspace(uuid)
