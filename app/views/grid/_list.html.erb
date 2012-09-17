@@ -59,16 +59,6 @@
                     <%= t 'actions.update' %>
                   </a>
                 </span>
-                <span class="button" title="<%= t 'actions.delete_help' %>">
-                  <%= link_to destroy_path(:grid => @grid.uuid,
-                                           :row => row.uuid,
-                                           :inline => true), 
-                              :confirm => t('message.delete', :name => row.to_s),
-                              :method => :delete do %>
-                    <%= icon('remove') %>
-                    <%= t('actions.delete') %>
-                  <% end %>
-                </span>
                 <script>
                   $("#row-<%= row.uuid %>").hover(
                     function (event){

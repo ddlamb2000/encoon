@@ -32,14 +32,6 @@ class Row < Entity
     @initialization
   end
 
-  def before_destroy
-    log_debug "Row#before_destroy"
-    super
-    RowLoc.destroy_all(["uuid = :uuid and version = :version", 
-                       {:uuid => self.uuid, :version => self.version}])
-    row_attachments.destroy_all
-  end
-  
   def to_s
     name
   end

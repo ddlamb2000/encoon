@@ -19,7 +19,6 @@ class GridController < ApplicationController
 
   before_filter :authenticate_user!, :only => [:create,
                                                :update,
-                                               :destroy,
                                                :attach_document,
                                                :save_attachment,
                                                :delete_attachment,
@@ -354,47 +353,6 @@ class GridController < ApplicationController
       else
         log_debug "GridController#update: error, params=#{params.inspect}"
         format.html { render :json => @row.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
-  def destroy
-    log_debug "GridController#destroy: params=#{params.inspect}"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure
-    selectRow
-    saved = false
-    name = @grid.row_title(@row)
-    begin
-      @row.transaction do
-        @row.enabled = false
-        if @grid.row_validate(@row, Grid::PHASE_DESTROY)
-          @grid.update_row!(@row)
-          @grid.destroy_row!(@row)
-          @grid.row_update_dates!(@row.uuid)
-          if @grid.has_translation?
-            for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid)
-              @grid.destroy_row_loc!(@row_loc)
-            end
-          end
-          saved = true
-        end
-      end
-    rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "GridController#destroy: invalid=#{invalid.inspect}"
-      saved = false
-    rescue Exception => invalid
-      log_error "GridController#destroy", invalid
-      saved = false
-    end
-    respond_to do |format|
-      if saved
-        flash[:notice] = t('transaction.deleted', 
-                                :type => @grid, :name => name)
-        format.html { redirect_to session[:last_url] }
-      else
-        log_debug "GridController#destroy: error, params=#{params.inspect}"
-        format.html { render :action => :show }
       end
     end
   end

@@ -26,7 +26,6 @@ class Grid < Entity
   PHASE_CREATE = 'create'
   PHASE_NEW_VERSION = 'new_version'
   PHASE_UPDATE = 'update'
-  PHASE_DESTROY = 'destroy'
   
   DISPLAY_ROWS_LIMIT = 10
   DISPLAY_ROWS_LIMIT_FULL = 50
@@ -113,19 +112,6 @@ class Grid < Entity
     false    
   end
 
-  def before_destroy
-    log_debug "Grid#before_destroy [#{to_s}]"
-    super
-    GridLoc.destroy_all(["uuid = :uuid AND version = :version", 
-                        {:uuid => self.uuid, :version => self.version}])
-    if Grid.all_versions(self.workspace.grids, self.uuid).length == 0
-      log_debug "Grid#before_destroy remove_orphans"
-      columns.destroy_all
-      rows.destroy_all
-      grid_mappings.destroy_all
-    end
-  end
-  
   # Selects data based on uuid
   def self.select_entity_by_uuid(collection, uuid)
     log_debug "Grid#select_entity_by_uuid(" +
@@ -895,33 +881,6 @@ class Grid < Entity
     true
   end
   
-  def destroy_row!(row)
-    log_debug "Grid#destroy_row!(row=#{row.inspect})"
-    if not can_update_data?
-      log_security_warning "Grid#destroy_row! Can't delete data"
-      return false
-    end
-    sql = "DELETE FROM #{@db_table}" +
-          " WHERE id = #{quote(row.id)}" +
-          " AND lock_version = #{quote(row.lock_version)}"
-    connection.delete(sql, "#{self.class.name} Delete")
-    row.make_audit(Audit::DELETE)
-    true
-  end
-  
-  def destroy_row_loc!(row)
-    log_debug "Grid#destroy_row_loc!(row=#{row.inspect})"
-    if not can_update_data?
-      log_security_warning "Grid#destroy_row_loc! Can't delete data"
-      return false
-    end
-    sql = "DELETE FROM #{@db_loc_table}" +
-          " WHERE id = #{quote(row.id)}" +
-          " AND lock_version = #{quote(row.lock_version)}"
-    connection.delete(sql, "#{self.class.name} Delete")
-    true
-  end
-  
   def mapping_all
     log_debug "Grid#mapping_all"
     grid_mappings.find(:all, 
@@ -975,30 +934,28 @@ class Grid < Entity
   def row_validate(row, phase)
     log_debug "Grid#row_validate(phase=#{phase}) [#{to_s}]"
     validated = true
-    if phase != Grid::PHASE_DESTROY
-      for column in column_all
-        attribute = phase == Grid::PHASE_CREATE ?
-                      column.default_physical_column :
-                      column.physical_column
-        value = row.read_value(column)
-        log_debug "Grid#row_validate(phase=#{phase}) control" +
-                  " column=#{column.name}" +
-                  " attribute=#{attribute}<=>#{value}"
-        if column.required
-          log_debug "Grid#row_validate(phase=#{phase}) required"
-          if value.blank?
-            validated = false
-            row.errors.add(attribute, I18n.t('error.required',
-                                             :column => column))
-          end
+    for column in column_all
+      attribute = phase == Grid::PHASE_CREATE ?
+                    column.default_physical_column :
+                    column.physical_column
+      value = row.read_value(column)
+      log_debug "Grid#row_validate(phase=#{phase}) control" +
+                " column=#{column.name}" +
+                " attribute=#{attribute}<=>#{value}"
+      if column.required
+        log_debug "Grid#row_validate(phase=#{phase}) required"
+        if value.blank?
+          validated = false
+          row.errors.add(attribute, I18n.t('error.required',
+                                           :column => column))
         end
-        if column.regex.present?
-          log_debug "Grid#row_validate(phase=#{phase}) regex"
-          if not Regexp.new(column.regex).match(value)
-            validated = false
-            row.errors.add(attribute, I18n.t('error.badformat', 
-                                             :column => column))
-          end
+      end
+      if column.regex.present?
+        log_debug "Grid#row_validate(phase=#{phase}) regex"
+        if not Regexp.new(column.regex).match(value)
+          validated = false
+          row.errors.add(attribute, I18n.t('error.badformat', 
+                                           :column => column))
         end
       end
     end
@@ -1008,12 +965,10 @@ class Grid < Entity
   def row_loc_validate(row, row_loc, phase)
     log_debug "Grid#row_loc_validate(phase=#{phase}) [#{to_s}]"
     validated = true
-    if phase != Grid::PHASE_DESTROY
-      if self.has_name?
-        if row_loc.name.blank?
-            validated = false
-            row.errors.add(:name, I18n.t('error.mis_name'))
-        end
+    if self.has_name?
+      if row_loc.name.blank?
+          validated = false
+          row.errors.add(:name, I18n.t('error.mis_name'))
       end
     end
     validated

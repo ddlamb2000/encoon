@@ -26,17 +26,6 @@ class Workspace < Entity
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
 
-  def before_destroy
-    log_debug "Workspace#before_destroy"
-    super
-    WorkspaceLoc.destroy_all(["uuid = :uuid AND version = :version", 
-                             {:uuid => self.uuid, :version => self.version}])
-    if Workspace.all_versions(Workspace, self.uuid).length == 0
-      log_debug "Workspace#before_destroy remove_orphans"
-      grids.destroy_all
-    end
-  end
-  
   # Selects data based on uuid
   def self.select_entity_by_uuid(collection, uuid)
     collection.find(:first, 

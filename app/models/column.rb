@@ -47,17 +47,6 @@ class Column < Entity
               :grid_reference,
               :workspace_reference
   
-  def before_destroy
-    log_debug "Column#before_destroy [column #{to_s}]"
-    super
-    ColumnLoc.destroy_all(["uuid = :uuid AND version = :version", 
-                          {:uuid => self.uuid, :version => self.version}])
-    if grid.column_all_versions(self.uuid).length == 0
-      log_debug "Column#before_destroy remove_orphans"
-      column_mappings.destroy_all
-    end
-  end
-  
   def is_preloaded?
     physical_column.present?
   end

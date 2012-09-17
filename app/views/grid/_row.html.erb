@@ -1,114 +1,125 @@
-<header>
+<% if @workspace.present? and @grid.present? and @row.present? %>
+  <header>
+    <hgroup>
+      <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+        <%= link_to(@workspace,
+                    show_path(
+                      :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                      :grid => Workspace::ROOT_UUID,
+                      :row => @workspace.uuid)) %> »
+      <% end %>
+      <%= link_to(@grid,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Grid::ROOT_UUID,
+                    :row => @grid.uuid)) %> »
+      <small>
+        <%= display_grid_next_versions(@grid, @row).html_safe %>
+        <%= display_locale(@row).html_safe if @grid.has_translation? %>
+        <%= display_updated_date(@row).html_safe %>
+        <% if user_signed_in? and not @grid.can_update?(@row) %>
+          <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+        <% end %>
+      </small>
+    </hgroup>
+    <h1><%= bigicon @page_icon %> <%= @row %></h1>
+  </header>
+  <% if @grid.uuid != Workspace::ROOT_UUID and not @columns.empty? %>
+    <table>
+      <tbody>
+        <% for column in @columns %>
+          <%= show_entity(
+                column, 
+                @row.read_value(column),
+                ((column.workspace_reference.present? and
+                  column.grid_reference.present? and
+                  @row.read_value(column).present?) ?  
+                  link_to(@row.read_referenced_name(column),
+                          show_path(
+                            :workspace => column.workspace_reference.display_uri,
+                            :grid => column.grid_reference.display_uri,
+                            :row => @row.read_value(column))) : ""),
+                @row.read_referenced_name(column),
+                @row.read_referenced_description(column)
+           ) %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <% if @grid.has_translation? and @row_loc.description.present? %>
+    <% if not @columns.empty? %><br/><% end %>
+    <p><%= @row_loc.description.html_safe %></p>
+  <% end %>
+  <% if user_signed_in? and @grid.can_update?(@row) %>
+    <div id="actions-<%= @row.uuid %>" 
+            class="actions float-actions" 
+            style="display: none;">
+      <span class="button" title="<%= t 'actions.update_help' %>">
+        <a id="update-<%= @row.uuid %>">
+          <%= icon('edit') %>
+          <%= t 'actions.update' %>
+        </a>
+      </span>
+      <span class="button" title="<%= t 'actions.attach_help' %>">
+        <%= link_to attach_document_path(
+                      :grid => @grid.uuid,
+                      :row => @row.uuid),
+                    :remote => true do %>
+          <%= icon('attachments') %>
+          <%= t 'actions.attach' %>
+        <% end %>
+      </span>
+      <span class="button" title="<%= t 'actions.export_help' %>">
+        <%= link_to export_row_xml_path(
+                      :workspace => @grid.workspace.display_uri,
+                      :grid => @grid.display_uri,
+                      :row => @row.display_uri) do %>
+          <%= icon('export') %>
+          <%= t 'actions.export' %>
+        <% end %>
+      </span>
+      <script>
+        $("#row-<%= @row.uuid %>").hover(
+          function (event){
+            var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @row.uuid %>").width()/2;
+            var top = $(this).offset().top+5;
+            $("#actions-<%= @row.uuid %>").css({left:left,top:top}).fadeIn(300);
+            $(this).addClass("highlighted");
+          },
+          function (event){
+            $("#actions-<%= @row.uuid %>").fadeOut(3);
+            $(this).removeClass("highlighted");
+          }
+        );
+        $("#update-<%= @row.uuid %>").click(function (event){
+          var top = $("#actions-<%= @row.uuid %>").offset().top+15;
+          var left = $("#document").offset().left+5;
+          var width = $("#document").width()-35;
+          $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+          $("#dialog").css({left:left, top:top, width:width}).show(300);
+          $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
+                                                       :row => @row.uuid,
+                                                       :container => "#row-#{@row.uuid}")) %>");
+        });
+      </script>
+    </div>
+  <% end %>
+<% else %>
   <hgroup>
-    <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+    <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
       <%= link_to(@workspace,
                   show_path(
                     :workspace => Workspace::SYSTEM_WORKSPACE_URI,
                     :grid => Workspace::ROOT_UUID,
                     :row => @workspace.uuid)) %> »
     <% end %>
-    <%= link_to(@grid,
-                show_path(
-                  :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                  :grid => Grid::ROOT_UUID,
-                  :row => @grid.uuid)) %> »
-    <small>
-      <%= display_grid_next_versions(@grid, @row).html_safe %>
-      <%= display_locale(@row).html_safe if @grid.has_translation? %>
-      <%= display_updated_date(@row).html_safe %>
-      <% if user_signed_in? and not @grid.can_update?(@row) %>
-        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-      <% end %>
-    </small>
+    <% if @grid.present? %>
+      <%= link_to(@grid,
+                  show_path(
+                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                    :grid => Grid::ROOT_UUID,
+                    :row => @grid.uuid)) %> »
+    <% end %>
   </hgroup>
-  <h1><%= bigicon @page_icon %> <%= @row %></h1>
-</header>
-<% if @grid.uuid != Workspace::ROOT_UUID and not @columns.empty? %>
-  <table>
-    <tbody>
-      <% for column in @columns %>
-        <%= show_entity(
-              column, 
-              @row.read_value(column),
-              ((column.workspace_reference.present? and
-                column.grid_reference.present? and
-                @row.read_value(column).present?) ?  
-                link_to(@row.read_referenced_name(column),
-                        show_path(
-                          :workspace => column.workspace_reference.display_uri,
-                          :grid => column.grid_reference.display_uri,
-                          :row => @row.read_value(column))) : ""),
-              @row.read_referenced_name(column),
-              @row.read_referenced_description(column)
-         ) %>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
-<% if @grid.has_translation? and @row_loc.description.present? %>
-  <% if not @columns.empty? %><br/><% end %>
-  <p><%= @row_loc.description.html_safe %></p>
-<% end %>
-<% if user_signed_in? and @grid.can_update?(@row) %>
-  <div id="actions-<%= @row.uuid %>" 
-          class="actions float-actions" 
-          style="display: none;">
-    <span class="button" title="<%= t 'actions.update_help' %>">
-      <a id="update-<%= @row.uuid %>">
-        <%= icon('edit') %>
-        <%= t 'actions.update' %>
-      </a>
-    </span>
-    <span class="button" title="<%= t 'actions.delete_help' %>">
-      <%= link_to destroy_path(:grid => @grid.uuid,
-                               :row => @row.uuid),
-                  :confirm => t('message.delete', :name => @row.to_s), 
-                  :method => :delete do %>
-        <%= icon('remove') %>
-        <%= t('actions.delete') %>
-      <% end %>
-    </span>
-    <span class="button" title="<%= t 'actions.attach_help' %>">
-      <%= link_to attach_document_path(
-                    :grid => @grid.uuid,
-                    :row => @row.uuid),
-                  :remote => true do %>
-        <%= icon('attachments') %>
-        <%= t 'actions.attach' %>
-      <% end %>
-    </span>
-    <span class="button" title="<%= t 'actions.export_help' %>">
-      <%= link_to export_row_xml_path(
-                    :workspace => @grid.workspace.display_uri,
-                    :grid => @grid.display_uri,
-                    :row => @row.display_uri) do %>
-        <%= icon('export') %>
-        <%= t 'actions.export' %>
-      <% end %>
-    </span>
-    <script>
-      $("#row-<%= @row.uuid %>").hover(
-        function (event){
-          var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @row.uuid %>").width()/2;
-          var top = $(this).offset().top+5;
-          $("#actions-<%= @row.uuid %>").css({left:left,top:top}).fadeIn(300);
-          $(this).addClass("highlighted");
-        },
-        function (event){
-          $("#actions-<%= @row.uuid %>").fadeOut(3);
-          $(this).removeClass("highlighted");
-        }
-      );
-      $("#update-<%= @row.uuid %>").click(function (event){
-        var top = $("#actions-<%= @row.uuid %>").offset().top+15;
-        var left = $("#document").offset().left+5;
-        var width = $("#document").width()-35;
-        $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-        $("#dialog").css({left:left, top:top, width:width}).show(300);
-        $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
-                                                     :row => @row.uuid,
-                                                     :container => "#row-#{@row.uuid}")) %>");
-      });
-    </script>
-  </div>
+  <p><%= t 'error.not_found' %><p>
 <% end %>
