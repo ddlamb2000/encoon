@@ -144,7 +144,7 @@ class Entity < ActiveRecord::Base
   
   # Indicates if the given uuid is a valid uuid
   def self.uuid?(uuid)
-    uuid.present? and uuid.length == 36
+    uuid.present? and uuid =~ /\A(urn:uuid:)?[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/i
   end
 
   def self.loc_select_columns

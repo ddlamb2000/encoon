@@ -112,7 +112,7 @@ class Grid < Entity
     false    
   end
 
-  # Selects data based on uuid
+  # Selects data based on uuid.
   def self.select_entity_by_uuid(collection, uuid)
     log_debug "Grid#select_entity_by_uuid(" +
               "collection=#{collection}, " +
@@ -121,12 +121,31 @@ class Grid < Entity
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
                     :conditions => 
-                        ["grids.uuid = :uuid " +
+                        ["grids.uuid = :uuid" +
                          " AND grid_locs.version = grids.version" +
                          " AND " + as_of_date_clause("grids") +
                          " AND " + locale_clause("grid_locs") +
                          " AND " + grid_security_clause("grids"), 
                         {:uuid => uuid}])
+  end
+  
+  # Selects data based on workspace and uri.
+  def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri)
+    log_debug "Grid#select_entity_by_workspace_and_uri(" +
+              "collection=#{collection}, " +
+              "uri=#{uri})"
+    collection.find(:first, 
+                    :joins => :grid_locs,
+                    :select => self.all_select_columns,
+                    :conditions => 
+                        ["grid.workspace_uuid = :workspace_uuid" +
+                         " AND grids.uri = :uri" +
+                         " AND grid_locs.version = grids.version" +
+                         " AND " + as_of_date_clause("grids") +
+                         " AND " + locale_clause("grid_locs") +
+                         " AND " + grid_security_clause("grids"), 
+                        {:workspace_uuid => workspace_uuid,
+                         :uri => uri}])
   end
   
   # Selects data based on id
@@ -422,6 +441,37 @@ class Grid < Entity
     Row.find_by_sql([sql])[0]
     rescue ActiveRecord::StatementInvalid => exception
       log_error "Grid#row_select_entity_by_uuid #{exception.to_s}" +
+                ", data grid='#{name}', sql=#{sql}"
+      nil
+  end
+  
+  # Selects data based on uri.
+  def row_select_entity_by_uri(uri)
+    log_debug "Grid#row_select_entity_by_uri(uri=#{uri}) [#{to_s}]"
+    if not can_select_data?
+      log_security_warning "Grid#row_select_entity_by_uri Can't select data"
+      return nil
+    end
+    sql = "SELECT #{row_all_select_columns}" + 
+          " FROM grids grids, #{@db_table} rows" + 
+          (has_translation? ? ", #{@db_loc_table} row_locs" : "") +
+          " WHERE grids.uuid = #{quote(self.uuid)}" +
+          " AND " + as_of_date_clause("grids") +
+          " AND " + Grid::grid_security_clause("grids") + 
+          " AND rows.uri = #{quote(uri)}" +
+          " AND " + as_of_date_clause("rows") +
+          (has_mapping? ? "" : " AND rows.grid_uuid = #{quote(self.uuid)}") +
+          (has_translation? ? 
+              " AND rows.uuid = row_locs.uuid" +
+              " AND rows.version = row_locs.version" +
+              " AND " + locale_clause("row_locs") : "") +
+          ((self.uuid == Workspace::ROOT_UUID) ? 
+              " AND " + Grid::workspace_security_clause("rows") : "") + 
+          ((self.uuid == Grid::ROOT_UUID) ? 
+              " AND " + Grid::grid_security_clause("rows") : "") 
+    Row.find_by_sql([sql])[0]
+    rescue ActiveRecord::StatementInvalid => exception
+      log_error "Grid#row_select_entity_by_uri #{exception.to_s}" +
                 ", data grid='#{name}', sql=#{sql}"
       nil
   end

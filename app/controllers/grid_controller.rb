@@ -560,7 +560,11 @@ private
                          "Invalid: can't find workspace #{params[:workspace]}"
       else
         Entity.log_debug "GridController#selectWorkspaceAndGrid workspace found name=#{@workspace.name}"
-        @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
+        if Entity.uuid?(params[:grid])
+          @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
+        else
+          @grid = Grid.select_entity_by_workspace_and_uri(Grid, @workspace.uuid, params[:grid])
+        end
         if @grid.nil?
           Entity.log_debug "GridController#selectWorkspaceAndGrid " + 
                            "Invalid: can't find grid #{params[:grid]}"
@@ -601,6 +605,9 @@ private
     if @grid.present? and params[:row].present?
       if Entity.uuid?(params[:row])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
+        unlock_as_of_date
+      else
+        @row = @row_loc = @grid.row_select_entity_by_uri(params[:row])
         unlock_as_of_date
       end
       if @row.nil?
