@@ -116,6 +116,7 @@ fr:
     design:       "Définition"
     attached_row: "%{grid} (%{column})"
     locked:       "La données ne peut pas être modifiée."
+    no_data:      "Pas de données"
   datepicker:
     format:           "dd/mm/yy"
     decode:           "%d/%m/%Y"

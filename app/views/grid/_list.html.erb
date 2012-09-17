@@ -7,12 +7,26 @@
                     :grid => Workspace::ROOT_UUID,
                     :row => @workspace.uuid)) %> »
     <% end %>
+    <%= link_to(@grid,
+                show_path(
+                  :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                  :grid => Grid::ROOT_UUID,
+                  :row => @grid.uuid)) %> »
+    <small>
+      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
+      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+      <% end %>
+    </small>
   </hgroup>
-  <h2><%= icon 'table' %> <%= @grid %></h2>
+  <h1><%= bigicon 'table' %> <%= @grid %></h1>
   <small><%= trunc(@grid.description).html_safe %></small>
 </header>
-<% unless @table_rows.nil? or 
-          @table_rows.empty? or 
+<% if not @table_rows.nil? and @table_rows.empty? %>
+  <%= t('general.no_data') %>
+<% end %>
+<% unless @table_rows.nil? or
+          @table_rows.empty? or
           @table_columns.nil? %>
   <table>
     <thead>
@@ -114,10 +128,6 @@
   </table>
 <% end %>
 <small>
-  <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-  <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
-    <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-  <% end %>
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
   <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
 </small>
