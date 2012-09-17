@@ -83,7 +83,8 @@ body {
   }
 }
 #navigator {
-  @include float-left;
+  position:fixed;
+  left:0;
   width:30%;
   #history-content, #more-content {
     max-height:300px;
