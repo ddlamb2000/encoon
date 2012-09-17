@@ -18,7 +18,6 @@ class Column < Entity
   ROOT_UUID = '03bfafe0-ea31-012c-105a-00166f92f624'
   ROOT_GRID_UUID = '461e5940-ea31-012c-106b-00166f92f624'
   ROOT_KIND_UUID = '50270360-ea31-012c-106f-00166f92f624'
-  ROOT_NUMBER_UUID = '42e7f000-06cd-012d-c1f8-0026b0d63708'
   ROOT_DISPLAY_UUID = '4c766f00-06cd-012d-c1fb-0026b0d63708'
   ROOT_REFERENCE_UUID = '5a5107e0-0990-012d-e81a-4417fe7fde95'
   ROOT_DATA_KIND_UUID = '5a2e26e0-ea31-012c-1074-00166f92f624'
@@ -39,8 +38,7 @@ class Column < Entity
   belongs_to :grid_reference, :class_name => "Grid", :foreign_key => "grid_reference_uuid", :primary_key => "uuid"
   has_many :column_locs, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :column_mappings, :foreign_key => "column_uuid", :primary_key => "uuid"
-  validates_presence_of :grid_uuid, :number, :display, :kind
-  validates :number, :inclusion => { :in => 1..20 }
+  validates_presence_of :grid_uuid, :kind
   validates_associated :grid
   attr_reader :physical_column,
               :default_physical_column,
@@ -51,20 +49,19 @@ class Column < Entity
     physical_column.present?
   end
   
-  def load_cached_information(grid_uuid, grid, skip_reference, skip_mapping)
-    log_debug "Column#load_cached_information(grid_uuid=#{grid_uuid}, " + 
-              "grid=#{grid.to_s})"
+  def load_cached_information(grid, number, skip_reference, skip_mapping)
+    log_debug "Column#load_cached_information(grid=#{grid.to_s})"
     case self.kind
       when REFERENCE then 
-        @default_physical_column = "row_uuid" + self.number.to_s
+        @default_physical_column = "row_uuid" + number.to_s
       when DATE then 
-        @default_physical_column = "date" + self.number.to_s
+        @default_physical_column = "date" + number.to_s
       when INTEGER then 
-        @default_physical_column = "integer" + self.number.to_s
+        @default_physical_column = "integer" + number.to_s
       when DECIMAL then 
-        @default_physical_column = "float" + self.number.to_s
+        @default_physical_column = "float" + number.to_s
       else 
-        @default_physical_column = "value" + self.number.to_s
+        @default_physical_column = "value" + number.to_s
     end
     db_column = column_mapping_column
     if not skip_mapping and db_column.present?
@@ -80,7 +77,7 @@ class Column < Entity
         # this is used to avoid circular references
         log_debug "Column#load_cached_information reference " +
                   "grid_reference_uuid=#{self.grid_reference_uuid}"
-        if self.grid_reference_uuid == grid_uuid
+        if self.grid_reference_uuid == grid.uuid
           log_error "Column#load_cached_information circular reference " +
                     "for data grid '#{self.grid_reference_uuid}'"
           @grid_reference = grid
@@ -128,7 +125,6 @@ class Column < Entity
       when ROOT_GRID_UUID then self.grid_uuid = xml_value
       when ROOT_REFERENCE_UUID then self.grid_reference_uuid = xml_value
       when ROOT_KIND_UUID then self.kind = xml_value
-      when ROOT_NUMBER_UUID then self.number = xml_value.to_i
       when ROOT_DISPLAY_UUID then self.display = xml_value.to_i
       when ROOT_REQUIRED_UUID then self.required = ['true','t','1'].include?(xml_value)
       when ROOT_REGEX_UUID then self.regex = xml_value
@@ -141,7 +137,6 @@ class Column < Entity
     entity.grid_uuid = self.grid_uuid
     entity.grid_reference_uuid = self.grid_reference_uuid
     entity.kind = self.kind
-    entity.number = self.number
     entity.display = self.display
     entity.required = self.required
     entity.regex = self.regex

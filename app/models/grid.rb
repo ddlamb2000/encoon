@@ -52,8 +52,7 @@ class Grid < Entity
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
     load_workspace
     load_cached_mapping
-    load_cached_columns
-    load_cached_column_information(filters, false, skip_mapping)
+    load_columns(filters, false, skip_mapping)
     load_security
   end
   
@@ -61,8 +60,7 @@ class Grid < Entity
     log_debug "Grid#load_cached_grid_structure_reference [#{to_s}]"
     load_workspace
     load_cached_mapping
-    load_cached_columns
-    load_cached_column_information(nil, true)
+    load_columns(nil, true)
     load_security
   end
   
@@ -965,16 +963,13 @@ class Grid < Entity
       end
       if not initialized
         row.write_value(column, nil)
-        if self.uuid == Column::ROOT_UUID and
-           column.uuid == Column::ROOT_KIND_UUID
+        if self.uuid == Column::ROOT_UUID and column.uuid == Column::ROOT_KIND_UUID
           row.write_value(column, Column::STRING)
-        end
-        if self.uuid == Grid::ROOT_UUID and
-           column.uuid == Grid::ROOT_HAS_NAME_UUID
+        elsif self.uuid == Column::ROOT_UUID and column.uuid == Column::ROOT_DISPLAY_UUID
+          row.write_value(column, 1)
+        elsif self.uuid == Grid::ROOT_UUID and column.uuid == Grid::ROOT_HAS_NAME_UUID
           row.write_value(column, true)
-        end
-        if self.uuid == Grid::ROOT_UUID and
-           column.uuid == Grid::ROOT_HAS_DESCRIPTION_UUID
+        elsif self.uuid == Grid::ROOT_UUID and column.uuid == Grid::ROOT_HAS_DESCRIPTION_UUID
           row.write_value(column, true)
         end
       end
@@ -1048,7 +1043,7 @@ private
   def column_all_select_columns
     "columns.id, columns.uuid, columns.version, columns.lock_version, " +
     "columns.begin, columns.end, columns.enabled, " +
-    "columns.number, columns.display, columns.kind, " + 
+    "columns.display, columns.kind, " + 
     "columns.grid_reference_uuid, " + 
     "columns.required, columns.regex, " + 
     "columns.created_at, columns.updated_at, " + 
@@ -1174,43 +1169,54 @@ private
   end
 
   # Loads in memory information about columns
-  def load_cached_columns
-    log_debug "Grid#load_cached_columns [#{to_s}]"
-    @all_columns = columns.find(:all, 
-                 :joins => :column_locs,
-                 :select => column_all_select_columns,
-                 :conditions => 
-                      [as_of_date_clause("columns") + 
-                       " AND column_locs.version = columns.version" +
-                       " AND " + locale_clause("column_locs") + 
-                       " AND columns.display > 0"], 
-                 :order => "columns.display")
-    @columns = Array.new(@all_columns)
-  end
-
-  # Loads in memory information about columns
-  def load_cached_column_information(filters, 
-                                     skip_reference=false, 
-                                     skip_mapping=false)
-    log_debug "Grid#load_cached_column_information " +
+  def load_columns(filters, skip_reference=false, skip_mapping=false)
+    log_debug "Grid#load_columns " +
               "filters=#{filters},"+
               "skip_reference=#{skip_reference}," +
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
+    @all_columns = columns.find(:all,
+                 :joins => :column_locs,
+                 :select => column_all_select_columns,
+                 :conditions =>
+                      [as_of_date_clause("columns") +
+                       " AND column_locs.version = columns.version" +
+                       " AND " + locale_clause("column_locs")],
+                 :order => "columns.id")
+    @columns = Array.new(@all_columns)
+    index_reference = index_date = index_integer = index_decimal = index_string = 0
     column_all.each do |column|
       unless column.is_preloaded?
-        log_debug "Grid#load_cached_column_information column=#{column.name}"
-        column.load_cached_information(self.uuid, 
-                                       self, 
-                                       skip_reference, 
+        log_debug "Grid#load_columns column=#{column.name}"
+        case column.kind
+          when Column::REFERENCE then
+            index_reference = index_reference + 1 
+            number = index_reference
+          when Column::DATE then 
+            index_date = index_date + 1 
+            number = index_date
+          when Column::INTEGER then 
+            index_integer = index_integer + 1 
+            number = index_integer
+          when Column::DECIMAL then 
+            index_decimal = index_decimal + 1 
+            number = index_decimal
+          else 
+            index_string = index_string + 1 
+            number = index_string
+        end
+        log_debug "Grid#load_columns number=#{number}"
+        column.load_cached_information(self,
+                                       number,
+                                       skip_reference,
                                        skip_mapping)
-        log_debug "Grid#load_cached_column_information column.physical_column=#{column.physical_column}"
+        log_debug "Grid#load_columns column.physical_column=#{column.physical_column}"
+        @columns.delete(column) if column.display.blank? or column.display == 0
         unless filters.nil?
-          filters.each do |filter|
-            @columns.delete(column) if filter[:column_uuid] == column.uuid
-          end
+          filters.each{|filter| @columns.delete(column) if filter[:column_uuid] == column.uuid}
         end
       end
     end
+    @columns.sort_by! {|column| column[:display]}
   end
   
   def load_security_workspace(uuid)
