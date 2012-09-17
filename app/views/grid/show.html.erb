@@ -1,34 +1,37 @@
-<% unless @grid.blank? or @row.blank? %>
-  <% if @grid.uuid != Grid::ROOT_UUID %>
-    <article id="row-<%= @row.uuid %>">
-      <%= render :partial => "row" %>
-    </article>
-  <% end %>
-  <% unless @attached_grids.nil? or @attached_grids.empty? %>
-    <% for attached_grid in @attached_grids %>
-      <article id="grid-<%= attached_grid.uuid + "-" + get_filters_uuid(attached_grid.get_filters_on_row(@row)) %>">
-        <%= icon 'loading' %> <%= attached_grid.name %>…
+<section id="document" class="document">
+  <% unless @grid.blank? or @row.blank? %>
+    <% if @grid.uuid != Grid::ROOT_UUID %>
+      <article id="row-<%= @row.uuid %>">
+        <%= render :partial => "row" %>
       </article>
     <% end %>
+    <% unless @attached_grids.nil? or @attached_grids.empty? %>
+      <% for attached_grid in @attached_grids %>
+        <article id="grid-<%= attached_grid.uuid + "-" + get_filters_uuid(attached_grid.get_filters_on_row(@row)) %>">
+          <%= icon 'loading' %> <%= attached_grid.name %>…
+        </article>
+      <% end %>
+    <% end %>
+    <%= render :partial => 'navigation' %>
+  <% else %>
+    <hgroup>
+      <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+        <%= link_to(@workspace,
+                    show_path(
+                      :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                      :grid => Workspace::ROOT_UUID,
+                      :row => @workspace.uuid)) %> »
+      <% end %>
+      <% if @grid.present? %>
+        <%= link_to(@grid,
+                    show_path(
+                      :workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                      :grid => Grid::ROOT_UUID,
+                      :row => @grid.uuid)) %> »
+      <% end %>
+    </hgroup>
+    <h1><%= bigicon @page_icon %> <%= @page_title %></h1>
+    <p><%= t 'error.not_found' %><p>
   <% end %>
-  <%= render :partial => 'navigation' %>
-<% else %>
-  <hgroup>
-    <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
-      <%= link_to(@workspace,
-                  show_path(
-                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                    :grid => Workspace::ROOT_UUID,
-                    :row => @workspace.uuid)) %> »
-    <% end %>
-    <% if @grid.present? %>
-      <%= link_to(@grid,
-                  show_path(
-                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                    :grid => Grid::ROOT_UUID,
-                    :row => @grid.uuid)) %> »
-    <% end %>
-  </hgroup>
-  <h1><%= bigicon @page_icon %> <%= @page_title %></h1>
-  <p><%= t 'error.not_found' %><p>
-<% end %>
+</section>
+<section id="dialog" class="dialog float-dialog document" style="display: none;"></section>

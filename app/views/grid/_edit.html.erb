@@ -1,10 +1,7 @@
 <header class="action-header">
   <%= @workspace %> » <%= @grid %>
   <% if not new_row%> » <%= @row %><% end %>
-</header> 
-<small>
-  <% if @row.was_updated? %><%= display_updated_date(@row).html_safe %><% end %>
-</small>
+</header>
 <%= form_tag(new_row ?
               create_path(:grid => @grid.uuid, :filters => @filters) :
               update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
@@ -12,7 +9,6 @@
              :id => 'edit-inline-form') do |f| %>
   <%= hidden_field_tag "container", @container %>
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
-  <div class="validation-error"></div>
   <table class="form">
     <% if @grid.has_translation? and @grid.has_name? %>
       <tr id="header-name">
@@ -41,7 +37,9 @@
       </tr>
     <% end %>
   </table>
+  <div class="validation-error"></div>
   <footer class="actions">
+    <% if @row.was_updated? %><div><small><%= display_updated_date(@row).html_safe %></small></div><% end %>
     <span class="button">
       <%= label_tag :begin, t('field.begin_date') %>
       <%= text_field_tag :begin, I18n.l(@row.begin), :size => "10x1", :type => "date" %>

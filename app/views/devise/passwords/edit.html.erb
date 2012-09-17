@@ -1,21 +1,23 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<header class="action-header"><%= t('devise.change_passwd') %></header>
-<%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
-  <%= f.hidden_field :reset_password_token %>
-  <%= devise_error_messages! %>
-  <table class="form">
-    <tr>
-      <td class="header"><%= f.label :password, t('devise.new_passwd'), :class => "required" %></td>
-      <td class="string"><%= f.password_field :password, :required => true %></td>
-    </tr>
-    <tr>
-      <td class="header"><%= f.label :password_confirmation, t('devise.conf_new_passwd'), :class => "required" %></td>
-      <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
-    </tr>
-  </table>
-  <footer class="actions">
-    <span class="button"><%= f.submit t('devise.change_passwd') %></span>
-  </footer>
-<% end %>
+<section class="dialog document">
+  <header class="action-header"><%= t('devise.change_passwd') %></header>
+  <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
+    <%= f.hidden_field :reset_password_token %>
+    <table class="form">
+      <tr>
+        <td class="header"><%= f.label :password, t('devise.new_passwd'), :class => "required" %></td>
+        <td class="string"><%= f.password_field :password, :required => true %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :password_confirmation, t('devise.conf_new_passwd'), :class => "required" %></td>
+        <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
+      </tr>
+    </table>
+    <%= devise_error_messages! %>
+    <footer class="actions">
+      <span class="button"><%= f.submit t('devise.change_passwd') %></span>
+    </footer>
+  <% end %>
+</section>

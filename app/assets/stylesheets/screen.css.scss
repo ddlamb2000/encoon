@@ -47,8 +47,20 @@ $text-shadow-color:#D0D0D0;
 $padding:4px;
 @include blueprint;
 @mixin shade {
-  background-color:$background-color-table;
   @include background-image(linear-gradient(10% 50%, adjust-lightness($background-color-buttons, 80%) 5%, $background-color-buttons));
+  background-color:$background-color-table;
+}
+@mixin field-shade {
+  @include background-image(linear-gradient(color-stops($background-color-table 2px, white)));
+  background-color:$background-color-table;
+}
+@mixin title-shade {
+  @include background-image(linear-gradient(color-stops($background-color-table, $background-color-banner 95%)));
+  background-color:$background-color-banner;
+}
+@mixin banner-shade {
+  @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-banner, 5%) 5%, $background-color-banner));
+  background-color:$background-color-banner;
 }
 @mixin transition {
   @include transition-property(all);

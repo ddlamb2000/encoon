@@ -1,32 +1,34 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<header class="action-header"><%= t('devise.sign_up') %></header>
-<%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
-  <%= devise_error_messages! %>
-  <table class="form">
-    <tr>
-      <td class="header"><%= f.label :first_name, :class => "required" %></td>
-      <td class="string"><%= f.text_field :first_name, :required => true %></td>
-    </tr>
-    <tr>
-      <td class="header"><%= f.label :last_name, :class => "required" %></td>
-      <td class="string"><%= f.text_field :last_name, :required => true %></td>
-    </tr>
-    <tr>
-      <td class="header"><%= f.label :email, :class => "required" %></td>
-      <td class="string"><%= f.email_field :email, :required => true %></td>
-    </tr>
-    <tr>
-      <td class="header"><%= f.label :password, :class => "required" %></td>
-      <td class="string"><%= f.password_field :password, :required => true %></td>
-    </tr>
-    <tr>
-      <td class="header"><%= f.label :password_confirmation, :class => "required" %></td>
-      <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
-    </tr>
-  </table>
-  <footer class="actions">
-    <span class="button"><%= f.submit t('devise.sign_up') %></span>
-  </footer>
-<% end %>
+<section class="dialog document">
+  <header class="action-header"><%= t('devise.sign_up') %></header>
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name)) do |f| %>
+    <table class="form">
+      <tr>
+        <td class="header"><%= f.label :first_name, :class => "required" %></td>
+        <td class="string"><%= f.text_field :first_name, :required => true %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :last_name, :class => "required" %></td>
+        <td class="string"><%= f.text_field :last_name, :required => true %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :email, :class => "required" %></td>
+        <td class="string"><%= f.email_field :email, :required => true %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :password, :class => "required" %></td>
+        <td class="string"><%= f.password_field :password, :required => true %></td>
+      </tr>
+      <tr>
+        <td class="header"><%= f.label :password_confirmation, :class => "required" %></td>
+        <td class="string"><%= f.password_field :password_confirmation, :required => true %></td>
+      </tr>
+    </table>
+    <%= devise_error_messages! %>
+    <footer class="actions">
+      <span class="button"><%= f.submit t('devise.sign_up') %></span>
+    </footer>
+  <% end %>
+</section>

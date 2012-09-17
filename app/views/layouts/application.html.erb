@@ -30,9 +30,8 @@
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
-      <section id="document" class="document"><%= yield %></section>
+      <%= yield %>
     </section>
     <footer id="footer"><a><%= t 'banner.copyright' %></a></footer>
-    <div id="dialog" class="dialog document" style="display: none;"></div>
   </body>
 </html>
