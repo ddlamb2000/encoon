@@ -22,6 +22,8 @@ en:
   actions:
     create:               "New"
     create_help:          "Create new data for the corresponding category."
+    columns:              "Attributes"
+    column_help:          "Create or modify attributes for the category."
     create_column:        "New attribute"
     create_column_help:   "Create a new attribute for the category."
     update:               "Modify"

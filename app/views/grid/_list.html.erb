@@ -193,10 +193,10 @@
       </script>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="<%= t 'actions.create_column_help' %>" class="button">
+      <span title="<%= t 'actions.column_help' %>" class="button">
         <a id="attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= icon('edit') %>
-          <%= "Attributes" %>
+          <%= t 'actions.columns' %>
         </a>
       </span>
       <script>
