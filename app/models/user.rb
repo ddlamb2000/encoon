@@ -82,6 +82,8 @@ class User < Entity
       if self.revision > user.revision 
         log_debug "User#import! update"
         copy_attributes(user)
+        self.update_user_uuid = Entity.session_user_uuid
+        self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         user.save!
         user.update_dates!(User)
@@ -92,6 +94,8 @@ class User < Entity
       end
     else
       log_debug "User#import! new"
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+      self.created_at = self.updated_at = Time.now
       self.password = rand(36**15).to_s(36);
       log_debug "User#import! generated password=#{self.password}"
       make_audit(Audit::IMPORT)

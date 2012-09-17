@@ -59,6 +59,8 @@ class WorkspaceSharing < Entity
       if self.revision > workspace.revision 
         log_debug "WorkspaceSharing#import! update"
         copy_attributes(workspace)
+        self.update_user_uuid = Entity.session_user_uuid
+        self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)
@@ -69,6 +71,8 @@ class WorkspaceSharing < Entity
       end
     else
       log_debug "WorkspaceSharing#import! new"
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+      self.created_at = self.updated_at = Time.now
       make_audit(Audit::IMPORT)
       save!
       update_dates!(Workspace)

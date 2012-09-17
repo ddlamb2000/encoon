@@ -125,6 +125,8 @@ class Workspace < Entity
       if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
         copy_attributes(workspace)
+        self.update_user_uuid = Entity.session_user_uuid
+        self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)
@@ -135,6 +137,8 @@ class Workspace < Entity
       end
     else
       log_debug "Workspace#import! new"
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+      self.created_at = self.updated_at = Time.now
       make_audit(Audit::IMPORT)
       save!
       update_dates!(Workspace)

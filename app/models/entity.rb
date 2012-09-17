@@ -190,8 +190,6 @@ class Entity < ActiveRecord::Base
     xml.enabled(self.enabled)
     xml.created_at(self.created_at)
     xml.updated_at(self.updated_at) if was_updated?
-    xml.create_user_uuid(self.create_user_uuid)
-    xml.update_user_uuid(self.update_user_uuid) if was_updated?
   end
 
   def import(xml_attribute, xml_value)
@@ -204,19 +202,14 @@ class Entity < ActiveRecord::Base
       when 'end' then self.end = Date::parse(xml_value)
       when 'enabled' then self.enabled = ['true','t','1'].include?(xml_value)
       when 'revision' then self.lock_version = xml_value.to_i-1
-      when 'create_user_uuid' then self.create_user_uuid = xml_value
-      when 'update_user_uuid' then self.update_user_uuid = xml_value
     end
   end
   
   def copy_attributes(entity)
     log_debug "Entity#copy_attributes"
-    entity.begin = self.begin    
+    entity.begin = self.begin
     entity.end = self.end
     entity.enabled = self.enabled
-    entity.updated_at = self.updated_at    
-    entity.create_user_uuid = self.create_user_uuid    
-    entity.update_user_uuid = self.update_user_uuid    
   end
 
   def import_loc_base!(collection, loc)

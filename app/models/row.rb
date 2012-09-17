@@ -166,6 +166,8 @@ class Row < Entity
         if self.revision > row.revision 
           log_debug "Row#import! update"
           copy_attributes(row)
+          self.update_user_uuid = Entity.session_user_uuid
+          self.updated_at = Time.now
           make_audit(Audit::IMPORT)
           updated = grid.update_row!(self)
           grid.row_update_dates!(self.uuid)
@@ -176,6 +178,8 @@ class Row < Entity
         end
       else
         log_debug "Row#import! new"
+        self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+        self.created_at = self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         created = grid.create_row!(self)
         grid.row_update_dates!(self.uuid)

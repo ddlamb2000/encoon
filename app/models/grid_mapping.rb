@@ -50,6 +50,8 @@ class GridMapping < Entity
       if self.revision > mapping.revision 
         log_debug "GridMapping#import! update"
         copy_attributes(mapping)
+        self.update_user_uuid = Entity.session_user_uuid
+        self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         mapping.save!
         mapping.update_dates!(grid.grid_mappings)
@@ -60,6 +62,8 @@ class GridMapping < Entity
       end
     else
       log_debug "GridMapping#import! new"
+      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+      self.created_at = self.updated_at = Time.now
       make_audit(Audit::IMPORT)
       save!
       update_dates!(grid.grid_mappings)
