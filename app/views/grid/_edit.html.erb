@@ -76,6 +76,8 @@
       var container = "<%= @container %>";
       if(container == "") {window.location.reload(true);}
       else {$(container).html(xhr.responseText);}
+      $("#document, #document article").removeClass("disabled");
+      $("#document a").attr('class', 'enabled');
       $("#dialog").hide(300);
     })
     .bind("ajax:error", function(evt, xhr, status, error){
@@ -91,6 +93,8 @@
       $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
     });
   $("#cancel-dialog").click(function (event){
+    $("#document, #document article").removeClass("disabled");
+    $("#document a").attr('class', 'enabled');
     $("#dialog").hide(300);
   });
 </script>
