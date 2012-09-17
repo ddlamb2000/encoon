@@ -81,12 +81,10 @@
       <script>
         $("#row-<%= @row.uuid %>").hover(
           function (event){
-            if(!$('#dialog').is(':visible')){
-              var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @row.uuid %>").width()/2;
-              var top = $(this).offset().top+5;
-              $("#actions-<%= @row.uuid %>").css({left:left,top:top}).fadeIn(300);
-              $("#row-<%= @row.uuid %>").addClass("highlighted");
-            }
+            var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @row.uuid %>").width()/2;
+            var top = $(this).offset().top+5;
+            $("#actions-<%= @row.uuid %>").css({left:left,top:top}).fadeIn(300);
+            $("#row-<%= @row.uuid %>").addClass("highlighted");
           },
           function (event){
             $("#actions-<%= @row.uuid %>").fadeOut(3);
