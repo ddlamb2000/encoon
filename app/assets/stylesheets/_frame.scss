@@ -49,29 +49,12 @@ body {
   }
   form {
     display:inline;
-    input {
-      margin:0;
-      padding:2px;
-      border:0;
-      font-size:80%;
-      text-align:center;
-      font-family:$blueprint-font-family;
-      @include border-radius;
-      @include transition;
-      &[type=text] {
-        width:auto;        
-        border-spacing:0;
-        vertical-align:baseline;
-        @include text-shadow;
-      }
-    }
     select {
       margin:0px;
       padding:0;
       border:0;
       font-family:$blueprint-font-family;
       @include border-radius;
-      @include text-shadow;
       @include transition;
     }
   }
