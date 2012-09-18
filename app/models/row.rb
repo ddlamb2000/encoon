@@ -58,6 +58,12 @@ class Row < Entity
     send("#{@initialization ? column.default_physical_column : column.physical_column}=", value)
   end
   
+  def workspace
+    if attribute_present?(:workspace_uuid)
+      Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
+    end
+  end
+
   def read_referenced_name(column)
     value = read_value(column)
     if value.present? 

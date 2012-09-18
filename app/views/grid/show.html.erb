@@ -17,17 +17,13 @@
     <hgroup>
       <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
         <%= link_to(@workspace,
-                    show_path(
-                      :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                      :grid => Workspace::ROOT_UUID,
-                      :row => @workspace.uuid)) %> »
+                    show_workspace_path(:workspace => @workspace.display_uri)) %> »
       <% end %>
       <% if @grid.present? %>
         <%= link_to(@grid,
-                    show_path(
-                      :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                      :grid => Grid::ROOT_UUID,
-                      :row => @grid.uuid)) %> »
+                    show_grid_path(
+                      :workspace => @workspace.display_uri,
+                      :grid => @grid.display_uri)) %> »
       <% end %>
     </hgroup>
     <h1><%= bigicon @page_icon %> <%= @page_title %></h1>

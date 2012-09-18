@@ -60,25 +60,32 @@ class GridController < ApplicationController
     log_debug "GridController#show"
     @filters = params[:filters]
     selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
-    selectRow
-    @columns = @grid.column_all if @grid.present?
-    if @grid.uuid == Grid::ROOT_UUID
-      @attached_grids = [@grid.select_grid_cast(@row.uuid)] if @grid.present? and @row.present?
-    else
-      @attached_grids = Grid.select_referenced_grids(@grid.uuid) if @grid.present?
+    if @grid.present?
+      @grid.load_cached_grid_structure(@filters)
+      selectRow
+      @table_columns = @grid.filtered_columns
+      if @grid.uuid == Grid::ROOT_UUID
+        if @row.present?
+          @grid_cast = @grid.select_grid_cast(@row.uuid)
+          @attached_grids = [@grid_cast]
+        end
+      else
+        @attached_grids = Grid.select_referenced_grids(@grid.uuid) if @grid.present?
+      end
     end
-    set_page_title
-    push_history
-    render :show, :status => @status
-  end
-
-  def export_row
-    log_debug "GridController#export_row_xml"
-    @filters = params[:filters]
-    selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
-    selectRow
+    respond_to do |format|
+      format.html do
+        set_page_title
+        push_history
+        render :show, :status => @status
+      end
+      format.xml do
+        if @grid.uuid == Grid::ROOT_UUID and @grid_cast.present?
+            @table_rows = @grid_cast.row_all(@filters, '', 1, true)
+        end
+        render :show, :status => @status
+      end
+    end
   end
 
   # Renders the content of a list through an Ajax request  
@@ -88,26 +95,20 @@ class GridController < ApplicationController
     @search = params[:search]
     @page = params[:page]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
-    @table_row_count = @grid.row_count(@filters) if @grid.present?
-    @table_rows = @grid.row_all(@filters, @search, @page, true) if @grid.present?
-    @table_columns = @grid.filtered_columns if @grid.present?
+    if @grid.present?
+      @grid.load_cached_grid_structure(@filters) 
+      @table_row_count = @grid.row_count(@filters)
+      @table_rows = @grid.row_all(@filters, @search, @page, true)
+      @table_columns = @grid.filtered_columns
+    end
     render :partial => "list"
   end
   
-  def export_list
-    log_debug "GridController#export_list_xml"
-    @filters = params[:filters]
-    selectWorkspaceAndGrid
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
-    @rows = @grid.row_all(@filters, '', 1, true) if @grid.present?
-  end
-
   # Renders the details of an article through an Ajax request  
   def details
     log_debug "GridController#details"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     selectRow
     if @grid.present? and @row.present?
       @versions = @grid.row_all_versions(@row.uuid)
@@ -129,10 +130,11 @@ class GridController < ApplicationController
   # Renders the details of an article through an Ajax request  
   def row
     log_debug "GridController#row"
+    @filters = params[:filters]
     selectGridAndWorkspace
     @grid.load_cached_grid_structure
     selectRow
-    @columns = @grid.column_all
+    @table_columns = @grid.filtered_columns
     set_page_title
     render :partial => "row"
   end
@@ -143,7 +145,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters)
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
     @filters_uuid = get_filters_uuid(@filters)
     @row = @grid.rows.build
     @row_loc = RowLoc.new
@@ -157,7 +159,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters)
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
     render :partial => "edit", :locals => {:new_row => false}
   end
@@ -167,7 +169,7 @@ class GridController < ApplicationController
     saved = false
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters, true)
+    @grid.load_cached_grid_structure(@filters, true) if @grid.present?
     @row = @grid.rows.new
     @row.initialization
     begin
@@ -232,7 +234,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters)
+    @grid.load_cached_grid_structure(@filters) if @grid.present?
     selectRow
     if params[:lock_version] != @row.lock_version.to_s
       log_debug "GridController#update locked! " +
@@ -362,7 +364,7 @@ class GridController < ApplicationController
   def attach_document
     log_debug "GridController#attach_document"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     selectRow
     @row_attachment = @row.row_attachments.new
     set_page_title 
@@ -371,7 +373,7 @@ class GridController < ApplicationController
   def save_attachment
     log_debug "GridController#save_attachment"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     selectRow
     saved = false
     begin
@@ -465,7 +467,7 @@ class GridController < ApplicationController
   def import
     log_debug "GridController#import"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     @page_title = "Import Data"
     @page_icon = "import"
     @upload = Upload.new
@@ -474,7 +476,7 @@ class GridController < ApplicationController
   def upload
     log_debug "GridController#upload"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     @upload = Upload.new
     @upload.create_user_uuid = session[:user_uuid]
     @upload.update_user_uuid = session[:user_uuid]
@@ -552,6 +554,24 @@ private
     @workspace = nil
     @grid = nil
     if params[:workspace].present?
+      if params[:grid].nil? or params[:row].nil?
+        parameters = params[:workspace].split("/")
+        Entity.log_debug "GridController#selectWorkspaceAndGrid parameters=#{parameters.inspect}"
+        params[:workspace] = parameters[0]
+        params[:grid] = parameters[1]
+        params[:row] = parameters[2]
+        if params[:grid].nil? and params[:row].nil?
+          Entity.log_debug "GridController#selectWorkspaceAndGrid workspace only"
+          params[:row] = params[:workspace]
+          params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
+          params[:grid] = Workspace::ROOT_UUID
+        elsif not params[:grid].nil? and params[:row].nil?
+          Entity.log_debug "GridController#selectWorkspaceAndGrid grid only"
+          params[:row] = params[:grid]
+          params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
+          params[:grid] = Grid::ROOT_UUID
+        end
+      end 
       if Entity.uuid?(params[:workspace])
         @workspace = Workspace.select_entity_by_uuid(Workspace, params[:workspace])
       else

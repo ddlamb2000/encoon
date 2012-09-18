@@ -2,16 +2,12 @@
   <hgroup>
     <% if @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
       <%= link_to(@workspace,
-                  show_path(
-                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                    :grid => Workspace::ROOT_UUID,
-                    :row => @workspace.uuid)) %> »
+                  show_workspace_path(:workspace => @workspace.display_uri)) %> »
     <% end %>
     <%= link_to(@grid,
-                show_path(
-                  :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                  :grid => Grid::ROOT_UUID,
-                  :row => @grid.uuid)) %> »
+                show_grid_path(
+                  :workspace => @workspace.display_uri,
+                  :grid => @grid.display_uri)) %> »
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
@@ -47,11 +43,22 @@
           <td class="list-description">
             <span title="<%= trunc(row.description.html_safe) %>">
               <% if @grid.has_name? %>
-                <%= link_to @grid.row_title(row).html_safe,
-                            show_path(
-                              :workspace => @grid.workspace.display_uri,
-                              :grid => @grid.display_uri,
-                              :row => row.display_uri) %>
+                <% if @grid.uuid == Workspace::ROOT_UUID %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_workspace_path(
+                                :workspace => row.display_uri) %>
+                <% elsif @grid.uuid == Grid::ROOT_UUID %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_grid_path(
+                                :workspace => row.workspace.display_uri,
+                                :grid => row.display_uri) %>
+                <% else %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_path(
+                                :workspace => @grid.workspace.display_uri,
+                                :grid => @grid.display_uri,
+                                :row => row.display_uri) %>
+                <% end %>
               <% else %>
                 <%= link_to icon('blueright'),
                             show_path(
@@ -170,8 +177,7 @@
         <%= link_to export_list_xml_path(
                       :workspace => @grid.workspace.display_uri,
                       :grid => @grid.display_uri,
-                      :filters => @filters,
-                      :page => -1) do %>
+                      :filters => @filters) do %>
           <%= icon('export') %>
           <%= t 'actions.export' %>
         <% end %>
