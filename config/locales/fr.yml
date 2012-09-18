@@ -142,6 +142,7 @@ fr:
     no_grid:      "Erreur: catégorie non trouvée"
     no_data:      "Erreur: données non trouvée"
     not_found:    "Nous sommes désolés, mais la page demandée est introuvable et ne correspond à aucune information répertoriée."
+    locked:       "Un autre utilisateur a modifié la donnée depuis que vous avez accéder à l'écran de modification. Vous devez annuler votre changement et essayer à nouveau."
   message:
     delete:       "Etes vous sûr de vouloir supprimer ’%{name}’ ?"
   date:

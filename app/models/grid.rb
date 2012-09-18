@@ -871,8 +871,8 @@ class Grid < Entity
       log_security_warning "Grid#create_row! Can't create data"
       return false
     end
-    row.created_at = Time.now
-    row.updated_at = Time.now
+    row.created_at = row.updated_at = Time.now
+    row.create_user_uuid = row.update_user_uuid = Entity.session_user_uuid
     sql = "INSERT INTO #{@db_table}" +
           "(#{row_all_insert_columns})" +
           " VALUES(#{row_all_insert_values(row)})"
@@ -909,6 +909,7 @@ class Grid < Entity
       return false
     end
     row.updated_at = Time.now
+    row.update_user_uuid = Entity.session_user_uuid
     sql = "UPDATE #{@db_table}" +
           " SET #{row_all_update_values(row)}" +
           " WHERE id = #{quote(row.id)}" +
@@ -1193,19 +1194,19 @@ private
         log_debug "Grid#load_columns column=#{column.name}"
         case column.kind
           when Column::REFERENCE then
-            index_reference = index_reference + 1 
+            index_reference += 1 
             number = index_reference
           when Column::DATE then 
-            index_date = index_date + 1 
+            index_date += 1 
             number = index_date
           when Column::INTEGER then 
-            index_integer = index_integer + 1 
+            index_integer += 1 
             number = index_integer
           when Column::DECIMAL then 
-            index_decimal = index_decimal + 1 
+            index_decimal += 1 
             number = index_decimal
           else 
-            index_string = index_string + 1 
+            index_string += 1 
             number = index_string
         end
         log_debug "Grid#load_columns number=#{number}"

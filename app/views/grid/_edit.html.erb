@@ -1,12 +1,13 @@
 <header class="action-header">
   <%= @workspace %> » <%= @grid %>
-  <% if not new_row%> » <%= @row %><% end %>
+  <% if not new_row %> » <%= @row %><% end %>
 </header>
 <%= form_tag(new_row ?
               create_path(:grid => @grid.uuid, :filters => @filters) :
               update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
              :remote => true,
              :id => 'edit-inline-form') do |f| %>
+  <%= hidden_field_tag "lock_version", @row.lock_version %>
   <%= hidden_field_tag "container", @container %>
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
   <table class="form">

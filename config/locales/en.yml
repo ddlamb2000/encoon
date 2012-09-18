@@ -141,6 +141,7 @@ en:
     no_grid:      "Error: category isn't available"
     no_data:      "Error: data isn't available"
     not_found:    "We're sorry, but the requested page can't be found and doesn't refer to any information."
+    locked:       "Another user has made a change to that data since you accessed the modify form. You need to cancel your change and try again."
   message:
     delete:       "Are you sure you want to delete '%{name}'?"
   activerecord:
