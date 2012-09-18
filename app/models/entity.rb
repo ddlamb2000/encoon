@@ -257,7 +257,7 @@ class Entity < ActiveRecord::Base
 
   def all_audits
     log_debug "Entity#all_audits"
-    audits.find(:all, :order => "updated_at")
+    audits.find(:all, :order => "updated_at desc")
   end
 
   def make_audit(kind)
