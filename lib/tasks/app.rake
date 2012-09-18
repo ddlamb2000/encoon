@@ -84,9 +84,9 @@ namespace :app do
     else
       file = ENV['file']
       Entity.log_debug "rake:import_data upload #{file}.xml", true
-      Thread.current[:session_locale] = 'en'
-      Thread.current[:session_as_of_date] = Date.current
-      Thread.current[:session_user_display_name] = User::SYSTEM_ADMINISTRATOR_UUID
+      Entity.session_locale = 'en'
+      Entity.session_as_of_date = Date.current
+      Entity.session_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
       begin
         upload = Upload.create
         upload.upload(file)
