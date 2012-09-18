@@ -154,7 +154,7 @@ class Column < Entity
         self.updated_at = Time.now
         make_audit(Audit::IMPORT)
         column.save!
-        column.update_dates!(grid.columns, update_user_uuid)
+        column.update_dates!(grid.columns)
         return "updated"
       else
         log_debug "Column#import! skip update"
