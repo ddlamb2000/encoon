@@ -91,7 +91,7 @@ class Upload < Entity
           end
         end
       end
-      self.elapsed = Time.now - start_run
+      self.elapsed = 1000*(Time.now - start_run)
    end
   end
 
