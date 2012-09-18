@@ -1,4 +1,4 @@
-<% if session[:history_table].present? %>
+<% if user_signed_in? and session[:history_table].present? %>
   <article>
     <span id="history-title" class="button">
       <%= icon('history') + ("&nbsp;" + t('banner.history')).html_safe %>
