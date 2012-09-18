@@ -825,7 +825,8 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load_cached_grid_structure
           log_debug "Grid#row_export select grids in the workspace"
-          rows = grid_def.row_all([{:column_uuid => Grid::ROOT_WORKSPACE_UUID, :row_uuid => row.uuid}])
+          rows = grid_def.row_all([{:column_uuid => Grid::ROOT_WORKSPACE_UUID,
+                                    :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
@@ -836,7 +837,8 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load_cached_grid_structure
           log_debug "Grid#row_export select mapping in the data grid"
-          rows = grid_def.row_all([{:column_uuid => GridMapping::ROOT_GRID_UUID, :row_uuid => row.uuid}])
+          rows = grid_def.row_all([{:column_uuid => GridMapping::ROOT_GRID_UUID,
+                                    :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
@@ -845,7 +847,8 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load_cached_grid_structure
           log_debug "Grid#row_export select columns in the data grid"
-          rows = grid_def.row_all([{:column_uuid => Column::ROOT_GRID_UUID, :row_uuid => row.uuid}])
+          rows = grid_def.row_all([{:column_uuid => Column::ROOT_GRID_UUID,
+                                    :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
@@ -856,7 +859,8 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load_cached_grid_structure
           log_debug "Grid#row_export select mapping in the column"
-          rows = grid_def.row_all([{:column_uuid => ColumnMapping::ROOT_COLUMN_UUID, :row_uuid => row.uuid}])
+          rows = grid_def.row_all([{:column_uuid => ColumnMapping::ROOT_COLUMN_UUID,
+                                    :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end

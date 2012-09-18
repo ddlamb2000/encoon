@@ -81,7 +81,7 @@ class GridController < ApplicationController
       end
       format.xml do
         if @grid.uuid == Grid::ROOT_UUID and @grid_cast.present?
-            @table_rows = @grid_cast.row_all(@filters, '', 1, true)
+            @table_rows = @grid_cast.row_all(@filters, nil, -1, true)
         end
         render :show, :status => @status
       end
