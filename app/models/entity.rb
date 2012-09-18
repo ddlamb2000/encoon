@@ -142,11 +142,27 @@ class Entity < ActiveRecord::Base
     uri || self.uuid
   end
   
+  def clean_uri!
+    if attribute_present?(:uri)
+      self.uri = self.uri.downcase.
+                  gsub(/[ '’@.]/,"-").
+                  gsub(/[àâäÀÂÄ]/,"a").
+                  gsub(/[éèêëÉÈÊË]/,"e").
+                  gsub(/[ìîïÌÎÏ]/,"i").
+                  gsub(/[òôöÒÔÖ]/,"o").
+                  gsub(/[ùûüÙÛÜ]/,"u").
+                  gsub(/[çÇ]/,"c").
+                  gsub(/[œŒ]/,"oe").
+                  gsub(/[^a-z0-9-]/,"").
+                  gsub(/-\z/,"\\1")
+    end
+  end
+  
   # Indicates if the given uuid is a valid uuid
   def self.uuid?(uuid)
     uuid.present? and uuid =~ /\A(urn:uuid:)?[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/i
   end
-
+  
   def self.loc_select_columns
     "id, uuid, version, lock_version, " +
     "base_locale, locale, " +
