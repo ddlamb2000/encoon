@@ -3,12 +3,12 @@
   <row title="System" grid_uuid="f54309d0-ea30-012c-1054-00166f92f624" grid="Domain">
     <uuid>eec10850-dd45-012c-aafe-0026b0d63708</uuid>
     <version>1</version>
-    <revision>53</revision>
+    <revision>54</revision>
     <enabled>true</enabled>
     <created_at>2009-12-17 17:43:45 UTC</created_at>
-    <updated_at>2012-06-27 09:56:48 UTC</updated_at>
+    <updated_at>2012-09-18 04:01:18 UTC</updated_at>
     <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
-    <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public">f</data>
+    <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public">t</data>
     <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">57830c40-9c87-012f-089e-4417fe7fde95</data>
     <data uuid="44b03b60-a26c-012f-de85-4417fe7fde95" name="Uri">system</data>
     <locale>
@@ -21,8 +21,8 @@ It's used internally and it's not recommended to alter it.</description>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Syst&amp;#232;me</name>
-      <description>Contient les d&amp;#233;finitions de donn&amp;#233;es utilis&amp;#233;es &amp;#224; bas-niveau par l'application. Il est con&amp;#231;u, mis au point et maintenu dans le cadre du d&amp;#233;veloppement du syst&amp;#232;me lui-m&amp;#234;me dans le cadre d'un processus it&amp;#233;ratif et r&amp;#233;cursif. Par exemple la d&amp;#233;finition des espaces de travail et des grilles de donn&amp;#233;es repose sur un jeu de grilles de donn&amp;#233;es. Il est utilis&amp;#233; de mani&amp;#232;re interne et il n'est pas recommand&amp;#233; de le modifier.</description>
+      <name>Système</name>
+      <description>Contient les définitions de données utilisées par l'application. Il est conçu, mis au point et maintenu dans le cadre du développement du système lui-même dans le cadre d'un processus itératif et récursif. Par exemple la définition des espaces de travail et des grilles de données repose sur un jeu de grilles de données. Il est utilisé de manière interne et il n'est pas recommandé de le modifier.</description>
     </locale>
   </row>
   <row title="Attribute" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
@@ -56,19 +56,19 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">columns</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">column_locs</data>
   </row>
-  <row title="Data category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+  <row title="Category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>461e5940-ea31-012c-106b-00166f92f624</uuid>
     <version>1</version>
-    <revision>13</revision>
+    <revision>15</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:40:32 UTC</created_at>
-    <updated_at>2012-06-26 03:02:26 UTC</updated_at>
+    <updated_at>2012-09-18 03:56:46 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
@@ -77,17 +77,17 @@ It's used internally and it's not recommended to alter it.</description>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Data category</name>
-      <description>Data category the attribute is defined to.</description>
+      <name>Category</name>
+      <description>Category the attribute is defined to.</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Catégorie de données</name>
-      <description>Catégorie de données à laquelle est attachée l'attribut.</description>
+      <name>Catégorie</name>
+      <description>Catégorie à laquelle est attaché l'attribut.</description>
     </locale>
   </row>
-  <row title="Data category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3427a80-06cd-012d-c202-0026b0d63708</uuid>
     <version>1</version>
     <revision>1</revision>
@@ -105,7 +105,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-02-28 19:27:57 UTC</created_at>
     <updated_at>2012-06-26 03:01:47 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
@@ -142,7 +142,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-01-23 09:40:49 UTC</created_at>
     <updated_at>2010-04-06 12:21:04 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">5a2e26e0-ea31-012c-1074-00166f92f624</data>
@@ -179,7 +179,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-03-04 07:49:14 UTC</created_at>
     <updated_at>2012-06-26 03:03:08 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">20</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
@@ -216,7 +216,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-03-29 21:10:21 UTC</created_at>
     <updated_at>2010-04-06 12:39:41 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">10</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -253,7 +253,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-03-29 20:57:05 UTC</created_at>
     <updated_at>2010-04-06 12:21:43 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">03bfafe0-ea31-012c-105a-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">03bfafe0-ea31-012c-105a-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -313,7 +313,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">b800e230-042b-012d-0a08-0015c5091b01</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">column_mappings</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
@@ -325,7 +325,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-02-25 11:06:57 UTC</created_at>
     <updated_at>2012-06-26 03:07:48 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">b800e230-042b-012d-0a08-0015c5091b01</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">03bfafe0-ea31-012c-105a-00166f92f624</data>
@@ -360,7 +360,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-02-25 11:07:43 UTC</created_at>
     <updated_at>2010-04-02 06:39:30 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">b800e230-042b-012d-0a08-0015c5091b01</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">b800e230-042b-012d-0a08-0015c5091b01</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -413,7 +413,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grids</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">grid_locs</data>
   </row>
@@ -425,7 +425,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-01-23 09:39:28 UTC</created_at>
     <updated_at>2012-06-26 02:53:52 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
@@ -462,7 +462,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-04-13 14:55:36 UTC</created_at>
     <updated_at>2010-04-13 15:10:54 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -493,7 +493,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-04-13 14:55:06 UTC</created_at>
     <updated_at>2010-04-13 14:57:10 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -549,7 +549,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:04 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -575,7 +575,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:24 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -601,7 +601,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:07:33 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">e1fa0830-dd46-012c-538a-0016cbad334a</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -675,19 +675,19 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">a6beb050-0427-012d-09bf-0015c5091b01</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grid_mappings</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
-  <row title="Data category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+  <row title="Category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>bdbcc440-0427-012d-09c5-0015c5091b01</uuid>
     <version>1</version>
-    <revision>8</revision>
+    <revision>11</revision>
     <enabled>true</enabled>
     <created_at>2010-02-25 10:37:48 UTC</created_at>
-    <updated_at>2012-06-26 03:07:08 UTC</updated_at>
+    <updated_at>2012-09-18 03:57:12 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">a6beb050-0427-012d-09bf-0015c5091b01</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
@@ -696,15 +696,15 @@ It's used internally and it's not recommended to alter it.</description>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
-      <name>Data category</name>
+      <name>Category</name>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
-      <name>Catégorie de données</name>
+      <name>Catégorie</name>
     </locale>
   </row>
-  <row title="Data category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>3125b701-0a56-012d-64db-4417fe7fde95</uuid>
     <version>1</version>
     <revision>1</revision>
@@ -722,7 +722,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-02-25 10:38:16 UTC</created_at>
     <updated_at>2010-04-02 06:40:30 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">a6beb050-0427-012d-09bf-0015c5091b01</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -752,7 +752,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-02-25 10:38:33 UTC</created_at>
     <updated_at>2010-04-02 06:40:45 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">a6beb050-0427-012d-09bf-0015c5091b01</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">a6beb050-0427-012d-09bf-0015c5091b01</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -805,7 +805,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:54:40 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspaces</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">workspace_locs</data>
   </row>
@@ -816,7 +816,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2012-06-27 09:54:48 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
@@ -846,7 +846,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2012-06-27 09:54:00 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -876,7 +876,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2012-06-27 09:56:19 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">f54309d0-ea30-012c-1054-00166f92f624</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -930,7 +930,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-06-02 20:07:23 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">roles</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">role_locs</data>
   </row>
@@ -965,7 +965,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-06-20 12:03:44 UTC</created_at>
     <updated_at>2012-06-20 12:08:58 UTC</updated_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">workspace_sharings</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
@@ -977,7 +977,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-06-17 07:18:00 UTC</created_at>
     <updated_at>2012-06-26 02:57:28 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">f54309d0-ea30-012c-1054-00166f92f624</data>
@@ -1012,7 +1012,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-06-19 21:56:45 UTC</created_at>
     <updated_at>2012-08-08 07:09:06 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
@@ -1047,7 +1047,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-06-17 07:18:23 UTC</created_at>
     <updated_at>2012-06-26 02:57:40 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">4c2b6200-9a7a-012f-642b-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">08beadc0-ea31-012c-105d-00166f92f624</data>
@@ -1105,7 +1105,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2010-03-25 15:57:11 UTC</created_at>
     <grid_uuid title="Data mapping">a6beb050-0427-012d-09bf-0015c5091b01</grid_uuid>
-    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">uploads</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation"></data>
   </row>
@@ -1116,7 +1116,7 @@ It's used internally and it's not recommended to alter it.</description>
     <enabled>true</enabled>
     <created_at>2012-08-16 18:25:38 UTC</created_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -1146,7 +1146,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2010-03-25 15:56:52 UTC</created_at>
     <updated_at>2012-08-08 07:09:53 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -1181,7 +1181,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-08-07 10:19:07 UTC</created_at>
     <updated_at>2012-08-08 07:14:54 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -1216,7 +1216,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-08-07 10:21:13 UTC</created_at>
     <updated_at>2012-08-08 07:10:10 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -1251,7 +1251,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-08-07 10:21:43 UTC</created_at>
     <updated_at>2012-08-08 07:18:46 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
@@ -1286,7 +1286,7 @@ It's used internally and it's not recommended to alter it.</description>
     <created_at>2012-08-07 10:20:23 UTC</created_at>
     <updated_at>2012-08-08 07:15:09 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Data category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">c306f4d0-14a2-012d-c0f4-4417fe7fde95</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">f33188f0-06cc-012d-c1db-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
