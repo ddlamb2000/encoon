@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encoon>
+  <row title="Security" grid_uuid="f54309d0-ea30-012c-1054-00166f92f624" grid="Domain">
+    <uuid>63f69480-d59e-012f-590e-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-31 13:33:36 UTC</created_at>
+    <updated_at>2012-09-18 11:11:23 UTC</updated_at>
+    <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
+    <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public"></data>
+    <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">50088bf0-9c87-012f-089e-4417fe7fde95</data>
+    <data uuid="44b03b60-a26c-012f-de85-4417fe7fde95" name="Uri">security</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Security</name>
+    </locale>
+  </row>
+</encoon>
