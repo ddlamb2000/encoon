@@ -35,6 +35,14 @@ body {
         background-color:$background-color-highlights;
       }
     } 
+    .disabled {
+      background-color:transparent;
+      text-decoration:none;
+      cursor:progress;
+      &:hover {
+        background-color:transparent;
+      }
+    }
   }
   #header-application {
     @include float-left;
@@ -160,6 +168,14 @@ body {
         color:$background-color-article;
       }
     } 
+    .disabled {
+      background-color:transparent;
+      text-decoration:none;
+      cursor:progress;
+      &:hover {
+        background-color:transparent;
+      }
+    }
   }
   .highlighted {
     background-color:$background-color-highlights;
@@ -214,9 +230,12 @@ body {
     background:$background-color-table-header;
   }
   .disabled {
-    background:$background-color-table-header;
+    background:transparent;
     text-decoration:none;
     cursor:progress;
+    &:hover {
+      background-color:transparent;
+    }
   }
   table {
     width:100%;
@@ -308,6 +327,4 @@ body {
 }
 .disabled {
   background:$background-color-table-header;
-  text-decoration:none;
-  cursor:progress;
 }

@@ -78,7 +78,7 @@
       if(container == "") {window.location.reload(true);}
       else {$(container).html(xhr.responseText);}
       $("#document, #document article").removeClass("disabled");
-      $("#document a").attr('class', 'enabled');
+      $("a").removeClass("disabled");
       $("#dialog").hide(300);
     })
     .bind("ajax:error", function(evt, xhr, status, error){
@@ -95,7 +95,7 @@
     });
   $("#cancel-dialog").click(function (event){
     $("#document, #document article").removeClass("disabled");
-    $("#document a").attr('class', 'enabled');
+    $("a").removeClass("disabled");
     $("#dialog").hide(300);
   });
 </script>
