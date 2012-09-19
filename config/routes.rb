@@ -17,6 +17,8 @@
 Encoon::Application.routes.draw do
   root :to => 'grid#home'
   devise_for :users
+  match '*flag/__set' => 'grid#set', :as => 'set'
+  match '*flag/__unset' => 'grid#unset', :as => 'unset'
   match '/*grid/__list' => 'grid#list', :as => 'list'
   match '/*grid/__new' => 'grid#new', :as => 'new'
   match '/*grid/__create' => 'grid#create', :as => 'create', :via => [:post]
@@ -35,7 +37,5 @@ Encoon::Application.routes.draw do
   match '/*workspace/*grid/*row' => 'grid#show', :as => 'show'
   match '/*workspace/*grid.xml' => 'grid#show', :format => :xml, :as => 'export_list_xml'
   match '/__history' => 'grid#history', :as => 'history'
-  match '/__set' => 'grid#set', :as => 'set'
-  match '/__unset' => 'grid#unset', :as => 'unset'
   match '/__refresh' => 'grid#refresh', :as => 'refresh'
 end
