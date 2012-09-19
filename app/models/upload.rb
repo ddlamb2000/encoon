@@ -74,9 +74,11 @@ class Upload < Entity
                   entity.default_dates
                   imported = entity.import!
                   if imported != ""
-                    if locs.length > 0
-                      locs.each do |entity_loc|
-                        entity.import_loc!(entity_loc)
+                    if imported != "skipped"
+                      if locs.length > 0
+                        locs.each do |entity_loc|
+                          entity.import_loc!(entity_loc)
+                        end
                       end
                     end
                     entity.create_missing_loc!

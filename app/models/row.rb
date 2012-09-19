@@ -227,21 +227,25 @@ class Row < Entity
       base_loc = nil
       foundI18n = false
       grid.row_loc_select_entity_by_uuid(self.uuid, self.version).each do |loc|
-        base_locs << loc.base_locale
+        base_locs << loc.locale
         if not foundI18n
           base_loc = loc
           foundI18n = (loc.base_locale == I18n.locale.to_s)
         end
       end
       if base_loc.present?
+        log_debug "Row#create_missing! base_locs=#{base_locs.inspect}"
         LANGUAGES.each do |lang, locale|
+          log_debug "Row#create_missing! locale=#{locale.to_s}"
           if (base_locs.find {|value| locale.to_s == value}).nil?
             loc = new_loc
             base_loc.copy_attributes(loc)
             loc.locale = locale.to_s
             loc.base_locale = base_loc.base_locale
+            log_debug "Row#create_missing! create_row_loc!"
             grid.create_row_loc!(loc)
-            log_debug "Row#create_missing! new, locale=#{locale.to_s}"
+          else
+            log_debug "Row#create_missing! skip"
           end
         end
       end
