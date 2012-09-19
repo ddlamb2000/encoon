@@ -9,10 +9,15 @@
     @include field-shade;
     @include transition;
     @include border-radius;
-    &[type=text], &[type=email] {
+    &[type=text],&[type=email] {
       vertical-align:middle;
       width:auto;
       border-spacing:0;
+    }
+    &[type=file] {
+      border:1px solid transparent;
+      background-color:transparent;
+      background-image:none;
     }
   }
   select {
