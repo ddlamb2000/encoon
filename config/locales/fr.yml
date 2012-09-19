@@ -84,6 +84,7 @@ fr:
     languages:    "Langues"
     attachments:  "Documents"
     data:         "Données"
+    file:         "Fichier"
   general:
     home:         "Accueil"
     undefined:    "(non défini)"
@@ -145,7 +146,8 @@ fr:
     not_found:    "Nous sommes désolés, mais la page demandée est introuvable et ne correspond à aucune information répertoriée."
     locked:       "Un autre utilisateur a modifié la donnée depuis que vous avez accéder à l'écran de modification. Vous devez annuler votre changement et essayer à nouveau."
   message:
-    delete:       "Etes vous sûr de vouloir supprimer ’%{name}’ ?"
+    delete:       "Êtes vous sûr de vouloir supprimer ’%{name}’ ?"
+    uploaded:     "Le fichier a été chargé: %{record_count} enregistrements, %{insert_count} insertions, %{update_count} mises à jour."
   date:
     formats:
       default: "%d/%m/%Y"

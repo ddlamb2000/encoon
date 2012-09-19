@@ -8,7 +8,7 @@
              :id => 'import-form') do %>
   <table class="form">
     <tr>
-      <td class="header">Data file</td>
+      <td class="header"><%= t 'field.file' %></td>
       <td class="string">
         <%= file_field_tag :data_file, :accept => 'text/xml' %>
       </td>

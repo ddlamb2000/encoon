@@ -149,10 +149,13 @@ class GridController < ApplicationController
       @upload.transaction do
         log_debug "GridController#upload: initialize transaction " +
                   "params[:data_file]=#{params[:data_file]}"
-        @upload.update_attributes(:data_file => params[:data_file])
-        log_debug "GridController#upload: row_validate"
-        @upload.save!
-        saved = true
+        if params[:data_file].blank?
+          @upload.errors.add(:file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+        else
+          @upload.update_attributes(:data_file => params[:data_file])
+          @upload.save!
+          saved = true
+        end
       end
     rescue ActiveRecord::RecordInvalid => invalid
       log_debug "GridController#upload: invalid=#{invalid.inspect}"
@@ -164,7 +167,10 @@ class GridController < ApplicationController
     respond_to do |format|
       if saved
         log_debug "GridController#upload: saved"
-        flash[:notice] = "File uploaded."
+        flash[:notice] = I18n.t('message.uploaded',
+                                :record_count => @upload.records,
+                                :insert_count => @upload.inserted,
+                                :update_count => @upload.updated)
         render :nothing => true
       else
         log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"

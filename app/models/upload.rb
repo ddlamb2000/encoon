@@ -16,7 +16,6 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class Upload < Entity
   require "rexml/document"
-  validates_presence_of :file_name
 
   def upload(file_name)
     self.file_name = file_name
@@ -25,8 +24,8 @@ class Upload < Entity
   end
   
   def data_file=(input_file)
-    self.records = self.inserted = self.updated = self.skipped = self.elapsed = 0
-    if input_file.present?
+    if not input_file.blank?
+      self.records = self.inserted = self.updated = self.skipped = self.elapsed = 0
       start_run = Time.now 
       self.file_name = input_file.original_filename if self.file_name.blank?
       log_debug "Upload#data_file= [#{self.file_name}]"
@@ -92,7 +91,7 @@ class Upload < Entity
         end
       end
       self.elapsed = 1000*(Time.now - start_run)
-   end
+    end
   end
 
 private
