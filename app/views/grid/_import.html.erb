@@ -1,0 +1,58 @@
+<header class="action-header">
+  <%= @workspace %> » <%= @grid %>
+</header>
+<%= form_tag(upload_path(:grid => @grid.uuid),
+             :remote => true,
+             :multipart => true,
+             :target => "target_dialog",
+             :id => 'import-form') do %>
+  <table class="form">
+    <tr>
+      <td class="header">Data file</td>
+      <td class="string">
+        <%= file_field_tag :data_file, :accept => 'text/xml' %>
+      </td>
+    </tr>
+  </table>
+  <div class="validation-error"></div>
+  <footer class="actions">
+    <span class="button">
+      <a id="cancel-dialog"><%= t 'actions.cancel' %></a>
+    </span>
+    <span class="button">
+      <%= submit_tag t('actions.import'), :id => "ok-dialog" %>
+    </span>
+  </footer>
+<% end %>
+<iframe id="target_dialog" style="display: none;"></iframe>
+<script>
+  $('#import-form')
+    .bind("ajax:beforeSend", function(evt, xhr, settings){
+      $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+      $(".field_with_errors").removeClass("field_with_errors");
+    })
+    .bind('ajax:aborted:file', function(event, elements){
+      $(this).find('div.validation-error').empty();
+      $(".field_with_errors").removeClass("field_with_errors");
+      window.location.reload(true);
+      $("#document, #document article").removeClass("disabled");
+      $("a").removeClass("disabled");
+      $("#dialog").hide(300);
+    })
+    .bind("ajax:error", function(evt, xhr, status, error){
+      var errors, errorText;
+      try {errors = $.parseJSON(xhr.responseText);}
+      catch(err) {errors = {message: err};}
+      errorText = "<ul>";
+      for(error in errors) {
+        errorText += "<li>" + errors[error] + "</li> ";
+      }
+      errorText += "</ul>";
+      $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
+    });
+  $("#cancel-dialog").click(function (event){
+    $("#document, #document article").removeClass("disabled");
+    $("a").attr('class', 'enabled');
+    $("#dialog").hide(300);
+  });
+</script>

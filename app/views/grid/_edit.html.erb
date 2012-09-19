@@ -6,13 +6,13 @@
               create_path(:grid => @grid.uuid, :filters => @filters) :
               update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
              :remote => true,
-             :id => 'edit-inline-form') do |f| %>
+             :id => 'edit-form') do %>
   <%= hidden_field_tag "lock_version", @row.lock_version %>
   <%= hidden_field_tag "container", @container %>
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
   <table class="form">
     <% if @grid.has_translation? and @grid.has_name? %>
-      <tr id="header-name">
+      <tr>
         <td class="header">
           <%= label_tag :name, t('field.name'), :class => "required" %>
         </td>
@@ -28,7 +28,7 @@
       <%= edit_entity(@row, column, description) %>
     <% end %>
     <% if @grid.has_translation? and @grid.has_description? %>
-      <tr id="header-description">
+      <tr>
         <td class="header">
           <%= label_tag :description, t('field.description') %>
         </td>
@@ -66,7 +66,7 @@
   </footer>
 <% end %>
 <script>
-  $('#edit-inline-form')
+  $('#edit-form')
     .bind("ajax:beforeSend", function(evt, xhr, settings){
       $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
       $(".field_with_errors").removeClass("field_with_errors");

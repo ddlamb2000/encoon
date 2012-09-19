@@ -17,8 +17,12 @@
 class GridController < ApplicationController
   before_filter :load_workspaces, :only => [:home, :show, :refresh]
 
-  before_filter :authenticate_user!, :only => [:create,
+  before_filter :authenticate_user!, :only => [:new,
+                                               :edit,
+                                               :create,
                                                :update,
+                                               :attributes,
+                                               :details,
                                                :attach_document,
                                                :save_attachment,
                                                :delete_attachment,
@@ -122,9 +126,51 @@ class GridController < ApplicationController
   def attributes
     log_debug "GridController#attributes"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load_cached_grid_structure if @grid.present?
     @columns = @grid.column_all
     render :partial => "attributes"
+  end
+
+  def import
+    log_debug "GridController#import"
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure if @grid.present?
+    render :partial => "import"
+  end
+  
+  def upload
+    log_debug "GridController#upload"
+    saved = false
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure if @grid.present?
+    @upload = Upload.new
+    @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
+    begin
+      @upload.transaction do
+        log_debug "GridController#upload: initialize transaction " +
+                  "params[:data_file]=#{params[:data_file]}"
+        @upload.update_attributes(:data_file => params[:data_file])
+        log_debug "GridController#upload: row_validate"
+        @upload.save!
+        saved = true
+      end
+    rescue ActiveRecord::RecordInvalid => invalid
+      log_debug "GridController#upload: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "GridController#upload", invalid
+      saved = false
+    end
+    respond_to do |format|
+      if saved
+        log_debug "GridController#upload: saved"
+        flash[:notice] = "File uploaded."
+        render :nothing => true
+      else
+        log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
+        format.html {render :json => @upload.errors, :status => :unprocessable_entity}
+      end
+    end
   end
 
   # Renders the details of an article through an Ajax request  
@@ -461,32 +507,6 @@ class GridController < ApplicationController
     end
     respond_to do |format|
       format.html { render :action => "show" }
-    end
-  end
-
-  def import
-    log_debug "GridController#import"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
-    @page_title = "Import Data"
-    @page_icon = "import"
-    @upload = Upload.new
-  end
-  
-  def upload
-    log_debug "GridController#upload"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
-    @upload = Upload.new
-    @upload.create_user_uuid = session[:user_uuid]
-    @upload.update_user_uuid = session[:user_uuid]
-    respond_to do |format|
-      if @upload.update_attributes(params[:upload])
-        flash[:notice] = "File uploaded."
-        format.html { redirect_to :action => "index" }
-      else
-        format.html { render :action => "import_data" }
-      end
     end
   end
 

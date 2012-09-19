@@ -1,11 +1,10 @@
 h1 {
-  font-size:180%;
+  font-size:200%;
   font-weight:bolder;
   color:$title-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
 }
-h2 {
-  font-size:150%;
+h2,h3 {
   font-weight:bolder;
   color:$title-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);

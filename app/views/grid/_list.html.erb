@@ -15,8 +15,7 @@
       <% end %>
     </small>
   </hgroup>
-  <h1><%= bigicon 'table' %> <%= @grid %></h1>
-  <small><%= trunc(@grid.description).html_safe %></small>
+  <h3><%= @grid %></h3>
 </header>
 <% if not @table_rows.nil? and @table_rows.empty? %>
   <%= t('general.no_data') %>

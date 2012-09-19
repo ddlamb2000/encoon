@@ -15,8 +15,8 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Upload < Entity
-
   require "rexml/document"
+  validates_presence_of :file_name
 
   def upload(file_name)
     self.file_name = file_name

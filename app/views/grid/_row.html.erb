@@ -18,7 +18,7 @@
         <% end %>
       </small>
     </hgroup>
-    <h1><%= bigicon @page_icon %> <%= @row %></h1>
+    <h1><%= @row %></h1>
   </header>
   <% if @grid.uuid != Workspace::ROOT_UUID and not @table_columns.empty? %>
     <table>
@@ -57,23 +57,29 @@
         </a>
       </span>
       <span class="button" title="<%= t 'actions.attach_help' %>">
-        <%= link_to attach_document_path(
-                      :grid => @grid.uuid,
-                      :row => @row.uuid),
+        <%= link_to attach_document_path(:grid => @grid.uuid,
+                                         :row => @row.uuid),
                     :remote => true do %>
           <%= icon('attachments') %>
           <%= t 'actions.attach' %>
         <% end %>
       </span>
       <span class="button" title="<%= t 'actions.export_help' %>">
-        <%= link_to export_row_xml_path(
-                      :workspace => @grid.workspace.display_uri,
-                      :grid => @grid.display_uri,
-                      :row => @row.display_uri) do %>
+        <%= link_to export_row_xml_path(:workspace => @grid.workspace.display_uri,
+                                        :grid => @grid.display_uri,
+                                        :row => @row.display_uri) do %>
           <%= icon('export') %>
           <%= t 'actions.export' %>
         <% end %>
       </span>
+      <% if @grid.can_create_data?(@filters) %>
+        <span class="button" title="<%= t 'actions.import_help' %>">
+          <a id="import-<%= @row.uuid %>">
+            <%= icon('import') %>
+            <%= t 'actions.import' %>
+          </a>
+        </span>
+      <% end %>
       <script>
         $("#row-<%= @row.uuid %>").hover(
           function (event){
@@ -98,8 +104,21 @@
             $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
             $("#dialog").css({left:left, top:top, width:width}).show(300);
             $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
-                                                         :row => @row.uuid,
-                                                         :container => "#row-#{@row.uuid}")) %>");
+                                                     :row => @row.uuid,
+                                                     :container => "#row-#{@row.uuid}")) %>");
+          }
+        });
+        $("#import-<%= @row.uuid %>").click(function (event){
+          if(!$('#dialog').is(':visible')){
+            var top = $("#actions-<%= @row.uuid %>").offset().top+15;
+            var left = $("#document").offset().left+5;
+            var width = $("#document").width()-35;
+            $("#actions-<%= @row.uuid %>").fadeOut(3);
+            $("#document, #document article").addClass("disabled");
+            $("a").addClass("disabled");
+            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+            $("#dialog").css({left:left, top:top, width:width}).show(300);
+            $("#dialog").load("<%= url_for(import_path(:grid => @grid.uuid)) %>");
           }
         });
       </script>
