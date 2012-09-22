@@ -17,6 +17,8 @@
 Encoon::Application.routes.draw do
   root :to => 'grid#home'
   devise_for :users
+  match '/__history' => 'grid#history', :as => 'history'
+  match '/__refresh' => 'grid#refresh', :as => 'refresh'
   match '*flag/__set' => 'grid#set', :as => 'set'
   match '*flag/__unset' => 'grid#unset', :as => 'unset'
   match '/*grid/__list' => 'grid#list', :as => 'list'
@@ -36,6 +38,4 @@ Encoon::Application.routes.draw do
   match '/*workspace/*grid/*row.xml' => 'grid#show', :format => :xml, :as => 'export_row_xml'
   match '/*workspace/*grid/*row' => 'grid#show', :as => 'show'
   match '/*workspace/*grid.xml' => 'grid#show', :format => :xml, :as => 'export_list_xml'
-  match '/__history' => 'grid#history', :as => 'history'
-  match '/__refresh' => 'grid#refresh', :as => 'refresh'
 end
