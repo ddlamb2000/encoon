@@ -26,7 +26,7 @@
   <table>
     <thead>
       <tr>
-        <th class="list-header-string"><%=h @grid.name %></th>
+        <th class="list-header-string"></th>
         <% for column in @table_columns %>
           <%= show_header_label(column.kind,
                                 column.name.html_safe,
@@ -82,8 +82,8 @@
                 <script>
                   $("#row-<%= row.uuid %>").hover(
                     function (event){
-                      var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= row.uuid %>").width()/2;
-                      var top = $(this).offset().top+10;
+                      var left = $(this).width()-$("#actions-<%= row.uuid %>").width();
+                      var top = $(this).offset().top-60;
                       $("#actions-<%= row.uuid %>").css({left:left, top:top}).show();
                       $(this).addClass("highlighted");
                     },
@@ -222,7 +222,7 @@
         $("#attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           if(!$('#dialog').is(':visible')){
             var top = $(this).offset().top+20;
-            var left = $(this).offset().left;
+            var left = $("#document").offset().left+5+$(this).width()/2-250/2;
             var width = 250;
             $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
@@ -238,8 +238,8 @@
     <script>
       $("#grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
-          var left = $(this).offset().left+$(this).width()/2-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width()/2;
-          var top = $(this).offset().top;
+          var left = $(this).width()-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width();
+          var top = $(this).offset().top-40;
           $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top}).fadeIn(300);
           $(this).addClass("highlighted");
         },

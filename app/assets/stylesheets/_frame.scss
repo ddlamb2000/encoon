@@ -4,10 +4,16 @@ body {
 }
 #banner {
   @include clearfix;
+  position:fixed;
+  top:0;
+  left:0;
   width:100%;
+  z-index:5;
   padding-top:$padding;
   padding-bottom:$padding;
   color:$color-highlight;
+  opacity:0.95;
+  filter:alpha(opacity=95);
   @include banner-shade;
   @include single-box-shadow($shadow-color, 0, 2px, 2px); 
   .button { 
@@ -92,34 +98,33 @@ body {
 }
 #navigator {
   position:fixed;
+  top:45px;
   left:0;
   width:30%;
+  z-index:5;
   #history-content, #more-content {
     max-height:300px;
     overflow:auto;
   }
 }
-#footer {
-  text-align:center;
-  font-size:90%;
-  width:100%;
-  @include float-left;
-}
 .tools {
   @media only screen and (max-width: 320px) {
     display:none;
   }
-  margin-left:2*$padding;
+  margin-left:-$padding;
   margin-right:2*$padding;
   margin-top:4*$padding;
   margin-bottom:2*$padding;
   color:$color-highlight;
   article {
-    margin-left:$padding;
+    margin-left:0;
     margin-right:$padding;
     margin-top:$padding;
     margin-bottom:$padding;
-    padding:$padding;
+    padding-left:2*$padding;
+    padding-right:$padding;
+    padding-top:$padding;
+    padding-bottom:$padding;
     @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
     background-color:$background-color-navigator-section;
     @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
@@ -208,7 +213,9 @@ body {
   }
 }
 .document {
-  margin-left:2*$padding;
+  position:relative;
+  top:45px;
+  margin-left:$padding;
   margin-right:4*$padding;
   margin-top:4*$padding;
   margin-bottom:2*$padding;
@@ -327,4 +334,10 @@ body {
 }
 .disabled {
   background:$background-color-table-header;
+}
+#footer {
+  text-align:center;
+  font-size:90%;
+  width:100%;
+  @include float-left;
 }
