@@ -79,15 +79,19 @@ class Workspace < Entity
   end
   
   # Selects the workspaces the current user can access to.
-  def self.user_workspaces(collection)
+  def self.user_workspaces(collection, include_public = false)
     collection.find(:all,
                     :joins => :workspace_locs,
                     :select => self.all_select_columns,
                     :conditions =>
                       ["workspace_locs.version = workspaces.version " +
                        " AND " + as_of_date_clause("workspaces") +
-                       " AND " + Grid::workspace_security_clause("workspaces") +
-                       " AND " + locale_clause("workspace_locs")],
+                       " AND (" +
+                       "  " + Grid::workspace_security_clause("workspaces") +
+                       (include_public ? "  OR workspaces.public = :public" : "") +
+                       " )" +
+                       " AND " + locale_clause("workspace_locs"),
+                       {:public => true}],
                     :order => "workspace_locs.name")
   end
   
