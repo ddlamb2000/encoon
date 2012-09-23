@@ -1245,11 +1245,7 @@ private
     sql = "SELECT default_role_uuid, create_user_uuid" + 
           " FROM workspaces workspace_security" + 
           " WHERE workspace_security.uuid = '#{uuid}'" + 
-          " AND (" +
-          "  workspace_security.public = 't'" +
-          "  OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
-          "  OR workspace_security.create_user_uuid = '#{Entity.session_user_uuid}'" +
-          " )" +
+          " AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
@@ -1275,14 +1271,10 @@ private
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
     else
-      sql = "SELECT default_role_uuid, public" + 
+      sql = "SELECT default_role_uuid" + 
             " FROM workspaces workspace_security" + 
             " WHERE workspace_security.uuid = '#{self.workspace_uuid}'" + 
-            " AND (" +
-            "  workspace_security.public = 't'" +
-            "  OR workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
-            "  OR workspace_security.create_user_uuid = '#{Entity.session_user_uuid}'" +
-            " )" +
+            " AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
             " AND " + as_of_date_clause("workspace_security") +
             " LIMIT 1"
       security = Grid.find_by_sql([sql])[0]
@@ -1290,10 +1282,6 @@ private
         @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
         @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
         @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
-      elsif security.present? and security.public
-        @can_select_data = true
-        @can_create_data = false
-        @can_update_data = false
       end
     end
     log_debug "Grid#load_security " +
