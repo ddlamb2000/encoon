@@ -83,3 +83,27 @@ li {
 .filter {
   font-size:95%;
 }
+.add-button a {
+  background: {
+    image:url(add.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.history-button a {
+  background: {
+    image:url(history.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.search-button a {
+  background: {
+    image:url(search.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}

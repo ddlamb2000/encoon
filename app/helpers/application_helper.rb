@@ -67,6 +67,18 @@ module ApplicationHelper
     end
   end
   
+  # Displays an icon using its name
+  def i(name)
+    if name.present?
+      tag("img", {:src => asset_path(name + ".png"), 
+                  :height => "24", 
+                  :width => "24", 
+                  :border => "0"})
+    else
+      ""
+    end
+  end
+  
   def display_filters(grid, filters, search=nil)
     output = ""
     if filters.present?

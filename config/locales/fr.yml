@@ -28,7 +28,7 @@ fr:
     create_column_help:   "Créez un nouvel attribute pour la catégorie."
     update:               "Modifier"
     update_help:          "Modifiez la données sélectionnée."
-    update_grid:          "Modifier catégorie"
+    update_grid:          "Catégorie"
     update_grid_help:     "Changez les propritétés de la catégorie."
     import:               "Importer"
     import_help:          "Importez des données depuis un fichier .xml."
@@ -44,6 +44,7 @@ fr:
     login:                "Connexion"
     attach:               "Attacher document"
     wait:                 "Chargement en cours…"
+    search:               "Rechercher"
   devise:
     sign_in:            "Se connecter"
     sign_up:            "S’enregistrer"

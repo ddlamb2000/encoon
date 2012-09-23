@@ -59,7 +59,7 @@
                                 :row => row.display_uri) %>
                 <% end %>
               <% else %>
-                <%= link_to icon('blueright'),
+                <%= link_to icon('entity'),
                             show_path(
                               :workspace => @grid.workspace.display_uri,
                               :grid => @grid.display_uri,
@@ -149,9 +149,8 @@
       <%= icon('previous') %>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="<%= t 'actions.create_help' %>" class="button">
+      <span title="<%= t 'actions.create_help' %>" class="button add-button">
         <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-          <%= icon('plus') %>
           <%= t 'actions.create' %>
         </a>
       </span>
@@ -175,6 +174,11 @@
         });
       </script>
     <% end %>
+    <span title="<%= t 'actions.create_help' %>" class="button search-button">
+      <a id="search-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+        <%= t 'actions.search' %>
+      </a>
+    </span>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
       <span title="<%= t 'actions.export_help' %>" class="button">
         <%= link_to export_list_xml_path(

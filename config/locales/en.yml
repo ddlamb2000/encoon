@@ -28,7 +28,7 @@ en:
     create_column_help:   "Create a new attribute for the category."
     update:               "Modify"
     update_help:          "Modify selected data."
-    update_grid:          "Modify category"
+    update_grid:          "Category"
     update_grid_help:     "Modify category properties."
     import:               "Import"
     import_help:          "Import rows from an .xml file."
@@ -43,6 +43,7 @@ en:
     more:                 "Details"
     login:                "Log in"
     wait:                 "Loading in progress…"
+    search:               "Search"
   devise:
     sign_in:            "Sign in"
     sign_up:            "Sign up"

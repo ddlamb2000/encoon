@@ -12,8 +12,8 @@ body {
   padding-top:$padding;
   padding-bottom:$padding;
   color:$color-highlight;
-  opacity:0.95;
-  filter:alpha(opacity=95);
+  opacity:0.9;
+  filter:alpha(opacity=90);
   @include banner-shade;
   @include single-box-shadow($shadow-color, 0, 2px, 2px); 
   .button { 
@@ -130,8 +130,8 @@ body {
     @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
     line-height:160%;
     @include border-radius;
-    opacity:0.95;
-    filter:alpha(opacity=95);
+    opacity:0.9;
+    filter:alpha(opacity=90);
     a {
       @include link-colors($color-highlight);
     }
@@ -163,8 +163,12 @@ body {
     @include border-radius;
     a {
       color:$detail-color;
+      padding-top:$padding;
+      padding-bottom:$padding;
+      padding-left:6*$padding;
+      padding-right:$padding;
+      cursor:pointer;
       @include undecored-link;
-      padding:$padding;
       @include link-colors($color-highlight);
       @include border-radius;
       @include transition;
@@ -336,8 +340,16 @@ body {
   background:$background-color-table-header;
 }
 #footer {
+  position:fixed;
+  z-index:5;
+  bottom:0;
   text-align:center;
+  vertical-align:middle;
   font-size:90%;
   width:100%;
+  height: 20px;
+  background-color:$background-color-table;
+  opacity:0.9;
+  filter:alpha(opacity=90);
   @include float-left;
 }
