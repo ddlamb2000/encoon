@@ -32,8 +32,16 @@ class GridController < ApplicationController
   # Renders the home page using hard-coded references.
   def home
     params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
-    params[:grid] = Grid::HOME_GRID_UUID
-    params[:row] = Grid::HOME_ROW_UUID
+    params[:grid] = Grid::HOME_PAGE_UUID
+    params[:row] = Grid::HOME_WELCOME_UUID
+    show
+  end
+
+  # Renders credits using hard-coded references.
+  def credits
+    params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
+    params[:grid] = Grid::HOME_PAGE_UUID
+    params[:row] = Grid::HOME_CREDITS_UUID
     show
   end
 

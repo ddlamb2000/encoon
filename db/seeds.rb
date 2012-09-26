@@ -24,7 +24,7 @@ for file in ["administrator",
              "security",
              "home_credentials",
              "home",
-             "welcome",
+             "pages",
              "countries"]
   Entity.log_debug "rake db:seed upload #{file}.xml", true
   Entity.session_locale = 'en'

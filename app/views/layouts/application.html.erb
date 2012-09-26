@@ -32,6 +32,8 @@
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
       <%= yield %>
     </section>
-    <footer id="footer"><a><%= t 'banner.copyright' %></a></footer>
+    <% cache 'footer' do %>
+      <footer id="footer"><%= render :partial => 'layouts/footer' %></footer>
+    <% end %>
   </body>
 </html>

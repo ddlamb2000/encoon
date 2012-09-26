@@ -17,6 +17,7 @@
 Encoon::Application.routes.draw do
   root :to => 'grid#home'
   devise_for :users
+  match '/credits' => 'grid#credits', :as => 'credits'
   match '/__history' => 'grid#history', :as => 'history'
   match '/__refresh' => 'grid#refresh', :as => 'refresh'
   match '*flag/__set' => 'grid#set', :as => 'set'

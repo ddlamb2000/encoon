@@ -28,14 +28,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Attribute" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>03bfafe0-ea31-012c-105a-00166f92f624</uuid>
     <version>1</version>
-    <revision>11</revision>
+    <revision>12</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:41 UTC</created_at>
-    <updated_at>2012-06-26 15:06:49 UTC</updated_at>
+    <updated_at>2012-09-23 19:40:37 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">attributes</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -293,6 +294,7 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -385,14 +387,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Category" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>fe92c430-ea30-012c-1057-00166f92f624</uuid>
     <version>1</version>
-    <revision>13</revision>
+    <revision>15</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:32 UTC</created_at>
-    <updated_at>2012-09-10 02:31:01 UTC</updated_at>
+    <updated_at>2012-09-23 19:40:24 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">grids</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -516,17 +519,64 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
   </row>
-  <row title="Country" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
-    <uuid>e1fa0830-dd46-012c-538a-0016cbad334a</uuid>
+  <row title="Uri" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>88d0bed0-e7e3-012f-7269-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>14</revision>
+    <revision>1</revision>
     <enabled>true</enabled>
-    <created_at>2010-04-21 18:06:41 UTC</created_at>
-    <updated_at>2012-09-08 08:35:53 UTC</updated_at>
+    <created_at>2012-09-23 19:33:55 UTC</created_at>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">603286d0-ea31-012c-1079-00166f92f624</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required"></data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Uri</name>
+    </locale>
+  </row>
+  <row title="Uri | uri" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>b9cfe310-c9fd-012f-4735-4417fe7fde96</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-08-16 18:25:48 UTC</created_at>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">88d0bed0-e7e3-012f-7269-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">uri</data>
+  </row>
+  <row title="Category sort order" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>08e6e470-e5f4-012f-0006-4417fe7fde95</uuid>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:26:59 UTC</created_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Category sort order</name>
+    </locale>
+  </row>
+  <row title="Country" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>e1fa0830-dd46-012c-538a-0016cbad334a</uuid>
+    <version>1</version>
+    <revision>15</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-21 18:06:41 UTC</created_at>
+    <updated_at>2012-09-23 19:40:07 UTC</updated_at>
+    <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">countries</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -631,6 +681,7 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -655,6 +706,7 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -777,14 +829,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Domain" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
     <version>1</version>
-    <revision>10</revision>
+    <revision>11</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:16 UTC</created_at>
-    <updated_at>2012-06-26 02:48:54 UTC</updated_at>
+    <updated_at>2012-09-23 19:40:50 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">workspaces</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -902,14 +955,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Role" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>62630550-0cb5-012d-bcb2-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>3</revision>
+    <revision>4</revision>
     <enabled>true</enabled>
     <created_at>2010-03-08 07:51:53 UTC</created_at>
-    <updated_at>2012-06-26 15:10:28 UTC</updated_at>
+    <updated_at>2012-09-23 19:39:55 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">roles</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -937,14 +991,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Sharing" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>4c2b6200-9a7a-012f-642b-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>5</revision>
+    <revision>6</revision>
     <enabled>true</enabled>
     <created_at>2012-06-17 07:16:36 UTC</created_at>
-    <updated_at>2012-06-26 15:09:11 UTC</updated_at>
+    <updated_at>2012-09-26 05:29:47 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">sharings</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1077,14 +1132,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="Upload" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>c306f4d0-14a2-012d-c0f4-4417fe7fde95</uuid>
     <version>1</version>
-    <revision>7</revision>
+    <revision>8</revision>
     <enabled>true</enabled>
     <created_at>2010-03-18 09:58:44 UTC</created_at>
-    <updated_at>2012-06-26 15:12:22 UTC</updated_at>
+    <updated_at>2012-09-23 19:41:00 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">f</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">f</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">uploads</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1316,14 +1372,15 @@ It's used internally and it's not recommended to alter it.</description>
   <row title="User" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>08beadc0-ea31-012c-105d-00166f92f624</uuid>
     <version>1</version>
-    <revision>8</revision>
+    <revision>9</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:49 UTC</created_at>
-    <updated_at>2010-05-25 20:01:25 UTC</updated_at>
+    <updated_at>2012-09-23 19:39:08 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
-    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">0</data>
-    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">0</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">users</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>

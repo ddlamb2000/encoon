@@ -4,7 +4,7 @@
 </div>
 <nav>
   <span class="button">
-    <%= link_to_unless_current(t('general.home').html_safe, root_path) do |name| %>
+    <%= link_to_unless_current(t('general.home'), root_path) do |name| %>
       <span class="highlighted"><%= name %></span>
     <% end %>
   </span>

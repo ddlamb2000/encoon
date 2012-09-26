@@ -19,9 +19,11 @@ class Grid < Entity
   ROOT_WORKSPACE_UUID = '1fe00120-ea31-012c-1065-00166f92f624'
   ROOT_HAS_NAME_UUID = '78a7e2d1-293a-012d-2869-4417fe7fde95'
   ROOT_HAS_DESCRIPTION_UUID = '8afbf6b1-293a-012d-1701-4417fe7fde95'
+  ROOT_URI_UUID = '88d0bed0-e7e3-012f-7269-4417fe7fde95'
   
-  HOME_GRID_UUID = 'cf01e9a0-d59d-012f-590e-4417fe7fde95'
-  HOME_ROW_UUID = 'f38b12c0-d59d-012f-590e-4417fe7fde95'
+  HOME_PAGE_UUID = '84d08550-d677-012f-413c-4417fe7fde95'
+  HOME_WELCOME_UUID = 'a8ed4160-e9ca-012f-7569-4417fe7fde95'
+  HOME_CREDITS_UUID = '731d6e10-e9ca-012f-7569-4417fe7fde95'
 
   PHASE_CREATE = 'create'
   PHASE_NEW_VERSION = 'new_version'
@@ -136,7 +138,7 @@ class Grid < Entity
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
                     :conditions => 
-                        ["grid.workspace_uuid = :workspace_uuid" +
+                        ["grids.workspace_uuid = :workspace_uuid" +
                          " AND grids.uri = :uri" +
                          " AND grid_locs.version = grids.version" +
                          " AND " + as_of_date_clause("grids") +
@@ -756,6 +758,7 @@ class Grid < Entity
       when ROOT_WORKSPACE_UUID then self.workspace_uuid = xml_value
       when ROOT_HAS_NAME_UUID then self.has_name = ['true','t','1'].include?(xml_value)
       when ROOT_HAS_DESCRIPTION_UUID then self.has_description = ['true','t','1'].include?(xml_value)
+      when ROOT_URI_UUID then self.uri = xml_value
     end
   end
 
@@ -1042,7 +1045,7 @@ private
   def self.all_select_columns
     "grids.id, grids.uuid, grids.version, grids.lock_version, " + 
     "grids.begin, grids.end, grids.enabled, grids.workspace_uuid, " + 
-    "grids.has_name, grids.has_description, " + 
+    "grids.has_name, grids.has_description, grids.uri, " + 
     "grids.created_at, grids.updated_at, " +
     "grids.create_user_uuid, grids.update_user_uuid, " +
     "grid_locs.base_locale, grid_locs.locale, " +
