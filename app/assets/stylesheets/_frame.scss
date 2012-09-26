@@ -19,6 +19,7 @@ body {
   @include single-box-shadow($shadow-color, 0, 2px, 2px);
   .separator {
     color:$title-color;
+    font-weight:bolder;
   } 
   .button { 
     display:inline;
