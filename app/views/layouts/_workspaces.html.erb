@@ -10,7 +10,8 @@
   </span>
   <% unless @workspaces.nil? %>
     <% for row in @workspaces %>
-      | <span class="button" title="<%= row.description.html_safe %>">
+      <span class="separator">|</span>
+      <span class="button" title="<%= row.description.html_safe %>">
           <%= link_to_unless_current(
                 row.name.html_safe,
                 show_workspace_path(:workspace => row.display_uri)) do |name| %>

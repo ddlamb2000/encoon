@@ -12,10 +12,14 @@ body {
   padding-top:$padding;
   padding-bottom:$padding;
   color:$color-highlight;
+  border-bottom:2px solid $title-color;
   opacity:0.9;
   filter:alpha(opacity=90);
   @include banner-shade;
-  @include single-box-shadow($shadow-color, 0, 2px, 2px); 
+  @include single-box-shadow($shadow-color, 0, 2px, 2px);
+  .separator {
+    color:$title-color;
+  } 
   .button { 
     display:inline;
     @include border-radius;
@@ -55,6 +59,7 @@ body {
     text-align:left;
     padding-left:2*$padding;
     font-weight:bolder;
+    font-size:140%;
   }
   #header-links {
     @include float-right;
@@ -98,7 +103,7 @@ body {
 }
 #navigator {
   position:fixed;
-  top:45px;
+  top:48px;
   left:0;
   width:30%;
   z-index:5;
@@ -112,9 +117,9 @@ body {
     display:none;
   }
   margin-left:-$padding;
-  margin-right:2*$padding;
+  margin-right:$padding;
   margin-top:4*$padding;
-  margin-bottom:2*$padding;
+  margin-bottom:$padding;
   color:$color-highlight;
   article {
     margin-left:0;
@@ -218,9 +223,9 @@ body {
 }
 .document {
   position:relative;
-  top:45px;
+  top:48px;
   margin-left:$padding;
-  margin-right:4*$padding;
+  margin-right:2*$padding;
   margin-top:4*$padding;
   margin-bottom:2*$padding;
   padding:$padding;
