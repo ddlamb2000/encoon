@@ -399,7 +399,7 @@ class Grid < Entity
               " AND rows.version = row_locs.version" +
               " AND " + locale_clause("row_locs") : "") +
           ((self.uuid == Workspace::ROOT_UUID) ? 
-              " AND " + Grid::workspace_security_clause("rows") : "") + 
+              " AND " + Grid::workspace_security_clause("rows", false, false) : "") + 
           ((self.uuid == Grid::ROOT_UUID) ? 
               " AND " + Grid::grid_security_clause("rows") : "") + 
           conditions +
@@ -1245,7 +1245,7 @@ private
     sql = "SELECT default_role_uuid, create_user_uuid" + 
           " FROM workspaces workspace_security" + 
           " WHERE workspace_security.uuid = '#{uuid}'" + 
-          " AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+          " AND workspace_security.default_role_uuid is not null" +
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
@@ -1274,7 +1274,7 @@ private
       sql = "SELECT default_role_uuid" + 
             " FROM workspaces workspace_security" + 
             " WHERE workspace_security.uuid = '#{self.workspace_uuid}'" + 
-            " AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+            " AND workspace_security.default_role_uuid is not null" +
             " AND " + as_of_date_clause("workspace_security") +
             " LIMIT 1"
       security = Grid.find_by_sql([sql])[0]

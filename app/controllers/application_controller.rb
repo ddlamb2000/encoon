@@ -46,7 +46,7 @@ protected
   def load_workspaces
     log_debug "ApplicationController#load_workspaces: " + 
                 "user_uuid=#{Entity.session_user_uuid}?"
-    @workspaces = Workspace.user_workspaces(Workspace, true)
+    @workspaces = Workspace.user_workspaces(Workspace)
   end
 
   def push_history

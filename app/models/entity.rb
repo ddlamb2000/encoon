@@ -351,7 +351,9 @@ class Entity < ActiveRecord::Base
     Thread.current[:session_locale]
   end
 
-  def self.workspace_security_clause(synonym, include_public=false)
+  def self.workspace_security_clause(synonym,
+                                     include_public=false,
+                                     include_default=true)
     if DATA_GRID_SECURITY_ACTIVATED
       "(" +
       " EXISTS (" +
@@ -359,14 +361,16 @@ class Entity < ActiveRecord::Base
       "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
       "  AND " + as_of_date_clause("workspace_sharings") +
       "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "  AND workspace_sharings.role_uuid is not null" +
       " )" +
-      " OR EXISTS (" +
-      "  SELECT 1 FROM workspaces workspace_security" +
-      "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
-      "  AND " + as_of_date_clause("workspace_security") +
-      "  AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
-      " )" +
+      (include_default ? 
+        " OR EXISTS (" +
+        "  SELECT 1 FROM workspaces workspace_security" +
+        "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
+        "  AND " + as_of_date_clause("workspace_security") +
+        "  AND workspace_security.default_role_uuid is not null" +
+        " )" : "") +
+      (include_public ? "  OR workspaces.public = :public" : "") +
       ")"
     else
       "1=1"
@@ -383,7 +387,7 @@ class Entity < ActiveRecord::Base
       "  AND " + as_of_date_clause("grid_security") +
       "  AND " + as_of_date_clause("workspace_sharings") +
       "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-      "  AND workspace_sharings.role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "  AND workspace_sharings.role_uuid is not null" +
       " )" + 
       " OR EXISTS (" +
       "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
@@ -391,7 +395,7 @@ class Entity < ActiveRecord::Base
       "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
       "  AND " + as_of_date_clause("grid_security") +
       "  AND " + as_of_date_clause("workspace_security") +
-      "  AND workspace_security.default_role_uuid in ('#{Role::ROLE_READ_ONLY_UUID}', '#{Role::ROLE_READ_WRITE_UUID}', '#{Role::ROLE_READ_WRITE_ALL_UUID}', '#{Role::ROLE_TOTAL_CONTROL_UUID}')" +
+      "  AND workspace_security.default_role_uuid is not null" +
       " )" +
       ")"
     else
