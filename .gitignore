@@ -4,6 +4,7 @@
 .loadpath
 .tmp*
 log/
+*.autosave
 tmp/
 Thumbs.db
 db/*.sqlite3

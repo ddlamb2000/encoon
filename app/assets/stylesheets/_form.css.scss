@@ -67,7 +67,6 @@
       padding-bottom:2*$padding;
       padding-left:8*$padding;
       padding-right:$padding;
-      margin:0;
       border:1px solid transparent;
       @include border-radius;
       @include transition;
@@ -82,11 +81,10 @@
         font-size:100%;
         display:inline;
         vertical-align:middle;
-        padding-top:$padding;
-        padding-bottom:$padding;
-        padding-left:2*$padding;
-        padding-right:2*$padding;
-        margin:0;
+        padding-top:2*$padding;
+        padding-bottom:2*$padding;
+        padding-left:8*$padding;
+        padding-right:$padding;
         background-color:white;
         border:1px solid $background-color-highlights;
         cursor:pointer;
@@ -137,7 +135,6 @@
   padding:2*$padding;
   color:$color-highlight;
   border:0;
-  width:60%;
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
   background-color:$background-color-navigator-section;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px);

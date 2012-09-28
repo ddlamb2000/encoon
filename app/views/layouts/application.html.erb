@@ -20,7 +20,6 @@
   <body>
     <header id="header">
       <section id="banner"><%= render :partial => "layouts/banner" %></section>
-      <%= render :partial => 'layouts/flash', :locals => {:flash => flash}  %>
     </header>
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
@@ -30,6 +29,7 @@
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">
+      <%= render :partial => 'layouts/flash', :locals => {:flash => flash}  %>
       <%= yield %>
     </section>
     <% cache 'footer' do %>

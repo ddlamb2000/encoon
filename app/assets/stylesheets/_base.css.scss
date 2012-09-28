@@ -2,11 +2,13 @@ h1 {
   font-size:200%;
   font-weight:bolder;
   color:$title-color;
+  border-bottom:1px solid $text-shadow-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
 }
 h2,h3 {
   font-weight:bolder;
   color:$title-color;
+  border-bottom:1px solid $text-shadow-color;
   @include single-text-shadow($text-shadow-color, 2px, 2px, 2px);
 }
 p {
