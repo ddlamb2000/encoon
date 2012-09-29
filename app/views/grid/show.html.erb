@@ -8,14 +8,7 @@
     <% unless @attached_grids.nil? or @attached_grids.empty? %>
       <% for attached_grid in @attached_grids %>
         <% filters = attached_grid.get_filters_on_row(@row) %>
-        <article id="grid-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>">
-          <%= icon 'loading' %> <%= attached_grid.name %>…
-        </article>
-        <script>
-          $("#grid-<%= attached_grid.uuid + "-" + get_filters_uuid(filters) %>").load(
-            "<%= url_for(list_path(:grid => attached_grid.uuid,
-                                   :filters => filters)) %>");
-        </script>
+        <article id="grid-<%= attached_grid.uuid + '-' + get_filters_uuid(filters) %>" style="display: none;"></article>
       <% end %>
     <% end %>
     <%= render :partial => 'navigation' %>
