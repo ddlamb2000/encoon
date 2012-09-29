@@ -63,6 +63,10 @@ $document-top:50px;
   @include background-image(linear-gradient(color-stops(adjust-lightness($background-color-banner, 15%) 2px, $background-color-banner)));
   background-color:$background-color-banner;
 }
+@mixin table-shade {
+  @include background-image(linear-gradient(color-stops(white, $background-color-table-header)));
+  background-color:$background-color-table-header;
+}
 @mixin transition {
   @include transition-property(all);
   @include transition-duration(0.3s);

@@ -246,6 +246,9 @@ body {
     tr, th {
       padding:2px;
     }
+    thead th {
+      @include table-shade;
+    }
     .highlighted {
       background:$background-color-table;
     }
