@@ -1,0 +1,45 @@
+#header-application {
+  padding-left:8*$padding;
+  background: {
+    image:url(icon.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.add-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(add.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.history-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(history.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.search-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(search.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.edit-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(edit.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}

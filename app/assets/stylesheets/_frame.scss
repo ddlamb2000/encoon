@@ -58,6 +58,7 @@ body {
   #header-application {
     @include float-left;
     height:24px;
+    font-size:130%;
   }
   #header-links {
     @include float-right;
@@ -157,7 +158,6 @@ body {
       color:$detail-color;
       padding-top:$padding;
       padding-bottom:$padding;
-      padding-left:6*$padding;
       padding-right:$padding;
       cursor:pointer;
       @include undecored-link;
