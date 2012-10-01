@@ -1,0 +1,54 @@
+<header class="action-header">
+  <%= @workspace %> » <%= @grid %>
+</header>
+<%= form_tag(save_attachment_path(:grid => @grid.uuid, :row => @row.uuid),
+             :remote => true,
+             :multipart => true,
+             :target => "target_dialog",
+             :id => 'import-form') do %>
+  <table class="form">
+    <tr>
+      <td class="header"><%= t 'field.file' %></td>
+      <td class="string">
+        <%= file_field_tag :document %>
+      </td>
+    </tr>
+  </table>
+  <div class="validation-error"></div>
+  <footer class="actions">
+    <span class="button">
+      <a id="cancel-dialog"><%= t 'actions.cancel' %></a>
+    </span>
+    <span class="button">
+      <%= submit_tag t('actions.attach'), :id => "ok-dialog" %>
+    </span>
+  </footer>
+<% end %>
+<iframe id="target_dialog" style="display: none;"></iframe>
+<script>
+  $('#import-form')
+    .bind("ajax:beforeSend", function(evt, xhr, settings){
+      $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+      $(".field_with_errors").removeClass("field_with_errors");
+    })
+    .bind('ajax:aborted:file', function(event, elements){
+      $("#dialog").hide(300);
+      window.location.reload(true);
+    })
+    .bind("ajax:error", function(evt, xhr, status, error){
+      var errors, errorText;
+      try {errors = $.parseJSON(xhr.responseText);}
+      catch(err) {errors = {message: err};}
+      errorText = "<ul>";
+      for(error in errors) {
+        errorText += "<li>" + errors[error] + "</li> ";
+      }
+      errorText += "</ul>";
+      $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
+    });
+  $("#cancel-dialog").click(function (event){
+    $("#document, #document article").removeClass("disabled");
+    $("a").attr('class', 'enabled');
+    $("#dialog").hide(300);
+  });
+</script>

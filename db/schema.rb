@@ -11,7 +11,18 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120923104743) do
+ActiveRecord::Schema.define(:version => 20121001082724) do
+
+  create_table "attachments", :force => true do |t|
+    t.string   "uuid",                  :limit => 36
+    t.string   "document_file_name"
+    t.string   "document_content_type"
+    t.integer  "document_file_size"
+    t.datetime "document_updated_at"
+    t.integer  "lock_version",                        :default => 0
+  end
+
+  add_index "attachments", ["uuid"], :name => "index_attachments_on_uuid"
 
   create_table "audits", :force => true do |t|
     t.integer  "version"
@@ -159,16 +170,6 @@ ActiveRecord::Schema.define(:version => 20120923104743) do
 
   add_index "roles", ["uuid", "begin", "end"], :name => "index_roles_on_uuid_and_begin_and_end"
   add_index "roles", ["uuid"], :name => "index_roles_on_uuid"
-
-  create_table "row_attachments", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.string  "file_name"
-    t.binary  "document",     :limit => 1048576
-    t.string  "content_type"
-    t.integer "lock_version",                    :default => 0
-  end
-
-  add_index "row_attachments", ["uuid"], :name => "index_row_attachments_on_uuid"
 
   create_table "row_locs", :force => true do |t|
     t.string  "uuid",         :limit => 36

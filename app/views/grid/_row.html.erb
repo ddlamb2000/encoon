@@ -46,6 +46,27 @@
     <% if not @table_columns.empty? %><br/><% end %>
     <p><%= @row_loc.description.html_safe %></p>
   <% end %>
+  <% if @row.has_attachment? %>
+    <% if @row.has_photo? %>
+      <% for document in @row.attachments %>
+        <% if document.photo? %>
+          <li>
+            <%= image_tag document.document(:inline) %>
+          </li>
+        <% end %>
+      <% end %>
+     <% end %>
+    <% if @row.has_document? %>
+      <% for document in @row.attachments %>
+        <% if document.document? %>
+          <li>
+            <%= icon "document" %>
+            <%= document.document_file_name %>
+          </li>
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
   <% if user_signed_in? and @grid.can_update?(@row) %>
     <div id="actions-<%= @row.uuid %>" 
             class="actions float-actions" 
@@ -57,12 +78,10 @@
         </a>
       </span>
       <span class="button" title="<%= t 'actions.attach_help' %>">
-        <%= link_to attach_document_path(:grid => @grid.uuid,
-                                         :row => @row.uuid),
-                    :remote => true do %>
+        <a id="attach-<%= @row.uuid %>">
           <%= icon('attachments') %>
           <%= t 'actions.attach' %>
-        <% end %>
+        </a>
       </span>
       <span class="button" title="<%= t 'actions.export_help' %>">
         <%= link_to export_row_xml_path(:workspace => @grid.workspace.display_uri,
@@ -106,6 +125,19 @@
             $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
                                                      :row => @row.uuid,
                                                      :container => "#row-#{@row.uuid}")) %>");
+          }
+        });
+        $("#attach-<%= @row.uuid %>").click(function (event){
+          if(!$('#dialog').is(':visible')){
+            var top = $("#actions-<%= @row.uuid %>").offset().top+15;
+            var left = $("#document").offset().left+5;
+            var width = $("#document").width()-35;
+            $("#actions-<%= @row.uuid %>").fadeOut(3);
+            $("#document, #document article").addClass("disabled");
+            $("a").addClass("disabled");
+            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+            $("#dialog").css({left:left, top:top, width:width}).show(300);
+            $("#dialog").load("<%= url_for(attach_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
           }
         });
         $("#import-<%= @row.uuid %>").click(function (event){

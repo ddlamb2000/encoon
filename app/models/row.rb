@@ -17,7 +17,7 @@
 class Row < Entity
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   has_many :row_locs, :foreign_key => "uuid", :primary_key => "uuid"
-  has_many :row_attachments, :foreign_key => "uuid", :primary_key => "uuid"
+  has_many :attachments, :foreign_key => "uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid
   validates_associated :grid
   
@@ -253,37 +253,30 @@ class Row < Entity
   end
   
   def has_document?
-    for attachment in row_attachments
+    for attachment in attachments
       return true if attachment.document?
     end
     false
   end
 
   def has_photo?
-    for attachment in row_attachments
+    for attachment in attachments
       return true if attachment.photo?
     end
     false
   end
 
-  def first_photo
-    for attachment in row_attachments
-      return attachment if attachment.photo?
-    end
-    nil
-  end
-
   def has_attachment?
-    for attachment in row_attachments
+    for attachment in attachments
       return true if attachment.document? or attachment.photo?
     end
     false
   end
   
   def remove_attachment!(input_file)
-    for attachment in row_attachments
-      if attachment.content_type == input_file.content_type.chomp and 
-         attachment.file_name == input_file.original_filename
+    for attachment in attachments
+      if attachment.document_content_type == input_file.content_type.chomp and 
+         attachment.document_file_name == input_file.original_filename
         attachment.destroy
       end
     end

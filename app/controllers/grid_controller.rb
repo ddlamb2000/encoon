@@ -23,7 +23,7 @@ class GridController < ApplicationController
                                                :update,
                                                :attributes,
                                                :details,
-                                               :attach_document,
+                                               :attach,
                                                :save_attachment,
                                                :delete_attachment,
                                                :import,
@@ -182,7 +182,7 @@ class GridController < ApplicationController
         render :nothing => true
       else
         log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
-        format.html {render :json => @upload.errors, :status => :unprocessable_entity}
+        format.html { render :json => @upload.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -283,7 +283,7 @@ class GridController < ApplicationController
         format.html {list}
       else
         log_debug "GridController#create: error, @row.errors=#{@row.errors.inspect}"
-        format.html {render :json => @row.errors, :status => :unprocessable_entity}
+        format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -416,20 +416,20 @@ class GridController < ApplicationController
         end
       else
         log_debug "GridController#update: error, params=#{params.inspect}"
-        format.html {render :json => @row.errors, :status => :unprocessable_entity}
+        format.html { render :json => @row.errors, :status => :unprocessable_entity }
       end
     end
   end
 
-  def attach_document
-    log_debug "GridController#attach_document"
+  def attach
+    log_debug "GridController#attach"
     selectGridAndWorkspace
     @grid.load_cached_grid_structure if @grid.present?
     selectRow
-    @row_attachment = @row.row_attachments.new
-    set_page_title 
+    @attachment = @row.attachments.new
+    render :partial => "attach"
   end
-
+  
   def save_attachment
     log_debug "GridController#save_attachment"
     selectGridAndWorkspace
@@ -438,9 +438,10 @@ class GridController < ApplicationController
     saved = false
     begin
       @row.transaction do
-        @row.remove_attachment!(params[:row_attachment][:attach_document])
-        @row_attachment = @row.row_attachments.new
-        @row_attachment.update_attributes(params[:row_attachment])
+        @row.remove_attachment!(params[:document])
+        @attachment = @row.attachments.new
+        @attachment.document = params[:document]
+        @attachment.save!
         @row.make_audit(Audit::ATTACH)
         saved = true
       end
@@ -453,42 +454,11 @@ class GridController < ApplicationController
     end
     respond_to do |format|
       if saved
-        name = @grid.row_title(@row)
-        flash[:notice] = t('transaction.attached', 
-                                :type => @grid, :name => name)
-        format.html { redirect_to session[:last_url] }
+        render :nothing => true
       else
         log_debug "GridController#save_document: error"
-        format.html { render :action => "attach_document" }
+        format.html { render :json => @attachment.errors, :status => :unprocessable_entity }
       end
-    end
-  end
-
-  def photo
-    log_debug "GridController#photo"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure
-    selectRow
-    if params[:photo_id].present?
-      @row_attachment = @row.row_attachments.find(params[:photo_id])
-    else
-      @row_attachment = @row.first_photo
-    end
-    if @row_attachment.present?
-      send_data(@row_attachment.document)
-    end
-  end
-
-  def file
-    log_debug "GridController#file"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure
-    selectRow
-    @row_attachment = @row.row_attachments.find(params[:file_id])
-    if @row_attachment.present?
-      send_data @row_attachment.document, 
-                :type => @row_attachment.content_type,
-                :filename => @row_attachment.file_name
     end
   end
 
@@ -500,9 +470,9 @@ class GridController < ApplicationController
     saved = false
     begin
       @row.transaction do
-        @row_attachment = @row.row_attachments.find(params[:file_id])
-        if @row_attachment.present?
-          @row_attachment.delete
+        @attachment = @row.attachments.find(params[:file_id])
+        if @attachment.present?
+          @attachment.delete
           @row.make_audit(Audit::DETACH)
         end
       end
@@ -516,8 +486,8 @@ class GridController < ApplicationController
     end
     if saved
       flash[:notice] = t('transaction.deleted', 
-                              :type => @row_attachment.content_type, 
-                              :name => @row_attachment.file_name)
+                              :type => @attachment.content_type, 
+                              :name => @attachment.file_name)
     end
     respond_to do |format|
       format.html { render :action => "show" }

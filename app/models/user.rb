@@ -23,7 +23,7 @@ class User < Entity
   SYSTEM_ADMINISTRATOR_UUID = 'eebdc1a0-dd45-012c-aafe-0026b0d63708'
 
   has_many :row_passwords, :foreign_key => "uuid", :primary_key => "uuid"
-  has_many :row_attachments, :foreign_key => "uuid", :primary_key => "uuid"
+  has_many :attachments, :foreign_key => "uuid", :primary_key => "uuid"
 
   validates_presence_of :first_name, :last_name
 
@@ -49,7 +49,7 @@ class User < Entity
   end
   
   def has_photo?
-    for attachment in row_attachments
+    for attachment in attachments
       return true if attachment.photo?
     end
     false
