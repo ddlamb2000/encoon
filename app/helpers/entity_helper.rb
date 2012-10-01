@@ -27,7 +27,7 @@ module EntityHelper
       end
     end
     content_tag(list ? "th" : "td",
-      (("<span title=\"" + trunc(description) + "\">").html_safe +
+      (("<span title=\"" + truncate_html(description) + "\">").html_safe +
       label +
       "</span>".html_safe),
       :class => style
@@ -58,7 +58,7 @@ module EntityHelper
     content_tag("td", 
                 (referenced_link.blank? ? "" : referenced_link.html_safe) + 
                 (referenced_description.blank? ? "" : 
-                  " <small>#{trunc(referenced_description)}</small>".html_safe), 
+                  " <small>#{truncate_html(referenced_description)}</small>".html_safe), 
                 :class => (list ? "list-" : "") + "string")
   end
 

@@ -40,7 +40,7 @@
       <% for row in @table_rows %>
         <tr id="row-<%= row.uuid %>">
           <td class="list-description">
-            <span title="<%= trunc(row.description.html_safe) %>">
+            <span title="<%= truncate_html(row.description.html_safe) %>">
               <% if @grid.has_name? %>
                 <% if @grid.uuid == Workspace::ROOT_UUID %>
                   <%= link_to @grid.row_title(row).html_safe,

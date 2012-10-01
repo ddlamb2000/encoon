@@ -31,15 +31,6 @@ module ApplicationHelper
     APPLICATION_TITLE + ('production' != Rails.env ? (" (" + Rails.env + ")") : "")
   end
   
-  def trunc(value, limit=80)
-    return (value.length > limit) ? (value[0..limit-1] + "&hellip;") : value if value.present?
-    ""
-  end
-
-  def no_trunc(value)
-    value.present? ? value : ""
-  end
-
   # Displays an icon using its name
   def icon(name, title=nil)
     # Note: icons library: http://www.small-icons.com/packs/24x24-free-button-icons.jpg

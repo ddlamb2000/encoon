@@ -57,7 +57,7 @@
                           show_path(:workspace => @grid.workspace_uuid,
                                     :grid => @grid.uuid,
                                     :row => row.uuid) %>
-              <%= trunc(row.description).html_safe %>
+              <%= truncate_html(row.description).html_safe %>
               <small><%= display_updated_date(row).html_safe %></small>
             </li>
           </ul>
