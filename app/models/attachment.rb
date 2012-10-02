@@ -26,7 +26,9 @@ class Attachment < ActiveRecord::Base
   has_attached_file :document, 
                     :styles => lambda { |attachment| !attachment.instance.photo? ? {} : { 
                        :inline => attachment.instance.reduce(580),
-                       :mini => attachment.instance.crop(150,150)
+                       :mini => attachment.instance.crop(150,150),
+                       :icon => attachment.instance.crop(24,24),
+                       :micro => attachment.instance.crop(12,12)
                       } 
                     }, 
                     :path => ":rails_root/public/system/:style/:uuid",

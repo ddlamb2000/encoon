@@ -140,47 +140,7 @@
     <% if not @table_columns.empty? %><br/><% end %>
     <p><%= @row_loc.description.html_safe %></p>
   <% end %>
-  <% if @row.has_attachment? %>
-    <% for document in @row.attachments %>
-      <li id="row-image-<%= @row.uuid %>-<%= document.id.to_s %>">
-        <% if user_signed_in? and @grid.can_update?(@row) %>
-          <div id="actions-image-<%= @row.uuid %>-<%= document.id.to_s %>" 
-                  class="actions float-actions" 
-                  style="display: none;">
-            <span class="button" title="<%= t 'actions.delete_help' %>">
-              <a id="delete-image-<%= @row.uuid %>-<%= document.id.to_s %>">
-                <%= t 'actions.delete' %>
-              </a>
-            </span>
-          </div>
-          <script>
-            $("#row-image-<%= @row.uuid %>-<%= document.id.to_s %>").hover(
-              function (event){
-                $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeIn(300);
-              },
-              function (event){
-                $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeOut(3);
-              }
-            );
-            $("#delete-image-<%= @row.uuid %>-<%= document.id.to_s %>").click(function (event){
-              $.ajax("<%= url_for(delete_attachment_path(:grid => @grid.uuid,
-                                                         :row => @row.uuid,
-                                                         :id => document.id)) %>");
-            });
-          </script>
-        <% end %>
-        <% if document.photo? %>
-          <%= link_to document.document.url do %><%= image_tag document.document(:mini) %><% end %>
-        <% else %>
-          <%= link_to document.document.url do %>
-            <%= icon "document" %>
-            <%= document.document_file_name %>
-          <% end %>
-        <% end %>
-        <small><%= l document.document_updated_at %></small>
-      </li>
-    <% end %>
-  <% end %>
+  <%= render :partial => 'attachments' %>
 <% else %>
   <hgroup>
     <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>

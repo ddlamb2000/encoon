@@ -131,6 +131,15 @@ class GridController < ApplicationController
     render :partial => "details"
   end
   
+  # Renders the attachments of an article through an Ajax request  
+  def attachments
+    log_debug "GridController#attachments"
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure if @grid.present?
+    selectRow
+    render :partial => "attachments"
+  end
+  
   def attributes
     log_debug "GridController#attributes"
     selectGridAndWorkspace
@@ -200,7 +209,7 @@ class GridController < ApplicationController
   end
 
   def new
-    log_debug "GridController#edit"
+    log_debug "GridController#new"
     @container = params[:container]
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]

@@ -32,12 +32,7 @@
       $(".field_with_errors").removeClass("field_with_errors");
     })
     .bind('ajax:aborted:file', function(event, elements){
-      $(this).find('div.validation-error').empty();
-      $(".field_with_errors").removeClass("field_with_errors");
       window.location.reload(true);
-      $("#document, #document article").removeClass("disabled");
-      $("a").removeClass("disabled");
-      $("#dialog").hide(300);
     })
     .bind("ajax:error", function(evt, xhr, status, error){
       var errors, errorText;
