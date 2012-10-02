@@ -1,146 +1,5 @@
-<header>
-  <hgroup>
-    <% if @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
-      <%= link_to(@workspace,
-                  show_workspace_path(:workspace => @workspace.display_uri)) %> »
-    <% end %>
-    <%= link_to(@grid,
-                show_grid_path(
-                  :workspace => @workspace.display_uri,
-                  :grid => @grid.display_uri)) %> »
-    <small>
-      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
-        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-      <% end %>
-    </small>
-  </hgroup>
-  <h3><%= @grid %></h3>
-</header>
-<% if not @table_rows.nil? and @table_rows.empty? %>
-  <%= t('general.no_data') %>
-<% end %>
-<% unless @table_rows.nil? or
-          @table_rows.empty? or
-          @table_columns.nil? %>
-  <table>
-    <thead>
-      <tr>
-        <th class="list-header-string"></th>
-        <% for column in @table_columns %>
-          <%= show_header_label(column.kind,
-                                column.name.html_safe,
-                                column.description.html_safe,
-                                true) %>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% init_row_index(params[:page]) %>
-      <% for row in @table_rows %>
-        <tr id="row-<%= row.uuid %>">
-          <td class="list-description">
-            <span title="<%= truncate_html(row.description.html_safe) %>">
-              <% if @grid.has_name? %>
-                <% if @grid.uuid == Workspace::ROOT_UUID %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_workspace_path(
-                                :workspace => row.display_uri) %>
-                <% elsif @grid.uuid == Grid::ROOT_UUID %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_grid_path(
-                                :workspace => row.workspace.display_uri,
-                                :grid => row.display_uri) %>
-                <% else %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_path(
-                                :workspace => @grid.workspace.display_uri,
-                                :grid => @grid.display_uri,
-                                :row => row.display_uri) %>
-                <% end %>
-              <% else %>
-                <%= link_to icon('entity'),
-                            show_path(
-                              :workspace => @grid.workspace.display_uri,
-                              :grid => @grid.display_uri,
-                              :row => row.display_uri) %>
-              <% end %>
-            </span>
-            <%= display_information(row) %>
-            <small><%= display_updated_date(row).html_safe %></small>
-            <% if user_signed_in? and not @grid.can_update?(row) %>
-              <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-            <% end %>
-            <% if user_signed_in? and @grid.can_update?(row) %>
-              <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
-                <span class="button" title="<%= t 'actions.update_help' %>">
-                  <a id="update-<%= row.uuid %>">
-                    <%= icon('edit') %>
-                    <%= t 'actions.update' %>
-                  </a>
-                </span>
-                <script>
-                  $("#row-<%= row.uuid %>").hover(
-                    function (event){
-                      var left = $(this).width()-$("#actions-<%= row.uuid %>").width();
-                      var top = $(this).offset().top-60;
-                      $("#actions-<%= row.uuid %>").css({left:left, top:top}).show();
-                      $(this).addClass("highlighted");
-                    },
-                    function (event){
-                      $("#actions-<%= row.uuid %>").hide();
-                      $(this).removeClass("highlighted");
-                    }
-                  );
-                  $("#update-<%= row.uuid %>").click(function (event){
-                    if(!$('#dialog').is(':visible')){
-                      var top = $("#row-<%= row.uuid %>").offset().top+15;
-                      var left = $("#document").offset().left+5;
-                      var width = $("#document").width()-35;
-                      $("#actions-<%= row.uuid %>").hide();
-                      $("#document, #document article").addClass("disabled");
-                      $("a").addClass("disabled");
-                      $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-                      $("#dialog").css({left:left, top:top, width:width}).show(300);
-                      $("#dialog").load("<%= url_for(edit_path(
-                                                          :grid => @grid.uuid,
-                                                          :row => row.uuid,
-                                                          :filters => @filters,
-                                                          :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                                          :refresh_list => true)) %>");
-                    }
-                  });
-                </script>
-              </div>
-            <% end %>
-          </td>
-          <% init_column_index %>
-          <% for column in @table_columns %>
-            <%= show_entity_in_list(
-                    column,
-                    row.read_value(column),
-                    ((column.workspace_reference.present? and
-                      column.grid_reference.present? and
-                      row.read_value(column).present?) ?
-                        link_to(row.read_referenced_name(column),
-                                show_path(
-                                  :workspace => column.workspace_reference.display_uri,
-                                  :grid => column.grid_reference.display_uri,
-                                  :row => row.read_value(column))) :
-                        ""),
-                    row.read_referenced_name(column)) %>
-          <% end %>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-<% end %>
-<small>
-  <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
-  <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
-</small>
 <% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
-  <footer id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" class="actions float-actions" style="display: none;">
+  <div id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" class="actions float-actions" style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= calc_next_page(params[:page]) %>
     <% end %>
@@ -243,8 +102,7 @@
       $("#grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
         function (event){
           var left = $(this).width()-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width();
-          var top = $(this).offset().top-40;
-          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left, top:top}).fadeIn(300);
+          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left}).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){
@@ -253,5 +111,145 @@
         }
       );
     </script>
-  </footer>
+  </div>
 <% end %>
+<header>
+  <hgroup>
+    <% if @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <%= link_to(@workspace,
+                  show_workspace_path(:workspace => @workspace.display_uri)) %> »
+    <% end %>
+    <%= link_to(@grid,
+                show_grid_path(
+                  :workspace => @workspace.display_uri,
+                  :grid => @grid.display_uri)) %> »
+    <small>
+      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
+      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+      <% end %>
+    </small>
+  </hgroup>
+  <h3><%= @grid %></h3>
+</header>
+<% if not @table_rows.nil? and @table_rows.empty? %>
+  <%= t('general.no_data') %>
+<% end %>
+<% unless @table_rows.nil? or
+          @table_rows.empty? or
+          @table_columns.nil? %>
+  <table>
+    <thead>
+      <tr>
+        <th class="list-header-string"></th>
+        <% for column in @table_columns %>
+          <%= show_header_label(column.kind,
+                                column.name.html_safe,
+                                column.description.html_safe,
+                                true) %>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% init_row_index(params[:page]) %>
+      <% for row in @table_rows %>
+        <tr id="row-<%= row.uuid %>">
+          <td class="list-description">
+            <% if user_signed_in? and @grid.can_update?(row) %>
+              <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
+                <span class="button" title="<%= t 'actions.update_help' %>">
+                  <a id="update-<%= row.uuid %>">
+                    <%= icon('edit') %>
+                    <%= t 'actions.update' %>
+                  </a>
+                </span>
+                <script>
+                  $("#row-<%= row.uuid %>").hover(
+                    function (event){
+                      var left = $(this).width()-$("#actions-<%= row.uuid %>").width();
+                      $("#actions-<%= row.uuid %>").css({left:left}).show();
+                      $(this).addClass("highlighted");
+                    },
+                    function (event){
+                      $("#actions-<%= row.uuid %>").hide();
+                      $(this).removeClass("highlighted");
+                    }
+                  );
+                  $("#update-<%= row.uuid %>").click(function (event){
+                    if(!$('#dialog').is(':visible')){
+                      var top = $("#row-<%= row.uuid %>").offset().top+15;
+                      var left = $("#document").offset().left+5;
+                      var width = $("#document").width()-35;
+                      $("#actions-<%= row.uuid %>").hide();
+                      $("#document, #document article").addClass("disabled");
+                      $("a").addClass("disabled");
+                      $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
+                      $("#dialog").css({left:left, top:top, width:width}).show(300);
+                      $("#dialog").load("<%= url_for(edit_path(
+                                                          :grid => @grid.uuid,
+                                                          :row => row.uuid,
+                                                          :filters => @filters,
+                                                          :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                                          :refresh_list => true)) %>");
+                    }
+                  });
+                </script>
+              </div>
+            <% end %>
+            <span title="<%= truncate_html(row.description.html_safe) %>">
+              <% if @grid.has_name? %>
+                <% if @grid.uuid == Workspace::ROOT_UUID %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_workspace_path(
+                                :workspace => row.display_uri) %>
+                <% elsif @grid.uuid == Grid::ROOT_UUID %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_grid_path(
+                                :workspace => row.workspace.display_uri,
+                                :grid => row.display_uri) %>
+                <% else %>
+                  <%= link_to @grid.row_title(row).html_safe,
+                              show_path(
+                                :workspace => @grid.workspace.display_uri,
+                                :grid => @grid.display_uri,
+                                :row => row.display_uri) %>
+                <% end %>
+              <% else %>
+                <%= link_to icon('entity'),
+                            show_path(
+                              :workspace => @grid.workspace.display_uri,
+                              :grid => @grid.display_uri,
+                              :row => row.display_uri) %>
+              <% end %>
+            </span>
+            <%= display_information(row) %>
+            <small><%= display_updated_date(row).html_safe %></small>
+            <% if user_signed_in? and not @grid.can_update?(row) %>
+              <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+            <% end %>
+          </td>
+          <% init_column_index %>
+          <% for column in @table_columns %>
+            <%= show_entity_in_list(
+                    column,
+                    row.read_value(column),
+                    ((column.workspace_reference.present? and
+                      column.grid_reference.present? and
+                      row.read_value(column).present?) ?
+                        link_to(row.read_referenced_name(column),
+                                show_path(
+                                  :workspace => column.workspace_reference.display_uri,
+                                  :grid => column.grid_reference.display_uri,
+                                  :row => row.read_value(column))) :
+                        ""),
+                    row.read_referenced_name(column)) %>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+<small>
+  <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
+  <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
+</small>

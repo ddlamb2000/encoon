@@ -1,93 +1,4 @@
 <% if @workspace.present? and @grid.present? and @row.present? %>
-  <header>
-    <hgroup>
-      <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
-        <%= link_to(@workspace,
-                    show_workspace_path(:workspace => @workspace.display_uri)) %> »
-      <% end %>
-      <%= link_to(@grid,
-                  show_grid_path(
-                    :workspace => @workspace.display_uri,
-                    :grid => @grid.display_uri)) %> »
-      <small>
-        <%= display_grid_next_versions(@grid, @row).html_safe %>
-        <%= display_locale(@row).html_safe if @grid.has_translation? %>
-        <%= display_updated_date(@row).html_safe %>
-        <% if user_signed_in? and not @grid.can_update?(@row) %>
-          <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
-        <% end %>
-      </small>
-    </hgroup>
-    <h1><%= @row %></h1>
-  </header>
-  <% if @grid.uuid != Workspace::ROOT_UUID and not @table_columns.empty? %>
-    <table>
-      <tbody>
-        <% for column in @table_columns %>
-          <%= show_entity(
-                column, 
-                @row.read_value(column),
-                ((column.workspace_reference.present? and
-                  column.grid_reference.present? and
-                  @row.read_value(column).present?) ?  
-                  link_to(@row.read_referenced_name(column),
-                          show_path(
-                            :workspace => column.workspace_reference.display_uri,
-                            :grid => column.grid_reference.display_uri,
-                            :row => @row.read_value(column))) : ""),
-                @row.read_referenced_name(column),
-                @row.read_referenced_description(column)
-           ) %>
-        <% end %>
-      </tbody>
-    </table>
-  <% end %>
-  <% if @grid.has_translation? and @row_loc.description.present? %>
-    <% if not @table_columns.empty? %><br/><% end %>
-    <p><%= @row_loc.description.html_safe %></p>
-  <% end %>
-  <% if @row.has_attachment? %>
-    <% for document in @row.attachments %>
-      <li id="row-image-<%= @row.uuid %>-<%= document.id.to_s %>">
-        <% if document.photo? %>
-          <%= link_to document.document.url do %>
-            <%= image_tag document.document(:mini) %>
-          <% end %>
-        <% else %>
-          <%= link_to document.document.url do %>
-            <%= icon "document" %>
-            <%= document.document_file_name %>
-          <% end %>
-        <% end %>
-        <div id="actions-image-<%= @row.uuid %>-<%= document.id.to_s %>" 
-                class="actions float-actions" 
-                style="display: none;">
-          <span class="button" title="<%= t 'actions.delete_help' %>">
-            <a id="delete-image-<%= @row.uuid %>-<%= document.id.to_s %>">
-              <%= t 'actions.delete' %>
-            </a>
-          </span>
-        </div>
-      </li>
-      <script>
-        $("#row-image-<%= @row.uuid %>-<%= document.id.to_s %>").hover(
-          function (event){
-            var left = 0;
-            var top = $(this).offset().top;
-            $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").css({left:left,top:top}).fadeIn(300);
-          },
-          function (event){
-            $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeOut(3);
-          }
-        );
-        $("#delete-image-<%= @row.uuid %>-<%= document.id.to_s %>").click(function (event){
-          $.ajax("<%= url_for(delete_attachment_path(:grid => @grid.uuid,
-                                                     :row => @row.uuid,
-                                                     :id => document.id)) %>");
-        });
-      </script>
-    <% end %>
-  <% end %>
   <% if user_signed_in? and @grid.can_update?(@row) %>
     <div id="actions-<%= @row.uuid %>" 
             class="actions float-actions" 
@@ -124,8 +35,7 @@
         $("#row-<%= @row.uuid %>").hover(
           function (event){
             var left = $(this).width()-$("#actions-<%= @row.uuid %>").width();
-            var top = 5;
-            $("#actions-<%= @row.uuid %>").css({left:left,top:top}).fadeIn(300);
+            $("#actions-<%= @row.uuid %>").css({left:left}).fadeIn(300);
             $("#row-<%= @row.uuid %>").addClass("highlighted");
           },
           function (event){
@@ -176,6 +86,100 @@
         });
       </script>
     </div>
+  <% end %>
+  <header>
+    <hgroup>
+      <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+        <%= link_to(@workspace,
+                    show_workspace_path(:workspace => @workspace.display_uri)) %> »
+      <% end %>
+      <%= link_to(@grid,
+                  show_grid_path(
+                    :workspace => @workspace.display_uri,
+                    :grid => @grid.display_uri)) %> »
+      <small>
+        <%= display_grid_next_versions(@grid, @row).html_safe %>
+        <%= display_locale(@row).html_safe if @grid.has_translation? %>
+        <% if @row.was_updated? %>
+          <%= t 'field.updated' %>
+          <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid).html_safe %>
+        <% else %>
+          <%= t 'field.created' %>
+          <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
+        <% end %>
+        <% if user_signed_in? and not @grid.can_update?(@row) %>
+          <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+        <% end %>
+      </small>
+    </hgroup>
+    <h1><%= @row %></h1>
+  </header>
+  <% if @grid.uuid != Workspace::ROOT_UUID and not @table_columns.empty? %>
+    <table>
+      <tbody>
+        <% for column in @table_columns %>
+          <%= show_entity(
+                column, 
+                @row.read_value(column),
+                ((column.workspace_reference.present? and
+                  column.grid_reference.present? and
+                  @row.read_value(column).present?) ?  
+                  link_to(@row.read_referenced_name(column),
+                          show_path(
+                            :workspace => column.workspace_reference.display_uri,
+                            :grid => column.grid_reference.display_uri,
+                            :row => @row.read_value(column))) : ""),
+                @row.read_referenced_name(column),
+                @row.read_referenced_description(column)
+           ) %>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <% if @grid.has_translation? and @row_loc.description.present? %>
+    <% if not @table_columns.empty? %><br/><% end %>
+    <p><%= @row_loc.description.html_safe %></p>
+  <% end %>
+  <% if @row.has_attachment? %>
+    <% for document in @row.attachments %>
+      <li id="row-image-<%= @row.uuid %>-<%= document.id.to_s %>">
+        <% if user_signed_in? and @grid.can_update?(@row) %>
+          <div id="actions-image-<%= @row.uuid %>-<%= document.id.to_s %>" 
+                  class="actions float-actions" 
+                  style="display: none;">
+            <span class="button" title="<%= t 'actions.delete_help' %>">
+              <a id="delete-image-<%= @row.uuid %>-<%= document.id.to_s %>">
+                <%= t 'actions.delete' %>
+              </a>
+            </span>
+          </div>
+          <script>
+            $("#row-image-<%= @row.uuid %>-<%= document.id.to_s %>").hover(
+              function (event){
+                $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeIn(300);
+              },
+              function (event){
+                $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeOut(3);
+              }
+            );
+            $("#delete-image-<%= @row.uuid %>-<%= document.id.to_s %>").click(function (event){
+              $.ajax("<%= url_for(delete_attachment_path(:grid => @grid.uuid,
+                                                         :row => @row.uuid,
+                                                         :id => document.id)) %>");
+            });
+          </script>
+        <% end %>
+        <% if document.photo? %>
+          <%= link_to document.document.url do %><%= image_tag document.document(:mini) %><% end %>
+        <% else %>
+          <%= link_to document.document.url do %>
+            <%= icon "document" %>
+            <%= document.document_file_name %>
+          <% end %>
+        <% end %>
+        <small><%= l document.document_updated_at %></small>
+      </li>
+    <% end %>
   <% end %>
 <% else %>
   <hgroup>
