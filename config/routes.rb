@@ -33,7 +33,7 @@ Encoon::Application.routes.draw do
   match '/*grid/*row/__update' => 'grid#update', :as => 'update', :via => [:post]
   match '/*grid/*row/__attach' => 'grid#attach', :as => 'attach'
   match '/*grid/*row/__save_attachment' => 'grid#save_attachment', :as => 'save_attachment', :via => [:post]
-  match '/*grid/*row/__delete_attachment' => 'grid#delete_attachment', :as => 'delete_attachment'
+  match '/*grid/*row/*id/__delete_attachment' => 'grid#delete_attachment', :as => 'delete_attachment'
   match '/*workspace' => 'grid#show', :as => 'show_workspace'
   match '/*workspace/*grid' => 'grid#show', :as => 'show_grid'
   match '/*workspace/*grid/*row.xml' => 'grid#show', :format => :xml, :as => 'export_row_xml'

@@ -24,7 +24,7 @@ class Attachment < ActiveRecord::Base
   
   # Attached documents using PaperClip.
   has_attached_file :document, 
-                    :styles => lambda { |attachment| { 
+                    :styles => lambda { |attachment| !attachment.instance.photo? ? {} : { 
                        :inline => attachment.instance.reduce(580),
                        :mini => attachment.instance.crop(150,150)
                       } 
@@ -35,16 +35,24 @@ class Attachment < ActiveRecord::Base
   # Reduces a thumbnail based on a maximum width, 
   # if the original width is greater than this maximum.
   def reduce max_width
-     geo = Paperclip::Geometry.from_file(document.to_file(:original))
-     geo.width > max_width ? "#{max_width}" : "#{geo.width}"
+    if photo?
+      geo = Paperclip::Geometry.from_file(document.to_file(:original))
+      geo.width > max_width ? "#{max_width}" : "#{geo.width}"
+    else
+      nil
+    end
   end
 
   # Resizes a thumbnail based on its orientation. 
   # Landscape pictures are cropped to a maximum width and height.
   # Portrait pictures are reduced to a maximum width and height, pictures are centered.
   def crop max_width, max_height
-     geo = Paperclip::Geometry.from_file(document.to_file(:original))
-     geo.width > geo.height ? "#{max_width}x#{max_height}#" : "#{max_width}x#{max_height}>"
+    if photo?
+      geo = Paperclip::Geometry.from_file(document.to_file(:original))
+      geo.width > geo.height ? "#{max_width}x#{max_height}#" : "#{max_width}x#{max_height}>"
+    else
+      nil
+    end
   end
   
   def photo?

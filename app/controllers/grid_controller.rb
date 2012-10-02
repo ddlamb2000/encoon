@@ -470,7 +470,7 @@ class GridController < ApplicationController
     saved = false
     begin
       @row.transaction do
-        @attachment = @row.attachments.find(params[:file_id])
+        @attachment = @row.attachments.find(params[:id])
         if @attachment.present?
           @attachment.delete
           @row.make_audit(Audit::DETACH)
@@ -484,14 +484,7 @@ class GridController < ApplicationController
       log_error "GridController#delete_attachment", invalid
       saved = false
     end
-    if saved
-      flash[:notice] = t('transaction.deleted', 
-                              :type => @attachment.content_type, 
-                              :name => @attachment.file_name)
-    end
-    respond_to do |format|
-      format.html { render :action => "show" }
-    end
+    row
   end
 
 private

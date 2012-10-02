@@ -47,24 +47,45 @@
     <p><%= @row_loc.description.html_safe %></p>
   <% end %>
   <% if @row.has_attachment? %>
-    <% if @row.has_photo? %>
-      <% for document in @row.attachments %>
+    <% for document in @row.attachments %>
+      <li id="row-image-<%= @row.uuid %>-<%= document.id.to_s %>">
         <% if document.photo? %>
-          <li>
-            <%= image_tag document.document(:inline) %>
-          </li>
-        <% end %>
-      <% end %>
-     <% end %>
-    <% if @row.has_document? %>
-      <% for document in @row.attachments %>
-        <% if document.document? %>
-          <li>
+          <%= link_to document.document.url do %>
+            <%= image_tag document.document(:mini) %>
+          <% end %>
+        <% else %>
+          <%= link_to document.document.url do %>
             <%= icon "document" %>
             <%= document.document_file_name %>
-          </li>
+          <% end %>
         <% end %>
-      <% end %>
+        <div id="actions-image-<%= @row.uuid %>-<%= document.id.to_s %>" 
+                class="actions float-actions" 
+                style="display: none;">
+          <span class="button" title="<%= t 'actions.delete_help' %>">
+            <a id="delete-image-<%= @row.uuid %>-<%= document.id.to_s %>">
+              <%= t 'actions.delete' %>
+            </a>
+          </span>
+        </div>
+      </li>
+      <script>
+        $("#row-image-<%= @row.uuid %>-<%= document.id.to_s %>").hover(
+          function (event){
+            var left = 0;
+            var top = $(this).offset().top;
+            $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").css({left:left,top:top}).fadeIn(300);
+          },
+          function (event){
+            $("#actions-image-<%= @row.uuid %>-<%= document.id.to_s %>").fadeOut(3);
+          }
+        );
+        $("#delete-image-<%= @row.uuid %>-<%= document.id.to_s %>").click(function (event){
+          $.ajax("<%= url_for(delete_attachment_path(:grid => @grid.uuid,
+                                                     :row => @row.uuid,
+                                                     :id => document.id)) %>");
+        });
+      </script>
     <% end %>
   <% end %>
   <% if user_signed_in? and @grid.can_update?(@row) %>

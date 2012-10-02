@@ -33,7 +33,6 @@
     })
     .bind('ajax:aborted:file', function(event, elements){
       $("#dialog").hide(300);
-      window.location.reload(true);
     })
     .bind("ajax:error", function(evt, xhr, status, error){
       var errors, errorText;
