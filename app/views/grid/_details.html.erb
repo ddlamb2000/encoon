@@ -29,7 +29,7 @@
     <tr>
       <td class="header"><%= t 'field.created' %></td>
       <td class="string">
-        <%= @row.created_at %>
+        <%= l @row.created_at %>
         <small>
           <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
         </small>
@@ -39,10 +39,26 @@
       <tr>
         <td class="header"><%= t 'field.updated' %></td>
         <td class="string">
-          <%= @row.updated_at %>
+          <%= l @row.updated_at %>
           <small>
-            <%= display_updated_time_by( @row, @row.who_updated, @row.update_user_uuid).html_safe %>
+            <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid).html_safe %>
           </small>
+        </td>
+      </tr>
+    <% end %>
+    <% if @row.has_attachment? %>
+      <tr>
+        <td class="header"><%= t 'field.attachments' %></td>
+        <td class="string">
+          <ul>
+            <% for document in @row.attachments %>
+              <li>
+                <%= icon "document" %>
+                <%= document.document_file_name %>
+                (<%= number_to_human_size document.document_file_size %>)
+              </li>
+            <% end %>
+          </ul>
         </td>
       </tr>
     <% end %>
