@@ -445,14 +445,18 @@ class GridController < ApplicationController
     @grid.load_cached_grid_structure if @grid.present?
     selectRow
     saved = false
+    @attachment = @row.attachments.new
     begin
-      @row.transaction do
-        @row.remove_attachment!(params[:document])
-        @attachment = @row.attachments.new
-        @attachment.document = params[:document]
-        @attachment.save!
-        @row.make_audit(Audit::ATTACH)
-        saved = true
+      if params[:document].blank?
+        @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+      else
+        @row.transaction do
+          @row.remove_attachment!(params[:document])
+          @attachment.document = params[:document]
+          @attachment.save!
+          @row.make_audit(Audit::ATTACH)
+          saved = true
+        end
       end
     rescue ActiveRecord::RecordInvalid => invalid
       log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
