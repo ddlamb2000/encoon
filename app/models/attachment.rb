@@ -19,7 +19,7 @@ class Attachment < ActiveRecord::Base
 
   # Paperclip interpolation rule: used to include row uuid in attachment paths.
   Paperclip.interpolates :uuid do |attachment, style|
-    attachment.instance.uuid + "-" + attachment.original_filename
+    attachment.instance.uuid + "/" + attachment.original_filename
   end
   
   # Attached documents using PaperClip.
