@@ -27,7 +27,7 @@ class Attachment < ActiveRecord::Base
                     :styles => lambda { |attachment| !attachment.instance.photo? ? {} : { 
                        :inline => attachment.instance.reduce(580),
                        :mini => attachment.instance.crop(150,150),
-                       :icon => attachment.instance.crop(24,24),
+                       :icon => attachment.instance.crop(32,32),
                        :micro => attachment.instance.crop(12,12)
                       } 
                     }, 
