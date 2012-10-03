@@ -40,7 +40,7 @@ fr:
     delete_help:          "Supprimez la donnée sélectionée."
     attach:               "Attacher document"
     attach_help:          "Ajoutez un document ou une photo à la donnée sélectionnée."
-    more:                 "Détails"
+    more:                 "Informations"
     login:                "Connexion"
     wait:                 "Chargement en cours…"
     search:               "Rechercher"

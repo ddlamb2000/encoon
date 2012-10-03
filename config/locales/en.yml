@@ -40,7 +40,7 @@ en:
     delete_help:          "Delete selected data."
     attach:               "Attach"
     attach_help:          "Add an attachment (photo or document) to selected data."
-    more:                 "Details"
+    more:                 "Information"
     login:                "Log in"
     wait:                 "Loading in progress…"
     search:               "Search"

@@ -47,11 +47,9 @@ module EntityHelper
   end
 
   def show_boolean(value, list=false)
-    content_tag("td", (value == "1" or value == "t" or value == "true") ? 
-        tag("img", { :src => asset_path("true.gif"), 
-                     :height => "12", 
-                     :width => "12" }, false, false).html_safe : "&nbsp;".html_safe, 
-        :class => (list ? "list-" : "") + "boolean")
+    content_tag("td", "", 
+        :class => (list ? "list-" : "") + "boolean " +
+          ((value == "1" or value == "t" or value == "true") ? (list ? "list-ok" : "ok") : ""))
   end
 
   def show_reference(value, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
@@ -213,7 +211,7 @@ module EntityHelper
     attribute = row.initialization? ? column.default_physical_column : column.physical_column
     value = row.read_value(column)
     content_tag("tr",
-      show_edit_header_label(column.name.html_safe + description.html_safe, column.required, attribute) +
+      show_edit_header_label(description.html_safe, column.required, attribute) +
       edit(attribute, value, column.kind, column.grid_reference_uuid, true),
       :id => "header-" + attribute
     )
