@@ -258,7 +258,10 @@ class Row < Entity
   
   def remove_attachment!(input_file)
     for attachment in attachments
-      if attachment.document_content_type == input_file.content_type.chomp and 
+      if input_file.present? and
+         attachment.document_content_type.present? and
+         attachment.document_file_name.present? and
+         attachment.document_content_type == input_file.content_type.chomp and 
          attachment.document_file_name == input_file.original_filename
         attachment.destroy
       end
