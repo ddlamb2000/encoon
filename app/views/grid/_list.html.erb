@@ -75,9 +75,8 @@
       </script>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="<%= t 'actions.column_help' %>" class="button">
+      <span title="<%= t 'actions.column_help' %>" class="button edit-button">
         <a id="attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-          <%= icon('edit') %>
           <%= t 'actions.columns' %>
         </a>
       </span>
@@ -157,11 +156,8 @@
           <td class="list-description">
             <% if user_signed_in? and @grid.can_update?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
-                <span class="button" title="<%= t 'actions.update_help' %>">
-                  <a id="update-<%= row.uuid %>">
-                    <%= icon('edit') %>
-                    <%= t 'actions.update' %>
-                  </a>
+                <span class="button edit-button" title="<%= t 'actions.update_help' %>">
+                  <a id="update-<%= row.uuid %>"><%= t 'actions.update' %></a>
                 </span>
                 <script>
                   $("#row-<%= row.uuid %>").hover(

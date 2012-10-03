@@ -451,9 +451,13 @@ class GridController < ApplicationController
         @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
       else
         @row.transaction do
+          @row.update_user_uuid = Entity.session_user_uuid
           @row.remove_attachment!(params[:document])
+          @attachment.original_file_name = (params[:document]).original_filename
           @attachment.document = params[:document]
+          @attachment.create_user_uuid = Entity.session_user_uuid
           @attachment.save!
+          @row.save!
           @row.make_audit(Audit::ATTACH)
           saved = true
         end
@@ -467,7 +471,8 @@ class GridController < ApplicationController
     end
     respond_to do |format|
       if saved
-        render :nothing => true
+        render :text => "OK"
+        return
       else
         log_debug "GridController#save_document: error"
         format.html { render :json => @attachment.errors, :status => :unprocessable_entity }

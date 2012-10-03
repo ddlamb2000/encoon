@@ -1,8 +1,5 @@
-<header class="action-header">
-  <%= @workspace %> » <%= @grid %>
-</header>
+<header class="action-header"><%= @workspace %> » <%= @grid %></header>
 <%= form_tag(save_attachment_path(:grid => @grid.uuid, :row => @row.uuid),
-             :remote => true,
              :multipart => true,
              :target => "target-dialog",
              :id => 'attach-form') do %>
@@ -12,43 +9,25 @@
       <td class="string"><%= file_field_tag :document %></td>
     </tr>
   </table>
-  <div class="validation-error"></div>
   <footer class="actions">
     <span class="button"><a id="cancel-dialog"><%= t 'actions.cancel' %></a></span>
     <span class="button"><%= submit_tag t('actions.attach'), :id => "ok-dialog" %></span>
   </footer>
-  <iframe id="target-dialog"></iframe>
 <% end %>
+<iframe id="target-dialog"></iframe>
 <script>
-  $('#attach-form')
-    .bind("ajax:beforeSend", function(evt, xhr, settings){
-      $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-      $(".field_with_errors").removeClass("field_with_errors");
-    })
-    .bind('ajax:aborted:file', function(event, elements){
-      if ($("#more-button").attr('checked')) {
-        $("#more-content").
-          html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-          load("<%= url_for(details_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
-      }
-      $("#attachments-<%= @row.uuid %>").
-          html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-          load("<%= url_for(attachments_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
-    })
-    .bind("ajax:error", function(evt, xhr, status, error){
-      var errors, errorText;
-      try {errors = $.parseJSON(xhr.responseText);}
-      catch(err) {errors = {message: err};}
-      errorText = "<ul>";
-      for(error in errors) {
-        errorText += "<li>" + errors[error] + "</li> ";
-      }
-      errorText += "</ul>";
-      $(this).find('div.validation-error').html(errorText).addClass("error_explanation");
-    });
   $("#cancel-dialog").click(function (event){
     $("#document, #document article").removeClass("disabled");
     $("a").attr('class', 'enabled');
     $("#dialog").hide(300);
+  });
+  $("#target-dialog").bind("load", function (event){
+    $("body:contains(required)").css("background-color","red");
+    $("#attachments-<%= @row.uuid %>").load("<%= url_for(attachments_path(:grid => @grid.uuid,
+                                                                          :row => @row.uuid)) %>");
+    if ($("#more-button").attr('checked')) {
+      $("#more-content").load("<%= url_for(details_path(:grid => @grid.uuid,
+                                                        :row => @row.uuid)) %>");
+    }
   });
 </script>

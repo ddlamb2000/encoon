@@ -3,11 +3,8 @@
     <div id="actions-<%= @row.uuid %>" 
             class="actions float-actions" 
             style="display: none;">
-      <span class="button" title="<%= t 'actions.update_help' %>">
-        <a id="update-<%= @row.uuid %>">
-          <%= icon('edit') %>
-          <%= t 'actions.update' %>
-        </a>
+      <span class="button edit-button" title="<%= t 'actions.update_help' %>">
+        <a id="update-<%= @row.uuid %>"><%= t 'actions.update' %></a>
       </span>
       <span class="button" title="<%= t 'actions.attach_help' %>">
         <a id="attach-<%= @row.uuid %>">
@@ -140,7 +137,9 @@
     <% if not @table_columns.empty? %><br/><% end %>
     <p><%= @row_loc.description.html_safe %></p>
   <% end %>
-  <%= render :partial => 'attachments' %>
+  <section id="attachments-<%= @row.uuid %>">
+    <%= render :partial => 'attachments' %>
+  </section>
 <% else %>
   <hgroup>
     <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>

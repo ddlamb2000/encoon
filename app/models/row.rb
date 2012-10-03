@@ -253,17 +253,18 @@ class Row < Entity
   end
   
   def has_attachment?
-    not attachments.nil? and not attachments.empty? 
+    not self.attachments.nil? and not self.attachments.empty? 
   end
   
   def remove_attachment!(input_file)
-    for attachment in attachments
-      if input_file.present? and
-         attachment.document_content_type.present? and
-         attachment.document_file_name.present? and
-         attachment.document_content_type == input_file.content_type.chomp and 
-         attachment.document_file_name == input_file.original_filename
-        attachment.destroy
+    if input_file.present?
+      log_debug "Row#remove_attachment!(#{input_file.original_filename})"
+      for attachment in self.attachments
+        if attachment.original_file_name.present? and
+           attachment.original_file_name == input_file.original_filename
+          log_debug "Row#remove_attachment! destroy"
+          attachment.destroy
+        end
       end
     end
   end

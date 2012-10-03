@@ -23,8 +23,7 @@
     <% end %>
     <% for column in @grid.column_all %>
       <% description = column.description.present? ? 
-          ("<span title='#{column.description}'> " + icon("information") + "</span>") : 
-          "" %>
+          ("<span title='#{column.description}' class='help'>#{column.name}</span>") : "#{column.name}" %>
       <%= edit_entity(@row, column, description) %>
     <% end %>
     <% if @grid.has_translation? and @grid.has_description? %>

@@ -53,9 +53,14 @@
           <ul>
             <% for document in @row.attachments %>
               <li>
-                <%= icon "document" %>
+                <% if document.photo? %>
+                  <%= image_tag document.document(:micro) %>
+                <% else %>
+                  <%= icon "document" %>
+                <% end %>
                 <%= document.document_file_name %>
                 (<%= number_to_human_size document.document_file_size %>)
+                <%= display_created_time_by(document, document.who_created, document.create_user_uuid).html_safe %>
               </li>
             <% end %>
           </ul>

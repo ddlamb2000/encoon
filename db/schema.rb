@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121001082724) do
+ActiveRecord::Schema.define(:version => 20121003121846) do
 
   create_table "attachments", :force => true do |t|
     t.string   "uuid",                  :limit => 36
@@ -20,6 +20,8 @@ ActiveRecord::Schema.define(:version => 20121001082724) do
     t.integer  "document_file_size"
     t.datetime "document_updated_at"
     t.integer  "lock_version",                        :default => 0
+    t.string   "original_file_name"
+    t.string   "create_user_uuid",      :limit => 36
   end
 
   add_index "attachments", ["uuid"], :name => "index_attachments_on_uuid"

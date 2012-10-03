@@ -16,6 +16,11 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class Attachment < ActiveRecord::Base
   belongs_to :row, :foreign_key => "uuid", :primary_key => "uuid"
+  belongs_to :create_user, 
+             :select => "id, uuid, version, begin, end, enabled, email, first_name, last_name" , 
+             :class_name => "User", 
+             :foreign_key => "create_user_uuid", 
+             :primary_key => "uuid"
 
   # Paperclip interpolation rule: used to include row uuid in attachment paths.
   Paperclip.interpolates :uuid do |attachment, style|
@@ -63,5 +68,14 @@ class Attachment < ActiveRecord::Base
 
   def document?
     not(self.document_content_type =~ /image+/)
+  end
+
+  # Returns the name of the user who created the record
+  def who_created
+    self.create_user.blank? ? "?" : self.create_user
+  end
+  
+  def created_at
+    self.document_updated_at
   end
 end
