@@ -28,8 +28,9 @@
 @import "compass/typography/lists/bullets";
 @import "compass/typography/links/hover-link";
 @import "blueprint";
+@import "fonts";
 $default-border-radius:4px;
-$blueprint-font-family:sans-serif;
+$blueprint-font-family:ubuntu,sans-serif;
 $blueprint-font-size:11px;
 $background-color:#E0E0E0;
 $background-color-banner:#282828;
