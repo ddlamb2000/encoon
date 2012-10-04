@@ -23,6 +23,9 @@
     size:contain;
   }
 }
+.cancel-button a {
+  padding-left:$padding;
+}
 .add-button a {
   padding-left:8*$padding;
   background: {

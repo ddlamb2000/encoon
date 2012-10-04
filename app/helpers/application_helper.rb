@@ -148,41 +148,45 @@ module ApplicationHelper
     end
   end
   
-  def display_new
-    content_tag("div", t('general.new'), :class => "new")
+  def display_new(date=nil)
+    if date.nil? or ((Time.now-date) < 1.day)
+      content_tag("div", t('general.new'), :class => "new")
+    else
+      ""
+    end
   end
     
   def display_updated_date(entity)
     t(entity.revision == 1 ? 'general.created' : 'general.updated', 
             :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
-    ((Time.now-entity.updated_at) < 1.day ? display_new : "")
+    display_new(entity.updated_at)
   end
   
   def display_created_time_by(entity, who, who_uuid)
     t('general.time_by', 
-            :time => time_ago_in_words(
-                                entity.created_at, 
-                                :include_seconds => true),
-            :by => (who.present? and who_uuid.present?) ? 
-                       link_to_unless_current(who, 
-                           show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                                     :grid => User::ROOT_UUID,
-                                     :row => who_uuid)) :
-                       t('general.unknown'))
+        :time => time_ago_in_words(
+                            entity.created_at, 
+                            :include_seconds => true),
+        :by => (who.present? and who_uuid.present?) ? 
+                   link_to_unless_current(who, 
+                       show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                                 :grid => User::ROOT_UUID,
+                                 :row => who_uuid)) :
+                   t('general.unknown'))
   end
 
   def display_updated_time_by(entity, who, who_uuid)
     t('general.time_by', 
-            :time => time_ago_in_words(
-                                entity.updated_at, 
-                                :include_seconds => true),
-            :by => (who.present? and who_uuid.present?) ? 
-                       link_to_unless_current(who, 
-                           show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                                     :grid => User::ROOT_UUID,
-                                     :row => who_uuid)) :
-                       t('general.unknown')) +
-    ((Time.now-entity.updated_at) < 1.day ? display_new : "")
+        :time => time_ago_in_words(
+                            entity.updated_at, 
+                            :include_seconds => true),
+        :by => (who.present? and who_uuid.present?) ? 
+                   link_to_unless_current(who, 
+                       show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                                 :grid => User::ROOT_UUID,
+                                 :row => who_uuid)) :
+                   t('general.unknown')) +
+    display_new(entity.updated_at)
   end
 
   def warning_current_date(as_of_date)

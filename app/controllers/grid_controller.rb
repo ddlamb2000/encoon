@@ -471,7 +471,7 @@ class GridController < ApplicationController
     end
     respond_to do |format|
       if saved
-        render :text => "OK"
+        render :text => "<div id='ok'>OK</div>"
         return
       else
         log_debug "GridController#save_document: error"
