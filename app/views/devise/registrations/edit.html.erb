@@ -2,14 +2,11 @@
   <section id="unhappy">
     <article>
       <ul>
-        <li class="button">
+        <li class="button warning-button">
           <%= t('devise.unhappy') %> 
-          <%= link_to registration_path(resource_name), 
+          <%= link_to I18n.t('devise.cancel_account'), registration_path(resource_name), 
                       :confirm => t('message.delete', :name => current_user.to_s),
-                      :method => :delete do %>
-            <%= icon 'warning' %>
-            <%= t 'devise.cancel_account' %>
-          <% end %>
+                      :method => :delete %>
         </li>
       </ul>
     </article>

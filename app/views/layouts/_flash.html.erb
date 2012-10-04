@@ -1,12 +1,10 @@
 <% if flash[:notice] %>
   <section class='notice'>
-    <%= icon('information') %>
     <%= flash[:notice] %>
   </section>
 <% end %>
 <% if flash[:alert] %>
   <section class='error'>
-    <%= icon('warning') %>
     <%= flash[:alert] %>
   </section>
 <% end %>

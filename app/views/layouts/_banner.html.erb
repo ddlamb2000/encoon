@@ -6,18 +6,8 @@
                    :onchange => 'this.form.submit()' %>
   <% end %>
   <% if user_signed_in? %>
-    <span class="button">
-      <% if current_page?(edit_user_registration_path) %>
-        <span class="highlighted">
-          <%= icon 'preferences' %>
-          <%= current_user.to_s %>
-        </span>
-      <% else %>
-        <%= link_to(edit_user_registration_path) do %>
-          <%= icon 'preferences' %>
-          <%= current_user.to_s %>
-        <% end %>
-      <% end %>
+    <span class="button user-button">
+      <%= link_to current_user.to_s, edit_user_registration_path %>
     </span>
     <span class="separator">|</span>
     <span class="button">
@@ -27,11 +17,8 @@
       <% end %>
     </span>
   <% else %>
-    <span class="button">
-      <%= link_to new_session_path("user") do %>
-        <%= icon 'preferences' %>
-        <%= t 'devise.sign_in' %>
-      <% end %>
+    <span class="button user-button">
+      <%= link_to I18n.t('devise.sign_in'), new_session_path("user") %>
     </span>
   <% end %>
 </section>

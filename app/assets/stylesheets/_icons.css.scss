@@ -59,6 +59,60 @@
     size:contain;
   }
 }
+.attach-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/attach.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.user-button a {
+  padding-left:6*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/user.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.warning {
+  padding-left:6*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/warning.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.warning-alert {
+  padding-left:4*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/warning.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.warning-button a {
+  padding-left:6*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/warning.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.locked {
+  padding-left:4*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/lock.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
 .help {
   padding-left:4*$padding;
   background: {

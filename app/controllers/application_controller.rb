@@ -51,24 +51,11 @@ protected
 
   def push_history
     session[:history_table] = [] if session[:history_table].nil?
-
-    visited = {
-                :page_title => @page_title, 
-                :url => request.url, 
-                :page_icon => @page_icon, 
-                :when => Time.now
-              }
-
+    visited = { :page_title => @page_title, :url => request.url, :when => Time.now }
     session[:prior_page_title] = visited[:page_title]
     session[:prior_url] = visited[:url]
-    session[:prior_page_icon] = visited[:page_icon]
-    
-    if visited[:url] != session[:last_url] 
-      session[:history_table] << visited
-    end
-
+    session[:history_table] << visited if visited[:url] != session[:last_url]
     session[:last_url] = visited[:url]
-
     found = false
   end
   

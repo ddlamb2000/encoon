@@ -125,7 +125,7 @@
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
-        <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+        <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
       <% end %>
     </small>
   </hgroup>
@@ -221,7 +221,7 @@
             <%= display_information(row) %>
             <small><%= display_updated_date(row).html_safe %></small>
             <% if user_signed_in? and not @grid.can_update?(row) %>
-              <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+              <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
             <% end %>
           </td>
           <% init_column_index %>
@@ -247,5 +247,5 @@
 <% end %>
 <small>
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
-  <% if not_all_rows(@table_row_count) %><%= icon('warning') %><% end %>
+  <% if not_all_rows(@table_row_count) %><% end %>
 </small>

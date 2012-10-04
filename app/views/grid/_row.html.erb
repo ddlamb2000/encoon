@@ -6,11 +6,8 @@
       <span class="button edit-button" title="<%= t 'actions.update_help' %>">
         <a id="update-<%= @row.uuid %>"><%= t 'actions.update' %></a>
       </span>
-      <span class="button" title="<%= t 'actions.attach_help' %>">
-        <a id="attach-<%= @row.uuid %>">
-          <%= icon('attachments') %>
-          <%= t 'actions.attach' %>
-        </a>
+      <span class="button attach-button" title="<%= t 'actions.attach_help' %>">
+        <a id="attach-<%= @row.uuid %>"><%= t 'actions.attach' %></a>
       </span>
       <span class="button" title="<%= t 'actions.export_help' %>">
         <%= link_to export_row_xml_path(:workspace => @grid.workspace.display_uri,
@@ -105,7 +102,7 @@
           <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
         <% end %>
         <% if user_signed_in? and not @grid.can_update?(@row) %>
-          <span title="<%= t('general.locked') %>"><%= icon "locked" %></span>
+          <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
         <% end %>
       </small>
     </hgroup>

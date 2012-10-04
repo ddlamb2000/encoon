@@ -111,8 +111,6 @@ module ApplicationHelper
         hyperlink = content_tag("a", link[:page_title].html_safe, :href => link[:url])
         hyperlink = link[:page_title] if link[:url] == request.url
         output << content_tag("li", 
-                                icon(link[:page_icon].to_s) + 
-                                "&nbsp;".html_safe + 
                                 hyperlink +
                                 "&nbsp;".html_safe + 
                                 content_tag("span", 
@@ -187,10 +185,10 @@ module ApplicationHelper
     ((Time.now-entity.updated_at) < 1.day ? display_new : "")
   end
 
-  def display_warning_current_date(as_of_date)
+  def warning_current_date(as_of_date)
     now = Time.now
     today = Date::civil(now.year, now.month, now.day)
-    as_of_date != today ? icon('warning') : ""
+    as_of_date != today ? "warning" : ""
   end
   
   def information(entity, show_required=false)
@@ -236,9 +234,9 @@ module ApplicationHelper
   def display_locale(entity)
     if entity.locale != entity.base_locale
       language = LANGUAGES.find {|lang, locale| entity.base_locale == locale}
-      icon('warning') + ("&nbsp;" + link_to(language[0], 
-                                           refresh_path,
-                                           :locale => language[1])).html_safe
+      content_tag("span",
+                  link_to(language[0], refresh_path(:locale => language[1])),
+                  :class => 'warning-alert')
     else
       ""
     end

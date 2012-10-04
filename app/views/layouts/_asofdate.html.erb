@@ -1,8 +1,7 @@
 <article>
   <%= form_for :home, :url => refresh_path do |f| %>
-    <span class="button highlighted">
+    <span class="<%= warning_current_date(session[:as_of_date]) %> button highlighted">
       <%= t('field.asof_date') %>
-      <%= display_warning_current_date(session[:as_of_date]) %>
     </span>
     <% if session[:lock_as_of_date] %>
       <%= I18n.l(session[:as_of_date]) %>

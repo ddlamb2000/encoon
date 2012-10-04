@@ -512,20 +512,13 @@ private
     unless @grid.nil?
       unless @row.nil?
         @page_title = t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
-        case @grid.uuid
-          when Grid::ROOT_UUID then @page_icon = "table"
-          when Workspace::ROOT_UUID then @page_icon = "workspace"
-          else @page_icon = "entity"
-        end
       else
         @status = 404
         @page_title = t('error.no_data')
-        @page_icon = "warning"
       end
     else
       @status = 404
       @page_title = t('error.no_grid')
-      @page_icon = "warning"
     end
   end
 
