@@ -24,8 +24,8 @@
     <section id="navigator" style="<%= session[:hide_navigator] ? 'display: none;' : '' %>">
       <section class="tools">
         <%= render :partial => "layouts/asofdate" %>
-        <%= render :partial => 'layouts/history' %>
         <%= yield :navigator %>
+        <%= render :partial => 'layouts/history' %>
       </section>
     </section>
     <section id="main-area" class="<%= session[:hide_navigator] ? 'large-area' : 'main-area' %>">

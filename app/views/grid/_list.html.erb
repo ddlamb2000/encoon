@@ -124,7 +124,7 @@
     <%= link_to(@grid,
                 show_grid_path(
                   :workspace => @workspace.display_uri,
-                  :grid => @grid.display_uri)) %> »
+                  :grid => @grid.display_uri)) %>
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
