@@ -34,20 +34,22 @@ class Grid < Entity
   
   belongs_to :workspace, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :grid_locs, :foreign_key => "uuid", :primary_key => "uuid"
-  has_many :columns,  :foreign_key => "grid_uuid", :primary_key => "uuid"
-  has_many :column_locs,  :foreign_key => "uuid", :primary_key => "uuid", :through => :columns
-  has_many :rows,  :foreign_key => "grid_uuid", :primary_key => "uuid"
-  has_many :grid_mappings,  :foreign_key => "grid_uuid", :primary_key => "uuid"
+  has_many :columns, :foreign_key => "grid_uuid", :primary_key => "uuid"
+  has_many :column_locs, :foreign_key => "uuid", :primary_key => "uuid", :through => :columns
+  has_many :column_mappings, :foreign_key => "uuid", :primary_key => "uuid", :through => :columns
+  has_many :rows, :foreign_key => "grid_uuid", :primary_key => "uuid"
+  has_many :grid_mappings, :foreign_key => "grid_uuid", :primary_key => "uuid"
   validates_presence_of :workspace_uuid
   validates_associated :workspace
   
   @can_select_data = false
   @can_create_data = false
   @can_update_data = false
+  @can_update_data_all = false
 
   # Loads in memory the structure of the data grid
-  # and all the information to render the grid (columns
-  # definition, table mapping).
+  # and all the information to render the grid: columns
+  # definition, table mapping, column mapping and security.
   def load(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
               "filters=#{filters.inspect},"+
@@ -57,10 +59,6 @@ class Grid < Entity
     load_columns(filters, false, skip_mapping)
   end
 
-  def load_reference
-    load(nil, true)
-  end
-  
   def loaded? ; @columns.present? ; end
   def has_name? ; self.has_name ; end
   def has_description? ; self.has_description ; end
@@ -68,6 +66,7 @@ class Grid < Entity
   def has_mapping? ; @has_mapping ; end
   def can_select_data? ; @can_select_data ; end
   def can_update_data? ; @can_update_data ; end
+  def can_update_data_all? ; @can_update_data_all ; end
 
   def can_create_data?(filters=nil)
     if @can_create_data
@@ -92,19 +91,18 @@ class Grid < Entity
 
   def can_update?(row)
     if can_update_data?
-      return true if row.create_user_uuid == Entity.session_user_uuid
+      security = nil
       if self.uuid == Workspace::ROOT_UUID
         security = get_security_workspace(row.uuid)
-        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
         security = get_security_workspace(row.workspace_uuid)
-        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       elsif self.uuid == Column::ROOT_UUID and row.grid.present?
         security = get_security_workspace(row.grid.workspace_uuid)
-        return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       end
+      return [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
+      return true if can_update_data? or (row.create_user_uuid == Entity.session_user_uuid)
     end
-    false    
+    false
   end
 
   # Selects data based on uuid.
@@ -619,7 +617,7 @@ class Grid < Entity
     if not full and row.present?
       return summary if summary.length > 0
       count = 0
-      load_reference if not loaded?
+      load if not loaded?
       @columns.each do |column|
         if [Column::REFERENCE, 
             Column::STRING, 
@@ -937,24 +935,19 @@ class Grid < Entity
   
   def mapping_all
     log_debug "Grid#mapping_all"
-    grid_mappings.find(:all, 
-                       :conditions => 
-                          [as_of_date_clause("grid_mappings")])
+    grid_mappings.find(:all, :conditions => [as_of_date_clause("grid_mappings")])
   end
 
   def mapping_select_entity_by_uuid_version(uuid, version)
-    log_debug "Grid#mapping_select_entity_by_uuid_version(uuid=#{uuid}" +
-              ", version=#{version})"
+    log_debug "Grid#mapping_select_entity_by_uuid_version(uuid=#{uuid}, version=#{version})"
     grid_mappings.find(:all, 
                        :conditions => 
                           ["uuid = :uuid and version = :version", 
-                          {:uuid => uuid, 
-                           :version => version}])[0]
+                          {:uuid => uuid, :version => version}])[0]
   end
 
   def row_initialization(row, filters)
-    log_debug "Grid#row_initialization(filters=#{filters.inspect}) " + 
-              "[#{to_s}]"
+    log_debug "Grid#row_initialization(filters=#{filters.inspect}) [#{to_s}]"
     row.initialization
     column_all.each do |column|
       log_debug "Grid#default_row_value column=#{column.to_s}"
@@ -1030,9 +1023,10 @@ class Grid < Entity
     self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
     log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
     if self.workspace.present? and self.workspace.default_role_uuid.present?
-      @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_select_data = true
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data_all = [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
     end
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
@@ -1042,14 +1036,16 @@ class Grid < Entity
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
     if security.present?
-      @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_select_data = true
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data_all = [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
     end
     log_debug "Grid#load_workspace " +
               "@can_select_data=#{@can_select_data}," +
               "@can_create_data=#{@can_create_data}," +
-              "@can_update_data=#{@can_update_data}," +
+              "@can_update_data=#{@can_update_data}, " +
+              "@can_update_data_all=#{@can_update_data_all} " +
               "[#{to_s}]"
   end
   
@@ -1079,6 +1075,10 @@ private
     "columns.create_user_uuid, columns.update_user_uuid, " + 
     "column_locs.base_locale, column_locs.locale, " +
     "column_locs.name, column_locs.description"
+  end
+  
+  def column_all_select_columns_mapping
+    column_all_select_columns + ", column_mappings.db_column"
   end
   
   def row_all_select_columns
@@ -1178,19 +1178,29 @@ private
               "filters=#{filters},"+
               "skip_reference=#{skip_reference}," +
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
-    @all_columns = columns.find(:all,
-                 :joins => :column_locs,
-                 :select => column_all_select_columns,
-                 :conditions =>
-                      [as_of_date_clause("columns") +
-                       " AND column_locs.version = columns.version" +
-                       " AND " + locale_clause("column_locs")],
-                 :order => "columns.id")
+    if not(skip_mapping) and self.has_mapping?
+      @all_columns = columns.find(:all,
+                                  :joins => [:column_locs, :column_mappings],
+                                  :select => column_all_select_columns_mapping,
+                                  :conditions =>
+                                      [as_of_date_clause("columns") +
+                                       " AND column_locs.version = columns.version" +
+                                       " AND " + locale_clause("column_locs")],
+                                  :order => "columns.id")
+    else
+      @all_columns = columns.find(:all,
+                                  :joins => :column_locs,
+                                  :select => column_all_select_columns,
+                                  :conditions =>
+                                      [as_of_date_clause("columns") +
+                                       " AND column_locs.version = columns.version" +
+                                       " AND " + locale_clause("column_locs")],
+                                  :order => "columns.id")
+    end
     @columns = Array.new(@all_columns)
     index_reference = index_date = index_integer = index_decimal = index_string = 0
     column_all.each do |column|
       unless column.loaded?
-        log_debug "Grid#load_columns column=#{column.name}"
         case column.kind
           when Column::REFERENCE then
             index_reference += 1 
@@ -1208,16 +1218,16 @@ private
             index_string += 1 
             number = index_string
         end
-        log_debug "Grid#load_columns number=#{number}"
-        column.load_cached_information(self,
-                                       number,
-                                       skip_reference,
-                                       skip_mapping)
-        log_debug "Grid#load_columns column.physical_column=#{column.physical_column}"
-        @columns.delete(column) if column.display.blank? or column.display == 0
-        unless filters.nil?
-          filters.each{|filter| @columns.delete(column) if filter[:column_uuid] == column.uuid}
+        if column.display.blank? or column.display == 0
+          @columns.delete(column)
+        else
+          column.load_cached_information(self,
+                                         number,
+                                         skip_reference,
+                                         (not(self.has_mapping?) or skip_mapping),
+                                         (not(skip_mapping) and self.has_mapping?) ? column.db_column : nil)
         end
+        filters.each{|filter| @columns.delete(column) if filter[:column_uuid] == column.uuid} unless filters.nil?
       end
     end
     @columns.sort!{|a, b| a.display <=> b.display}

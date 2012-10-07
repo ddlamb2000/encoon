@@ -49,8 +49,7 @@ class Column < Entity
     physical_column.present?
   end
   
-  def load_cached_information(grid, number, skip_reference, skip_mapping)
-    log_debug "Column#load_cached_information(grid=#{grid.to_s})"
+  def load_cached_information(grid, number, skip_reference, skip_mapping, db_column)
     case self.kind
       when REFERENCE then 
         @default_physical_column = "row_uuid" + number.to_s
@@ -63,15 +62,9 @@ class Column < Entity
       else 
         @default_physical_column = "value" + number.to_s
     end
-    db_column = column_mapping_column
-    if not skip_mapping and db_column.present?
-      @physical_column = db_column
-    else
-      @physical_column = default_physical_column
-    end
-    log_debug "Column#load_cached_information " + 
-              "physical_column=#{physical_column}"
-    if not skip_reference
+    @physical_column = (skip_mapping or db_column.nil?) ? @default_physical_column : db_column
+    log_debug "Column#load_cached_information grid=#{grid.to_s}, name=#{self.name}, physical_column=#{physical_column}"
+    if not(skip_reference)
       if self.kind == REFERENCE and 
          self.grid_reference_uuid.present?
         # this is used to avoid circular references
@@ -82,15 +75,13 @@ class Column < Entity
                     "for data grid '#{self.grid_reference_uuid}'"
           @grid_reference = grid
           @workspace_reference = 
-            Workspace.select_entity_by_uuid(Workspace,
-                                            grid.workspace_uuid) if grid.present?
+            Workspace.select_entity_by_uuid(Workspace, grid.workspace_uuid) if grid.present?
         else
           @grid_reference = 
             Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
-          log_debug "Column#load_cached_information " +
-                    "@grid_reference=#{@grid_reference.to_s}"
+          log_debug "Column#load_cached_information @grid_reference=#{@grid_reference.to_s}"
           if @grid_reference.present? 
-            @grid_reference.load_reference if not @grid_reference.loaded?
+            @grid_reference.load if not(@grid_reference.loaded?)
             @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
                                                                    @grid_reference.workspace_uuid)
           end
@@ -183,43 +174,7 @@ class Column < Entity
       Column.all_locales(column_locs, self.uuid, self.version))
   end
 
-  def column_mapping_all
-    log_debug "Column#column_mapping_all"
-    column_mappings.find(:all, 
-                         :conditions => 
-                            [as_of_date_clause("column_mappings")])
-  end
-
-  def column_mapping_select_entity_by_uuid_version(uuid, version)
-    log_debug "Column#column_mapping_select_entity_by_uuid_version(" + 
-              "uuid=#{uuid}, version=#{version})"
-    column_mappings.find(:all, 
-                         :conditions => 
-                          ["uuid = :uuid and version = :version", 
-                          {:uuid => uuid, 
-                           :version => version}])[0]
-  end
-
 private
-
-  def column_mapping_read_select_columns
-    "column_mappings.uuid, column_mappings.version, " +
-    "column_mappings.begin, column_mappings.end, " +
-    "column_mappings.db_column"
-  end
-  
-  def column_mapping_read
-    log_debug "Column#column_mapping_read [column #{to_s}]"
-    column_mappings.find(:first, 
-                         :select => column_mapping_read_select_columns,
-                         :conditions => 
-                              [Grid.as_of_date_clause("column_mappings")])
-  end
-
-  def column_mapping_column
-    column_mapping = column_mapping_read
-    column_mapping.present? ? column_mapping.db_column : nil
-  end
 
   def self.loc_select_columns
     "column_locs.id, column_locs.uuid, " + 

@@ -51,9 +51,8 @@
       </span>
     <% end %>
     <% if user_signed_in? and @grid.can_create_data?(@filters) %>
-      <span title="<%= t 'actions.update_grid_help' %>" class="button">
+      <span title="<%= t 'actions.update_grid_help' %>" class="button edit-button">
         <a id="update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
-          <%= icon('table') %>
           <%= t 'actions.update_grid' %>
         </a>
       </span>
