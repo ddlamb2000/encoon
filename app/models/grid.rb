@@ -53,7 +53,7 @@ class Grid < Entity
               "filters=#{filters.inspect},"+
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
     load_workspace
-    load_cached_mapping
+    load_mapping
     load_columns(filters, false, skip_mapping)
   end
 
@@ -1083,9 +1083,7 @@ private
   
   def row_all_select_columns
     columns = ""
-    column_all.each do |column|
-      columns << ", rows." + column.physical_column
-    end
+    column_all.each{|column| columns << ", rows." + column.physical_column}
     "#{quote(self.uuid)} grid_uuid" +
     ", rows.id, rows.uuid, rows.version, rows.lock_version" + 
     ", rows.begin, rows.end, rows.enabled" + 
@@ -1107,9 +1105,7 @@ private
   
   def row_all_insert_columns
     columns = ""
-    column_all.each do |column|
-      columns << ", " + column.physical_column
-    end
+    column_all.each{|column| columns << ", " + column.physical_column}
     "uuid, version, lock_version, begin, end, enabled" + 
     (has_mapping? ? "" : ", grid_uuid") + 
     ", created_at, updated_at, create_user_uuid, update_user_uuid" + 
@@ -1122,9 +1118,7 @@ private
   
   def row_all_insert_values(row)
     columns = ""
-    column_all.each do |column|
-      columns << ", #{quote(row.read_value(column))}"
-    end
+    column_all.each{|column| columns << ", #{quote(row.read_value(column))}"}
     "#{quote(row.uuid)}, #{quote(row.version)}, #{quote(row.lock_version)}" +
     ", #{quote(row.begin)}, #{quote(row.end)}, #{quote(row.enabled)}" +
     (has_mapping? ? "" : ", #{quote(uuid)}") + 
@@ -1142,9 +1136,7 @@ private
   
   def row_all_update_values(row)
     columns = ""
-    column_all.each do |column|
-      columns << ", #{column.physical_column}=#{quote(row.read_value(column))}"
-    end
+    column_all.each{|column| columns << ", #{column.physical_column}=#{quote(row.read_value(column))}"}
     "lock_version=#{quote(row.lock_version+1)}" +
     ", begin=#{quote(row.begin)}, end=#{quote(row.end)}, enabled=#{quote(row.enabled)}" +
     ", updated_at=#{quote(row.updated_at)}, update_user_uuid=#{quote(row.update_user_uuid)}" +
@@ -1157,21 +1149,18 @@ private
   end
   
   def grid_mapping_read_select_columns
-    "grid_mappings.uuid, grid_mappings.version, " +
-    "grid_mappings.begin, grid_mappings.end, " +
     "grid_mappings.db_table, grid_mappings.db_loc_table"
   end
   
   def grid_mapping_read
     grid_mappings.find(:first, 
                        :select => grid_mapping_read_select_columns,
-                       :conditions => 
-                              [as_of_date_clause("grid_mappings")])
+                       :conditions => [as_of_date_clause("grid_mappings")])
   end
 
   # Loads in memory information about database mapping
-  def load_cached_mapping
-    log_debug "Grid#load_cached_mapping [#{to_s}]"
+  def load_mapping
+    log_debug "Grid#load_mapping [#{to_s}]"
     grid_mapping = grid_mapping_read
     if grid_mapping.present?
       @db_table = grid_mapping.db_table if grid_mapping.db_table.present?
@@ -1231,7 +1220,7 @@ private
         end
       end
     end
-    @columns.sort! {|a, b| a.display <=> b.display}
+    @columns.sort!{|a, b| a.display <=> b.display}
   end
   
   def get_security_workspace(uuid)

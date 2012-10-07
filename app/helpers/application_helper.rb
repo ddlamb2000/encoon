@@ -61,7 +61,7 @@ module ApplicationHelper
   # This is based on the concatenation of identifiers used to filter data 
   def get_filters_uuid(filters)
     output = ""
-    filters.collect { |filter| output << filter[:column_uuid] } if filters.present?
+    filters.collect{|filter| output << filter[:column_uuid]} if filters.present?
     output
   end
 
@@ -164,12 +164,12 @@ module ApplicationHelper
       output << t('general.inactive')
       output << icon('exclamation')
     end
-    output.length>0 ? output : ""  
+    output.length > 0 ? output : ""  
   end
   
   def display_information(entity, show_required=false)
     output = information(entity, show_required)
-    output.length>0 ? content_tag("small", output) : ""  
+    output.length > 0 ? content_tag("small", output) : ""  
   end
   
   def display_grid_next_versions(grid, entity)
