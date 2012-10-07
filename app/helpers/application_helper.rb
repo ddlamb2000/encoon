@@ -15,14 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 module ApplicationHelper
-  # Defines special builder for data grid forms
-  def grid_form_for(name, *args, &block)
-    options = args.last.is_a?(Hash) ? args.pop : {}
-    options = options.merge(:builder => GridBuilder)
-    args = (args << options)
-    form_for(name, *args, &block)
-  end
-  
   def current_page_title
     @page_title.present? ? (@page_title + " | " + current_application_title) : current_application_title 
   end
@@ -33,7 +25,6 @@ module ApplicationHelper
   
   # Displays an icon using its name
   def icon(name, title=nil)
-    # Note: icons library: http://www.small-icons.com/packs/24x24-free-button-icons.jpg
     if name.present?
       tag("img", {:src => asset_path(name + ".gif"), 
                   :height => "12", 
@@ -54,14 +45,13 @@ module ApplicationHelper
         column = grid.column_select_entity_by_uuid(column_uuid)
         if column.present? and column.kind == Column::REFERENCE
           output << ", " if output != ""
-          output << "\"#{column.name}\" equals to \"#{row_name}\"".html_safe
+          output << t('filters.equals_to', :column => column.name, :value => row_name)
         end
       end
     end
     if search.present?
       output << ", " if output != ""
-      output << icon('yellowlight') + 
-                "\"Name\" or \"description\" contains \"#{search}\"".html_safe
+      output << t('filters.search', :value => search)
     end
     output
   end
@@ -71,11 +61,7 @@ module ApplicationHelper
   # This is based on the concatenation of identifiers used to filter data 
   def get_filters_uuid(filters)
     output = ""
-    if filters.present?
-      filters.collect do |filter| 
-         output << filter[:column_uuid]
-      end
-    end
+    filters.collect { |filter| output << filter[:column_uuid] } if filters.present?
     output
   end
 
@@ -85,15 +71,15 @@ module ApplicationHelper
       history.reverse_each do |link|
         hyperlink = content_tag("a", link[:page_title].html_safe, :href => link[:url])
         hyperlink = link[:page_title] if link[:url] == request.url
-        output << content_tag("li", 
-                                hyperlink +
-                                "&nbsp;".html_safe + 
-                                content_tag("span", 
-                                    t('general.ago', 
-                                           :time => time_ago_in_words(link[:when], 
-                                                     :include_seconds => true)), 
-                                    :class => 'detail'), 
-                                :class => "description")
+        output << content_tag("li",
+                              hyperlink + " " + 
+                              content_tag(
+                                "span",
+                                t('general.ago',
+                                  :time => time_ago_in_words(link[:when],
+                                  :include_seconds => true)), 
+                                :class => 'detail'),
+                              :class => "description")
       end
     end
     output
@@ -115,52 +101,42 @@ module ApplicationHelper
     if date != Entity.begin_of_time and date != Entity.end_of_time
       now = Time.now
       today = Date::civil(now.year, now.month, now.day)
-      if date > today
-        t('general.ahead', :time => time_ago_in_words(date))
-      else
-        t('general.ago', :time => time_ago_in_words(date))
-      end
+      t(date > today ? 'general.ahead' : 'general.ago', :time => time_ago_in_words(date))
     end
   end
   
   def display_new(date=nil)
-    if date.nil? or ((Time.now-date) < 1.day)
-      content_tag("div", t('general.new'), :class => "new")
-    else
+    (date.nil? or ((Time.now-date) < 1.day)) ? 
+      content_tag("div", t('general.new'), :class => "new") :
       ""
-    end
   end
     
   def display_updated_date(entity)
     t(entity.revision == 1 ? 'general.created' : 'general.updated', 
-            :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
+      :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
     display_new(entity.updated_at)
   end
   
   def display_created_time_by(entity, who, who_uuid)
     t('general.time_by', 
-        :time => time_ago_in_words(
-                            entity.created_at, 
-                            :include_seconds => true),
-        :by => (who.present? and who_uuid.present?) ? 
-                   link_to_unless_current(who, 
-                       show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                                 :grid => User::ROOT_UUID,
-                                 :row => who_uuid)) :
-                   t('general.unknown'))
+      :time => time_ago_in_words(entity.created_at, :include_seconds => true),
+      :by => (who.present? and who_uuid.present?) ? 
+               link_to_unless_current(who, 
+                 show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                           :grid => User::ROOT_UUID,
+                           :row => who_uuid)) :
+               t('general.unknown'))
   end
 
   def display_updated_time_by(entity, who, who_uuid)
     t('general.time_by', 
-        :time => time_ago_in_words(
-                            entity.updated_at, 
-                            :include_seconds => true),
-        :by => (who.present? and who_uuid.present?) ? 
-                   link_to_unless_current(who, 
-                       show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                                 :grid => User::ROOT_UUID,
-                                 :row => who_uuid)) :
-                   t('general.unknown')) +
+      :time => time_ago_in_words(entity.updated_at, :include_seconds => true),
+      :by => (who.present? and who_uuid.present?) ? 
+               link_to_unless_current(who, 
+                 show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
+                           :grid => User::ROOT_UUID,
+                           :row => who_uuid)) :
+               t('general.unknown')) +
     display_new(entity.updated_at)
   end
 
@@ -265,25 +241,5 @@ module ApplicationHelper
     else
       total > Grid::DISPLAY_ROWS_LIMIT_FULL
     end
-  end
-  
-  def init_row_index(page, full=false)
-    @row_index = page.present? ? ((page.to_i-1) * 
-                  (full ? Grid::DISPLAY_ROWS_LIMIT_FULL : 
-                          Grid::DISPLAY_ROWS_LIMIT)) : 0
-  end
-  
-  def row_index
-    @row_index += 1
-    @row_index
-  end
-
-  def init_column_index
-    @column_index = 0
-  end
-  
-  def column_index
-    @column_index += 1
-    @column_index
   end
 end

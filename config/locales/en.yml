@@ -119,6 +119,9 @@ en:
     attached_row: "%{grid} (%{column})"
     locked:       "Data can't be modified."
     no_data:      "No data"
+  filters:
+    search:       "(Name) or (Text) contains (%{value})"
+    equals_to:    "(%{column}) equals to  (%{value})"
   datepicker:
     format:           "yy-mm-dd"
     decode:           "%Y-%m-%d"

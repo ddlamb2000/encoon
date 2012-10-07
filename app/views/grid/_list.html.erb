@@ -149,7 +149,6 @@
       </tr>
     </thead>
     <tbody>
-      <% init_row_index(params[:page]) %>
       <% for row in @table_rows %>
         <tr id="row-<%= row.uuid %>">
           <td class="list-description">
@@ -223,7 +222,6 @@
               <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
             <% end %>
           </td>
-          <% init_column_index %>
           <% for column in @table_columns %>
             <%= show_entity_in_list(
                     column,
