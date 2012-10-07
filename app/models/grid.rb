@@ -55,7 +55,6 @@ class Grid < Entity
     load_workspace
     load_cached_mapping
     load_columns(filters, false, skip_mapping)
-    load_security
   end
 
   def load_cached_grid_structure_reference
@@ -80,7 +79,7 @@ class Grid < Entity
             if column.uuid == column_uuid and 
                 column.kind == Column::REFERENCE and
                 column.grid_reference_uuid == Workspace::ROOT_UUID
-              security = load_security_workspace(row_uuid)
+              security = get_security_workspace(row_uuid)
               return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
             end
           end
@@ -95,13 +94,13 @@ class Grid < Entity
     if can_update_data?
       return true if row.create_user_uuid == Entity.session_user_uuid
       if self.uuid == Workspace::ROOT_UUID
-        security = load_security_workspace(row.uuid)
+        security = get_security_workspace(row.uuid)
         return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
-        security = load_security_workspace(row.workspace_uuid)
+        security = get_security_workspace(row.workspace_uuid)
         return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       elsif self.uuid == Column::ROOT_UUID and row.grid.present?
-        security = load_security_workspace(row.grid.workspace_uuid)
+        security = get_security_workspace(row.grid.workspace_uuid)
         return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
       end
     end
@@ -616,7 +615,6 @@ class Grid < Entity
   end
 
   def row_title(row, full=false)
-    log_debug "Grid#row_title(row=#{row}) [#{to_s}]"
     summary = (row.present? and self.has_name?) ? row.name : ""
     if not full and row.present?
       return summary if summary.length > 0
@@ -1036,6 +1034,18 @@ class Grid < Entity
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
     end
+    sql = "SELECT workspace_sharings.role_uuid" + 
+          " FROM workspace_sharings" + 
+          " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
+          " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+          " AND " + as_of_date_clause("workspace_sharings") +
+          " LIMIT 1"
+    security = Grid.find_by_sql([sql])[0]
+    if security.present?
+      @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+    end
     log_debug "Grid#load_workspace " +
               "@can_select_data=#{@can_select_data}," +
               "@can_create_data=#{@can_create_data}," +
@@ -1224,8 +1234,8 @@ private
     @columns.sort! {|a, b| a.display <=> b.display}
   end
   
-  def load_security_workspace(uuid)
-    log_debug "Grid#load_security_workspace [#{to_s}]"
+  def get_security_workspace(uuid)
+    log_debug "Grid#get_security_workspace [#{to_s}]"
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
           " WHERE workspace_sharings.workspace_uuid = '#{uuid}'" + 
@@ -1245,27 +1255,6 @@ private
                       security.create_user_uuid == Entity.session_user_uuid 
     return security.default_role_uuid if not security.nil?
     nil
-  end
-
-  def load_security
-    log_debug "Grid#load_security [#{to_s}]"
-    sql = "SELECT workspace_sharings.role_uuid" + 
-          " FROM workspace_sharings" + 
-          " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
-          " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-          " AND " + as_of_date_clause("workspace_sharings") +
-          " LIMIT 1"
-    security = Grid.find_by_sql([sql])[0]
-    if security.present?
-      @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-    end
-    log_debug "Grid#load_security " +
-              "@can_select_data=#{@can_select_data}," +
-              "@can_create_data=#{@can_create_data}," +
-              "@can_update_data=#{@can_update_data}," +
-              "[#{to_s}]"
   end
 end
 
