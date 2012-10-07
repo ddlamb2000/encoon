@@ -1,6 +1,6 @@
 <header class="action-header">
   <%= @workspace %> » <%= @grid %>
-  <% if not new_row %> » <%= @row %><% end %>
+  <% if not new_row %> » <%= @grid.row_title(@row) %><% end %>
 </header>
 <%= form_tag(new_row ?
               create_path(:grid => @grid.uuid, :filters => @filters) :
@@ -12,7 +12,7 @@
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
   <table class="form">
     <% if @grid.has_translation? and @grid.has_name? %>
-      <tr>
+      <tr id="header-name">
         <td class="header">
           <%= label_tag :name, t('field.name'), :class => "required" %>
         </td>
@@ -22,8 +22,9 @@
       </tr>
     <% end %>
     <% for column in @grid.column_all %>
-      <% description = column.description.present? ? 
-          ("<span title='#{column.description}' class='help'>#{column.name}</span>") : "#{column.name}" %>
+      <% description = column.description.present? ?
+          ("<span title='#{column.description}' class='help'>#{column.name}</span>") :
+          "#{column.name}" %>
       <%= edit_entity(@row, column, description) %>
     <% end %>
     <% if @grid.has_translation? and @grid.has_description? %>
