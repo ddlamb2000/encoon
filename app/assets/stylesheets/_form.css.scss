@@ -97,6 +97,26 @@
       }
     }
   }
+  .mini-button { 
+    display:inline;
+    margin:0;
+    cursor:pointer;
+    a {
+      background-color:$background-color-article;
+      color:$detail-color;
+      padding-top:0;
+      padding-bottom:0;
+      padding-right:$padding;
+      border:1px solid transparent;
+      @include border-radius;
+      @include transition;
+      @include undecored-link;
+      &:hover {
+        background-color:$background-color-highlights;
+        color:white;
+      }
+    }
+  }
   input {
     display:inline;
     text-decoration:none;

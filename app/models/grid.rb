@@ -909,7 +909,7 @@ class Grid < Entity
     true
   end
   
-  def update_row!(row)
+  def update_row!(row, audit=Audit::UPDATE)
     log_debug "Grid#update_row!(row=#{row.inspect})"
     if not can_update_data?
       log_security_warning "Grid#update_row! Can't update data"
@@ -923,7 +923,7 @@ class Grid < Entity
           " AND lock_version = #{quote(row.lock_version)}"
     connection.update(sql, "#{self.class.name} Update")
     row.lock_version += 1
-    row.make_audit(Audit::UPDATE)
+    row.make_audit(audit)
     true
   end
   

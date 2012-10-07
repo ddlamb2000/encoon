@@ -256,6 +256,10 @@ class Row < Entity
     not self.attachments.nil? and not self.attachments.empty? 
   end
   
+  def count_attachments
+    self.has_attachment? ? self.attachments.count : 0
+  end
+  
   def remove_attachment!(input_file)
     if input_file.present?
       log_debug "Row#remove_attachment!(#{input_file.original_filename})"

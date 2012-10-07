@@ -22,13 +22,14 @@
             $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(new_path(
-                                                :grid => @grid.uuid,
-                                                :filters => @filters,
-                                                :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
-                                                :refresh_list => true)) %>");
+            $("#dialog").
+              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+              css({left:left, top:top, width:width}).
+              show(300).
+              load("<%= url_for(new_path(:grid => @grid.uuid,
+                                         :filters => @filters,
+                                         :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                         :refresh_list => true)) %>");
           }
         });
       </script>
@@ -65,11 +66,12 @@
             $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(edit_path(
-                                                :grid => Grid::ROOT_UUID,
-                                                :row => @grid.uuid)) %>");
+            $("#dialog").
+              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+              css({left:left, top:top, width:width}).
+              show(300).
+              load("<%= url_for(edit_path(:grid => Grid::ROOT_UUID,
+                                          :row => @grid.uuid)) %>");
           }
         });
       </script>
@@ -84,15 +86,16 @@
         $("#attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
           if(!$('#dialog').is(':visible')){
             var top = $(this).offset().top+20;
-            var left = $("#document").offset().left+5+$(this).width()/2-250/2;
+            var left = $("#document").offset().left+5+$("#document").width()/2-250/2;
             var width = 250;
             $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(attributes_path(
-                                                :grid => @grid.uuid)) %>");
+            $("#dialog").
+              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+              css({left:left, top:top, width:width}).
+              show(300).
+              load("<%= url_for(attributes_path(:grid => @grid.uuid)) %>");
           }
         });
       </script>
@@ -156,7 +159,7 @@
           <td class="list-description">
             <% if user_signed_in? and @grid.can_update?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
-                <span class="button edit-button" title="<%= t 'actions.update_help' %>">
+                <span class="mini-button edit-button" title="<%= t 'actions.update_help' %>">
                   <a id="update-<%= row.uuid %>"><%= t 'actions.update' %></a>
                 </span>
                 <script>

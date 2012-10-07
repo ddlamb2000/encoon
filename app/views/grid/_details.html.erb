@@ -49,25 +49,7 @@
     <% if @row.has_attachment? %>
       <tr>
         <td class="header"><%= t 'field.attachments' %></td>
-        <td class="string">
-          <ul>
-            <% for document in @row.attachments %>
-              <li>
-                <% if document.photo? %>
-                  <%= link_to document.document.url do %><%= image_tag document.document(:micro) %><% end %>
-                  <%= document.document_file_name %>
-                <% else %>
-                  <%= link_to document.original_file_name, document.document.url %>
-                <% end %>
-                <small>
-                  (<%= number_to_human_size document.document_file_size %>)
-                  <%= display_created_time_by(document, document.who_created, document.create_user_uuid).html_safe %>
-                  <%= display_new(document.document_updated_at) %>
-                </small>
-              </li>
-            <% end %>
-          </ul>
-        </td>
+        <td class="string"><%= @row.count_attachments %></td>
       </tr>
     <% end %>
     <% if @versions.present? %>
