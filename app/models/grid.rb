@@ -79,7 +79,7 @@ class Grid < Entity
                 column.kind == Column::REFERENCE and
                 column.grid_reference_uuid == Workspace::ROOT_UUID
               security = get_security_workspace(row_uuid)
-              return Role::ROLE_TOTAL_CONTROL_UUID == security if not security.nil?
+              return [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
             end
           end
         end
