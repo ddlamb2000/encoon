@@ -108,7 +108,7 @@
         <% end %>
       </small>
     </hgroup>
-    <h1><%= @row %></h1>
+    <h1><%= @grid.row_title(@row) %></h1>
   </header>
   <% if @grid.uuid != Workspace::ROOT_UUID and not @table_columns.empty? %>
     <table>
