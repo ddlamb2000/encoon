@@ -174,6 +174,15 @@ class Column < Entity
       Column.all_locales(column_locs, self.uuid, self.version))
   end
 
+  def column_mapping_select_entity_by_uuid_version(uuid, version)
+    log_debug "Column#column_mapping_select_entity_by_uuid_version(" + 
+              "uuid=#{uuid}, version=#{version})"
+    column_mappings.find(:all, 
+                         :conditions => 
+                          ["uuid = :uuid and version = :version", 
+                          {:uuid => uuid, :version => version}])[0]
+  end
+
 private
 
   def self.loc_select_columns
