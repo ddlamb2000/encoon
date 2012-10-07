@@ -30,7 +30,7 @@ protected
 
   def load_credentials
     session[:as_of_date] = Date.current if session[:as_of_date].nil?
-    Entity.session_as_of_date=session[:as_of_date]
+    Entity.session_as_of_date = session[:as_of_date]
     if user_signed_in?
       Entity.session_user_uuid = current_user.uuid
       Entity.session_user_display_name = current_user
@@ -44,8 +44,7 @@ protected
   end
 
   def load_workspaces
-    log_debug "ApplicationController#load_workspaces: " + 
-                "user_uuid=#{Entity.session_user_uuid}?"
+    log_debug "ApplicationController#load_workspaces: user_uuid=#{Entity.session_user_uuid}?"
     @workspaces = Workspace.user_workspaces(Workspace)
   end
 
@@ -62,13 +61,11 @@ protected
   def change_as_of_date(entity)
     if entity.begin > session[:as_of_date]
       session[:as_of_date] = entity.begin 
-      flash[:notice] = 
-        "As of date changed to #{session[:as_of_date].to_s}" 
+      flash[:notice] = "As of date changed to #{session[:as_of_date].to_s}" 
     end
     if entity.end < session[:as_of_date]
       session[:as_of_date] = entity.end 
-      flash[:notice] = 
-        "As of date changed to #{session[:as_of_date].to_s}" 
+      flash[:notice] = "As of date changed to #{session[:as_of_date].to_s}" 
     end
   end
   
@@ -81,22 +78,12 @@ protected
   end
   
   def param_begin_date
-    if params[:begin_date].present?
-      Date.parse params[:begin_date]
-    else
-      Entity.begin_of_time
-    end
+    params[:begin_date].present? ? Date.parse(params[:begin_date]) : Entity.begin_of_time
   end
 
-  def log_debug(message)
-    Entity.log_debug(message)
-  end
+  def log_debug(message) ; Entity.log_debug(message) ; end
 
-  def log_error(message, invalid)
-    Entity.log_error(message, invalid)
-  end
+  def log_error(message, invalid) ; Entity.log_error(message, invalid) ; end
 
-  def as_of_date_clause(synonym)
-    Entity.as_of_date_clause(synonym) 
-  end
+  def as_of_date_clause(synonym) ; Entity.as_of_date_clause(synonym) ; end
 end
