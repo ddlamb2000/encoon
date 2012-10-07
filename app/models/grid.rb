@@ -57,13 +57,9 @@ class Grid < Entity
     load_columns(filters, false, skip_mapping)
     load_security
   end
-  
+
   def load_cached_grid_structure_reference
-    log_debug "Grid#load_cached_grid_structure_reference [#{to_s}]"
-    load_workspace
-    load_cached_mapping
-    load_columns(nil, true)
-    load_security
+    load_cached_grid_structure(nil, true)
   end
   
   def is_preloaded? ; @columns.present? ; end
@@ -1034,6 +1030,17 @@ class Grid < Entity
   def load_workspace
     log_debug "Grid#load_workspace [#{to_s}]"
     self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
+    log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
+    if self.workspace.present? and self.workspace.default_role_uuid.present?
+      @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+    end
+    log_debug "Grid#load_workspace " +
+              "@can_select_data=#{@can_select_data}," +
+              "@can_create_data=#{@can_create_data}," +
+              "@can_update_data=#{@can_update_data}," +
+              "[#{to_s}]"
   end
   
 private
@@ -1108,28 +1115,19 @@ private
     column_all.each do |column|
       columns << ", #{quote(row.read_value(column))}"
     end
-    "#{quote(row.uuid)}" +
-    ", #{quote(row.version)}" +
-    ", #{quote(row.lock_version)}" +
-    ", #{quote(row.begin)}" +
-    ", #{quote(row.end)}" +
-    ", #{quote(row.enabled)}" +
+    "#{quote(row.uuid)}, #{quote(row.version)}, #{quote(row.lock_version)}" +
+    ", #{quote(row.begin)}, #{quote(row.end)}, #{quote(row.enabled)}" +
     (has_mapping? ? "" : ", #{quote(uuid)}") + 
-    ", #{quote(row.created_at)}" +
-    ", #{quote(row.updated_at)}" +
-    ", #{quote(row.create_user_uuid)}" +
-    ", #{quote(row.update_user_uuid)}" +
+    ", #{quote(row.created_at)}, #{quote(row.updated_at)}" +
+    ", #{quote(row.create_user_uuid)}, #{quote(row.update_user_uuid)}" +
     columns
   end
   
   def row_all_insert_loc_values(row)
     "#{quote(row.uuid)}" +
-    ", #{quote(row.version)}" +
-    ", #{quote(row.lock_version)}" +
-    ", #{quote(row.locale)}" +
-    ", #{quote(row.base_locale)}" +
-    ", #{quote(row.name)}" +
-    ", #{quote(row.description)}"
+    ", #{quote(row.version)}, #{quote(row.lock_version)}" +
+    ", #{quote(row.locale)}, #{quote(row.base_locale)}" +
+    ", #{quote(row.name)}, #{quote(row.description)}"
   end
   
   def row_all_update_values(row)
@@ -1138,19 +1136,14 @@ private
       columns << ", #{column.physical_column}=#{quote(row.read_value(column))}"
     end
     "lock_version=#{quote(row.lock_version+1)}" +
-    ", begin=#{quote(row.begin)}" +
-    ", end=#{quote(row.end)}" +
-    ", enabled=#{quote(row.enabled)}" +
-    ", updated_at=#{quote(row.updated_at)}" +
-    ", update_user_uuid=#{quote(row.update_user_uuid)}" +
+    ", begin=#{quote(row.begin)}, end=#{quote(row.end)}, enabled=#{quote(row.enabled)}" +
+    ", updated_at=#{quote(row.updated_at)}, update_user_uuid=#{quote(row.update_user_uuid)}" +
     columns
   end
   
   def row_loc_update_values(row)
-    "lock_version=#{quote(row.lock_version+1)}" +
-    ", base_locale=#{quote(row.base_locale)}" +
-    ", name=#{quote(row.name)}" +
-    ", description=#{quote(row.description)}"
+    "lock_version=#{quote(row.lock_version+1)}, base_locale=#{quote(row.base_locale)}" +
+    ", name=#{quote(row.name)}, description=#{quote(row.description)}"
   end
   
   def grid_mapping_read_select_columns
@@ -1233,18 +1226,14 @@ private
   
   def load_security_workspace(uuid)
     log_debug "Grid#load_security_workspace [#{to_s}]"
-    
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
           " WHERE workspace_sharings.workspace_uuid = '#{uuid}'" + 
           " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
           " AND " + as_of_date_clause("workspace_sharings") +
           " LIMIT 1"
-
     security = Grid.find_by_sql([sql])[0]
-    log_debug "Grid#load_security_workspace (1) security=#{security.inspect}"
     return security.role_uuid if not security.nil?
-
     sql = "SELECT default_role_uuid, create_user_uuid" + 
           " FROM workspaces workspace_security" + 
           " WHERE workspace_security.uuid = '#{uuid}'" + 
@@ -1252,11 +1241,9 @@ private
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
-    log_debug "Grid#load_security_workspace (2) security=#{security.inspect}"
     return Role::ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
                       security.create_user_uuid == Entity.session_user_uuid 
     return security.default_role_uuid if not security.nil?
-
     nil
   end
 
@@ -1273,19 +1260,6 @@ private
       @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
       @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-    else
-      sql = "SELECT default_role_uuid" + 
-            " FROM workspaces workspace_security" + 
-            " WHERE workspace_security.uuid = '#{self.workspace_uuid}'" + 
-            " AND workspace_security.default_role_uuid is not null" +
-            " AND " + as_of_date_clause("workspace_security") +
-            " LIMIT 1"
-      security = Grid.find_by_sql([sql])[0]
-      if security.present? and security.default_role_uuid.present?
-        @can_select_data = [Role::ROLE_READ_ONLY_UUID, Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
-        @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
-        @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.default_role_uuid)
-      end
     end
     log_debug "Grid#load_security " +
               "@can_select_data=#{@can_select_data}," +

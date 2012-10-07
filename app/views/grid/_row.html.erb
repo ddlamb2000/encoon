@@ -17,7 +17,7 @@
           <%= t 'actions.export' %>
         <% end %>
       </span>
-      <% if @grid.can_create_data?(@filters) %>
+      <% if @grid.can_create_data?(@filters) and @grid.uuid == Workspace::ROOT_UUID %>
         <span class="button" title="<%= t 'actions.import_help' %>">
           <a id="import-<%= @row.uuid %>">
             <%= icon('import') %>

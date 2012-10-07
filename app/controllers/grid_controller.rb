@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class GridController < ApplicationController
-  before_filter :load_workspaces, :only => [:home, :show, :refresh]
+  before_filter :load_workspaces, :only => [:home, :credits, :show, :refresh]
 
   before_filter :authenticate_user!, :only => [:new,
                                                :edit,
@@ -624,7 +624,8 @@ private
                          "Invalid: can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
-        @workspace = @grid.load_workspace
+        @grid.load_workspace
+        @workspace = @grid.workspace
         if @workspace.nil?
           Entity.log_debug "GridController#selectGridAndWorkspace " + 
                            "Invalid: can't find workspace #{@grid.workspace_uuid}"
