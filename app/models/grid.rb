@@ -48,7 +48,7 @@ class Grid < Entity
   # Loads in memory the structure of the data grid
   # and all the information to render the grid (columns
   # definition, table mapping).
-  def load_cached_grid_structure(filters=nil, skip_mapping=false)
+  def load(filters=nil, skip_mapping=false)
     log_debug "Grid#load_grid_structure(" +
               "filters=#{filters.inspect},"+
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
@@ -57,11 +57,11 @@ class Grid < Entity
     load_columns(filters, false, skip_mapping)
   end
 
-  def load_cached_grid_structure_reference
-    load_cached_grid_structure(nil, true)
+  def load_reference
+    load(nil, true)
   end
   
-  def is_preloaded? ; @columns.present? ; end
+  def loaded? ; @columns.present? ; end
   def has_name? ; self.has_name ; end
   def has_description? ; self.has_description ; end
   def has_translation? ; @db_loc_table.present? and (has_name? or has_description?) ; end
@@ -187,7 +187,7 @@ class Grid < Entity
     log_debug "Grid#select_reference_rows(grid_uuid=#{grid_uuid})"
     grid = Grid.select_entity_by_uuid(Grid, grid_uuid)
     unless grid.nil?
-      grid.load_cached_grid_structure
+      grid.load
       grid.row_all(nil, nil, -1)
     end
   end
@@ -215,7 +215,7 @@ class Grid < Entity
     log_debug "Grid#select_grid_cast(row_uuid=#{row_uuid}) [#{to_s}]"
     if self.uuid == ROOT_UUID
       grid = Grid::select_entity_by_uuid(Grid, row_uuid)
-      grid.load_cached_grid_structure if grid.present?
+      grid.load if grid.present?
       grid
     end
   end
@@ -472,7 +472,7 @@ class Grid < Entity
   end
   
   def row_select_entity_by_uuid_version(uuid, version)
-    load_cached_grid_structure if not is_preloaded?
+    load if not loaded?
     log_debug "Grid#row_select_entity_by_uuid_version(uuid=#{uuid}, " + 
               "version=#{version}) [#{to_s}]"
     if not can_select_data?
@@ -619,7 +619,7 @@ class Grid < Entity
     if not full and row.present?
       return summary if summary.length > 0
       count = 0
-      load_cached_grid_structure_reference if not is_preloaded?
+      load_reference if not loaded?
       @columns.each do |column|
         if [Column::REFERENCE, 
             Column::STRING, 
@@ -820,7 +820,7 @@ class Grid < Entity
       if self.uuid == Workspace::ROOT_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, Grid::ROOT_UUID)
         if grid_def.present?
-          grid_def.load_cached_grid_structure
+          grid_def.load
           log_debug "Grid#row_export select grids in the workspace"
           rows = grid_def.row_all([{:column_uuid => Grid::ROOT_WORKSPACE_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -832,7 +832,7 @@ class Grid < Entity
       if self.uuid == Grid::ROOT_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, GridMapping::ROOT_UUID)
         if grid_def.present?
-          grid_def.load_cached_grid_structure
+          grid_def.load
           log_debug "Grid#row_export select mapping in the data grid"
           rows = grid_def.row_all([{:column_uuid => GridMapping::ROOT_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -842,7 +842,7 @@ class Grid < Entity
         end
         grid_def = Grid::select_entity_by_uuid(Grid, Column::ROOT_UUID)
         if grid_def.present?
-          grid_def.load_cached_grid_structure
+          grid_def.load
           log_debug "Grid#row_export select columns in the data grid"
           rows = grid_def.row_all([{:column_uuid => Column::ROOT_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -854,7 +854,7 @@ class Grid < Entity
       if self.uuid == Column::ROOT_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, ColumnMapping::ROOT_UUID)
         if grid_def.present?
-          grid_def.load_cached_grid_structure
+          grid_def.load
           log_debug "Grid#row_export select mapping in the column"
           rows = grid_def.row_all([{:column_uuid => ColumnMapping::ROOT_COLUMN_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -1200,7 +1200,7 @@ private
     @columns = Array.new(@all_columns)
     index_reference = index_date = index_integer = index_decimal = index_string = 0
     column_all.each do |column|
-      unless column.is_preloaded?
+      unless column.loaded?
         log_debug "Grid#load_columns column=#{column.name}"
         case column.kind
           when Column::REFERENCE then

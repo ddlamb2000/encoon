@@ -74,7 +74,7 @@ class Row < Entity
         grid = column.grid_reference
         if grid.present?
           log_debug "Row#read_referenced_name grid=#{grid.to_s}"
-          grid.load_cached_grid_structure_reference if not grid.is_preloaded?
+          grid.load_reference if not grid.loaded?
           return grid.select_reference_row_name(value)  
         end
       end
@@ -93,7 +93,7 @@ class Row < Entity
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
         grid = column.grid_reference
         if grid.present?
-          grid.load_cached_grid_structure_reference if not grid.is_preloaded?
+          grid.load_reference if not grid.loaded?
           return grid.select_reference_row_description(value)  
         end
       end
@@ -140,7 +140,7 @@ class Row < Entity
     log_debug "Row#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     self.initialization
-    grid.load_cached_grid_structure_reference if not grid.is_preloaded? 
+    grid.load_reference if not grid.loaded? 
     grid.column_all.each do |column|
       log_debug "Row#import_attribute column=#{column}, " + 
                 "column.uuid=#{column.uuid}"
@@ -154,7 +154,7 @@ class Row < Entity
     log_debug "Row#copy_attributes"
     super
     entity.grid_uuid = self.grid_uuid
-    grid.load_cached_grid_structure_reference if not grid.is_preloaded? 
+    grid.load_reference if not grid.loaded? 
     grid.column_all.each do |column|
       log_debug "Row#copy_attributes column=#{column}"
       write_value(column, self.read_value(column))

@@ -73,7 +73,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectWorkspaceAndGrid
     if @grid.present?
-      @grid.load_cached_grid_structure(@filters)
+      @grid.load(@filters)
       selectRow
       @table_columns = @grid.filtered_columns
       if @grid.uuid == Grid::ROOT_UUID
@@ -108,7 +108,7 @@ class GridController < ApplicationController
     @page = params[:page]
     selectGridAndWorkspace
     if @grid.present?
-      @grid.load_cached_grid_structure(@filters) 
+      @grid.load(@filters) 
       @table_row_count = @grid.row_count(@filters)
       @table_rows = @grid.row_all(@filters, @search, @page, true)
       @table_columns = @grid.filtered_columns
@@ -120,7 +120,7 @@ class GridController < ApplicationController
   def details
     log_debug "GridController#details"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     selectRow
     if @grid.present? and @row.present?
       @versions = @grid.row_all_versions(@row.uuid)
@@ -135,7 +135,7 @@ class GridController < ApplicationController
   def attachments
     log_debug "GridController#attachments"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     selectRow
     render :partial => "attachments"
   end
@@ -143,7 +143,7 @@ class GridController < ApplicationController
   def attributes
     log_debug "GridController#attributes"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     @columns = @grid.column_all
     render :partial => "attributes"
   end
@@ -153,7 +153,7 @@ class GridController < ApplicationController
     log_debug "GridController#row"
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure
+    @grid.load
     selectRow
     @table_columns = @grid.filtered_columns
     set_page_title
@@ -166,7 +166,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    @grid.load(@filters) if @grid.present?
     @filters_uuid = get_filters_uuid(@filters)
     @row = @grid.rows.build
     @row_loc = RowLoc.new
@@ -180,7 +180,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    @grid.load(@filters) if @grid.present?
     selectRow
     render :partial => "edit", :locals => {:new_row => false}
   end
@@ -190,7 +190,7 @@ class GridController < ApplicationController
     saved = false
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters, true) if @grid.present?
+    @grid.load(@filters, true) if @grid.present?
     @row = @grid.rows.new
     @row.initialization
     begin
@@ -199,7 +199,7 @@ class GridController < ApplicationController
         @row.begin = param_begin_date
         log_debug "GridController#create: populate from parameter values"
         populate_from_params
-        @grid.load_cached_grid_structure(@filters)
+        @grid.load(@filters)
         if @grid.has_translation?
           LANGUAGES.each do |lang, locale|
             log_debug "GridController#create: locale=#{locale}"
@@ -255,7 +255,7 @@ class GridController < ApplicationController
     @refresh_list = params[:refresh_list]
     @filters = params[:filters]
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure(@filters) if @grid.present?
+    @grid.load(@filters) if @grid.present?
     selectRow
     if params[:lock_version] != @row.lock_version.to_s
       log_debug "GridController#update locked! " +
@@ -385,7 +385,7 @@ class GridController < ApplicationController
   def attach
     log_debug "GridController#attach"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     selectRow
     if @row.present?
       @attachment = @row.attachments.new
@@ -396,7 +396,7 @@ class GridController < ApplicationController
   def save_attachment
     log_debug "GridController#save_attachment"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     selectRow
     saved = false
     if @row.present?
@@ -438,7 +438,7 @@ class GridController < ApplicationController
   def delete_attachment
     log_debug "GridController#delete_attachment"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     selectRow
     saved = false
     if @row.present?
@@ -465,7 +465,7 @@ class GridController < ApplicationController
   def import
     log_debug "GridController#import"
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     render :partial => "import"
   end
   
@@ -473,7 +473,7 @@ class GridController < ApplicationController
     log_debug "GridController#upload"
     saved = false
     selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
+    @grid.load if @grid.present?
     @upload = Upload.new
     @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
     begin

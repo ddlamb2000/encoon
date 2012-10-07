@@ -45,7 +45,7 @@ class Column < Entity
               :grid_reference,
               :workspace_reference
   
-  def is_preloaded?
+  def loaded?
     physical_column.present?
   end
   
@@ -90,7 +90,7 @@ class Column < Entity
           log_debug "Column#load_cached_information " +
                     "@grid_reference=#{@grid_reference.to_s}"
           if @grid_reference.present? 
-            @grid_reference.load_cached_grid_structure_reference if not @grid_reference.is_preloaded?
+            @grid_reference.load_reference if not @grid_reference.loaded?
             @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
                                                                    @grid_reference.workspace_uuid)
           end
