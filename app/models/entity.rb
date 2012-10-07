@@ -354,53 +354,45 @@ class Entity < ActiveRecord::Base
   def self.workspace_security_clause(synonym,
                                      include_public=false,
                                      include_default=true)
-    if DATA_GRID_SECURITY_ACTIVATED
-      "(" +
-      " EXISTS (" +
-      "  SELECT 1 FROM workspace_sharings " +
-      "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
-      "  AND " + as_of_date_clause("workspace_sharings") +
-      "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-      "  AND workspace_sharings.role_uuid is not null" +
-      " )" +
-      (include_default ? 
-        " OR EXISTS (" +
-        "  SELECT 1 FROM workspaces workspace_security" +
-        "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
-        "  AND " + as_of_date_clause("workspace_security") +
-        "  AND workspace_security.default_role_uuid is not null" +
-        " )" : "") +
-      (include_public ? "  OR workspaces.public = :public" : "") +
+    "(" +
+    " EXISTS (" +
+    "  SELECT 1 FROM workspace_sharings " +
+    "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
+    "  AND " + as_of_date_clause("workspace_sharings") +
+    "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+    "  AND workspace_sharings.role_uuid is not null" +
+    " )" +
+    (include_default ? 
+      " OR EXISTS (" +
+      "  SELECT 1 FROM workspaces workspace_security" +
+      "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
+      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND workspace_security.default_role_uuid is not null" +
+      " )" : "") +
+    (include_public ? "  OR workspaces.public = :public" : "") +
       ")"
-    else
-      "1=1"
-    end
   end
 
   def self.grid_security_clause(synonym)
-    if DATA_GRID_SECURITY_ACTIVATED
-      "(" +
-      " EXISTS (" +
-      "  SELECT 1 FROM grids grid_security, workspace_sharings " +
-      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
-      "  AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
-      "  AND " + as_of_date_clause("grid_security") +
-      "  AND " + as_of_date_clause("workspace_sharings") +
-      "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-      "  AND workspace_sharings.role_uuid is not null" +
-      " )" + 
-      " OR EXISTS (" +
-      "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
-      "  WHERE grid_security.uuid = #{synonym}.uuid" + 
-      "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
-      "  AND " + as_of_date_clause("grid_security") +
-      "  AND " + as_of_date_clause("workspace_security") +
-      "  AND workspace_security.default_role_uuid is not null" +
-      " )" +
-      ")"
-    else
-      "1=1"
-    end
+    "(" +
+    " EXISTS (" +
+    "  SELECT 1 FROM grids grid_security, workspace_sharings " +
+    "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+    "  AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
+    "  AND " + as_of_date_clause("grid_security") +
+    "  AND " + as_of_date_clause("workspace_sharings") +
+    "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+    "  AND workspace_sharings.role_uuid is not null" +
+    " )" + 
+    " OR EXISTS (" +
+    "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
+    "  WHERE grid_security.uuid = #{synonym}.uuid" + 
+    "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
+    "  AND " + as_of_date_clause("grid_security") +
+    "  AND " + as_of_date_clause("workspace_security") +
+    "  AND workspace_security.default_role_uuid is not null" +
+    " )" +
+    ")"
   end
 
   # Logs debugging message.

@@ -45,31 +45,6 @@ module ApplicationHelper
     end
   end
   
-  # Displays an icon using its name
-  def bigicon(name)
-    # Note: icons library: http://www.small-icons.com/packs/24x24-free-button-icons.jpg
-    if name.present?
-      tag("img", {:src => asset_path(name + ".gif"), 
-                  :height => "18", 
-                  :width => "18", 
-                  :border => "0"})
-    else
-      ""
-    end
-  end
-  
-  # Displays an icon using its name
-  def i(name)
-    if name.present?
-      tag("img", {:src => asset_path(name + ".png"), 
-                  :height => "24", 
-                  :width => "24", 
-                  :border => "0"})
-    else
-      ""
-    end
-  end
-  
   def display_filters(grid, filters, search=nil)
     output = ""
     if filters.present?
@@ -97,7 +72,7 @@ module ApplicationHelper
   def get_filters_uuid(filters)
     output = ""
     if filters.present?
-      filters.collect do |filter|
+      filters.collect do |filter| 
          output << filter[:column_uuid]
       end
     end
