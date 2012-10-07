@@ -148,54 +148,6 @@ class GridController < ApplicationController
     render :partial => "attributes"
   end
 
-  def import
-    log_debug "GridController#import"
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
-    render :partial => "import"
-  end
-  
-  def upload
-    log_debug "GridController#upload"
-    saved = false
-    selectGridAndWorkspace
-    @grid.load_cached_grid_structure if @grid.present?
-    @upload = Upload.new
-    @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
-    begin
-      @upload.transaction do
-        log_debug "GridController#upload: initialize transaction " +
-                  "params[:data_file]=#{params[:data_file]}"
-        if params[:data_file].blank?
-          @upload.errors.add(:file_name, I18n.t('error.required', :column => I18n.t('field.file')))
-        else
-          @upload.update_attributes(:data_file => params[:data_file])
-          @upload.save!
-          saved = true
-        end
-      end
-    rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "GridController#upload: invalid=#{invalid.inspect}"
-      saved = false
-    rescue Exception => invalid
-      log_error "GridController#upload", invalid
-      saved = false
-    end
-    respond_to do |format|
-      if saved
-        log_debug "GridController#upload: saved"
-        flash[:notice] = I18n.t('message.uploaded',
-                                :record_count => @upload.records,
-                                :insert_count => @upload.inserted,
-                                :update_count => @upload.updated)
-        render :nothing => true
-      else
-        log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
-        format.html { render :json => @upload.errors, :status => :unprocessable_entity }
-      end
-    end
-  end
-
   # Renders the details of an article through an Ajax request  
   def row
     log_debug "GridController#row"
@@ -472,6 +424,7 @@ class GridController < ApplicationController
       end
       respond_to do |format|
         if saved
+          log_debug "GridController#save_document: saved"
           render :text => "<div id='ok'>OK</div>"
           return
         else
@@ -506,6 +459,55 @@ class GridController < ApplicationController
         saved = false
       end
       row
+    end
+  end
+
+  def import
+    log_debug "GridController#import"
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure if @grid.present?
+    render :partial => "import"
+  end
+  
+  def upload
+    log_debug "GridController#upload"
+    saved = false
+    selectGridAndWorkspace
+    @grid.load_cached_grid_structure if @grid.present?
+    @upload = Upload.new
+    @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
+    begin
+      @upload.transaction do
+        log_debug "GridController#upload: initialize transaction " +
+                  "params[:data_file]=#{params[:data_file]}"
+        if params[:data_file].blank?
+          @upload.errors.add(:file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+        else
+          @upload.update_attributes(:data_file => params[:data_file])
+          @upload.save!
+          saved = true
+        end
+      end
+    rescue ActiveRecord::RecordInvalid => invalid
+      log_debug "GridController#upload: invalid=#{invalid.inspect}"
+      saved = false
+    rescue Exception => invalid
+      log_error "GridController#upload", invalid
+      saved = false
+    end
+    respond_to do |format|
+      if saved
+        log_debug "GridController#upload: saved"
+        flash[:notice] = I18n.t('message.uploaded',
+                                :record_count => @upload.records,
+                                :insert_count => @upload.inserted,
+                                :update_count => @upload.updated)
+        render :text => "<div id='ok'>OK</div>"
+        return
+      else
+        log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
+        format.html { render :json => @upload.errors, :status => :unprocessable_entity }
+      end
     end
   end
 
