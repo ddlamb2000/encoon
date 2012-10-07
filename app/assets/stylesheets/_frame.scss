@@ -170,7 +170,6 @@ body {
   .highlighted {
     background-color:$background-color-highlights;
     color:$background-color-article;
-    font-weight:bolder;
     @include border-radius;
     a {
       @include link-colors($color-highlight);
