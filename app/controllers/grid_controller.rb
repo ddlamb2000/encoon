@@ -514,10 +514,10 @@ class GridController < ApplicationController
 private
 
   def set_page_title
-    @status = 200
     unless @grid.nil?
       unless @row.nil?
-        @page_title = t('general.object_name', :type => @grid, :name => @grid.row_title(@row))
+        @status = 200
+        @page_title = @grid.row_title(@row)
       else
         @status = 404
         @page_title = t('error.no_data')

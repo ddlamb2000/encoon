@@ -99,7 +99,6 @@ fr:
     no_end:       "Pas de date de fin"
     version:      "Version %{version}"
     inactive:     "Inactif"
-    object_name:  "%{type} : %{name}"
     record:       "%{count} ligne / %{total}"
     records:      "%{count} lignes / %{total}"
     audit_create: "Création de la version %{version} (%{language})"
