@@ -18,55 +18,6 @@ class CreateGridMappings < ActiveRecord::Migration
     end
 
     add_index :grid_mappings, [:grid_uuid], :name => "index_grid_mappings_on_grid_uuid"
-    
-    uuid_gen = UUID.new
-
-    grid_mapping = GridMapping.create!(
-                      :uuid => uuid_gen.generate,
-                      :begin => Entity.begin_of_time,
-                      :end => Entity.end_of_time,
-                      :version => 1,
-                      :enabled => true,
-                      :grid_uuid => Workspace::ROOT_UUID,
-                      :create_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :update_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :db_table => 'workspaces',
-                      :db_loc_table => 'workspace_locs')
-    
-    grid_mapping = GridMapping.create!(
-                      :uuid => uuid_gen.generate,
-                      :begin => Entity.begin_of_time,
-                      :end => Entity.end_of_time,
-                      :version => 1,
-                      :enabled => true,
-                      :grid_uuid => Grid::ROOT_UUID,
-                      :create_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :update_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :db_table => 'grids',
-                      :db_loc_table => 'grid_locs')
-
-    grid_mapping = GridMapping.create!(
-                      :uuid => uuid_gen.generate,
-                      :begin => Entity.begin_of_time,
-                      :end => Entity.end_of_time,
-                      :version => 1,
-                      :enabled => true,
-                      :grid_uuid => Column::ROOT_UUID,
-                      :create_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :update_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :db_table => 'columns',
-                      :db_loc_table => 'column_locs')
-
-    grid_mapping = GridMapping.create!(
-                      :uuid => uuid_gen.generate,
-                      :begin => Entity.begin_of_time,
-                      :end => Entity.end_of_time,
-                      :version => 1,
-                      :enabled => true,
-                      :grid_uuid => User::ROOT_UUID,
-                      :create_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :update_user_uuid => 'eeba1320-dd45-012c-aafe-0026b0d63708',
-                      :db_table => 'users')
   end
 
   def self.down

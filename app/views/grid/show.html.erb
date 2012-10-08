@@ -1,6 +1,6 @@
 <section id="document" class="document">
   <% unless @grid.blank? or @row.blank? %>
-    <% if @grid.uuid != Grid::ROOT_UUID %>
+    <% if @grid.uuid != GRID_UUID %>
       <article id="row-<%= @row.uuid %>">
         <%= render :partial => "row" %>
       </article>
@@ -14,7 +14,7 @@
     <%= render :partial => 'navigation' %>
   <% else %>
     <hgroup>
-      <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <% if @workspace.present? and @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
         <%= link_to(@workspace,
                     show_workspace_path(:workspace => @workspace.display_uri)) %> »
       <% end %>

@@ -31,17 +31,17 @@ class GridController < ApplicationController
 
   # Renders the home page using hard-coded references.
   def home
-    params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
-    params[:grid] = Grid::HOME_PAGE_UUID
-    params[:row] = Grid::HOME_WELCOME_UUID
+    params[:workspace] = SYSTEM_WORKSPACE_URI
+    params[:grid] = HOME_PAGE_UUID
+    params[:row] = HOME_WELCOME_UUID
     show
   end
 
   # Renders credits using hard-coded references.
   def credits
-    params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
-    params[:grid] = Grid::HOME_PAGE_UUID
-    params[:row] = Grid::HOME_CREDITS_UUID
+    params[:workspace] = SYSTEM_WORKSPACE_URI
+    params[:grid] = HOME_PAGE_UUID
+    params[:row] = HOME_CREDITS_UUID
     show
   end
 
@@ -76,7 +76,7 @@ class GridController < ApplicationController
       @grid.load(@filters)
       selectRow
       @table_columns = @grid.filtered_columns
-      if @grid.uuid == Grid::ROOT_UUID
+      if @grid.uuid == GRID_UUID
         if @row.present?
           @grid_cast = @grid.select_grid_cast(@row.uuid)
           @attached_grids = [@grid_cast]
@@ -92,7 +92,7 @@ class GridController < ApplicationController
         render :show, :status => @status
       end
       format.xml do
-        if @grid.uuid == Grid::ROOT_UUID and @grid_cast.present?
+        if @grid.uuid == GRID_UUID and @grid_cast.present?
             @table_rows = @grid_cast.row_all(@filters, nil, -1, true)
         end
         render :show, :status => @status
@@ -577,13 +577,13 @@ private
         if params[:grid].nil? and params[:row].nil?
           Entity.log_debug "GridController#selectWorkspaceAndGrid workspace only"
           params[:row] = params[:workspace]
-          params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
-          params[:grid] = Workspace::ROOT_UUID
+          params[:workspace] = SYSTEM_WORKSPACE_URI
+          params[:grid] = WORKSPACE_UUID
         elsif not params[:grid].nil? and params[:row].nil?
           Entity.log_debug "GridController#selectWorkspaceAndGrid grid only"
           params[:row] = params[:grid]
-          params[:workspace] = Workspace::SYSTEM_WORKSPACE_URI
-          params[:grid] = Grid::ROOT_UUID
+          params[:workspace] = SYSTEM_WORKSPACE_URI
+          params[:grid] = GRID_UUID
         end
       end 
       if Entity.uuid?(params[:workspace])

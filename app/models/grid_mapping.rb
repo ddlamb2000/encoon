@@ -15,11 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class GridMapping < Entity
-  ROOT_UUID = 'a6beb050-0427-012d-09bf-0015c5091b01'
-  ROOT_GRID_UUID = 'bdbcc440-0427-012d-09c5-0015c5091b01'
-  ROOT_DB_TABLE = 'ce612c50-0427-012d-09c8-0015c5091b01'
-  ROOT_DB_LOC_TABLE = 'd8badca0-0427-012d-09cb-0015c5091b01'
-
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid, :db_table
 
@@ -27,9 +22,9 @@ class GridMapping < Entity
     log_debug "GridMapping#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_GRID_UUID then self.grid_uuid = xml_value
-      when ROOT_DB_TABLE then self.db_table = xml_value
-      when ROOT_DB_LOC_TABLE then self.db_loc_table = xml_value
+      when GRID_MAPPING_GRID_UUID then self.grid_uuid = xml_value
+      when GRID_MAPPING_DB_TABLE then self.db_table = xml_value
+      when GRID_MAPPING_DB_LOC_TABLE then self.db_loc_table = xml_value
     end
   end
   
@@ -72,6 +67,5 @@ class GridMapping < Entity
     ""
   end
 
-  def create_missing_loc!
-  end
+  def create_missing_loc! ; end
 end

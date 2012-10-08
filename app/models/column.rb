@@ -15,25 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Column < Entity
-  ROOT_UUID = '03bfafe0-ea31-012c-105a-00166f92f624'
-  ROOT_GRID_UUID = '461e5940-ea31-012c-106b-00166f92f624'
-  ROOT_KIND_UUID = '50270360-ea31-012c-106f-00166f92f624'
-  ROOT_DISPLAY_UUID = '4c766f00-06cd-012d-c1fb-0026b0d63708'
-  ROOT_REFERENCE_UUID = '5a5107e0-0990-012d-e81a-4417fe7fde95'
-  ROOT_DATA_KIND_UUID = '5a2e26e0-ea31-012c-1074-00166f92f624'
-  ROOT_REQUIRED_UUID = '8df46b61-1da3-012d-46db-4417fe7fde95'
-  ROOT_REGEX_UUID = '68792a30-1da5-012d-2556-4417fe7fde95'
-
-  STRING = "603286d0-ea31-012c-1079-00166f92f624"
-  TEXT = "688c4870-ea31-012c-107d-00166f92f624"
-  DATE = "6d2c8470-ea31-012c-1081-00166f92f624"
-  INTEGER = "f33188f0-06cc-012d-c1db-0026b0d63708"
-  DECIMAL = "f766af30-06cc-012d-c1df-0026b0d63708"
-  BOOLEAN = "ff2dd910-06cc-012d-c1e3-0026b0d63708"
-  REFERENCE = "04950150-06cd-012d-c1e7-0026b0d63708"
-  HYPERLINK = "0a0a5050-06cd-012d-c1eb-0026b0d63708"
-  PASSWORD = "91add730-0d0b-012d-4ae1-4417fe7fde95"
-  
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   belongs_to :grid_reference, :class_name => "Grid", :foreign_key => "grid_reference_uuid", :primary_key => "uuid"
   has_many :column_locs, :foreign_key => "uuid", :primary_key => "uuid"
@@ -51,13 +32,13 @@ class Column < Entity
   
   def load_cached_information(grid, number, skip_reference, skip_mapping, db_column)
     case self.kind
-      when REFERENCE then 
+      when COLUMN_TYPE_REFERENCE then 
         @default_physical_column = "row_uuid" + number.to_s
-      when DATE then 
+      when COLUMN_TYPE_DATE then 
         @default_physical_column = "date" + number.to_s
-      when INTEGER then 
+      when COLUMN_TYPE_INTEGER then 
         @default_physical_column = "integer" + number.to_s
-      when DECIMAL then 
+      when COLUMN_TYPE_DECIMAL then 
         @default_physical_column = "float" + number.to_s
       else 
         @default_physical_column = "value" + number.to_s
@@ -65,7 +46,7 @@ class Column < Entity
     @physical_column = (skip_mapping or db_column.nil?) ? @default_physical_column : db_column
     log_debug "Column#load_cached_information grid=#{grid.to_s}, name=#{self.name}, physical_column=#{physical_column}"
     if not(skip_reference)
-      if self.kind == REFERENCE and 
+      if self.kind == COLUMN_TYPE_REFERENCE and 
          self.grid_reference_uuid.present?
         # this is used to avoid circular references
         log_debug "Column#load_cached_information reference " +
@@ -113,12 +94,12 @@ class Column < Entity
     log_debug "Column#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_GRID_UUID then self.grid_uuid = xml_value
-      when ROOT_REFERENCE_UUID then self.grid_reference_uuid = xml_value
-      when ROOT_KIND_UUID then self.kind = xml_value
-      when ROOT_DISPLAY_UUID then self.display = xml_value.to_i
-      when ROOT_REQUIRED_UUID then self.required = ['true','t','1'].include?(xml_value)
-      when ROOT_REGEX_UUID then self.regex = xml_value
+      when COLUMN_GRID_UUID then self.grid_uuid = xml_value
+      when COLUMN_REFERENCE_UUID then self.grid_reference_uuid = xml_value
+      when COLUMN_KIND_UUID then self.kind = xml_value
+      when COLUMN_DISPLAY_UUID then self.display = xml_value.to_i
+      when COLUMN_REQUIRED_UUID then self.required = ['true','t','1'].include?(xml_value)
+      when COLUMN_REGEX_UUID then self.regex = xml_value
     end
   end
   

@@ -69,7 +69,7 @@
               html('<%= escape_javascript(render :partial => "layouts/loading") %>').
               css({left:left, top:top, width:width}).
               show(300).
-              load("<%= url_for(edit_path(:grid => Grid::ROOT_UUID,
+              load("<%= url_for(edit_path(:grid => GRID_UUID,
                                           :row => @grid.uuid)) %>");
           }
         });
@@ -116,7 +116,7 @@
 <% end %>
 <header>
   <hgroup>
-    <% if @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+    <% if @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
       <%= link_to(@workspace,
                   show_workspace_path(:workspace => @workspace.display_uri)) %> »
     <% end %>
@@ -191,11 +191,11 @@
             <% end %>
             <span title="<%= truncate_html(row.description.html_safe) %>">
               <% if @grid.has_name? %>
-                <% if @grid.uuid == Workspace::ROOT_UUID %>
+                <% if @grid.uuid == WORKSPACE_UUID %>
                   <%= link_to @grid.row_title(row).html_safe,
                               show_workspace_path(
                                 :workspace => row.display_uri) %>
-                <% elsif @grid.uuid == Grid::ROOT_UUID %>
+                <% elsif @grid.uuid == GRID_UUID %>
                   <%= link_to @grid.row_title(row).html_safe,
                               show_grid_path(
                                 :workspace => row.workspace.display_uri,

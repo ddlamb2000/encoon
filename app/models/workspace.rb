@@ -15,14 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Workspace < Entity
-  ROOT_UUID = 'f54309d0-ea30-012c-1054-00166f92f624'
-  ROOT_DEFAULT_ROLE_UUID_UUID = '0e1f4990-a26c-012f-de85-4417fe7fde95'
-  ROOT_PUBLIC_UUID = 'f1ca9820-a26b-012f-de85-4417fe7fde95'
-  ROOT_URI_UUID = '44b03b60-a26c-012f-de85-4417fe7fde95'
-
-  SYSTEM_WORKSPACE_UUID = 'eec10850-dd45-012c-aafe-0026b0d63708'
-  SYSTEM_WORKSPACE_URI = 'system'
-
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
 
@@ -111,17 +103,15 @@ class Workspace < Entity
     log_debug "Workspace#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_PUBLIC_UUID then self.public = ['true','t','1'].include?(xml_value)
-      when ROOT_DEFAULT_ROLE_UUID_UUID then self.default_role_uuid = xml_value
-      when ROOT_URI_UUID then self.uri = xml_value
+      when WORKSPACE_PUBLIC_UUID then self.public = ['true','t','1'].include?(xml_value)
+      when WORKSPACE_DEFAULT_ROLE_UUID then self.default_role_uuid = xml_value
+      when WORKSPACE_URI_UUID then self.uri = xml_value
     end
   end
 
   def import!
     log_debug "Workspace#import!"
-    workspace = Workspace.select_entity_by_uuid_version(Workspace, 
-                                                        self.uuid, 
-                                                        self.version)
+    workspace = Workspace.select_entity_by_uuid_version(Workspace, self.uuid, self.version)
     if workspace.present?
       if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
@@ -149,15 +139,11 @@ class Workspace < Entity
   end
 
   def import_loc!(loc)
-    import_loc_base!(Workspace.all_locales(workspace_locs, 
-                                           self.uuid, 
-                                           self.version), loc)
+    import_loc_base!(Workspace.all_locales(workspace_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
-    create_missing_loc_base!(Workspace.all_locales(workspace_locs, 
-                                                   self.uuid, 
-                                                   self.version))
+    create_missing_loc_base!(Workspace.all_locales(workspace_locs, self.uuid, self.version))
   end
   
 private

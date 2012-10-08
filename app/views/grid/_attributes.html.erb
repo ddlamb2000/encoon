@@ -18,9 +18,9 @@
         $("#dialog").
           html('<%= escape_javascript(render :partial => "layouts/loading") %>').
           css({left:left, width:width}).
-          load("<%= url_for(new_path(:grid => Column::ROOT_UUID,
+          load("<%= url_for(new_path(:grid => COLUMN_UUID,
                                      :filters => [{
-                                       :column_uuid => Column::ROOT_GRID_UUID,
+                                       :column_uuid => COLUMN_GRID_UUID,
                                        :row_uuid => @grid.uuid,
                                        :row_name => @grid.name}])) %>");
       });
@@ -43,7 +43,7 @@
           $("#dialog").
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
             css({left:left, width:width}).
-            load("<%= url_for(edit_path(:grid => Column::ROOT_UUID,
+            load("<%= url_for(edit_path(:grid => COLUMN_UUID,
                                         :row => column.uuid)) %>");
         });
       </script>

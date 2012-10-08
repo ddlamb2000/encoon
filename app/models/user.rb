@@ -15,13 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class User < Entity
-  ROOT_UUID = '08beadc0-ea31-012c-105d-00166f92f624'
-  ROOT_EMAIL_UUID = 'e878a5b1-1a56-012d-50c9-4417fe7fde95'
-  ROOT_FIRST_NAME_UUID = 'd164bfd1-1a56-012d-2c94-4417fe7fde95'
-  ROOT_LAST_NAME_UUID = 'da06d511-1a56-012d-71ca-4417fe7fde95'
-  
-  SYSTEM_ADMINISTRATOR_UUID = 'eebdc1a0-dd45-012c-aafe-0026b0d63708'
-
   has_many :row_passwords, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :attachments, :foreign_key => "uuid", :primary_key => "uuid"
 
@@ -48,13 +41,6 @@ class User < Entity
     name
   end
   
-  def has_photo?
-    for attachment in attachments
-      return true if attachment.photo?
-    end
-    false
-  end
-
   def self.select_entity_by_uuid_version(collection, uuid, version)
     collection.find(:first, 
                     :select => self.all_select_columns,
@@ -69,9 +55,9 @@ class User < Entity
     log_debug "User#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_EMAIL_UUID then self.email = xml_value
-      when ROOT_FIRST_NAME_UUID then self.first_name = xml_value
-      when ROOT_LAST_NAME_UUID then self.last_name = xml_value
+      when USER_EMAIL_UUID then self.email = xml_value
+      when USER_FIRST_NAME_UUID then self.first_name = xml_value
+      when USER_LAST_NAME_UUID then self.last_name = xml_value
     end
   end
   
@@ -143,7 +129,7 @@ private
     workspace_sharing = WorkspaceSharing.new
     workspace_sharing.workspace_uuid = workspace.uuid
     workspace_sharing.user_uuid = self.uuid
-    workspace_sharing.role_uuid = Role::ROLE_TOTAL_CONTROL_UUID
+    workspace_sharing.role_uuid = ROLE_TOTAL_CONTROL_UUID
     workspace_sharing.save!
     log_debug "User#create_workspace_new_user audit"
     workspace.make_audit(Audit::CREATE)

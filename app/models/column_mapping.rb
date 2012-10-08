@@ -15,10 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class ColumnMapping < Entity
-  ROOT_UUID = 'b800e230-042b-012d-0a08-0015c5091b01'
-  ROOT_COLUMN_UUID = 'd0352c30-042b-012d-0a0c-0015c5091b01'
-  ROOT_DB_COLUMN = 'eb71d430-042b-012d-0a11-0015c5091b01'
-
   belongs_to :column, :foreign_key => "column_uuid", :primary_key => "uuid"
   validates_presence_of :column_uuid, :db_column
 
@@ -26,8 +22,8 @@ class ColumnMapping < Entity
     log_debug "ColumnMapping#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_COLUMN_UUID then self.column_uuid = xml_value
-      when ROOT_DB_COLUMN then self.db_column = xml_value
+      when COLUMN_MAPPING_COLUMN_UUID then self.column_uuid = xml_value
+      when COLUMN_MAPPING_DB_COLUMN then self.db_column = xml_value
     end
   end
   
@@ -70,6 +66,5 @@ class ColumnMapping < Entity
     ""
   end
 
-  def create_missing_loc!
-  end
+  def create_missing_loc! ; end
 end

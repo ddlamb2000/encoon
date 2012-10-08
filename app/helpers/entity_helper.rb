@@ -19,10 +19,10 @@ module EntityHelper
     style = "header"
     if list
       case kind
-        when Column::INTEGER then style = "list-header-number"
-        when Column::DECIMAL then style = "list-header-number"
-        when Column::DATE then style = "list-header-date"
-        when Column::BOOLEAN then style = "list-header-boolean"
+        when COLUMN_TYPE_INTEGER then style = "list-header-number"
+        when COLUMN_TYPE_DECIMAL then style = "list-header-number"
+        when COLUMN_TYPE_DATE then style = "list-header-date"
+        when COLUMN_TYPE_BOOLEAN then style = "list-header-boolean"
         else style = "list-header-string"
       end
     end
@@ -70,18 +70,18 @@ module EntityHelper
 
   def show(value, kind, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
     case kind
-      when Column::HYPERLINK then show_hyperlink(value, list)
-      when Column::INTEGER then show_number(value, list)
-      when Column::DECIMAL then show_number(value, list)
-      when Column::DATE then show_date(value, list)
-      when Column::BOOLEAN then show_boolean(value, list)
-      when Column::REFERENCE then show_reference(value,
+      when COLUMN_TYPE_HYPERLINK then show_hyperlink(value, list)
+      when COLUMN_TYPE_INTEGER then show_number(value, list)
+      when COLUMN_TYPE_DECIMAL then show_number(value, list)
+      when COLUMN_TYPE_DATE then show_date(value, list)
+      when COLUMN_TYPE_BOOLEAN then show_boolean(value, list)
+      when COLUMN_TYPE_REFERENCE then show_reference(value,
                                                  grid_uuid,
                                                  referenced_link,
                                                  referenced_name,
                                                  referenced_description,
                                                  list)
-      when Column::PASSWORD then show_password(value, list)
+      when COLUMN_TYPE_PASSWORD then show_password(value, list)
       else show_generic(value, list)
     end
   end
@@ -187,12 +187,12 @@ module EntityHelper
 
   def edit(attribute, value, kind, grid_uuid, include_blanks)
     case kind
-      when Column::TEXT then edit_text(attribute, value)
-      when Column::BOOLEAN then edit_boolean(attribute, value)
-      when Column::INTEGER then edit_integer(attribute, value)
-      when Column::DATE then edit_date(attribute, value)
-      when Column::REFERENCE then edit_reference(attribute, grid_uuid, include_blanks, value)
-      when Column::PASSWORD then edit_password(attribute, value)
+      when COLUMN_TYPE_TEXT then edit_text(attribute, value)
+      when COLUMN_TYPE_BOOLEAN then edit_boolean(attribute, value)
+      when COLUMN_TYPE_INTEGER then edit_integer(attribute, value)
+      when COLUMN_TYPE_DATE then edit_date(attribute, value)
+      when COLUMN_TYPE_REFERENCE then edit_reference(attribute, grid_uuid, include_blanks, value)
+      when COLUMN_TYPE_PASSWORD then edit_password(attribute, value)
       else edit_string(attribute, value)
     end
   end

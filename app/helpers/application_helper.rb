@@ -43,7 +43,7 @@ module ApplicationHelper
         column_uuid = filter[:column_uuid]
         row_name = filter[:row_name]
         column = grid.column_select_entity_by_uuid(column_uuid)
-        if column.present? and column.kind == Column::REFERENCE
+        if column.present? and column.kind == COLUMN_TYPE_REFERENCE
           output << ", " if output != ""
           output << t('filters.equals_to', :column => column.name, :value => row_name)
         end
@@ -122,8 +122,8 @@ module ApplicationHelper
       :time => time_ago_in_words(entity.created_at, :include_seconds => true),
       :by => (who.present? and who_uuid.present?) ? 
                link_to_unless_current(who, 
-                 show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                           :grid => User::ROOT_UUID,
+                 show_path(:workspace => SYSTEM_WORKSPACE_URI,
+                           :grid => USER_UUID,
                            :row => who_uuid)) :
                t('general.unknown'))
   end
@@ -133,8 +133,8 @@ module ApplicationHelper
       :time => time_ago_in_words(entity.updated_at, :include_seconds => true),
       :by => (who.present? and who_uuid.present?) ? 
                link_to_unless_current(who, 
-                 show_path(:workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                           :grid => User::ROOT_UUID,
+                 show_path(:workspace => SYSTEM_WORKSPACE_URI,
+                           :grid => USER_UUID,
                            :row => who_uuid)) :
                t('general.unknown')) +
     display_new(entity.updated_at)

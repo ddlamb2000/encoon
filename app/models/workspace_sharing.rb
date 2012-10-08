@@ -15,11 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class WorkspaceSharing < Entity
-  ROOT_UUID = '4c2b6200-9a7a-012f-642b-4417fe7fde95'
-  ROOT_WORKSPACE_UUID_UUID = '7e67ae50-9a7a-012f-642b-4417fe7fde95'
-  ROOT_USER_UUID_UUID = '8c13aa60-9a7a-012f-642b-4417fe7fde95'
-  ROOT_ROLE_UUID_UUID = '95d604f0-9c87-012f-089e-4417fe7fde95'
-
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   
   def self.select_entity_by_uuid_version(collection, uuid, version)
@@ -44,9 +39,9 @@ class WorkspaceSharing < Entity
     log_debug "WorkspaceSharing#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_WORKSPACE_UUID_UUID then self.workspace_uuid = xml_value
-      when ROOT_USER_UUID_UUID then self.user_uuid = xml_value
-      when ROOT_ROLE_UUID_UUID then self.role_uuid = xml_value
+      when WORKSPACE_SHARING_WORKSPACE_UUID_UUID then self.workspace_uuid = xml_value
+      when WORKSPACE_SHARING_USER_UUID_UUID then self.user_uuid = xml_value
+      when WORKSPACE_SHARING_ROLE_UUID_UUID then self.role_uuid = xml_value
     end
   end
 

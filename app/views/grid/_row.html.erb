@@ -17,7 +17,7 @@
           <%= t 'actions.export' %>
         <% end %>
       </span>
-      <% if @grid.can_create_data?(@filters) and @grid.uuid == Workspace::ROOT_UUID %>
+      <% if @grid.can_create_data?(@filters) and @grid.uuid == WORKSPACE_UUID %>
         <span class="button" title="<%= t 'actions.import_help' %>">
           <a id="import-<%= @row.uuid %>">
             <%= icon('import') %>
@@ -83,11 +83,11 @@
   <% end %>
   <header>
     <hgroup>
-      <% if @workspace.uuid != @row.uuid and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+      <% if @workspace.uuid != @row.uuid and @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
         <%= link_to(@workspace,
                     show_workspace_path(:workspace => @workspace.display_uri)) %> »
       <% end %>
-      <% if @grid.uuid != Workspace::ROOT_UUID %>
+      <% if @grid.uuid != WORKSPACE_UUID %>
         <%= link_to(@grid,
                     show_grid_path(
                       :workspace => @workspace.display_uri,
@@ -110,7 +110,7 @@
     </hgroup>
     <h1><%= @grid.row_title(@row) %></h1>
   </header>
-  <% if @grid.uuid != Workspace::ROOT_UUID and not @table_columns.empty? %>
+  <% if @grid.uuid != WORKSPACE_UUID and not @table_columns.empty? %>
     <table>
       <tbody>
         <% for column in @table_columns %>
@@ -141,18 +141,18 @@
   </section>
 <% else %>
   <hgroup>
-    <% if @workspace.present? and @workspace.uuid != Workspace::SYSTEM_WORKSPACE_UUID %>
+    <% if @workspace.present? and @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
       <%= link_to(@workspace,
                   show_path(
-                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                    :grid => Workspace::ROOT_UUID,
+                    :workspace => SYSTEM_WORKSPACE_URI,
+                    :grid => WORKSPACE_UUID,
                     :row => @workspace.uuid)) %> »
     <% end %>
     <% if @grid.present? %>
       <%= link_to(@grid,
                   show_path(
-                    :workspace => Workspace::SYSTEM_WORKSPACE_URI,
-                    :grid => Grid::ROOT_UUID,
+                    :workspace => SYSTEM_WORKSPACE_URI,
+                    :grid => GRID_UUID,
                     :row => @grid.uuid)) %> »
     <% end %>
   </hgroup>

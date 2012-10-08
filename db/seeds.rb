@@ -29,7 +29,7 @@ for file in ["administrator",
   Entity.log_debug "rake db:seed upload #{file}.xml", true
   Entity.session_locale = 'en'
   Entity.session_as_of_date = Date.current
-  Entity.session_user_uuid = User::SYSTEM_ADMINISTRATOR_UUID
+  Entity.session_user_uuid = SYSTEM_ADMINISTRATOR_UUID
   begin
     upload = Upload.create
     upload.upload("db/#{file}.xml")

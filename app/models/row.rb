@@ -67,7 +67,7 @@ class Row < Entity
   def read_referenced_name(column)
     value = read_value(column)
     if value.present? 
-      if column.kind == Column::REFERENCE and 
+      if column.kind == COLUMN_TYPE_REFERENCE and 
          column.grid_reference_uuid.present?
         log_debug "Row#read_referenced_name value=#{value}, " +
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
@@ -85,7 +85,7 @@ class Row < Entity
   end
 
   def read_referenced_description(column)
-    if column.kind == Column::REFERENCE and 
+    if column.kind == COLUMN_TYPE_REFERENCE and 
        column.grid_reference_uuid.present?
       value = read_value(column)
       if value.present? 

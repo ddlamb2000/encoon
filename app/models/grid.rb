@@ -15,16 +15,6 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class Grid < Entity
-  ROOT_UUID = 'fe92c430-ea30-012c-1057-00166f92f624'
-  ROOT_WORKSPACE_UUID = '1fe00120-ea31-012c-1065-00166f92f624'
-  ROOT_HAS_NAME_UUID = '78a7e2d1-293a-012d-2869-4417fe7fde95'
-  ROOT_HAS_DESCRIPTION_UUID = '8afbf6b1-293a-012d-1701-4417fe7fde95'
-  ROOT_URI_UUID = '88d0bed0-e7e3-012f-7269-4417fe7fde95'
-  
-  HOME_PAGE_UUID = '84d08550-d677-012f-413c-4417fe7fde95'
-  HOME_WELCOME_UUID = 'a8ed4160-e9ca-012f-7569-4417fe7fde95'
-  HOME_CREDITS_UUID = '731d6e10-e9ca-012f-7569-4417fe7fde95'
-
   PHASE_CREATE = 'create'
   PHASE_NEW_VERSION = 'new_version'
   PHASE_UPDATE = 'update'
@@ -76,10 +66,11 @@ class Grid < Entity
           row_uuid = filter[:row_uuid]
           column_all.each do |column|
             if column.uuid == column_uuid and 
-                column.kind == Column::REFERENCE and
-                column.grid_reference_uuid == Workspace::ROOT_UUID
+                column.kind == COLUMN_TYPE_REFERENCE and
+                column.grid_reference_uuid == WORKSPACE_UUID
               security = get_security_workspace(row_uuid)
-              return [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
+              return [ROLE_READ_WRITE_ALL_UUID,
+                      ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
             end
           end
         end
@@ -92,14 +83,15 @@ class Grid < Entity
   def can_update?(row)
     if can_update_data?
       security = nil
-      if self.uuid == Workspace::ROOT_UUID
+      if self.uuid == WORKSPACE_UUID
         security = get_security_workspace(row.uuid)
-      elsif self.uuid == Grid::ROOT_UUID or self.uuid == WorkspaceSharing::ROOT_UUID
+      elsif self.uuid == GRID_UUID or self.uuid == WORKSPACE_SHARING_UUID
         security = get_security_workspace(row.workspace_uuid)
-      elsif self.uuid == Column::ROOT_UUID and row.grid.present?
+      elsif self.uuid == COLUMN_UUID and row.grid.present?
         security = get_security_workspace(row.grid.workspace_uuid)
       end
-      return [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
+      return [ROLE_READ_WRITE_ALL_UUID,
+              ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
       return true if can_update_data? or (row.create_user_uuid == Entity.session_user_uuid)
     end
     false
@@ -211,7 +203,7 @@ class Grid < Entity
 
   def select_grid_cast(row_uuid)
     log_debug "Grid#select_grid_cast(row_uuid=#{row_uuid}) [#{to_s}]"
-    if self.uuid == ROOT_UUID
+    if self.uuid == GRID_UUID
       grid = Grid::select_entity_by_uuid(Grid, row_uuid)
       grid.load if grid.present?
       grid
@@ -268,7 +260,7 @@ class Grid < Entity
                       " AND grid_locs.version = grids.version" +
                       " AND " + grid_security_clause("grids") + 
                       " ORDER BY grid_locs.name, column_locs.name", 
-                       {:kind => Column::REFERENCE, 
+                       {:kind => COLUMN_TYPE_REFERENCE, 
                         :uuid => uuid}])
   end
   
@@ -360,7 +352,7 @@ class Grid < Entity
         row_uuid = filter[:row_uuid]
         column_all.each do |column|
           log_debug "Grid#row_all filter: column.uuid=#{column.uuid}"
-          if column.uuid == column_uuid and column.kind == Column::REFERENCE
+          if column.uuid == column_uuid and column.kind == COLUMN_TYPE_REFERENCE
             log_debug "Grid#row_all found reference"
             conditions << " AND rows.#{column.physical_column} = #{quote(row_uuid)}"
           end
@@ -393,9 +385,9 @@ class Grid < Entity
               " AND rows.uuid = row_locs.uuid" +
               " AND rows.version = row_locs.version" +
               " AND " + locale_clause("row_locs") : "") +
-          ((self.uuid == Workspace::ROOT_UUID) ? 
+          ((self.uuid == WORKSPACE_UUID) ? 
               " AND " + Grid::workspace_security_clause("rows", false, false) : "") + 
-          ((self.uuid == Grid::ROOT_UUID) ? 
+          ((self.uuid == GRID_UUID) ? 
               " AND " + Grid::grid_security_clause("rows") : "") + 
           conditions +
           ((has_translation? and not count) ? " ORDER BY row_locs.name" : "") +
@@ -427,9 +419,9 @@ class Grid < Entity
               " AND rows.uuid = row_locs.uuid" +
               " AND rows.version = row_locs.version" +
               " AND " + locale_clause("row_locs") : "") +
-          ((self.uuid == Workspace::ROOT_UUID) ? 
+          ((self.uuid == WORKSPACE_UUID) ? 
               " AND " + Grid::workspace_security_clause("rows") : "") + 
-          ((self.uuid == Grid::ROOT_UUID) ? 
+          ((self.uuid == GRID_UUID) ? 
               " AND " + Grid::grid_security_clause("rows") : "") 
     Row.find_by_sql([sql])[0]
     rescue ActiveRecord::StatementInvalid => exception
@@ -458,9 +450,9 @@ class Grid < Entity
               " AND rows.uuid = row_locs.uuid" +
               " AND rows.version = row_locs.version" +
               " AND " + locale_clause("row_locs") : "") +
-          ((self.uuid == Workspace::ROOT_UUID) ? 
+          ((self.uuid == WORKSPACE_UUID) ? 
               " AND " + Grid::workspace_security_clause("rows") : "") + 
-          ((self.uuid == Grid::ROOT_UUID) ? 
+          ((self.uuid == GRID_UUID) ? 
               " AND " + Grid::grid_security_clause("rows") : "") 
     Row.find_by_sql([sql])[0]
     rescue ActiveRecord::StatementInvalid => exception
@@ -490,9 +482,9 @@ class Grid < Entity
                         " AND rows.uuid = row_locs.uuid" +
                         " AND rows.version = row_locs.version" +
                         " AND " + locale_clause("row_locs") : "") + 
-                     ((self.uuid == Workspace::ROOT_UUID) ? 
+                     ((self.uuid == WORKSPACE_UUID) ? 
                         " AND " + Grid::workspace_security_clause("rows") : "") + 
-                     ((self.uuid == Grid::ROOT_UUID) ? 
+                     ((self.uuid == GRID_UUID) ? 
                          " AND " + Grid::grid_security_clause("rows") : ""), 
                        {:grid_uuid => self.uuid,
                         :version => version,
@@ -521,9 +513,9 @@ class Grid < Entity
                         " AND rows.uuid = row_locs.uuid" +
                         " AND rows.version = row_locs.version" +
                         " AND " + locale_clause("row_locs") : "") +
-                     ((self.uuid == Workspace::ROOT_UUID) ? 
+                     ((self.uuid == WORKSPACE_UUID) ? 
                         " AND " + Grid::workspace_security_clause("rows") : "") + 
-                     ((self.uuid == Grid::ROOT_UUID) ? 
+                     ((self.uuid == GRID_UUID) ? 
                          " AND " + Grid::grid_security_clause("rows") : ""), 
                        {:id => id}])[0]
     rescue ActiveRecord::StatementInvalid => exception
@@ -550,9 +542,9 @@ class Grid < Entity
                         " AND rows.uuid = row_locs.uuid" +
                         " AND rows.version = row_locs.version" +
                         " AND " + locale_clause("row_locs") : "") + 
-                     ((self.uuid == Workspace::ROOT_UUID) ? 
+                     ((self.uuid == WORKSPACE_UUID) ? 
                         " AND " + Grid::workspace_security_clause("rows") : "") + 
-                     ((self.uuid == Grid::ROOT_UUID) ? 
+                     ((self.uuid == GRID_UUID) ? 
                          " AND " + Grid::grid_security_clause("rows") : "") + 
                      " ORDER BY rows.begin", 
                        {:uuid => uuid,
@@ -619,9 +611,9 @@ class Grid < Entity
       count = 0
       load if not loaded?
       @columns.each do |column|
-        if [Column::REFERENCE, 
-            Column::STRING, 
-            Column::TEXT].include?(column.kind)
+        if [COLUMN_TYPE_REFERENCE, 
+            COLUMN_TYPE_STRING, 
+            COLUMN_TYPE_TEXT].include?(column.kind)
           value = row.read_referenced_name(column)
           if value.length > 0
             summary = summary + " | " if count > 0
@@ -747,10 +739,10 @@ class Grid < Entity
     log_debug "Grid#import_attribute(xml_attribute=#{xml_attribute}, " + 
               "xml_value=#{xml_value})"
     case xml_attribute
-      when ROOT_WORKSPACE_UUID then self.workspace_uuid = xml_value
-      when ROOT_HAS_NAME_UUID then self.has_name = ['true','t','1'].include?(xml_value)
-      when ROOT_HAS_DESCRIPTION_UUID then self.has_description = ['true','t','1'].include?(xml_value)
-      when ROOT_URI_UUID then self.uri = xml_value
+      when GRID_WORKSPACE_UUID then self.workspace_uuid = xml_value
+      when GRID_HAS_NAME_UUID then self.has_name = ['true','t','1'].include?(xml_value)
+      when GRID_HAS_DESCRIPTION_UUID then self.has_description = ['true','t','1'].include?(xml_value)
+      when GRID_URI_UUID then self.uri = xml_value
     end
   end
 
@@ -815,46 +807,46 @@ class Grid < Entity
           end
         end
       end
-      if self.uuid == Workspace::ROOT_UUID
-        grid_def = Grid::select_entity_by_uuid(Grid, Grid::ROOT_UUID)
+      if self.uuid == WORKSPACE_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, GRID_UUID)
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select grids in the workspace"
-          rows = grid_def.row_all([{:column_uuid => Grid::ROOT_WORKSPACE_UUID,
+          rows = grid_def.row_all([{:column_uuid => GRID_WORKSPACE_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
         end
       end
-      if self.uuid == Grid::ROOT_UUID
-        grid_def = Grid::select_entity_by_uuid(Grid, GridMapping::ROOT_UUID)
+      if self.uuid == GRID_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, GRID_MAPPING_UUID)
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select mapping in the data grid"
-          rows = grid_def.row_all([{:column_uuid => GridMapping::ROOT_GRID_UUID,
+          rows = grid_def.row_all([{:column_uuid => GRID_MAPPING_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
         end
-        grid_def = Grid::select_entity_by_uuid(Grid, Column::ROOT_UUID)
+        grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_UUID)
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select columns in the data grid"
-          rows = grid_def.row_all([{:column_uuid => Column::ROOT_GRID_UUID,
+          rows = grid_def.row_all([{:column_uuid => COLUMN_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
           end
         end
       end
-      if self.uuid == Column::ROOT_UUID
-        grid_def = Grid::select_entity_by_uuid(Grid, ColumnMapping::ROOT_UUID)
+      if self.uuid == COLUMN_UUID
+        grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_MAPPING_UUID)
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select mapping in the column"
-          rows = grid_def.row_all([{:column_uuid => ColumnMapping::ROOT_COLUMN_UUID,
+          rows = grid_def.row_all([{:column_uuid => COLUMN_MAPPING_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
@@ -962,13 +954,13 @@ class Grid < Entity
       end
       if not initialized
         row.write_value(column, nil)
-        if self.uuid == Column::ROOT_UUID and column.uuid == Column::ROOT_KIND_UUID
-          row.write_value(column, Column::STRING)
-        elsif self.uuid == Column::ROOT_UUID and column.uuid == Column::ROOT_DISPLAY_UUID
+        if self.uuid == COLUMN_UUID and column.uuid == COLUMN_KIND_UUID
+          row.write_value(column, COLUMN_TYPE_STRING)
+        elsif self.uuid == COLUMN_UUID and column.uuid == COLUMN_DISPLAY_UUID
           row.write_value(column, 1)
-        elsif self.uuid == Grid::ROOT_UUID and column.uuid == Grid::ROOT_HAS_NAME_UUID
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_NAME_UUID
           row.write_value(column, true)
-        elsif self.uuid == Grid::ROOT_UUID and column.uuid == Grid::ROOT_HAS_DESCRIPTION_UUID
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_DESCRIPTION_UUID
           row.write_value(column, true)
         end
       end
@@ -1024,9 +1016,14 @@ class Grid < Entity
     log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
     if self.workspace.present? and self.workspace.default_role_uuid.present?
       @can_select_data = true
-      @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
-      @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
-      @can_update_data_all = [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_create_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data_all = [ROLE_READ_WRITE_ALL_UUID,
+                              ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
     end
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
@@ -1037,9 +1034,14 @@ class Grid < Entity
     security = Grid.find_by_sql([sql])[0]
     if security.present?
       @can_select_data = true
-      @can_create_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_update_data = [Role::ROLE_READ_WRITE_UUID, Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_update_data_all = [Role::ROLE_READ_WRITE_ALL_UUID, Role::ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_create_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data_all = [ROLE_READ_WRITE_ALL_UUID,
+                              ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
     end
     log_debug "Grid#load_workspace " +
               "@can_select_data=#{@can_select_data}," +
@@ -1202,16 +1204,16 @@ private
     column_all.each do |column|
       unless column.loaded?
         case column.kind
-          when Column::REFERENCE then
+          when COLUMN_TYPE_REFERENCE then
             index_reference += 1 
             number = index_reference
-          when Column::DATE then 
+          when COLUMN_TYPE_DATE then 
             index_date += 1 
             number = index_date
-          when Column::INTEGER then 
+          when COLUMN_TYPE_INTEGER then 
             index_integer += 1 
             number = index_integer
-          when Column::DECIMAL then 
+          when COLUMN_TYPE_DECIMAL then 
             index_decimal += 1 
             number = index_decimal
           else 
@@ -1250,7 +1252,7 @@ private
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
-    return Role::ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
+    return ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
                       security.create_user_uuid == Entity.session_user_uuid 
     return security.default_role_uuid if not security.nil?
     nil

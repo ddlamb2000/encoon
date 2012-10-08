@@ -48,13 +48,13 @@ class Upload < Entity
                 entity = nil
                 locs = []
                 case grid_uuid
-                  when Workspace::ROOT_UUID then entity = Workspace.new
-                  when Grid::ROOT_UUID then entity = Grid.new
-                  when Column::ROOT_UUID then entity = Column.new
-                  when User::ROOT_UUID then entity = User.new
-                  when GridMapping::ROOT_UUID then entity = GridMapping.new
-                  when ColumnMapping::ROOT_UUID then entity = ColumnMapping.new
-                  when WorkspaceSharing::ROOT_UUID then entity = WorkspaceSharing.new
+                  when WORKSPACE_UUID then entity = Workspace.new
+                  when GRID_UUID then entity = Grid.new
+                  when COLUMN_UUID then entity = Column.new
+                  when USER_UUID then entity = User.new
+                  when GRID_MAPPING_UUID then entity = GridMapping.new
+                  when COLUMN_MAPPING_UUID then entity = ColumnMapping.new
+                  when WORKSPACE_SHARING_UUID then entity = WorkspaceSharing.new
                   else entity = Row.new
                 end
                 entity.transaction do
