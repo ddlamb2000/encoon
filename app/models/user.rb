@@ -107,6 +107,8 @@ private
   
   # Creates a private workspace for the user being created. 
   def create_workspace_new_user
+    self.create_user_uuid = self.uuid
+    save!
     log_debug "User#create_workspace_new_user workspace"
     workspace = Workspace.new
     workspace.create_user_uuid = self.uuid

@@ -57,7 +57,18 @@ protected
     session[:last_url] = visited[:url]
     found = false
   end
-  
+
+  # Insures the user who signed in is updated with the appropriate user.
+  # This method is triggered by Devise after sign in.
+  def after_sign_in_path_for(resource_or_scope)
+    log_debug "ApplicationController#after_sign_in_path_for(#{resource_or_scope})"
+    if user_signed_in?
+      current_user.update_user_uuid = current_user.uuid
+      current_user.save!
+    end
+    super
+  end
+    
   def change_as_of_date(entity)
     if entity.begin > session[:as_of_date]
       session[:as_of_date] = entity.begin 
