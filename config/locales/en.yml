@@ -149,6 +149,7 @@ en:
     locked:       "Another user has made a change to that data since you accessed the modify form. You need to cancel your change and try again."
     cant_create:  "You're not authorized to create data."
     cant_update:  "You're not authorized to update data."
+    cant_select:  "You're not authorized to select this data for '%{column}'."
   message:
     delete:       "Are you sure you want to delete '%{name}'?"
     uploaded:     "The file was uploaded: %{record_count} records, %{insert_count} inserted, %{update_count} updated."

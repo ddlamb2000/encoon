@@ -948,31 +948,33 @@ class Grid < Entity
     end
   end
 
-  def row_validate(row, phase)
+  def row_validate(row, phase, filters)
     log_debug "Grid#row_validate(phase=#{phase}) [#{to_s}]"
     validated = true
     for column in column_all
-      attribute = phase == Grid::PHASE_CREATE ?
-                    column.default_physical_column :
-                    column.physical_column
+      attribute = (phase == Grid::PHASE_CREATE) ? column.default_physical_column : column.physical_column
       value = row.read_value(column)
-      log_debug "Grid#row_validate(phase=#{phase}) control" +
-                " column=#{column.name}" +
-                " attribute=#{attribute}<=>#{value}"
+      log_debug "Grid#row_validate(phase=#{phase}) control #{column.name}: #{value}"
+      if filters.present?
+        filters.each do |filter|
+          if column.uuid == filter[:column_uuid] and value != filter[:row_uuid]
+            validated = false
+            row.errors.add(attribute, I18n.t('error.cant_select', :column => column))
+          end
+        end
+      end
       if column.required
-        log_debug "Grid#row_validate(phase=#{phase}) required"
         if value.blank?
+          log_debug "Grid#row_validate(phase=#{phase}) required"
           validated = false
-          row.errors.add(attribute, I18n.t('error.required',
-                                           :column => column))
+          row.errors.add(attribute, I18n.t('error.required', :column => column))
         end
       end
       if column.regex.present?
-        log_debug "Grid#row_validate(phase=#{phase}) regex"
         if not Regexp.new(column.regex).match(value)
+          log_debug "Grid#row_validate(phase=#{phase}) regex"
           validated = false
-          row.errors.add(attribute, I18n.t('error.badformat', 
-                                           :column => column))
+          row.errors.add(attribute, I18n.t('error.badformat', :column => column))
         end
       end
     end

@@ -149,6 +149,7 @@ fr:
     locked:       "Un autre utilisateur a modifié la donnée depuis que vous avez accédez à l'écran de modification. Vous devez annuler votre changement et essayer à nouveau."
     cant_create:  "Vous n’êtes pas autorisé à créér une donnée."
     cant_update:  "Vous n’êtes pas autorisé à modifier la donnée."
+    cant_select:  "Vous n’êtes pas autorisé à sélectionner cette donnée pour '%{column}'."
   message:
     delete:       "Êtes vous sûr de vouloir supprimer ’%{name}’ ?"
     uploaded:     "Le fichier a été chargé: %{record_count} enregistrements, %{insert_count} insertions, %{update_count} mises à jour."

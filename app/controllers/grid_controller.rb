@@ -16,19 +16,14 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class GridController < ApplicationController
   before_filter :load_workspaces, :only => [:home, :credits, :show, :refresh]
+  before_filter :authenticate_user!, :only => [:new, :edit, :create, :update,
+                                               :attributes, :details,
+                                               :attach, :save_attachment, :delete_attachment,
+                                               :import, :upload]
 
-  before_filter :authenticate_user!, :only => [:new,
-                                               :edit,
-                                               :create,
-                                               :update,
-                                               :attributes,
-                                               :details,
-                                               :attach,
-                                               :save_attachment,
-                                               :delete_attachment,
-                                               :import,
-                                               :upload]
-
+  # Message used to aknowledge AJAX requests in dialogs. 
+  OK_MSG = "<div id='ok'>OK</div>"
+  
   # Renders the home page using hard-coded references.
   def home
     params[:workspace] = SYSTEM_WORKSPACE_URI
@@ -92,9 +87,7 @@ class GridController < ApplicationController
         render :show, :status => @status
       end
       format.xml do
-        if @grid.uuid == GRID_UUID and @grid_cast.present?
-            @table_rows = @grid_cast.row_all(@filters, nil, -1, true)
-        end
+        @table_rows = @grid_cast.row_all(@filters, nil, -1, true) if @grid.uuid == GRID_UUID and @grid_cast.present?
         render :show, :status => @status
       end
     end
@@ -218,14 +211,14 @@ class GridController < ApplicationController
                 log_debug "GridController#create: create_row_loc!"
                 @grid.create_row_loc!(@row_loc)
               else
-                @grid.row_validate(@row, Grid::PHASE_CREATE)
+                @grid.row_validate(@row, Grid::PHASE_CREATE, @filters)
                 log_debug "GridController#create: rollback!"
                 raise ActiveRecord::Rollback
               end
             end
           end
           log_debug "GridController#create: row_validate"
-          if @grid.row_validate(@row, Grid::PHASE_CREATE)
+          if @grid.row_validate(@row, Grid::PHASE_CREATE, @filters)
             log_debug "GridController#create: create_row!"
             @grid.create_row!(@row, @filters)
             saved = true
@@ -248,10 +241,10 @@ class GridController < ApplicationController
     end
     respond_to do |format|
       if saved
-        format.html {list}
+        format.html{list}
       else
         log_debug "GridController#create: error, @row.errors=#{@row.errors.inspect}"
-        format.html { render :json => @row.errors, :status => :unprocessable_entity }
+        format.html{render :json => @row.errors, :status => :unprocessable_entity}
       end
     end
   end
@@ -288,7 +281,7 @@ class GridController < ApplicationController
                   log_debug "GridController#update populate from parameter values"
                   populate_from_params
                   log_debug "GridController#update row_validate"
-                  if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
+                  if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION, @filters)
                     log_debug "GridController#update create_row!"
                     @grid.create_row!(@row, @filters)
                     if @grid.has_translation
@@ -306,14 +299,12 @@ class GridController < ApplicationController
                           @row_loc.description = params[:description]
                         end
                         log_debug "GridController#update row_loc_validate"
-                        if @grid.row_loc_validate(@row, 
-                                                  @row_loc, 
-                                                  Grid::PHASE_NEW_VERSION)
+                        if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_NEW_VERSION)
                           log_debug "GridController#update create_row_loc!"
                           @grid.create_row_loc!(@row_loc)
                         else
                           log_debug "GridController#update row_validate"
-                          @grid.row_validate(@row, Grid::PHASE_UPDATE)
+                          @grid.row_validate(@row, Grid::PHASE_UPDATE, @filters)
                           log_debug "GridController#update: rollback!"
                           raise ActiveRecord::Rollback
                         end
@@ -333,7 +324,7 @@ class GridController < ApplicationController
                   log_debug "GridController#update populate from parameter values"
                   populate_from_params
                   log_debug "GridController#update row_validate"
-                  if @grid.row_validate(@row, Grid::PHASE_UPDATE)
+                  if @grid.row_validate(@row, Grid::PHASE_UPDATE, @filters)
                     log_debug "GridController#update update_row!"
                     @grid.update_row!(@row)
                     if @grid.has_translation
@@ -346,9 +337,7 @@ class GridController < ApplicationController
                           @row_loc.name = params[:name]
                           @row_loc.description = params[:description]
                           log_debug "GridController#update row_loc_validate"
-                          if @grid.row_loc_validate(@row, 
-                                                    @row_loc, 
-                                                    Grid::PHASE_UPDATE)
+                          if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_UPDATE)
                             log_debug "GridController#update update_row_loc!"
                             @grid.update_row_loc!(@row_loc)
                           else
@@ -386,11 +375,11 @@ class GridController < ApplicationController
           if @container == ""
             render :nothing => true
           else
-            format.html {@refresh_list ? list : row}
+            format.html{@refresh_list ? list : row}
           end
         else
           log_debug "GridController#update: error, params=#{params.inspect}"
-          format.html { render :json => @row.errors, :status => :unprocessable_entity }
+          format.html{render :json => @row.errors, :status => :unprocessable_entity}
         end
       end
     end
@@ -444,11 +433,11 @@ class GridController < ApplicationController
       respond_to do |format|
         if saved
           log_debug "GridController#save_attachment: saved"
-          render :text => "<div id='ok'>OK</div>"
+          render :text => OK_MSG
           return
         else
           log_debug "GridController#save_attachment: error"
-          format.html { render :json => @attachment.errors, :status => :unprocessable_entity }
+          format.html{render :json => @attachment.errors, :status => :unprocessable_entity}
         end
       end
     end
@@ -526,11 +515,11 @@ class GridController < ApplicationController
                                 :record_count => @upload.records,
                                 :insert_count => @upload.inserted,
                                 :update_count => @upload.updated)
-        render :text => "<div id='ok'>OK</div>"
+        render :text => OK_MSG
         return
       else
         log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
-        format.html { render :json => @upload.errors, :status => :unprocessable_entity }
+        format.html{render :json => @upload.errors, :status => :unprocessable_entity}
       end
     end
   end
