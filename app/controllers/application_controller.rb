@@ -96,5 +96,7 @@ protected
 
   def log_error(message, invalid) ; Entity.log_error(message, invalid) ; end
 
+  def log_security_warning(message) ; Entity.log_security_warning(message) ; end
+
   def as_of_date_clause(synonym) ; Entity.as_of_date_clause(synonym) ; end
 end

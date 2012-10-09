@@ -193,52 +193,57 @@ class GridController < ApplicationController
     @grid.load(@filters, true) if @grid.present?
     @row = @grid.rows.new
     @row.initialization
-    begin
-      @row.transaction do
-        log_debug "GridController#create: initialize transaction"
-        @row.begin = param_begin_date
-        log_debug "GridController#create: populate from parameter values"
-        populate_from_params
-        @grid.load(@filters)
-        if @grid.has_translation?
-          LANGUAGES.each do |lang, locale|
-            log_debug "GridController#create: locale=#{locale}"
-            @row_loc = @row.new_loc
-            @row_loc.uuid = @row.uuid
-            @row_loc.version = @row.version
-            @row_loc.base_locale = I18n.locale.to_s
-            @row_loc.locale = locale
-            @row_loc.name = params[:name]
-            @row_loc.description = params[:description]
-            log_debug "GridController#create: row_loc_validate"
-            if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_CREATE)
-              log_debug "GridController#create: create_row_loc!"
-              @grid.create_row_loc!(@row_loc)
-            else
-              @grid.row_validate(@row, Grid::PHASE_CREATE)
-              log_debug "GridController#create: rollback!"
-              raise ActiveRecord::Rollback
+    if @grid.can_create_data?(@filters)
+      begin
+        @row.transaction do
+          log_debug "GridController#create: initialize transaction"
+          @row.begin = param_begin_date
+          log_debug "GridController#create: populate from parameter values"
+          populate_from_params
+          @grid.load(@filters)
+          if @grid.has_translation?
+            LANGUAGES.each do |lang, locale|
+              log_debug "GridController#create: locale=#{locale}"
+              @row_loc = @row.new_loc
+              @row_loc.uuid = @row.uuid
+              @row_loc.version = @row.version
+              @row_loc.base_locale = I18n.locale.to_s
+              @row_loc.locale = locale
+              @row_loc.name = params[:name]
+              @row_loc.description = params[:description]
+              log_debug "GridController#create: row_loc_validate"
+              if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_CREATE)
+                log_debug "GridController#create: create_row_loc!"
+                @grid.create_row_loc!(@row_loc)
+              else
+                @grid.row_validate(@row, Grid::PHASE_CREATE)
+                log_debug "GridController#create: rollback!"
+                raise ActiveRecord::Rollback
+              end
             end
           end
+          log_debug "GridController#create: row_validate"
+          if @grid.row_validate(@row, Grid::PHASE_CREATE)
+            log_debug "GridController#create: create_row!"
+            @grid.create_row!(@row)
+            saved = true
+          else
+            log_debug "GridController#create: rollback!(2)"
+            raise ActiveRecord::Rollback
+          end
         end
-        log_debug "GridController#create: row_validate"
-        if @grid.row_validate(@row, Grid::PHASE_CREATE)
-          log_debug "GridController#create: create_row!"
-          @grid.create_row!(@row)
-          saved = true
-        else
-          log_debug "GridController#create: rollback!(2)"
-          raise ActiveRecord::Rollback
-        end
+      rescue ActiveRecord::RecordInvalid => invalid
+        log_debug "GridController#create: invalid=#{invalid.inspect}"
+        saved = false
+      rescue Exception => invalid
+        log_error "GridController#create", invalid
+        saved = false
       end
-    rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "GridController#create: invalid=#{invalid.inspect}"
-      saved = false
-    rescue Exception => invalid
-      log_error "GridController#create", invalid
-      saved = false
+      change_as_of_date(@row)
+    else
+      log_security_warning "GridController#create can_create_data? == false"
+      @row.errors.add(:uuid, I18n.t('error.cant_create'))
     end
-    change_as_of_date(@row)
     respond_to do |format|
       if saved
         format.html {list}
@@ -257,127 +262,134 @@ class GridController < ApplicationController
     selectGridAndWorkspace
     @grid.load(@filters) if @grid.present?
     selectRow
-    if params[:lock_version] != @row.lock_version.to_s
-      log_debug "GridController#update locked! " +
-                "params[:lock_version]=#{params[:lock_version]}, " +
-                "@row.lock_version=#{@row.lock_version}"
-      @row.errors.add(:uuid, I18n.t('error.locked'))
-    else
-      begin
-        @grid.transaction do
-          log_debug "GridController#update initialize transaction"
-          version = @row.version
-          if params[:mode] == Grid::PHASE_NEW_VERSION then
-            log_debug "GridController#update new version"
-            new_version = @grid.row_max_version(@row.uuid)+1
-            @row = @row.clone
-            @row.version = new_version
-            @row.lock_version = 0
-            @row.begin = param_begin_date
-            if multiple_versions_ok?
-              @row.enabled = params[:enabled]
-              log_debug "GridController#update populate from parameter values"
-              populate_from_params
-              log_debug "GridController#update row_validate"
-              if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
-                log_debug "GridController#update create_row!"
-                @grid.create_row!(@row)
-                if @grid.has_translation?
-                  for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
-                    log_debug "GridController#update update row_loc values"
-                    @row_loc = @row_loc.clone
-                    @row_loc.version = new_version
-                    @row_loc.lock_version = 0
-                    log_debug "GridController#update locale=#{@row_loc.locale}"
-                    if @row_loc.locale == I18n.locale.to_s or 
-                       @row_loc.base_locale == I18n.locale.to_s
-                      log_debug "GridController#update update row_loc values"
-                      @row_loc.base_locale = I18n.locale.to_s
-                      @row_loc.name = params[:name]
-                      @row_loc.description = params[:description]
-                    end
-                    log_debug "GridController#update row_loc_validate"
-                    if @grid.row_loc_validate(@row, 
-                                              @row_loc, 
-                                              Grid::PHASE_NEW_VERSION)
-                      log_debug "GridController#update create_row_loc!"
-                      @grid.create_row_loc!(@row_loc)
-                    else
-                      log_debug "GridController#update row_validate"
-                      @grid.row_validate(@row, Grid::PHASE_UPDATE)
-                      log_debug "GridController#update: rollback!"
-                      raise ActiveRecord::Rollback
-                    end
-                  end
-                end
-                saved = true
-              else
-                raise ActiveRecord::Rollback
-              end
-            end
-          else
-            log_debug "GridController#update update existing version"
-            @row.begin = param_begin_date
-            if multiple_versions_ok?
-              log_debug "GridController#update versions OK"
-              @row.enabled = params[:enabled]
-              log_debug "GridController#update populate from parameter values"
-              populate_from_params
-              log_debug "GridController#update row_validate"
-              if @grid.row_validate(@row, Grid::PHASE_UPDATE)
-                log_debug "GridController#update update_row!"
-                @grid.update_row!(@row)
-                if @grid.has_translation?
-                  for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
-                    log_debug "GridController#update locale=#{@row_loc.locale}"
-                    if @row_loc.locale == I18n.locale.to_s or 
-                       @row_loc.base_locale == I18n.locale.to_s
-                      log_debug "GridController#update update row_loc values"
-                      @row_loc.base_locale = I18n.locale.to_s
-                      @row_loc.name = params[:name]
-                      @row_loc.description = params[:description]
-                      log_debug "GridController#update row_loc_validate"
-                      if @grid.row_loc_validate(@row, 
-                                                @row_loc, 
-                                                Grid::PHASE_UPDATE)
-                        log_debug "GridController#update update_row_loc!"
-                        @grid.update_row_loc!(@row_loc)
-                      else
-                        log_debug "GridController#update: rollback!(3)"
-                        raise ActiveRecord::Rollback
+    if @row.present?
+      if @grid.can_update?(@row)
+        if params[:lock_version] != @row.lock_version.to_s
+          log_debug "GridController#update locked! " +
+                    "params[:lock_version]=#{params[:lock_version]}, " +
+                    "@row.lock_version=#{@row.lock_version}"
+          @row.errors.add(:uuid, I18n.t('error.locked'))
+        else
+          begin
+            @grid.transaction do
+              log_debug "GridController#update initialize transaction"
+              version = @row.version
+              if params[:mode] == Grid::PHASE_NEW_VERSION then
+                log_debug "GridController#update new version"
+                new_version = @grid.row_max_version(@row.uuid)+1
+                @row = @row.clone
+                @row.version = new_version
+                @row.lock_version = 0
+                @row.begin = param_begin_date
+                if multiple_versions_ok?
+                  @row.enabled = params[:enabled]
+                  log_debug "GridController#update populate from parameter values"
+                  populate_from_params
+                  log_debug "GridController#update row_validate"
+                  if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
+                    log_debug "GridController#update create_row!"
+                    @grid.create_row!(@row)
+                    if @grid.has_translation?
+                      for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
+                        log_debug "GridController#update update row_loc values"
+                        @row_loc = @row_loc.clone
+                        @row_loc.version = new_version
+                        @row_loc.lock_version = 0
+                        log_debug "GridController#update locale=#{@row_loc.locale}"
+                        if @row_loc.locale == I18n.locale.to_s or 
+                           @row_loc.base_locale == I18n.locale.to_s
+                          log_debug "GridController#update update row_loc values"
+                          @row_loc.base_locale = I18n.locale.to_s
+                          @row_loc.name = params[:name]
+                          @row_loc.description = params[:description]
+                        end
+                        log_debug "GridController#update row_loc_validate"
+                        if @grid.row_loc_validate(@row, 
+                                                  @row_loc, 
+                                                  Grid::PHASE_NEW_VERSION)
+                          log_debug "GridController#update create_row_loc!"
+                          @grid.create_row_loc!(@row_loc)
+                        else
+                          log_debug "GridController#update row_validate"
+                          @grid.row_validate(@row, Grid::PHASE_UPDATE)
+                          log_debug "GridController#update: rollback!"
+                          raise ActiveRecord::Rollback
+                        end
                       end
                     end
+                    saved = true
+                  else
+                    raise ActiveRecord::Rollback
                   end
                 end
-                saved = true
               else
-                log_debug "GridController#update: rollback!(4)"
-                raise ActiveRecord::Rollback
+                log_debug "GridController#update update existing version"
+                @row.begin = param_begin_date
+                if multiple_versions_ok?
+                  log_debug "GridController#update versions OK"
+                  @row.enabled = params[:enabled]
+                  log_debug "GridController#update populate from parameter values"
+                  populate_from_params
+                  log_debug "GridController#update row_validate"
+                  if @grid.row_validate(@row, Grid::PHASE_UPDATE)
+                    log_debug "GridController#update update_row!"
+                    @grid.update_row!(@row)
+                    if @grid.has_translation?
+                      for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
+                        log_debug "GridController#update locale=#{@row_loc.locale}"
+                        if @row_loc.locale == I18n.locale.to_s or 
+                           @row_loc.base_locale == I18n.locale.to_s
+                          log_debug "GridController#update update row_loc values"
+                          @row_loc.base_locale = I18n.locale.to_s
+                          @row_loc.name = params[:name]
+                          @row_loc.description = params[:description]
+                          log_debug "GridController#update row_loc_validate"
+                          if @grid.row_loc_validate(@row, 
+                                                    @row_loc, 
+                                                    Grid::PHASE_UPDATE)
+                            log_debug "GridController#update update_row_loc!"
+                            @grid.update_row_loc!(@row_loc)
+                          else
+                            log_debug "GridController#update: rollback!(3)"
+                            raise ActiveRecord::Rollback
+                          end
+                        end
+                      end
+                    end
+                    saved = true
+                  else
+                    log_debug "GridController#update: rollback!(4)"
+                    raise ActiveRecord::Rollback
+                  end
+                end
               end
             end
+            log_debug "GridController#update row_update_dates!"
+            @grid.row_update_dates!(@row.uuid)
+          rescue ActiveRecord::RecordInvalid => invalid
+            log_debug "GridController#update: invalid=#{invalid.inspect}"
+            saved = false
+          rescue Exception => invalid
+            log_error "GridController#update", invalid
+            saved = false
           end
         end
-        log_debug "GridController#update row_update_dates!"
-        @grid.row_update_dates!(@row.uuid)
-      rescue ActiveRecord::RecordInvalid => invalid
-        log_debug "GridController#update: invalid=#{invalid.inspect}"
-        saved = false
-      rescue Exception => invalid
-        log_error "GridController#update", invalid
-        saved = false
-      end
-    end
-    change_as_of_date(@row)
-    respond_to do |format|
-      if saved
-        if @container == ""
-          render :nothing => true
-        else
-          format.html {@refresh_list ? list : row}
-        end
+        change_as_of_date(@row)
       else
-        log_debug "GridController#update: error, params=#{params.inspect}"
-        format.html { render :json => @row.errors, :status => :unprocessable_entity }
+        log_security_warning "GridController#update can_update_data? == false"
+        @row.errors.add(:uuid, I18n.t('error.cant_update'))
+      end
+      respond_to do |format|
+        if saved
+          if @container == ""
+            render :nothing => true
+          else
+            format.html {@refresh_list ? list : row}
+          end
+        else
+          log_debug "GridController#update: error, params=#{params.inspect}"
+          format.html { render :json => @row.errors, :status => :unprocessable_entity }
+        end
       end
     end
   end
