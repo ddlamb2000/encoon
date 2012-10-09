@@ -1,5 +1,5 @@
 <% if @workspace.present? and @grid.present? and @row.present? %>
-  <% if user_signed_in? and @grid.can_update?(@row) %>
+  <% if user_signed_in? and @grid.can_update_row?(@row) %>
     <div id="actions-<%= @row.uuid %>" 
             class="actions float-actions" 
             style="display: none;">
@@ -17,7 +17,7 @@
           <%= t 'actions.export' %>
         <% end %>
       </span>
-      <% if @grid.can_create_data?(@filters) and @grid.uuid == WORKSPACE_UUID %>
+      <% if @grid.can_create_row?(@filters) and @grid.uuid == WORKSPACE_UUID %>
         <span class="button" title="<%= t 'actions.import_help' %>">
           <a id="import-<%= @row.uuid %>">
             <%= icon('import') %>
@@ -95,7 +95,7 @@
       <% end %>
       <small>
         <%= display_grid_next_versions(@grid, @row).html_safe %>
-        <%= display_locale(@row).html_safe if @grid.has_translation? %>
+        <%= display_locale(@row).html_safe if @grid.has_translation %>
         <% if @row.was_updated? %>
           <%= t 'field.updated' %>
           <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid).html_safe %>
@@ -103,7 +103,7 @@
           <%= t 'field.created' %>
           <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
         <% end %>
-        <% if user_signed_in? and not @grid.can_update?(@row) %>
+        <% if user_signed_in? and not @grid.can_update_row?(@row) %>
           <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
         <% end %>
       </small>
@@ -132,7 +132,7 @@
       </tbody>
     </table>
   <% end %>
-  <% if @grid.has_translation? and @row_loc.description.present? %>
+  <% if @grid.has_translation and @row_loc.description.present? %>
     <% if not @table_columns.empty? %><br/><% end %>
     <p><%= @row_loc.description.html_safe %></p>
   <% end %>

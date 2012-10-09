@@ -21,14 +21,9 @@ class Column < Entity
   has_many :column_mappings, :foreign_key => "column_uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid, :kind
   validates_associated :grid
-  attr_reader :physical_column,
-              :default_physical_column,
-              :grid_reference,
-              :workspace_reference
+  attr_reader :physical_column, :default_physical_column, :grid_reference, :workspace_reference
   
-  def loaded?
-    physical_column.present?
-  end
+  def loaded ; physical_column.present? ; end
   
   def load_cached_information(grid, number, skip_reference, skip_mapping, db_column)
     case self.kind
@@ -55,14 +50,14 @@ class Column < Entity
           log_error "Column#load_cached_information circular reference " +
                     "for data grid '#{self.grid_reference_uuid}'"
           @grid_reference = grid
-          @workspace_reference = 
-            Workspace.select_entity_by_uuid(Workspace, grid.workspace_uuid) if grid.present?
+          @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
+                                                                 grid.workspace_uuid) if grid.present?
         else
           @grid_reference = 
             Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
           log_debug "Column#load_cached_information @grid_reference=#{@grid_reference.to_s}"
           if @grid_reference.present? 
-            @grid_reference.load if not(@grid_reference.loaded?)
+            @grid_reference.load if not(@grid_reference.loaded)
             @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
                                                                    @grid_reference.workspace_uuid)
           end
@@ -91,8 +86,7 @@ class Column < Entity
   end
   
   def import_attribute(xml_attribute, xml_value)
-    log_debug "Column#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "Column#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when COLUMN_GRID_UUID then self.grid_uuid = xml_value
       when COLUMN_REFERENCE_UUID then self.grid_reference_uuid = xml_value
@@ -172,8 +166,4 @@ private
     "column_locs.base_locale, column_locs.locale, " +
     "column_locs.name, column_locs.description"
   end
-end
-
-class ColumnLoc < EntityLoc
-  validates_presence_of :name
 end

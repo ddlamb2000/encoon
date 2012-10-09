@@ -36,8 +36,7 @@ class WorkspaceSharing < Entity
   end
 
   def import_attribute(xml_attribute, xml_value)
-    log_debug "WorkspaceSharing#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "WorkspaceSharing#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when WORKSPACE_SHARING_WORKSPACE_UUID_UUID then self.workspace_uuid = xml_value
       when WORKSPACE_SHARING_USER_UUID_UUID then self.user_uuid = xml_value

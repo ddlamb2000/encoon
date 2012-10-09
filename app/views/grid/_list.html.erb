@@ -1,4 +1,4 @@
-<% if (user_signed_in? and @grid.can_create_data?(@filters)) or not_all_rows(@table_row_count) %>
+<% if (user_signed_in? and @grid.can_create_row?(@filters)) or not_all_rows(@table_row_count) %>
   <div id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" class="actions float-actions" style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= calc_next_page(params[:page]) %>
@@ -7,7 +7,7 @@
       <%= calc_previous_page(params[:page]) %>
       <%= icon('previous') %>
     <% end %>
-    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.create_help' %>" class="button add-button">
         <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= t 'actions.create' %>
@@ -39,7 +39,7 @@
         <%= t 'actions.search' %>
       </a>
     </span>
-    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.export_help' %>" class="button">
         <%= link_to export_list_xml_path(
                       :workspace => @grid.workspace.display_uri,
@@ -50,7 +50,7 @@
         <% end %>
       </span>
     <% end %>
-    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.update_grid_help' %>" class="button edit-button">
         <a id="update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= t 'actions.update_grid' %>
@@ -75,7 +75,7 @@
         });
       </script>
     <% end %>
-    <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.column_help' %>" class="button edit-button">
         <a id="attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
           <%= t 'actions.columns' %>
@@ -122,7 +122,7 @@
     <% end %>
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      <% if not (user_signed_in? and @grid.can_create_data?(@filters)) %>
+      <% if not (user_signed_in? and @grid.can_create_row?(@filters)) %>
         <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
       <% end %>
     </small>
@@ -151,7 +151,7 @@
       <% for row in @table_rows %>
         <tr id="row-<%= row.uuid %>">
           <td class="list-description">
-            <% if user_signed_in? and @grid.can_update?(row) %>
+            <% if user_signed_in? and @grid.can_update_row?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
                 <span class="mini-button edit-button" title="<%= t 'actions.update_help' %>">
                   <a id="update-<%= row.uuid %>"><%= t 'actions.update' %></a>
@@ -190,7 +190,7 @@
               </div>
             <% end %>
             <span title="<%= truncate_html(row.description.html_safe) %>">
-              <% if @grid.has_name? %>
+              <% if @grid.has_name %>
                 <% if @grid.uuid == WORKSPACE_UUID %>
                   <%= link_to @grid.row_title(row).html_safe,
                               show_workspace_path(
@@ -217,7 +217,7 @@
             </span>
             <%= display_information(row) %>
             <small><%= display_updated_date(row).html_safe %></small>
-            <% if user_signed_in? and not @grid.can_update?(row) %>
+            <% if user_signed_in? and not @grid.can_update_row?(row) %>
               <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
             <% end %>
           </td>

@@ -1,6 +1,6 @@
 <header class="action-header"><%= @workspace %> » <%= @grid %></header>
 <table class="form">
-  <% if user_signed_in? and @grid.can_create_data?(@filters) %>
+  <% if user_signed_in? and @grid.can_create_row?(@filters) %>
     <tr>
       <td class="header"></td>
       <td class="string actions"> 

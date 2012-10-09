@@ -75,11 +75,7 @@ class Upload < Entity
                   imported = entity.import!
                   if imported != ""
                     if imported != "skipped"
-                      if locs.length > 0
-                        locs.each do |entity_loc|
-                          entity.import_loc!(entity_loc)
-                        end
-                      end
+                      locs.each { |entity_loc|  entity.import_loc!(entity_loc) } if locs.length > 0
                     end
                     entity.create_missing_loc!
                     self.inserted = self.inserted + 1 if "inserted" == imported
@@ -97,7 +93,7 @@ class Upload < Entity
   end
 
 private
-  
+
   def undecode(attribute)
     attribute.get_text.to_s.gsub(/&amp;/,'&').gsub(/&lt;/,'<').gsub(/&gt;/,'>').gsub(/&quot;/,'"')    
   end

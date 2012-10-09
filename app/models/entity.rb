@@ -106,24 +106,6 @@ class Entity < ActiveRecord::Base
     1 + self.lock_version
   end
 
-  # Returns true if the user who created the record has a photo
-  def created_photo?
-    if self.create_user.blank?
-      false
-    else
-      self.create_user.has_photo?
-    end
-  end
-
-  # Returns true if the user who updated the record has a photo
-  def updated_photo?
-    if self.update_user.blank?
-      false
-    else
-      self.update_user.has_photo?
-    end
-  end
-
   def to_s
     attribute_present?(:name) ? read_attribute(:name) : self.uuid
   end
@@ -209,8 +191,7 @@ class Entity < ActiveRecord::Base
   end
 
   def import(xml_attribute, xml_value)
-    log_debug "Entity#import(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "Entity#import(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when 'uuid' then self.uuid = xml_value
       when 'version' then self.version = xml_value.to_i
@@ -358,7 +339,7 @@ class Entity < ActiveRecord::Base
     " EXISTS (" +
     "  SELECT 1 FROM workspace_sharings " +
     "  WHERE workspace_sharings.workspace_uuid = #{synonym}.uuid" + 
-    "  AND " + as_of_date_clause("workspace_sharings") +
+    "  AND #{as_of_date_clause("workspace_sharings")}" +
     "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
     "  AND workspace_sharings.role_uuid is not null" +
     " )" +
@@ -366,7 +347,7 @@ class Entity < ActiveRecord::Base
       " OR EXISTS (" +
       "  SELECT 1 FROM workspaces workspace_security" +
       "  WHERE workspace_security.uuid = #{synonym}.uuid" + 
-      "  AND " + as_of_date_clause("workspace_security") +
+      "  AND #{as_of_date_clause("workspace_security")}" +
       "  AND workspace_security.default_role_uuid is not null" +
       " )" : "") +
     (include_public ? "  OR workspaces.public = :public" : "") +
@@ -379,8 +360,8 @@ class Entity < ActiveRecord::Base
     "  SELECT 1 FROM grids grid_security, workspace_sharings " +
     "  WHERE grid_security.uuid = #{synonym}.uuid" + 
     "  AND workspace_sharings.workspace_uuid = grid_security.workspace_uuid" + 
-    "  AND " + as_of_date_clause("grid_security") +
-    "  AND " + as_of_date_clause("workspace_sharings") +
+    "  AND #{as_of_date_clause("grid_security")}" +
+    "  AND #{as_of_date_clause("workspace_sharings")}" +
     "  AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
     "  AND workspace_sharings.role_uuid is not null" +
     " )" + 
@@ -388,8 +369,8 @@ class Entity < ActiveRecord::Base
     "  SELECT 1 FROM grids grid_security, workspaces workspace_security" +
     "  WHERE grid_security.uuid = #{synonym}.uuid" + 
     "  AND workspace_security.uuid = grid_security.workspace_uuid" + 
-    "  AND " + as_of_date_clause("grid_security") +
-    "  AND " + as_of_date_clause("workspace_security") +
+    "  AND #{as_of_date_clause("grid_security")}" +
+    "  AND #{as_of_date_clause("workspace_security")}" +
     "  AND workspace_security.default_role_uuid is not null" +
     " )" +
     ")"

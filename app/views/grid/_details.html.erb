@@ -71,7 +71,7 @@
         </td>
       </tr>
     <% end %>
-    <% if @grid.has_translation? and @locales.present? %>
+    <% if @grid.has_translation and @locales.present? %>
       <tr>
         <td class="header"><%= t 'field.languages' %></td>
         <td class="string">

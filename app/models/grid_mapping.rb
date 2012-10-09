@@ -19,8 +19,7 @@ class GridMapping < Entity
   validates_presence_of :grid_uuid, :db_table
 
   def import_attribute(xml_attribute, xml_value)
-    log_debug "GridMapping#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "GridMapping#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when GRID_MAPPING_GRID_UUID then self.grid_uuid = xml_value
       when GRID_MAPPING_DB_TABLE then self.db_table = xml_value

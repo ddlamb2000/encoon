@@ -11,7 +11,7 @@
   <%= hidden_field_tag "container", @container %>
   <%= hidden_field_tag "refresh_list", @refresh_list if @refresh_list.present? %>
   <table class="form">
-    <% if @grid.has_translation? and @grid.has_name? %>
+    <% if @grid.has_translation and @grid.has_name %>
       <tr id="header-name">
         <td class="header">
           <%= label_tag :name, t('field.name'), :class => "required" %>
@@ -21,13 +21,13 @@
         </td>
       </tr>
     <% end %>
-    <% for column in @grid.column_all %>
+    <% for column in @table_columns %>
       <% description = column.description.present? ?
           ("<span title='#{column.description}' class='help'>#{column.name}</span>") :
           "#{column.name}" %>
       <%= edit_entity(@row, column, description) %>
     <% end %>
-    <% if @grid.has_translation? and @grid.has_description? %>
+    <% if @grid.has_translation and @grid.has_description %>
       <tr>
         <td class="header">
           <%= label_tag :description, t('field.description') %>

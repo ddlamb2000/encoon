@@ -7,7 +7,7 @@
     <% end %>
     <% unless @attached_grids.nil? or @attached_grids.empty? %>
       <% for attached_grid in @attached_grids %>
-        <% filters = attached_grid.get_filters_on_row(@row) %>
+        <% filters = attached_grid.get_filters_on_row(@row, @grid.row_title(@row)) %>
         <article id="grid-<%= attached_grid.uuid + '-' + get_filters_uuid(filters) %>" style="display: none;"></article>
       <% end %>
     <% end %>

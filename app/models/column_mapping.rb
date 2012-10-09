@@ -19,8 +19,7 @@ class ColumnMapping < Entity
   validates_presence_of :column_uuid, :db_column
 
   def import_attribute(xml_attribute, xml_value)
-    log_debug "ColumnMapping#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "ColumnMapping#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when COLUMN_MAPPING_COLUMN_UUID then self.column_uuid = xml_value
       when COLUMN_MAPPING_DB_COLUMN then self.db_column = xml_value

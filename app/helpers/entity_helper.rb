@@ -16,7 +16,6 @@
 # See doc/COPYRIGHT.rdoc for more details.
 module EntityHelper
   def show_header_label(kind, label, description, list=false)
-    style = "header"
     if list
       case kind
         when COLUMN_TYPE_INTEGER then style = "list-header-number"
@@ -25,11 +24,11 @@ module EntityHelper
         when COLUMN_TYPE_BOOLEAN then style = "list-header-boolean"
         else style = "list-header-string"
       end
+    else
+      style = "header"
     end
     content_tag(list ? "th" : "td",
-      (("<span title=\"" + truncate_html(description) + "\">").html_safe +
-      label +
-      "</span>".html_safe),
+      "<span title=\"#{truncate_html(description)}\">#{label}</span>".html_safe,
       :class => style
      )
   end
@@ -208,7 +207,7 @@ module EntityHelper
   end
 
   def edit_entity(row, column, description)
-    attribute = row.initialization? ? column.default_physical_column : column.physical_column
+    attribute = row.initialized ? column.default_physical_column : column.physical_column
     value = row.read_value(column)
     content_tag("tr",
       show_edit_header_label(description.html_safe, column.required, attribute) +

@@ -52,8 +52,7 @@ class User < Entity
   end
   
   def import_attribute(xml_attribute, xml_value)
-    log_debug "User#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "User#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when USER_EMAIL_UUID then self.email = xml_value
       when USER_FIRST_NAME_UUID then self.first_name = xml_value

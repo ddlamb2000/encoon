@@ -94,14 +94,13 @@ class Workspace < Entity
   def copy_attributes(entity)
     log_debug "Workspace#copy_attributes"
     super
-    entity.public = self.public    
-    entity.default_role_uuid = self.default_role_uuid    
-    entity.uri = self.uri    
+    entity.public = self.public
+    entity.default_role_uuid = self.default_role_uuid
+    entity.uri = self.uri
   end
 
   def import_attribute(xml_attribute, xml_value)
-    log_debug "Workspace#import_attribute(xml_attribute=#{xml_attribute}, " + 
-              "xml_value=#{xml_value})"
+    log_debug "Workspace#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when WORKSPACE_PUBLIC_UUID then self.public = ['true','t','1'].include?(xml_value)
       when WORKSPACE_DEFAULT_ROLE_UUID then self.default_role_uuid = xml_value
@@ -158,8 +157,4 @@ private
     "workspace_locs.base_locale, workspace_locs.locale, " +
     "workspace_locs.name, workspace_locs.description"
   end
-end
-
-class WorkspaceLoc < EntityLoc
-  validates_presence_of :name
 end

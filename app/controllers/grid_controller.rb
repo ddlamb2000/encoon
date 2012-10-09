@@ -168,6 +168,7 @@ class GridController < ApplicationController
     selectGridAndWorkspace
     @grid.load(@filters) if @grid.present?
     @filters_uuid = get_filters_uuid(@filters)
+    @table_columns = @grid.column_all if @grid.present?
     @row = @grid.rows.build
     @row_loc = RowLoc.new
     @grid.row_initialization(@row, @filters)
@@ -181,6 +182,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace
     @grid.load(@filters) if @grid.present?
+    @table_columns = @grid.column_all if @grid.present?
     selectRow
     render :partial => "edit", :locals => {:new_row => false}
   end
@@ -193,7 +195,7 @@ class GridController < ApplicationController
     @grid.load(@filters, true) if @grid.present?
     @row = @grid.rows.new
     @row.initialization
-    if @grid.can_create_data?(@filters)
+    if @grid.can_create_row?(@filters)
       begin
         @row.transaction do
           log_debug "GridController#create: initialize transaction"
@@ -201,7 +203,7 @@ class GridController < ApplicationController
           log_debug "GridController#create: populate from parameter values"
           populate_from_params
           @grid.load(@filters)
-          if @grid.has_translation?
+          if @grid.has_translation
             LANGUAGES.each do |lang, locale|
               log_debug "GridController#create: locale=#{locale}"
               @row_loc = @row.new_loc
@@ -225,7 +227,7 @@ class GridController < ApplicationController
           log_debug "GridController#create: row_validate"
           if @grid.row_validate(@row, Grid::PHASE_CREATE)
             log_debug "GridController#create: create_row!"
-            @grid.create_row!(@row)
+            @grid.create_row!(@row, @filters)
             saved = true
           else
             log_debug "GridController#create: rollback!(2)"
@@ -241,7 +243,7 @@ class GridController < ApplicationController
       end
       change_as_of_date(@row)
     else
-      log_security_warning "GridController#create can_create_data? == false"
+      log_security_warning "GridController#create can_create_row? == false"
       @row.errors.add(:uuid, I18n.t('error.cant_create'))
     end
     respond_to do |format|
@@ -263,7 +265,7 @@ class GridController < ApplicationController
     @grid.load(@filters) if @grid.present?
     selectRow
     if @row.present?
-      if @grid.can_update?(@row)
+      if @grid.can_update_row?(@row)
         if params[:lock_version] != @row.lock_version.to_s
           log_debug "GridController#update locked! " +
                     "params[:lock_version]=#{params[:lock_version]}, " +
@@ -288,8 +290,8 @@ class GridController < ApplicationController
                   log_debug "GridController#update row_validate"
                   if @grid.row_validate(@row, Grid::PHASE_NEW_VERSION)
                     log_debug "GridController#update create_row!"
-                    @grid.create_row!(@row)
-                    if @grid.has_translation?
+                    @grid.create_row!(@row, @filters)
+                    if @grid.has_translation
                       for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
                         log_debug "GridController#update update row_loc values"
                         @row_loc = @row_loc.clone
@@ -334,7 +336,7 @@ class GridController < ApplicationController
                   if @grid.row_validate(@row, Grid::PHASE_UPDATE)
                     log_debug "GridController#update update_row!"
                     @grid.update_row!(@row)
-                    if @grid.has_translation?
+                    if @grid.has_translation
                       for @row_loc in @grid.row_loc_select_entity_by_uuid(@row.uuid, version)
                         log_debug "GridController#update locale=#{@row_loc.locale}"
                         if @row_loc.locale == I18n.locale.to_s or 
@@ -413,7 +415,7 @@ class GridController < ApplicationController
     selectRow
     if @row.present?
       @attachment = @row.attachments.new
-      if @grid.can_update?(@row)
+      if @grid.can_update_row?(@row)
         begin
           if params[:document].blank?
             @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
@@ -463,7 +465,7 @@ class GridController < ApplicationController
         @row.transaction do
           @attachment = @row.attachments.find(params[:id])
           if @attachment.present?
-            if @grid.can_update?(@row)
+            if @grid.can_update_row?(@row)
               @attachment.delete
               @grid.update_row!(@row, Audit::DETACH)
               saved = true
