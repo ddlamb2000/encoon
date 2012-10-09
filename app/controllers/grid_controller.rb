@@ -407,40 +407,45 @@ class GridController < ApplicationController
   
   def save_attachment
     log_debug "GridController#save_attachment"
+    saved = false
     selectGridAndWorkspace
     @grid.load if @grid.present?
     selectRow
-    saved = false
     if @row.present?
       @attachment = @row.attachments.new
-      begin
-        if params[:document].blank?
-          @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
-        else
-          @row.transaction do
-            @row.remove_attachment!(params[:document])
-            @attachment.original_file_name = (params[:document]).original_filename
-            @attachment.document = params[:document]
-            @attachment.create_user_uuid = Entity.session_user_uuid
-            @attachment.save!
-            @grid.update_row!(@row, Audit::ATTACH)
-            saved = true
+      if @grid.can_update?(@row)
+        begin
+          if params[:document].blank?
+            @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+          else
+            @row.transaction do
+              @row.remove_attachment!(params[:document])
+              @attachment.original_file_name = (params[:document]).original_filename
+              @attachment.document = params[:document]
+              @attachment.create_user_uuid = Entity.session_user_uuid
+              @attachment.save!
+              @grid.update_row!(@row, Audit::ATTACH)
+              saved = true
+            end
           end
+        rescue ActiveRecord::RecordInvalid => invalid
+          log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
+          saved = false
+        rescue Exception => invalid
+          log_error "GridController#save_attachment", invalid
+          saved = false
         end
-      rescue ActiveRecord::RecordInvalid => invalid
-        log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
-        saved = false
-      rescue Exception => invalid
-        log_error "GridController#save_attachment", invalid
-        saved = false
+      else
+        log_security_warning "GridController#save_attachment: can_update_data? == false"
+        @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
       end
       respond_to do |format|
         if saved
-          log_debug "GridController#save_document: saved"
+          log_debug "GridController#save_attachment: saved"
           render :text => "<div id='ok'>OK</div>"
           return
         else
-          log_debug "GridController#save_document: error"
+          log_debug "GridController#save_attachment: error"
           format.html { render :json => @attachment.errors, :status => :unprocessable_entity }
         end
       end
@@ -449,20 +454,25 @@ class GridController < ApplicationController
 
   def delete_attachment
     log_debug "GridController#delete_attachment"
+    saved = false
     selectGridAndWorkspace
     @grid.load if @grid.present?
     selectRow
-    saved = false
     if @row.present?
       begin
         @row.transaction do
           @attachment = @row.attachments.find(params[:id])
           if @attachment.present?
-            @attachment.delete
-            @grid.update_row!(@row, Audit::DETACH)
+            if @grid.can_update?(@row)
+              @attachment.delete
+              @grid.update_row!(@row, Audit::DETACH)
+              saved = true
+            else
+              log_security_warning "GridController#delete_attachment can_update_data? == false"
+              @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
+            end
           end
         end
-        saved = true
       rescue ActiveRecord::RecordInvalid => invalid
         log_debug "GridController#delete_attachment: invalid=#{invalid.inspect}"
         saved = false
