@@ -40,9 +40,7 @@ class Grid < Entity
   # definition, table mapping, column mapping and security settings.
   # Load is mandatory before any access to the data using the grid.
   def load(filters=nil, skip_mapping=false)
-    log_debug "Grid#load_grid_structure(" +
-              "filters=#{filters.inspect},"+
-              "skip_mapping=#{skip_mapping}) [#{to_s}]"
+    log_debug "Grid#load_grid_structure(#{filters.inspect}, #{skip_mapping}) [#{to_s}]"
     load_workspace
     load_mapping
     load_columns(filters, false, skip_mapping)
@@ -1154,22 +1152,22 @@ private
               "skip_mapping=#{skip_mapping}) [#{to_s}]"
     if not(skip_mapping) and @has_mapping
       @column_all = columns.find(:all,
-                                  :joins => [:column_locs, :column_mappings],
-                                  :select => column_all_select_columns_mapping,
-                                  :conditions =>
-                                      [as_of_date_clause("columns") +
-                                       " AND column_locs.version = columns.version" +
-                                       " AND " + locale_clause("column_locs")],
-                                  :order => "columns.id")
+                                 :joins => [:column_locs, :column_mappings],
+                                 :select => column_all_select_columns_mapping,
+                                 :conditions =>
+                                     [as_of_date_clause("columns") +
+                                      " AND column_locs.version = columns.version" +
+                                      " AND " + locale_clause("column_locs")],
+                                 :order => "columns.id")
     else
       @column_all = columns.find(:all,
-                                  :joins => :column_locs,
-                                  :select => column_all_select_columns,
-                                  :conditions =>
-                                      [as_of_date_clause("columns") +
-                                       " AND column_locs.version = columns.version" +
-                                       " AND " + locale_clause("column_locs")],
-                                  :order => "columns.id")
+                                 :joins => :column_locs,
+                                 :select => column_all_select_columns,
+                                 :conditions =>
+                                     [as_of_date_clause("columns") +
+                                      " AND column_locs.version = columns.version" +
+                                      " AND " + locale_clause("column_locs")],
+                                 :order => "columns.id")
     end
     @filtered_columns = Array.new(@column_all)
     index_reference = index_date = index_integer = index_decimal = index_string = 0
@@ -1224,9 +1222,6 @@ private
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
-    return ROLE_TOTAL_CONTROL_UUID if not security.nil? and 
-                      security.create_user_uuid == Entity.session_user_uuid 
-    return security.default_role_uuid if not security.nil?
-    nil
+    security.nil? ? nil : security.default_role_uuid
   end
 end
