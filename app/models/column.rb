@@ -140,13 +140,12 @@ class Column < Entity
 
   def import_loc!(loc)
     log_debug "Column#import_loc!(loc=#{loc})"
-    import_loc_base!(
-      Column.all_locales(column_locs, self.uuid, self.version), loc)
+    import_loc_base!(Column.all_locales(column_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
-    create_missing_loc_base!(
-      Column.all_locales(column_locs, self.uuid, self.version))
+    log_debug "Column#create_missing_loc!"
+    create_missing_loc_base!(Column.all_locales(column_locs, self.uuid, self.version))
   end
 
   def column_mapping_select_entity_by_uuid_version(uuid, version)

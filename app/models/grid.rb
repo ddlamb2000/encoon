@@ -754,16 +754,12 @@ class Grid < Entity
 
   def import_loc!(loc)
     log_debug "Grid#import_loc!"
-    import_loc_base!(Grid.all_locales(grid_locs, 
-                                      self.uuid, 
-                                      self.version), 
-                                      loc)
+    import_loc_base!(Grid.all_locales(grid_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
-    create_missing_loc_base!(Grid.all_locales(grid_locs, 
-                                              self.uuid, 
-                                              self.version))
+    log_debug "Grid#create_missing_loc!"
+    create_missing_loc_base!(Grid.all_locales(grid_locs, self.uuid, self.version))
   end
 
   # Exports row in .xml format.
@@ -995,41 +991,6 @@ class Grid < Entity
     validated
   end
   
-  def load_workspace
-    log_debug "Grid#load_workspace [#{to_s}]"
-    self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
-    log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
-    if self.workspace.present? and self.workspace.default_role_uuid.present?
-      @can_select_data = true
-      @can_create_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
-      @can_update_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
-    end
-    sql = "SELECT workspace_sharings.role_uuid" + 
-          " FROM workspace_sharings" + 
-          " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
-          " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
-          " AND " + as_of_date_clause("workspace_sharings") +
-          " LIMIT 1"
-    security = Grid.find_by_sql([sql])[0]
-    if security.present?
-      @can_select_data = true
-      @can_create_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_update_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-    end
-    log_debug "Grid#load_workspace " +
-              "@can_select_data=#{@can_select_data}," +
-              "@can_create_data=#{@can_create_data}," +
-              "@can_update_data=#{@can_update_data} [#{to_s}]"
-  end
-  
 private
 
   def quote(sql) ; connection.quote(sql) ; end
@@ -1125,6 +1086,41 @@ private
   def row_loc_update_values(row)
     "lock_version=#{quote(row.lock_version+1)}, base_locale=#{quote(row.base_locale)}" +
     ", name=#{quote(row.name)}, description=#{quote(row.description)}"
+  end
+  
+  def load_workspace
+    log_debug "Grid#load_workspace [#{to_s}]"
+    self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
+    log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
+    if self.workspace.present? and self.workspace.default_role_uuid.present?
+      @can_select_data = true
+      @can_create_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+    end
+    sql = "SELECT workspace_sharings.role_uuid" + 
+          " FROM workspace_sharings" + 
+          " WHERE workspace_sharings.workspace_uuid = '#{self.workspace_uuid}'" + 
+          " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
+          " AND " + as_of_date_clause("workspace_sharings") +
+          " LIMIT 1"
+    security = Grid.find_by_sql([sql])[0]
+    if security.present?
+      @can_select_data = true
+      @can_create_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID,
+                          ROLE_READ_WRITE_ALL_UUID,
+                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+    end
+    log_debug "Grid#load_workspace " +
+              "@can_select_data=#{@can_select_data}," +
+              "@can_create_data=#{@can_create_data}," +
+              "@can_update_data=#{@can_update_data} [#{to_s}]"
   end
   
   # Loads in memory information about database mapping.

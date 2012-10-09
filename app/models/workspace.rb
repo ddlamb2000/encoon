@@ -138,10 +138,12 @@ class Workspace < Entity
   end
 
   def import_loc!(loc)
+    log_debug "Workspace#import_loc!"
     import_loc_base!(Workspace.all_locales(workspace_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
+    log_debug "Workspace#create_missing_loc!"
     create_missing_loc_base!(Workspace.all_locales(workspace_locs, self.uuid, self.version))
   end
   
