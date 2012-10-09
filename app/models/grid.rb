@@ -47,56 +47,9 @@ class Grid < Entity
     @loaded = true
   end
 
-  # Indicates if the user can create a row into the grid.
-  # Authorization depends on the workspace security settings
-  # the grid is attached to, but also to the workspace security settings
-  # the row will be attached to, based on the filters.
-  # Thus, if the filter contains a reference to a workspace, 
-  # the security applies based on the workspace provided by the filter.
-  def can_create_row?(filters=nil)
-    return false if not(@can_create_data or self.uuid == WORKSPACE_SHARING_UUID)
-    if filters.present?
-      filters.each do |filter|
-        column_uuid = filter[:column_uuid]
-        row_uuid = filter[:row_uuid]
-        column_all.each do |column|
-          if column.uuid == column_uuid and 
-              column.kind == COLUMN_TYPE_REFERENCE and
-              column.grid_reference_uuid == WORKSPACE_UUID
-            security = get_security_workspace(row_uuid)
-            return [ROLE_READ_WRITE_ALL_UUID,
-                    ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
-          end
-        end
-      end
-    end
-    return @can_create_data
-  end
-
-  # Indicates if the user can update a specific row.
-  # Authorization depends on the workspace security settings
-  # the row is attached to. The way the row is attached to a workspace depends
-  # on the grid. The row could be a grid itself, a workspace itself or a column.
-  def can_update_row?(row)
-    return false if not(@can_update_data or self.uuid == WORKSPACE_SHARING_UUID)
-    security = nil
-    if self.uuid == WORKSPACE_UUID
-      security = get_security_workspace(row.uuid)
-    elsif self.uuid == GRID_UUID or self.uuid == WORKSPACE_SHARING_UUID
-      security = get_security_workspace(row.workspace_uuid)
-    elsif self.uuid == COLUMN_UUID and row.grid.present?
-      security = get_security_workspace(row.grid.workspace_uuid)
-    end
-    return [ROLE_READ_WRITE_ALL_UUID,
-            ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
-    return (@can_update_data or (row.create_user_uuid == Entity.session_user_uuid))
-  end
-
   # Selects data based on uuid.
   def self.select_entity_by_uuid(collection, uuid)
-    log_debug "Grid#select_entity_by_uuid(" +
-              "collection=#{collection}, " +
-              "uuid=#{uuid})"
+    log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid}) [#{to_s}]"
     collection.find(:first, 
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
@@ -111,9 +64,7 @@ class Grid < Entity
   
   # Selects data based on workspace and uri.
   def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri)
-    log_debug "Grid#select_entity_by_workspace_and_uri(" +
-              "collection=#{collection}, " +
-              "uri=#{uri})"
+    log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{uri}) [#{to_s}]"
     collection.find(:first, 
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
@@ -130,9 +81,7 @@ class Grid < Entity
   
   # Selects data based on id
   def self.select_entity_by_id(collection, id)
-    log_debug "Grid#select_entity_by_id(" +
-              "collection=#{collection}, " +
-              "id=#{id})"
+    log_debug "Grid#select_entity_by_id(#{collection}, #{id}) [#{to_s}]"
     collection.find(:first, 
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
@@ -145,9 +94,7 @@ class Grid < Entity
   end
   
   def self.select_entity_by_uuid_version(collection, uuid, version)
-    log_debug "Grid#select_entity_by_uuid_version(" +
-              "collection=#{collection}, " +
-              "uuid=#{uuid}, version=#{version})"
+    log_debug "Grid#select_entity_by_uuid_version(#{collection}, #{uuid}, #{version}) [#{to_s}]"
     collection.find(:first, 
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
@@ -169,7 +116,7 @@ class Grid < Entity
   # Selects the reference rows attached to one grid
   # This is used to display a drop-down list
   def self.select_reference_rows(grid_uuid)
-    log_debug "Grid#select_reference_rows(grid_uuid=#{grid_uuid})"
+    log_debug "Grid#select_reference_rows(#{grid_uuid}) [#{to_s}]"
     grid = Grid.select_entity_by_uuid(Grid, grid_uuid)
     unless grid.nil?
       grid.load
@@ -179,14 +126,14 @@ class Grid < Entity
 
   # Selects the name of one reference row attached to one grid
   def select_reference_row_name(row_uuid)
-    log_debug "Grid#select_reference_row_name(row_uuid=#{row_uuid})"
+    log_debug "Grid#select_reference_row_name(#{row_uuid}) [#{to_s}]"
     row = row_select_entity_by_uuid(row_uuid)
     row.present? ? row_title(row) : ""
   end
   
   # Selects the description of one reference row attached to one grid
   def select_reference_row_description(row_uuid)
-    log_debug "Grid#select_reference_row_description(row_uuid=#{row_uuid})"
+    log_debug "Grid#select_reference_row_description(#{row_uuid}) [#{to_s}]"
     row = row_select_entity_by_uuid(row_uuid)
     row.present? ? row.description : ""
   end
@@ -197,7 +144,7 @@ class Grid < Entity
   end
 
   def select_grid_cast(row_uuid)
-    log_debug "Grid#select_grid_cast(row_uuid=#{row_uuid}) [#{to_s}]"
+    log_debug "Grid#select_grid_cast(#{row_uuid}) [#{to_s}]"
     if self.uuid == GRID_UUID
       grid = Grid::select_entity_by_uuid(Grid, row_uuid)
       grid.load if grid.present?
@@ -275,8 +222,7 @@ class Grid < Entity
   end
   
   def column_select_entity_by_uuid_version(uuid, version)
-    log_debug "Grid#column_select_entity_by_uuid_version(uuid=#{uuid}," + 
-              "version=#{version}) [#{to_s}]"
+    log_debug "Grid#column_select_entity_by_uuid_version(#{uuid}, #{version}) [#{to_s}]"
     columns.find(:first, 
                  :joins => :column_locs,
                  :select => column_all_select_columns,
@@ -379,7 +325,7 @@ class Grid < Entity
 
   # Selects data based on uuid
   def row_select_entity_by_uuid(uuid)
-    log_debug "Grid#row_select_entity_by_uuid(uuid=#{uuid}) [#{to_s}]"
+    log_debug "Grid#row_select_entity_by_uuid(#{uuid}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_select_entity_by_uuid Can't select data"
       return nil
@@ -441,8 +387,7 @@ class Grid < Entity
   
   def row_select_entity_by_uuid_version(uuid, version)
     load if not loaded
-    log_debug "Grid#row_select_entity_by_uuid_version(uuid=#{uuid}, " + 
-              "version=#{version}) [#{to_s}]"
+    log_debug "Grid#row_select_entity_by_uuid_version(#{uuid}, #{version}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_select_entity_by_uuid_version Can't select data"
       return nil
@@ -475,7 +420,7 @@ class Grid < Entity
   
   # Selects data based on id
   def row_select_entity_by_id(id)
-    log_debug "Grid#row_select_entity_by_id(id=#{id}) [#{to_s}]"
+    log_debug "Grid#row_select_entity_by_id(#{id}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_select_entity_by_id Can't select data"
       return nil
@@ -503,7 +448,7 @@ class Grid < Entity
   end
   
   def row_all_versions(uuid)
-    log_debug "Grid#row_all_versions(uuid=#{uuid}) [#{to_s}]"
+    log_debug "Grid#row_all_versions(#{uuid}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_all_versions Can't select data"
       return []
@@ -530,8 +475,7 @@ class Grid < Entity
   end
   
   def row_all_locales(uuid, version)
-    log_debug "Grid#row_all_locales(uuid=#{uuid}, " + 
-              "version=#{version.to_s}) [#{to_s}]"
+    log_debug "Grid#row_all_locales(#{uuid}, #{version.to_s}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_all_locales Can't select data"
       return []
@@ -654,28 +598,32 @@ class Grid < Entity
     connection.select_value(sql).to_i
   end
 
-  def row_update_dates!(uuid)
-    log_debug "Grid#row_update_dates!(uuid=#{uuid}"
-    previous_item = nil
-    last_item = nil
-    row_all_versions(uuid).each do |item|
-      if item.enabled
-        if previous_item.present? and previous_item.end != item.begin-1
-          log_debug "Grid#row_update_dates! previous_item set end date"
-          previous_item.end = item.begin-1 if item.begin > Entity.begin_of_time
-          previous_item.update_user_uuid = Entity.session_user_uuid
-          update_row!(previous_item)
+  def row_initialization(row, filters)
+    log_debug "Grid#row_initialization(filters=#{filters.inspect}) [#{to_s}]"
+    row.initialization
+    column_all.each do |column|
+      log_debug "Grid#default_row_value column=#{column.to_s}"
+      initialized = false
+      if filters.present?
+        filters.each do |filter|
+          if column.uuid == filter[:column_uuid]
+            row.write_value(column, filter[:row_uuid])
+            initialized = true
+          end
         end
-        previous_item = item
       end
-      last_item = item
-    end
-    log_debug "Grid#row_update_dates! last_item=#{last_item.inspect}"
-    if last_item.present? and last_item.end != @@end_of_time
-      log_debug "Entity#update_dates last_item set end date"
-      last_item.end = @@end_of_time
-      last_item.update_user_uuid = Entity.session_user_uuid
-      update_row!(last_item)
+      if not initialized
+        row.write_value(column, nil)
+        if self.uuid == COLUMN_UUID and column.uuid == COLUMN_KIND_UUID
+          row.write_value(column, COLUMN_TYPE_STRING)
+        elsif self.uuid == COLUMN_UUID and column.uuid == COLUMN_DISPLAY_UUID
+          row.write_value(column, 1)
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_NAME_UUID
+          row.write_value(column, true)
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_DESCRIPTION_UUID
+          row.write_value(column, true)
+        end
+      end
     end
   end
 
@@ -833,6 +781,65 @@ class Grid < Entity
     end
   end
   
+  # Indicates if the user can create a row into the grid.
+  # Authorization depends on the workspace security settings
+  # the grid is attached to, but also to the workspace security settings
+  # the row will be attached to, based on the filters.
+  # Thus, if the filter contains a reference to a workspace, 
+  # the security applies based on the workspace provided by the filter.
+  def can_create_row?(filters=nil)
+    return false if not(@can_create_data or [WORKSPACE_SHARING_UUID,
+                                             GRID_UUID,
+                                             COLUMN_UUID].include?(self.uuid))
+    if filters.present?
+      filters.each do |filter|
+        column_uuid = filter[:column_uuid]
+        row_uuid = filter[:row_uuid]
+        column_all.each do |column|
+          if column.uuid == column_uuid and 
+             column.kind == COLUMN_TYPE_REFERENCE and
+             column.grid_reference_uuid == WORKSPACE_UUID
+            security = get_security_workspace(row_uuid)
+            return [ROLE_READ_WRITE_ALL_UUID,
+                    ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
+          elsif column.uuid == column_uuid and 
+                column.kind == COLUMN_TYPE_REFERENCE and
+                column.grid_reference_uuid == GRID_UUID
+            grid = Grid::select_entity_by_uuid(Grid, row_uuid)
+            if grid.present?
+              security = get_security_workspace(grid.workspace_uuid)
+              return [ROLE_READ_WRITE_ALL_UUID,
+                      ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
+            end
+          end
+        end
+      end
+    end
+    return @can_create_data
+  end
+
+  # Indicates if the user can update a specific row.
+  # Authorization depends on the workspace security settings
+  # the row is attached to. The way the row is attached to a workspace depends
+  # on the grid. The row could be a grid itself, a workspace itself or a column.
+  def can_update_row?(row)
+    return false if not(@can_update_data or [WORKSPACE_UUID,
+                                             WORKSPACE_SHARING_UUID,
+                                             GRID_UUID,
+                                             COLUMN_UUID].include?(self.uuid))
+    security = nil
+    if self.uuid == WORKSPACE_UUID
+      security = get_security_workspace(row.uuid)
+    elsif self.uuid == GRID_UUID or self.uuid == WORKSPACE_SHARING_UUID
+      security = get_security_workspace(row.workspace_uuid)
+    elsif self.uuid == COLUMN_UUID and row.grid.present?
+      security = get_security_workspace(row.grid.workspace_uuid)
+    end
+    return [ROLE_READ_WRITE_ALL_UUID,
+            ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
+    return (@can_update_data or (row.create_user_uuid == Entity.session_user_uuid))
+  end
+
   def create_row!(row, filters=nil)
     log_debug "Grid#create_row!(row=#{row.inspect})"
     if not can_create_row?(filters)
@@ -854,16 +861,16 @@ class Grid < Entity
     true
   end
   
-  def create_row_loc!(row)
-    log_debug "Grid#create_row_loc!(row=#{row.inspect})"
-    if not can_create_row?
+  def create_row_loc!(row, row_loc, filters=nil)
+    log_debug "Grid#create_row_loc!(row_loc=#{row_loc.inspect})"
+    if not can_create_row?(filters)
       log_security_warning "Grid#create_row_loc! Can't create data"
       row.errors.add(:uuid, I18n.t('error.cant_create'))
       raise "Grid#create_row_loc! Can't create data"
     end
     sql = "INSERT INTO #{@db_loc_table}" +
           "(#{row_all_insert_loc_columns})" +
-          " VALUES(#{row_all_insert_loc_values(row)})"
+          " VALUES(#{row_all_insert_loc_values(row_loc)})"
     self.id = connection.insert(sql, 
                                 "#{self.class.name} Create",
                                 self.class.primary_key, 
@@ -891,24 +898,44 @@ class Grid < Entity
     true
   end
   
-  def update_row_loc!(row)
-    log_debug "Grid#update_row_loc!(row=#{row.inspect})"
+  def update_row_loc!(row, row_loc)
+    log_debug "Grid#update_row_loc!(row_loc=#{row_loc.inspect})"
     if not can_update_row?(row)
       log_security_warning "Grid#update_row_loc! Can't update data"
       row.errors.add(:uuid, I18n.t('error.cant_update'))
       raise "Grid#update_row_loc! Can't update data"
     end
     sql = "UPDATE #{@db_loc_table}" +
-          " SET #{row_loc_update_values(row)}" +
-          " WHERE id = #{quote(row.id)}" +
-          " AND lock_version = #{quote(row.lock_version)}"
+          " SET #{row_loc_update_values(row_loc)}" +
+          " WHERE id = #{quote(row_loc.id)}" +
+          " AND lock_version = #{quote(row_loc.lock_version)}"
     connection.update(sql, "#{self.class.name} Update")
     true
   end
   
-  def mapping_all
-    log_debug "Grid#mapping_all"
-    grid_mappings.find(:all, :conditions => [as_of_date_clause("grid_mappings")])
+  def row_update_dates!(uuid)
+    log_debug "Grid#row_update_dates!(uuid=#{uuid}"
+    previous_item = nil
+    last_item = nil
+    row_all_versions(uuid).each do |item|
+      if item.enabled
+        if previous_item.present? and previous_item.end != item.begin-1
+          log_debug "Grid#row_update_dates! previous_item set end date"
+          previous_item.end = item.begin-1 if item.begin > Entity.begin_of_time
+          previous_item.update_user_uuid = Entity.session_user_uuid
+          update_row!(previous_item)
+        end
+        previous_item = item
+      end
+      last_item = item
+    end
+    log_debug "Grid#row_update_dates! last_item=#{last_item.inspect}"
+    if last_item.present? and last_item.end != @@end_of_time
+      log_debug "Entity#update_dates last_item set end date"
+      last_item.end = @@end_of_time
+      last_item.update_user_uuid = Entity.session_user_uuid
+      update_row!(last_item)
+    end
   end
 
   def mapping_select_entity_by_uuid_version(uuid, version)
@@ -919,35 +946,9 @@ class Grid < Entity
                           {:uuid => uuid, :version => version}])[0]
   end
 
-  def row_initialization(row, filters)
-    log_debug "Grid#row_initialization(filters=#{filters.inspect}) [#{to_s}]"
-    row.initialization
-    column_all.each do |column|
-      log_debug "Grid#default_row_value column=#{column.to_s}"
-      initialized = false
-      if filters.present?
-        filters.each do |filter|
-          if column.uuid == filter[:column_uuid]
-            row.write_value(column, filter[:row_uuid])
-            initialized = true
-          end
-        end
-      end
-      if not initialized
-        row.write_value(column, nil)
-        if self.uuid == COLUMN_UUID and column.uuid == COLUMN_KIND_UUID
-          row.write_value(column, COLUMN_TYPE_STRING)
-        elsif self.uuid == COLUMN_UUID and column.uuid == COLUMN_DISPLAY_UUID
-          row.write_value(column, 1)
-        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_NAME_UUID
-          row.write_value(column, true)
-        elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_DESCRIPTION_UUID
-          row.write_value(column, true)
-        end
-      end
-    end
-  end
-
+  # Validates row is correct according to grid columns definition.
+  # Row is validated against filters also in order to control data
+  # match with the scope of selected data.
   def row_validate(row, phase, filters)
     log_debug "Grid#row_validate(phase=#{phase}) [#{to_s}]"
     validated = true
@@ -981,6 +982,7 @@ class Grid < Entity
     validated
   end
 
+  # Validates locale row is correct.
   def row_loc_validate(row, row_loc, phase)
     log_debug "Grid#row_loc_validate(phase=#{phase}) [#{to_s}]"
     validated = true

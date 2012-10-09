@@ -192,18 +192,17 @@ class Row < Entity
     else
       log_debug "Row#import_loc! grid=#{grid.inspect}"
       updated = 0
-      grid.row_loc_select_entity_by_uuid(self.uuid, 
-                                         self.version).each do |row_loc|
+      grid.row_loc_select_entity_by_uuid(self.uuid, self.version).each do |row_loc|
         if row_loc.base_locale == loc.base_locale
           log_debug "Row#import_loc! update"
           loc.copy_attributes(row_loc)
-          grid.update_row_loc!(row_loc)
+          grid.update_row_loc!(self, row_loc)
           updated += 1
         end
       end
       if updated == 0
         log_debug "Row#import_loc! new"
-        grid.create_row_loc!(loc)
+        grid.create_row_loc!(self, loc)
       end
     end
   end
@@ -233,7 +232,7 @@ class Row < Entity
             loc.locale = locale.to_s
             loc.base_locale = base_loc.base_locale
             log_debug "Row#create_missing! create_row_loc!"
-            grid.create_row_loc!(loc)
+            grid.create_row_loc!(self, loc)
           else
             log_debug "Row#create_missing! skip"
           end

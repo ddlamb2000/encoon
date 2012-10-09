@@ -209,7 +209,7 @@ class GridController < ApplicationController
               log_debug "GridController#create: row_loc_validate"
               if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_CREATE)
                 log_debug "GridController#create: create_row_loc!"
-                @grid.create_row_loc!(@row_loc)
+                @grid.create_row_loc!(@row, @row_loc, @filters)
               else
                 @grid.row_validate(@row, Grid::PHASE_CREATE, @filters)
                 log_debug "GridController#create: rollback!"
@@ -301,7 +301,7 @@ class GridController < ApplicationController
                         log_debug "GridController#update row_loc_validate"
                         if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_NEW_VERSION)
                           log_debug "GridController#update create_row_loc!"
-                          @grid.create_row_loc!(@row_loc)
+                          @grid.create_row_loc!(@row, @row_loc, @filters)
                         else
                           log_debug "GridController#update row_validate"
                           @grid.row_validate(@row, Grid::PHASE_UPDATE, @filters)
@@ -339,7 +339,7 @@ class GridController < ApplicationController
                           log_debug "GridController#update row_loc_validate"
                           if @grid.row_loc_validate(@row, @row_loc, Grid::PHASE_UPDATE)
                             log_debug "GridController#update update_row_loc!"
-                            @grid.update_row_loc!(@row_loc)
+                            @grid.update_row_loc!(@row, @row_loc)
                           else
                             log_debug "GridController#update: rollback!(3)"
                             raise ActiveRecord::Rollback
