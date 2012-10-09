@@ -789,6 +789,10 @@ class Grid < Entity
                                               self.version))
   end
 
+  # Exports row in .xml format.
+  # For rows corresponding to workspaces, grids or columns, associated rows
+  # are also exported, so a grid is exported with columns, a workspace is associated
+  # with grids and so on. 
   def row_export(xml, row)
     log_debug "Grid#row_export(row=#{row}) [#{to_s}]"
     if row.present?
@@ -824,7 +828,7 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select mapping in the data grid"
-          rows = grid_def.row_all([{:column_uuid => GRID_MAPPING_UUID,
+          rows = grid_def.row_all([{:column_uuid => GRID_MAPPING_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
@@ -834,7 +838,7 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select columns in the data grid"
-          rows = grid_def.row_all([{:column_uuid => COLUMN_UUID,
+          rows = grid_def.row_all([{:column_uuid => COLUMN_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
@@ -846,7 +850,7 @@ class Grid < Entity
         if grid_def.present?
           grid_def.load
           log_debug "Grid#row_export select mapping in the column"
-          rows = grid_def.row_all([{:column_uuid => COLUMN_MAPPING_UUID,
+          rows = grid_def.row_all([{:column_uuid => COLUMN_MAPPING_COLUMN_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
           for child in rows
             grid_def.row_export(xml, child)
