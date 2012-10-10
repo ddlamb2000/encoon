@@ -116,10 +116,7 @@
 <% end %>
 <header>
   <hgroup>
-    <% if @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
-      <%= link_to(@workspace,
-                  show_workspace_path(:workspace => @workspace.display_uri)) %> »
-    <% end %>
+    <%= render :partial => 'breadcrumbs' %>
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       <% if not (user_signed_in? and @grid.can_create_row?(@filters)) %>

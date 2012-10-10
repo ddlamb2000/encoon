@@ -1,32 +1,13 @@
 <section id="document" class="document">
-  <% unless @grid.blank? or @row.blank? %>
-    <% if @grid.uuid != GRID_UUID %>
-      <article id="row-<%= @row.uuid %>">
-        <%= render :partial => "row" %>
-      </article>
-    <% end %>
-    <% unless @attached_grids.nil? or @attached_grids.empty? %>
-      <% for attached_grid in @attached_grids %>
-        <% filters = attached_grid.get_filters_on_row(@row, @grid.row_title(@row)) %>
-        <article id="grid-<%= attached_grid.uuid + '-' + get_filters_uuid(filters) %>" style="display: none;"></article>
-      <% end %>
-    <% end %>
-    <%= render :partial => 'navigation' %>
-  <% else %>
-    <hgroup>
-      <% if @workspace.present? and @workspace.uuid != SYSTEM_WORKSPACE_UUID %>
-        <%= link_to(@workspace,
-                    show_workspace_path(:workspace => @workspace.display_uri)) %> »
-      <% end %>
-      <% if @grid.present? %>
-        <%= link_to(@grid,
-                    show_grid_path(
-                      :workspace => @workspace.display_uri,
-                      :grid => @grid.display_uri)) %> »
-      <% end %>
-    </hgroup>
-    <h1><%= @page_title %></h1>
-    <p><%= t 'error.not_found' %><p>
+  <% if @grid.uuid != GRID_UUID %>
+    <article id="row-<%= @row.uuid %>"><%= render :partial => "row" %></article>
   <% end %>
+  <% unless @attached_grids.nil? or @attached_grids.empty? %>
+    <% for attached_grid in @attached_grids %>
+      <% filters = attached_grid.get_filters_on_row(@row, @grid.row_title(@row)) %>
+      <article id="grid-<%= attached_grid.uuid + '-' + get_filters_uuid(filters) %>" style="display: none;"></article>
+    <% end %>
+  <% end %>
+  <%= render :partial => 'navigation' %>
 </section>
 <section id="dialog" class="dialog float-dialog document" style="display: none;"></section>

@@ -1,0 +1,1 @@
+<% if @workspace.present? and @workspace.uuid != SYSTEM_WORKSPACE_UUID %>  <%= link_to(@workspace, show_workspace_path(:workspace => @workspace.display_uri)) %> »<% end %><% if @grid.present? %>  <%= link_to(@grid, show_grid_path(:workspace => @workspace.display_uri,                                    :grid => @grid.display_uri)) %> »<% end %>

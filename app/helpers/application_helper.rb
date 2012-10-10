@@ -56,9 +56,8 @@ module ApplicationHelper
     output
   end
 
-  # This is used to generate a unique id in the page
-  # in order to avoid duplicates.
-  # This is based on the concatenation of identifiers used to filter data 
+  # Returns a string made of identifiers based on filters, 
+  # used to identify a grid and associated filters in a page.
   def get_filters_uuid(filters)
     output = ""
     filters.collect{|filter| output << filter[:column_uuid]} if filters.present?
