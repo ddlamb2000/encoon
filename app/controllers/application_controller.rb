@@ -80,14 +80,6 @@ protected
     end
   end
   
-  def lock_as_of_date
-    session[:lock_as_of_date] = true 
-  end
-  
-  def unlock_as_of_date
-    session[:lock_as_of_date] = false 
-  end
-  
   def param_begin_date
     params[:begin_date].present? ? Date.parse(params[:begin_date]) : Entity.begin_of_time
   end

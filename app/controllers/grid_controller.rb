@@ -687,10 +687,8 @@ private
     if @grid.present? and params[:row].present?
       if Entity.uuid?(params[:row])
         @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
-        unlock_as_of_date
       else
         @row = @row_loc = @grid.row_select_entity_by_uri(params[:row])
-        unlock_as_of_date
       end
       if @row.nil?
         Entity.log_debug "GridController#selectRow " +
