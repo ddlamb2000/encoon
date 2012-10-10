@@ -227,15 +227,13 @@ class GridController < ApplicationController
         log_security_warning "GridController#create can_create_row? == false"
         @row.errors.add(:uuid, I18n.t('error.cant_create'))
       end
-      respond_to do |format|
-        if saved
-          list
-          return
-        else
-          log_debug "GridController#create: error, @row.errors=#{@row.errors.inspect}"
-          format.html{render :json => @row.errors, :status => :unprocessable_entity}
-          return
-        end
+      if saved
+        list
+        return
+      else
+        log_debug "GridController#create: error, @row.errors=#{@row.errors.inspect}"
+        render :json => @row.errors, :status => :unprocessable_entity
+        return
       end
     end
     render :partial => "no_data", :status => 404
@@ -366,118 +364,132 @@ class GridController < ApplicationController
           log_security_warning "GridController#update can_update_data? == false"
           @row.errors.add(:uuid, I18n.t('error.cant_update'))
         end
-        respond_to do |format|
-          if saved
-            log_debug "GridController#update saved"
-            change_as_of_date(@row)
-            if @container == ""
-              log_debug "GridController#update no refresh"
-              render :nothing => true
-              return
-            else
-              log_debug "GridController#update refresh"
-              @refresh_list ? list : row
-              return
-            end
+        if saved
+          log_debug "GridController#update saved"
+          change_as_of_date(@row)
+          if @container == ""
+            log_debug "GridController#update no refresh"
+            render :nothing => true
+            return
           else
-            log_debug "GridController#update: error, params=#{params.inspect}"
-            format.html{render :json => @row.errors, :status => :unprocessable_entity}
+            log_debug "GridController#update refresh"
+            @refresh_list ? list : row
             return
           end
+        else
+          log_debug "GridController#update: error, params=#{params.inspect}"
+          render :json => @row.errors, :status => :unprocessable_entity
+          return
         end
       end
     end
     render :partial => "no_data", :status => 404
   end
 
+  # Renders an upload page for a new attachment to the selected row of data through an Ajax request.
   def attach
     log_debug "GridController#attach"
     selectGridAndWorkspace
-    @grid.load if @grid.present?
-    selectRow
-    if @row.present?
-      @attachment = @row.attachments.new
-      render :partial => "attach"
+    if @workspace.present? and @grid.present?
+      @grid.load
+      selectRow
+      if @row.present?
+        @attachment = @row.attachments.new
+        render :partial => "attach"
+        return
+      end
     end
+    render :partial => "no_data", :status => 404
   end
   
+  # Attaches a document to the select data row.
+  # Attachments are managed using PaperClip, through attribute 'document'.
   def save_attachment
     log_debug "GridController#save_attachment"
     saved = false
     selectGridAndWorkspace
-    @grid.load if @grid.present?
-    selectRow
-    if @row.present?
-      @attachment = @row.attachments.new
-      if @grid.can_update_row?(@row)
-        begin
-          if params[:document].blank?
-            @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
-          else
-            @row.transaction do
-              @row.remove_attachment!(params[:document])
-              @attachment.original_file_name = (params[:document]).original_filename
-              @attachment.document = params[:document]
-              @attachment.create_user_uuid = Entity.session_user_uuid
-              @attachment.save!
-              @grid.update_row!(@row, Audit::ATTACH)
-              saved = true
+    if @workspace.present? and @grid.present?
+      @grid.load
+      selectRow
+      if @row.present?
+        @attachment = @row.attachments.new
+        if @grid.can_update_row?(@row)
+          begin
+            if params[:document].blank?
+              @attachment.errors.add(:document_file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+            else
+              @row.transaction do
+                @row.remove_attachment!(params[:document])
+                @attachment.original_file_name = (params[:document]).original_filename
+                @attachment.document = params[:document]
+                @attachment.create_user_uuid = Entity.session_user_uuid
+                @attachment.save!
+                @grid.update_row!(@row, Audit::ATTACH)
+                saved = true
+              end
             end
+          rescue ActiveRecord::RecordInvalid => invalid
+            log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
+            saved = false
+          rescue Exception => invalid
+            log_error "GridController#save_attachment", invalid
+            saved = false
           end
-        rescue ActiveRecord::RecordInvalid => invalid
-          log_debug "GridController#save_attachment: invalid=#{invalid.inspect}"
-          saved = false
-        rescue Exception => invalid
-          log_error "GridController#save_attachment", invalid
-          saved = false
+        else
+          log_security_warning "GridController#save_attachment: can_update_data? == false"
+          @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
         end
-      else
-        log_security_warning "GridController#save_attachment: can_update_data? == false"
-        @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
-      end
-      respond_to do |format|
         if saved
           log_debug "GridController#save_attachment: saved"
           render :text => OK_MSG
           return
         else
           log_debug "GridController#save_attachment: error"
-          format.html{render :json => @attachment.errors, :status => :unprocessable_entity}
+          render :json => @attachment.errors, :status => :unprocessable_entity
+          return
         end
       end
     end
+    render :partial => "no_data", :status => 404
   end
 
+  # Removes attached document to the select data row.
   def delete_attachment
     log_debug "GridController#delete_attachment"
     saved = false
     selectGridAndWorkspace
-    @grid.load if @grid.present?
-    selectRow
-    if @row.present?
-      begin
-        @row.transaction do
-          @attachment = @row.attachments.find(params[:id])
-          if @attachment.present?
-            if @grid.can_update_row?(@row)
-              @attachment.delete
-              @grid.update_row!(@row, Audit::DETACH)
-              saved = true
-            else
-              log_security_warning "GridController#delete_attachment can_update_data? == false"
-              @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
+    if @workspace.present? and @grid.present?
+      @grid.load
+      selectRow
+      if @row.present?
+        begin
+          @row.transaction do
+            @attachment = @row.attachments.find(params[:id])
+            if @attachment.present?
+              if @grid.can_update_row?(@row)
+                @attachment.delete
+                @grid.update_row!(@row, Audit::DETACH)
+                saved = true
+              else
+                log_security_warning "GridController#delete_attachment can_update_data? == false"
+                @attachment.errors.add(:uuid, I18n.t('error.cant_update'))
+              end
             end
           end
+        rescue ActiveRecord::RecordInvalid => invalid
+          log_debug "GridController#delete_attachment: invalid=#{invalid.inspect}"
+          saved = false
+        rescue Exception => invalid
+          log_error "GridController#delete_attachment", invalid
+          saved = false
         end
-      rescue ActiveRecord::RecordInvalid => invalid
-        log_debug "GridController#delete_attachment: invalid=#{invalid.inspect}"
-        saved = false
-      rescue Exception => invalid
-        log_error "GridController#delete_attachment", invalid
-        saved = false
+        if saved
+          row
+          return
+        end
       end
-      row
     end
+    render :partial => "no_data", :status => 404
   end
 
   # Renders the attributes of a grid through an Ajax request.
@@ -493,40 +505,46 @@ class GridController < ApplicationController
     render :partial => "no_data", :status => 404
   end
 
+  # Renders the import dialog page through an Ajax request.
   def import
     log_debug "GridController#import"
     selectGridAndWorkspace
-    @grid.load if @grid.present?
-    render :partial => "import"
+    if @workspace.present? and @grid.present?
+      @grid.load
+      render :partial => "import"
+      return
+    end
+    render :partial => "no_data", :status => 404
   end
   
+  # Renders the upload dialog page through an Ajax request.
   def upload
     log_debug "GridController#upload"
     saved = false
     selectGridAndWorkspace
-    @grid.load if @grid.present?
-    @upload = Upload.new
-    @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
-    begin
-      @upload.transaction do
-        log_debug "GridController#upload: initialize transaction " +
-                  "params[:data_file]=#{params[:data_file]}"
-        if params[:data_file].blank?
-          @upload.errors.add(:file_name, I18n.t('error.required', :column => I18n.t('field.file')))
-        else
-          @upload.update_attributes(:data_file => params[:data_file])
-          @upload.save!
-          saved = true
+    if @workspace.present? and @grid.present?
+      @grid.load
+      @upload = Upload.new
+      @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
+      begin
+        @upload.transaction do
+          log_debug "GridController#upload: initialize transaction " +
+                    "params[:data_file]=#{params[:data_file]}"
+          if params[:data_file].blank?
+            @upload.errors.add(:file_name, I18n.t('error.required', :column => I18n.t('field.file')))
+          else
+            @upload.update_attributes(:data_file => params[:data_file])
+            @upload.save!
+            saved = true
+          end
         end
+      rescue ActiveRecord::RecordInvalid => invalid
+        log_debug "GridController#upload: invalid=#{invalid.inspect}"
+        saved = false
+      rescue Exception => invalid
+        log_error "GridController#upload", invalid
+        saved = false
       end
-    rescue ActiveRecord::RecordInvalid => invalid
-      log_debug "GridController#upload: invalid=#{invalid.inspect}"
-      saved = false
-    rescue Exception => invalid
-      log_error "GridController#upload", invalid
-      saved = false
-    end
-    respond_to do |format|
       if saved
         log_debug "GridController#upload: saved"
         flash[:notice] = I18n.t('message.uploaded',
@@ -537,9 +555,11 @@ class GridController < ApplicationController
         return
       else
         log_debug "GridController#upload: error, @upload.errors=#{@upload.errors.inspect}"
-        format.html{render :json => @upload.errors, :status => :unprocessable_entity}
+        render :json => @upload.errors, :status => :unprocessable_entity
+        return
       end
     end
+    render :partial => "no_data", :status => 404
   end
 
   # Renders the home page using hard-coded references.
@@ -576,6 +596,7 @@ class GridController < ApplicationController
     render :nothing => true
   end
 
+  # Forces page to be refreshed after an as of date change.
   def refresh
     log_debug "GridController#refresh date=#{params[:home][:session_date]}"
     session[:as_of_date] = Date.strptime(params[:home][:session_date], t('datepicker.decode'))
@@ -596,6 +617,7 @@ private
     end
   end
 
+  # Controls if version of the row exists or not in the database in order to avoid duplicates.
   def multiple_versions_ok?
     if params[:enabled] == "0" and 
         !@grid.row_enabled_version_exists?(@row, params[:mode] == 'new_version')
@@ -608,6 +630,9 @@ private
     true
   end
   
+  # Selects workspace, then grid information based on paramaters.
+  # The workspace is selected based on given uri or uuid.
+  # The grid is selected for the given workspace based on uri or uuid.
   def selectWorkspaceAndGrid
     Entity.log_debug "GridController#selectWorkspaceAndGrid"
     @workspace = nil
@@ -656,6 +681,9 @@ private
     end
   end
 
+  # Selects grid, then workspace information based on paramaters.
+  # The grid is selected based on uuid only.
+  # The workspace is selected based on grid information.
   def selectGridAndWorkspace
     Entity.log_debug "GridController#selectGridAndWorkspace"
     @workspace = nil
@@ -681,6 +709,8 @@ private
     end
   end
 
+  # Selects row information based on paramaters.
+  # Row is selected for a given grid.
   def selectRow
     Entity.log_debug "GridController#selectRow"
     @row = nil
