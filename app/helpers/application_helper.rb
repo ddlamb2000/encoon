@@ -58,8 +58,8 @@ module ApplicationHelper
 
   # Returns a string made of identifiers based on filters, 
   # used to identify a grid and associated filters in a page.
-  def get_filters_uuid(filters)
-    output = ""
+  def filters_uuid(entity, filters)
+    output = entity.uuid + "-"
     filters.collect{|filter| output << filter[:column_uuid]} if filters.present?
     output
   end

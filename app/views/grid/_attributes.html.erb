@@ -5,14 +5,14 @@
       <td class="header"></td>
       <td class="string actions"> 
         <span title="<%= t 'actions.create_column_help' %>" class="mini-button add-button">
-          <a id="new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+          <a id="new-column-grid-<%= filters_uuid(@grid, @filters) %>">
             <%= t 'actions.create_column' %>
           </a>
         </span>
       </td>
     </tr>
     <script>
-      $("#new-column-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+      $("#new-column-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
         var left = $("#document").offset().left+5;
         var width = $("#document").width()-35;
         $("#dialog").

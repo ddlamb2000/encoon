@@ -17,14 +17,6 @@
           <%= t 'actions.export' %>
         <% end %>
       </span>
-      <% if @grid.can_create_row?(@filters) and @grid.uuid == WORKSPACE_UUID %>
-        <span class="button" title="<%= t 'actions.import_help' %>">
-          <a id="import-<%= @row.uuid %>">
-            <%= icon('import') %>
-            <%= t 'actions.import' %>
-          </a>
-        </span>
-      <% end %>
       <script>
         $("#row-<%= @row.uuid %>").hover(
           function (event){
@@ -63,19 +55,6 @@
             $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
             $("#dialog").css({left:left, top:top, width:width}).show(300);
             $("#dialog").load("<%= url_for(attach_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
-          }
-        });
-        $("#import-<%= @row.uuid %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= @row.uuid %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= @row.uuid %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(import_path(:grid => @grid.uuid)) %>");
           }
         });
       </script>

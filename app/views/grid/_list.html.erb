@@ -1,5 +1,5 @@
 <% if (user_signed_in? and @grid.can_create_row?(@filters)) or not_all_rows(@table_row_count) %>
-  <div id="actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>" class="actions float-actions" style="display: none;">
+  <div id="actions-<%= filters_uuid(@grid, @filters) %>" class="actions float-actions" style="display: none;">
     <% if not_last_page(params[:page], @table_row_count) %>
       <%= calc_next_page(params[:page]) %>
     <% end %>
@@ -9,17 +9,17 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.create_help' %>" class="button add-button">
-        <a id="create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+        <a id="create-<%= filters_uuid(@grid, @filters) %>">
           <%= t 'actions.create' %>
         </a>
       </span>
       <script>
-        $("#create-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+        $("#create-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
+            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
             var left = $("#document").offset().left+5;
             var width = $("#document").width()-35;
-            $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
+            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
             $("#dialog").
@@ -28,18 +28,41 @@
               show(300).
               load("<%= url_for(new_path(:grid => @grid.uuid,
                                          :filters => @filters,
-                                         :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                         :container => "#grid-filters_uuid(@grid, @filters)}",
                                          :refresh_list => true)) %>");
           }
         });
       </script>
     <% end %>
     <span title="<%= t 'actions.create_help' %>" class="button search-button">
-      <a id="search-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+      <a id="search-<%= filters_uuid(@grid, @filters) %>">
         <%= t 'actions.search' %>
       </a>
     </span>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
+      <span class="button" title="<%= t 'actions.import_help' %>">
+        <a id="import-<%= @grid.uuid %>">
+          <%= icon('import') %>
+          <%= t 'actions.import' %>
+        </a>
+      </span>
+      <script>
+        $("#import-<%= @grid.uuid %>").click(function (event){
+          if(!$('#dialog').is(':visible')){
+            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
+            var left = $("#document").offset().left+5;
+            var width = $("#document").width()-35;
+            $("#actions-<%= @grid.uuid %>").fadeOut(3);
+            $("#document, #document article").addClass("disabled");
+            $("a").addClass("disabled");
+            $("#dialog").
+              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+              css({left:left, top:top, width:width}).
+              show(300).
+              load("<%= url_for(import_path(:grid => @grid.uuid)) %>");
+          }
+        });
+      </script>
       <span title="<%= t 'actions.export_help' %>" class="button">
         <%= link_to export_list_xml_path(
                       :workspace => @grid.workspace.display_uri,
@@ -52,17 +75,17 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.update_grid_help' %>" class="button edit-button">
-        <a id="update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+        <a id="update-grid-<%= filters_uuid(@grid, @filters) %>">
           <%= t 'actions.update_grid' %>
         </a>
       </span>
       <script>
-        $("#update-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+        $("#update-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").offset().top+15;
+            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
             var left = $("#document").offset().left+5;
             var width = $("#document").width()-35;
-            $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
+            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
             $("#dialog").
@@ -77,17 +100,17 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.column_help' %>" class="button edit-button">
-        <a id="attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>">
+        <a id="attributes-grid-<%= filters_uuid(@grid, @filters) %>">
           <%= t 'actions.columns' %>
         </a>
       </span>
       <script>
-        $("#attributes-grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").click(function (event){
+        $("#attributes-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           if(!$('#dialog').is(':visible')){
             var top = $(this).offset().top+20;
             var left = $("#document").offset().left+5+$("#document").width()/2-250/2;
             var width = 250;
-            $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
+            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
             $("#document, #document article").addClass("disabled");
             $("a").addClass("disabled");
             $("#dialog").
@@ -100,14 +123,14 @@
       </script>
     <% end %>
     <script>
-      $("#grid-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").hover(
+      $("#grid-<%= filters_uuid(@grid, @filters) %>").hover(
         function (event){
-          var left = $(this).width()-$("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").width();
-          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").css({left:left}).fadeIn(300);
+          var left = $(this).width()-$("#actions-<%= filters_uuid(@grid, @filters) %>").width();
+          $("#actions-<%= filters_uuid(@grid, @filters) %>").css({left:left}).fadeIn(300);
           $(this).addClass("highlighted");
         },
         function (event){
-          $("#actions-<%= @grid.uuid + "-" + get_filters_uuid(@filters) %>").fadeOut(3);
+          $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
           $(this).removeClass("highlighted");
         }
       );
@@ -179,7 +202,7 @@
                                                           :grid => @grid.uuid,
                                                           :row => row.uuid,
                                                           :filters => @filters,
-                                                          :container => "#grid-#{@grid.uuid}-#{get_filters_uuid(@filters)}",
+                                                          :container => "#grid-#{filters_uuid(@grid, @filters)}",
                                                           :refresh_list => true)) %>");
                     }
                   });
