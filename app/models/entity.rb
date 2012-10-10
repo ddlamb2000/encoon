@@ -393,8 +393,7 @@ class Entity < ActiveRecord::Base
       logger.debug "[" +
                    "#{session_user_display_name}:" +
                    "#{I18n.l(session_as_of_date)}" +
-                   "(#{session_locale})] " +
-                   message
+                   "(#{session_locale})] #{message}"
     else
       logger.debug message
     end
@@ -407,10 +406,9 @@ class Entity < ActiveRecord::Base
                    "#{session_user_display_name}:" +
                    "#{I18n.l(session_as_of_date)}" +
                    "(#{session_locale})] " +
-                   "## WARNING ## " +
-                   message
+                   "## WARNING ## #{message}"
     else
-      logger.warn "## WARNING ## " + message
+      logger.warn "## WARNING ## #{message}"
     end 
     puts message if out 
   end
@@ -421,10 +419,9 @@ class Entity < ActiveRecord::Base
                    "#{session_user_display_name}:" +
                    "#{I18n.l(session_as_of_date)}" +
                    "(#{session_locale})] " +
-                   "## SECURITY ## " +
-                   message
+                   "## SECURITY ## #{message}"
     else
-      logger.warn "## SECURITY ## " + message
+      logger.warn "## SECURITY ## #{message}"
     end 
   end
 
@@ -434,8 +431,7 @@ class Entity < ActiveRecord::Base
                    "#{session_user_display_name}:" +
                    "#{I18n.l(session_as_of_date)}" +
                    "(#{session_locale})] " +
-                   "## ERROR ## " +
-                   message +
+                   "## ERROR ## #{message}" +
                    (exception.present? ? " - " + exception.inspect : "")
       if exception.present?
         for trace in exception.backtrace
@@ -443,15 +439,14 @@ class Entity < ActiveRecord::Base
                        "#{session_user_display_name}:" +
                        "#{I18n.l(session_as_of_date)}" +
                        "(#{session_locale})] " +
-                       "## EXCEPTION ## " +
-                       trace
+                       "## EXCEPTION ## #{trace}"
         end
       end                   
     else
-      logger.error "## ERROR ## " + message + (exception.present? ? " - " + exception.inspect : "")
+      logger.error "## ERROR ## #{message}" + (exception.present? ? " - " + exception.inspect : "")
       if exception.present?
         for trace in exception.backtrace
-          logger.error "## EXCEPTION ## " + trace
+          logger.error "## EXCEPTION ## #{trace}"
         end
       end                   
     end 
