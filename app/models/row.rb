@@ -94,17 +94,6 @@ class Row < Entity
     ""
   end
 
-  def self.all_locales(collection, uuid, version)
-    collection.find(:all, 
-                    :select => self.loc_select_columns,
-                    :conditions => 
-                           ["row_locs.uuid = :uuid " +
-                            "AND row_locs.version = :version " +
-                            "AND row_locs.locale = row_locs.base_locale", 
-                           {:uuid => uuid, :version => version}], 
-                    :order => "row_locs.locale")
-  end
-
   def new_loc
     loc = row_locs.new
     loc.uuid = self.uuid

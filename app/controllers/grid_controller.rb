@@ -85,7 +85,7 @@ class GridController < ApplicationController
       selectRow
       if @row.present?
         @versions = @grid.row_all_versions(@row.uuid)
-        @locales = @grid.row_all_locales(@row.uuid, @row.version)
+        @locales = @grid.row_locales(@row.uuid, @row.version, false)
         @audits = @row.all_audits
         session[:show_details] = true
         render :partial => "details"

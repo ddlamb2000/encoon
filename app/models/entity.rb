@@ -134,16 +134,16 @@ class Entity < ActiveRecord::Base
 
   # Indicates if the given uuid is a valid uuid
   def self.uuid?(uuid)
-    uuid.present? and uuid =~ /\A(urn:uuid:)?[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/
+    uuid.present? and uuid =~ /[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/
   end
 
-  def self.all_locales(collection, uuid, version)
-    log_debug "Entity#all_locales(uuid=#{uuid}), version=#{version.to_s}"
+  def self.locales(collection, uuid, version)
+    log_debug "Entity#locales(uuid=#{uuid}), version=#{version.to_s}"
     collection.find(:all, 
                     :select => self.loc_select_columns,
                     :conditions => 
-                           ["version = :version AND locale = base_locale", 
-                           {:version => version}], 
+                           ["uuid = :uuid AND version = :version",
+                           {:uuid => uuid, :version => version}],
                     :order => "locale")
   end
 
@@ -216,6 +216,9 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # Creates local row for all the installed languages
+  # that is not created yet for the given collection.
+  # This insures on row exists for any installed language.
   def create_missing_loc_base!(collection)
     log_debug "Entity#create_missing_loc!"
     base_locs = []
@@ -231,7 +234,7 @@ class Entity < ActiveRecord::Base
     if base_loc.present?
       LANGUAGES.each do |lang, locale|
         if (base_locs.find {|value| locale.to_s == value}).nil?
-          loc = new_loc        
+          loc = new_loc
           base_loc.copy_attributes(loc)
           loc.locale = locale.to_s
           loc.base_locale = base_loc.base_locale
@@ -322,9 +325,7 @@ class Entity < ActiveRecord::Base
     Thread.current[:session_locale]
   end
 
-  def self.workspace_security_clause(synonym,
-                                     include_public=false,
-                                     include_default=true)
+  def self.workspace_security_clause(synonym, include_public=false, include_default=true)
     "(" +
     " EXISTS (" +
     "  SELECT 1 FROM workspace_sharings " +

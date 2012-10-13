@@ -66,18 +66,6 @@ class Column < Entity
     end
   end
   
-  def self.all_locales(collection, uuid, version)
-    collection.find(:all, 
-                    :select => self.loc_select_columns,
-                    :conditions => 
-                           ["column_locs.uuid = :uuid " +
-                            "AND column_locs.version = :version " +
-                            "AND column_locs.locale = column_locs.base_locale", 
-                           {:uuid => uuid, 
-                            :version => version}], 
-                    :order => "column_locs.locale")
-  end
-
   def new_loc
     loc = column_locs.new
     loc.uuid = self.uuid
@@ -140,12 +128,12 @@ class Column < Entity
 
   def import_loc!(loc)
     log_debug "Column#import_loc!(loc=#{loc})"
-    import_loc_base!(Column.all_locales(column_locs, self.uuid, self.version), loc)
+    import_loc_base!(Column.locales(column_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
     log_debug "Column#create_missing_loc!"
-    create_missing_loc_base!(Column.all_locales(column_locs, self.uuid, self.version))
+    create_missing_loc_base!(Column.locales(column_locs, self.uuid, self.version))
   end
 
   def column_mapping_select_entity_by_uuid_version(uuid, version)

@@ -18,10 +18,10 @@ class Grid < Entity
   PHASE_CREATE = 'create'
   PHASE_NEW_VERSION = 'new_version'
   PHASE_UPDATE = 'update'
-  
+
   DISPLAY_ROWS_LIMIT = 10
   DISPLAY_ROWS_LIMIT_FULL = 50
-  
+
   belongs_to :workspace, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :grid_locs, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :columns, :foreign_key => "grid_uuid", :primary_key => "uuid"
@@ -446,10 +446,10 @@ class Grid < Entity
                        {:uuid => uuid, :grid_uuid => self.uuid}])
   end
 
-  def row_all_locales(uuid, version)
-    log_debug "Grid#row_all_locales(#{uuid}, #{version.to_s}) [#{to_s}]"
+  def row_locales(uuid, version, all=true)
+    log_debug "Grid#row_locales(#{uuid}, #{version.to_s}) [#{to_s}]"
     if not @can_select_data
-      log_security_warning "Grid#row_all_locales Can't select data"
+      log_security_warning "Grid#row_locales Can't select data"
       return []
     end
     RowLoc.find_by_sql(["SELECT #{row_loc_select_columns}" + 
@@ -459,7 +459,7 @@ class Grid < Entity
                         " AND " + Grid::grid_security_clause("grids") + 
                         " AND row_locs.uuid = :uuid" +
                         " AND row_locs.version = :version" +
-                        " AND row_locs.base_locale = row_locs.locale" +
+                        (all ? "" : " AND row_locs.base_locale = row_locs.locale") +
                         " ORDER BY row_locs.locale", 
                          {:uuid => uuid, :version => version}])
   end
@@ -611,7 +611,7 @@ class Grid < Entity
       xml.workspace_uuid(self.workspace_uuid, :title => self.workspace_name)
       xml.has_name(self.has_name) if self.has_name
       xml.has_description(self.has_description) if self.has_description
-      Grid.all_locales(grid_locs, self.uuid, self.version).each do |loc|
+      Grid.locales(grid_locs, self.uuid, self.version).each do |loc|
         log_debug "Grid#export locale #{loc.base_locale}"
         xml.locale do
           xml.base_locale(loc.base_locale)
@@ -672,12 +672,12 @@ class Grid < Entity
 
   def import_loc!(loc)
     log_debug "Grid#import_loc!"
-    import_loc_base!(Grid.all_locales(grid_locs, self.uuid, self.version), loc)
+    import_loc_base!(Grid.locales(grid_locs, self.uuid, self.version), loc)
   end
 
   def create_missing_loc!
     log_debug "Grid#create_missing_loc!"
-    create_missing_loc_base!(Grid.all_locales(grid_locs, self.uuid, self.version))
+    create_missing_loc_base!(Grid.locales(grid_locs, self.uuid, self.version))
   end
 
   # Exports row in .xml format.
@@ -693,7 +693,7 @@ class Grid < Entity
         column_all.each do |column|
           xml.data(row.read_value(column), :uuid => column.uuid, :name => column.name)
         end
-        row_all_locales(row.uuid, row.version).each do |loc|
+        row_locales(row.uuid, row.version).each do |loc|
           xml.locale do
             xml.base_locale(loc.base_locale)
             xml.locale(loc.locale)
@@ -1112,7 +1112,8 @@ private
       @db_loc_table = "row_locs"
     end
     @has_mapping = grid_mapping.present?
-    @has_translation = @db_loc_table.present? and (self.has_name or self.has_description)
+    @has_translation = (@db_loc_table.present? and (self.has_name or self.has_description))
+    log_debug "Grid#load_mapping self.has_name=#{self.has_name}, self.has_description=#{self.has_description}, @has_mapping=#{@has_mapping}, @has_translation=#{@has_translation} [#{to_s}]"
   end
 
   # Loads in memory information about columns.
