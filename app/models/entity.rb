@@ -225,7 +225,7 @@ class Entity < ActiveRecord::Base
     base_loc = nil
     foundI18n = false
     collection.each do |loc|
-      base_locs << loc.base_locale
+      base_locs << loc.locale
       if not foundI18n
         base_loc = loc
         foundI18n = (loc.base_locale == I18n.locale.to_s)
@@ -234,12 +234,14 @@ class Entity < ActiveRecord::Base
     if base_loc.present?
       LANGUAGES.each do |lang, locale|
         if (base_locs.find {|value| locale.to_s == value}).nil?
+          log_debug "Entity#create_missing_loc! new, locale=#{locale.to_s}"
           loc = new_loc
           base_loc.copy_attributes(loc)
           loc.locale = locale.to_s
           loc.base_locale = base_loc.base_locale
           loc.save!
-          log_debug "Entity#create_missing_loc! new, locale=#{locale.to_s}"
+        else
+          log_debug "Entity#create_missing! skip"
         end
       end
     end

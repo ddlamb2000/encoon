@@ -189,6 +189,9 @@ class Row < Entity
     end
   end
 
+  # Creates local row for all the installed languages
+  # that is not created yet for the given collection.
+  # This insures on row exists for any installed language.
   def create_missing_loc!
     log_debug "Row#create_missing_loc!"
     if grid.nil?
@@ -207,8 +210,8 @@ class Row < Entity
       if base_loc.present?
         log_debug "Row#create_missing! base_locs=#{base_locs.inspect}"
         LANGUAGES.each do |lang, locale|
-          log_debug "Row#create_missing! locale=#{locale.to_s}"
           if (base_locs.find {|value| locale.to_s == value}).nil?
+            log_debug "Row#create_missing! locale=#{locale.to_s}"
             loc = new_loc
             base_loc.copy_attributes(loc)
             loc.locale = locale.to_s

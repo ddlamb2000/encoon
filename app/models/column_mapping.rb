@@ -65,5 +65,6 @@ class ColumnMapping < Entity
     ""
   end
 
+  # Creates local row for all the installed languages: no locale for this class.
   def create_missing_loc! ; end
 end

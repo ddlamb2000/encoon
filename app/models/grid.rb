@@ -675,6 +675,9 @@ class Grid < Entity
     import_loc_base!(Grid.locales(grid_locs, self.uuid, self.version), loc)
   end
 
+  # Creates local row for all the installed languages
+  # that is not created yet for the given collection.
+  # This insures on row exists for any installed language.
   def create_missing_loc!
     log_debug "Grid#create_missing_loc!"
     create_missing_loc_base!(Grid.locales(grid_locs, self.uuid, self.version))

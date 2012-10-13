@@ -142,6 +142,9 @@ class Workspace < Entity
     import_loc_base!(Workspace.locales(workspace_locs, self.uuid, self.version), loc)
   end
 
+  # Creates local row for all the installed languages
+  # that is not created yet for the given collection.
+  # This insures on row exists for any installed language.
   def create_missing_loc!
     log_debug "Workspace#create_missing_loc!"
     create_missing_loc_base!(Workspace.locales(workspace_locs, self.uuid, self.version))
