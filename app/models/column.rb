@@ -105,7 +105,7 @@ class Column < Entity
     else
       column = grid.column_select_entity_by_uuid_version(self.uuid, self.version)
       if column.present?
-        if self.updated_at > column.updated_at 
+        if self.revision > column.revision 
           log_debug "Column#import! update"
           copy_attributes(column)
           column.update_user_uuid = Entity.session_user_uuid

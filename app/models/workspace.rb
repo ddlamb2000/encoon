@@ -114,7 +114,7 @@ class Workspace < Entity
     log_debug "Workspace#import!"
     workspace = Workspace.select_entity_by_uuid_version(Workspace, self.uuid, self.version)
     if workspace.present?
-      if self.updated_at > workspace.updated_at 
+      if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
         copy_attributes(workspace)
         workspace.update_user_uuid = Entity.session_user_uuid

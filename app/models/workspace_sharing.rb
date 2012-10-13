@@ -50,7 +50,7 @@ class WorkspaceSharing < Entity
     log_debug "WorkspaceSharing#import!"
     workspace = WorkspaceSharing.select_entity_by_uuid_version(WorkspaceSharing, self.uuid, self.version)
     if workspace.present?
-      if self.updated_at > workspace.updated_at 
+      if self.revision > workspace.revision 
         log_debug "WorkspaceSharing#import! update"
         copy_attributes(workspace)
         workspace.update_user_uuid = Entity.session_user_uuid

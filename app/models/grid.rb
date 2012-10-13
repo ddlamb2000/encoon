@@ -604,7 +604,7 @@ class Grid < Entity
     log_debug "Grid#import!"
     grid = Grid.select_entity_by_uuid_version(Grid, self.uuid, self.version)
     if grid.present?
-      if self.updated_at > grid.updated_at 
+      if self.revision > grid.revision 
         log_debug "Grid#import! update"
         copy_attributes(grid)
         grid.update_user_uuid = Entity.session_user_uuid

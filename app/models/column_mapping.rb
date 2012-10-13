@@ -42,7 +42,7 @@ class ColumnMapping < Entity
     else
       mapping = column.column_mapping_select_entity_by_uuid_version(self.uuid, self.version)
       if mapping.present?
-        if self.updated_at > mapping.updated_at 
+        if self.revision > mapping.revision 
           log_debug "ColumnMapping#import! update"
           copy_attributes(mapping)
           mapping.update_user_uuid = Entity.session_user_uuid
