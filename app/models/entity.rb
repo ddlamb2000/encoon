@@ -187,6 +187,7 @@ class Entity < ActiveRecord::Base
       when 'begin' then self.begin = Date::parse(xml_value)
       when 'end' then self.end = Date::parse(xml_value)
       when 'enabled' then self.enabled = ['true','t','1'].include?(xml_value)
+      when 'updated_at' then self.end = DateTime::parse(xml_value)
     end
   end
 
