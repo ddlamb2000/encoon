@@ -104,8 +104,7 @@ class Grid < Entity
                          " AND grid_locs.version = grids.version " +
                          " AND " + locale_clause("grid_locs") + 
                          " AND " + grid_security_clause("grids"), 
-                        {:uuid => uuid, 
-                         :version => version}]) 
+                        {:uuid => uuid, :version => version}]) 
   end
   
   # Returns the name of the grid used as a reference
@@ -130,14 +129,14 @@ class Grid < Entity
     row = row_select_entity_by_uuid(row_uuid)
     row.present? ? row_title(row) : ""
   end
-  
+
   # Selects the description of one reference row attached to one grid
   def select_reference_row_description(row_uuid)
     log_debug "Grid#select_reference_row_description(#{row_uuid}) [#{to_s}]"
     row = row_select_entity_by_uuid(row_uuid)
     row.present? ? row.description : ""
   end
-  
+
   def workspace_name
     workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
     workspace.present? ? workspace.name : ""
@@ -159,19 +158,20 @@ class Grid < Entity
   def filter_column_name
     attribute_present?(:filter_column_name) ? read_attribute(:filter_column_name) : nil
   end
-  
+
   # Builds a filter based on the given row used to select dependent tables.
   def get_filters_on_row(row, row_name)
     self.filter_column_uuid.nil? ? [] : [{:column_uuid => self.filter_column_uuid,
                                           :row_uuid => row.uuid,
                                           :row_name => row_name}]
   end
-  
+
   # Selects the grids attached to one row via one or more columns.
   def self.select_referenced_grids(uuid)
     log_debug "Grid#select_referenced_grids(uuid=#{uuid}) [#{to_s}]"
     Grid.find_by_sql(["SELECT grids.id," + 
                       " grids.uuid," + 
+                      " grids.uri," + 
                       " grid_locs.name," + 
                       " grid_locs.description," + 
                       " grids.version," + 
@@ -202,7 +202,7 @@ class Grid < Entity
                        {:kind => COLUMN_TYPE_REFERENCE, 
                         :uuid => uuid}])
   end
-  
+
   def column_select_by_uuid(uuid)
     self.column_all.each{|column| return column if column.uuid == uuid}
   end
@@ -220,7 +220,7 @@ class Grid < Entity
                        "AND " + locale_clause("column_locs"), 
                       {:uuid => uuid}]) 
   end
-  
+
   def column_select_entity_by_uuid_version(uuid, version)
     log_debug "Grid#column_select_entity_by_uuid_version(#{uuid}, #{version}) [#{to_s}]"
     columns.find(:first, 
@@ -231,10 +231,9 @@ class Grid < Entity
                        "AND columns.version = :version " + 
                        "AND column_locs.version = columns.version " +
                        "AND " + locale_clause("column_locs"), 
-                      {:uuid => uuid, 
-                       :version => version}]) 
+                      {:uuid => uuid, :version => version}]) 
   end
-  
+
   # Selects data based on id
   def column_select_entity_by_id(id)
     log_debug "Grid#column_select_entity_by_id(id=#{id}) [#{to_s}]"
@@ -247,7 +246,7 @@ class Grid < Entity
                         "AND " + locale_clause("column_locs"), 
                        {:id => id}]) 
   end
-  
+
   def column_all_versions(uuid)
     log_debug "Grid#column_all_versions(uuid=#{uuid}) [#{to_s}]"
     columns.find(:all, 
@@ -260,7 +259,7 @@ class Grid < Entity
                         {:uuid => uuid}], 
                  :order => "columns.begin")
   end
-  
+
   def row_count(filters=nil)
     row_all(filters, nil, nil, false, true)
   end
@@ -324,7 +323,7 @@ class Grid < Entity
   end
 
   # Selects data based on uuid
-  def row_select_entity_by_uuid(uuid)
+  def row_select_entity_by_uuid(uuid, uri=nil)
     log_debug "Grid#row_select_entity_by_uuid(#{uuid}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_select_entity_by_uuid Can't select data"
@@ -336,7 +335,7 @@ class Grid < Entity
           " WHERE grids.uuid = #{quote(self.uuid)}" +
           " AND " + as_of_date_clause("grids") +
           " AND " + Grid::grid_security_clause("grids") + 
-          " AND rows.uuid = #{quote(uuid)}" +
+          (uri.nil? ? " AND rows.uuid = #{quote(uuid)}" : " AND rows.uri = #{quote(uri)}") +
           " AND " + as_of_date_clause("rows") +
           (@has_mapping ? "" : " AND rows.grid_uuid = #{quote(self.uuid)}") +
           (@has_translation ? 
@@ -353,38 +352,12 @@ class Grid < Entity
                 ", data grid='#{name}', sql=#{sql}"
       nil
   end
-  
+
   # Selects data based on uri.
   def row_select_entity_by_uri(uri)
-    log_debug "Grid#row_select_entity_by_uri(uri=#{uri}) [#{to_s}]"
-    if not @can_select_data
-      log_security_warning "Grid#row_select_entity_by_uri Can't select data"
-      return nil
-    end
-    sql = "SELECT #{row_all_select_columns}" + 
-          " FROM grids grids, #{@db_table} rows" + 
-          (@has_translation ? ", #{@db_loc_table} row_locs" : "") +
-          " WHERE grids.uuid = #{quote(self.uuid)}" +
-          " AND " + as_of_date_clause("grids") +
-          " AND " + Grid::grid_security_clause("grids") + 
-          " AND rows.uri = #{quote(uri)}" +
-          " AND " + as_of_date_clause("rows") +
-          (@has_mapping ? "" : " AND rows.grid_uuid = #{quote(self.uuid)}") +
-          (@has_translation ? 
-              " AND rows.uuid = row_locs.uuid" +
-              " AND rows.version = row_locs.version" +
-              " AND " + locale_clause("row_locs") : "") +
-          ((self.uuid == WORKSPACE_UUID) ? 
-              " AND " + Grid::workspace_security_clause("rows") : "") + 
-          ((self.uuid == GRID_UUID) ? 
-              " AND " + Grid::grid_security_clause("rows") : "") 
-    Row.find_by_sql([sql])[0]
-    rescue ActiveRecord::StatementInvalid => exception
-      log_error "Grid#row_select_entity_by_uri #{exception.to_s}" +
-                ", data grid='#{name}', sql=#{sql}"
-      nil
+    row_select_entity_by_uuid(nil, uri)
   end
-  
+
   def row_select_entity_by_uuid_version(uuid, version)
     load if not loaded
     log_debug "Grid#row_select_entity_by_uuid_version(#{uuid}, #{version}) [#{to_s}]"
@@ -417,7 +390,7 @@ class Grid < Entity
                 ", data grid='#{name}', sql=#{sql}"
       nil
   end
-  
+
   # Selects data based on id
   def row_select_entity_by_id(id)
     log_debug "Grid#row_select_entity_by_id(#{id}) [#{to_s}]"
@@ -446,7 +419,7 @@ class Grid < Entity
                 ", data grid='#{name}'"
       nil
   end
-  
+
   def row_all_versions(uuid)
     log_debug "Grid#row_all_versions(#{uuid}) [#{to_s}]"
     if not @can_select_data
@@ -470,10 +443,9 @@ class Grid < Entity
                      ((self.uuid == GRID_UUID) ? 
                          " AND " + Grid::grid_security_clause("rows") : "") + 
                      " ORDER BY rows.begin", 
-                       {:uuid => uuid,
-                        :grid_uuid => self.uuid}])
+                       {:uuid => uuid, :grid_uuid => self.uuid}])
   end
-  
+
   def row_all_locales(uuid, version)
     log_debug "Grid#row_all_locales(#{uuid}, #{version.to_s}) [#{to_s}]"
     if not @can_select_data
@@ -489,8 +461,7 @@ class Grid < Entity
                         " AND row_locs.version = :version" +
                         " AND row_locs.base_locale = row_locs.locale" +
                         " ORDER BY row_locs.locale", 
-                         {:uuid => uuid,
-                          :version => version}])
+                         {:uuid => uuid, :version => version}])
   end
 
   def row_begin_duplicate_exists?(row, begin_date)
@@ -549,7 +520,7 @@ class Grid < Entity
     return summary.length > 0 ? summary : "[-]" if full 
     I18n.t('general.undefined')
   end
-  
+
   def row_loc_select_entity_by_uuid(uuid, version=0)
     log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, " +
               "version=#{version}) [#{to_s}]"
@@ -566,8 +537,7 @@ class Grid < Entity
                         (version > 0 ? 
                           " AND row_locs.version = :version" : 
                           ""), 
-                          {:version => version,
-                           :uuid => uuid}])
+                          {:version => version, :uuid => uuid}])
   end
 
   def row_select_next_version(row)
@@ -633,7 +603,7 @@ class Grid < Entity
     loc.version = self.version
     loc
   end
-  
+
   def export(xml)
     log_debug "Grid#export [#{to_s}]"
     xml.grid(:title => self.name) do
@@ -780,7 +750,7 @@ class Grid < Entity
       end
     end
   end
-  
+
   # Indicates if the user can create a row into the grid.
   # Authorization depends on the workspace security settings
   # the grid is attached to, but also to the workspace security settings
@@ -860,7 +830,7 @@ class Grid < Entity
     row.make_audit(Audit::CREATE)
     true
   end
-  
+
   def create_row_loc!(row, row_loc, filters=nil)
     log_debug "Grid#create_row_loc!(row_loc=#{row_loc.inspect})"
     if not can_create_row?(filters)
@@ -878,7 +848,7 @@ class Grid < Entity
                                 self.class.sequence_name)
     true
   end
-  
+
   def update_row!(row, audit=Audit::UPDATE)
     log_debug "Grid#update_row!(row=#{row.inspect})"
     if not can_update_row?(row)
@@ -897,7 +867,7 @@ class Grid < Entity
     row.make_audit(audit)
     true
   end
-  
+
   def update_row_loc!(row, row_loc)
     log_debug "Grid#update_row_loc!(row_loc=#{row_loc.inspect})"
     if not can_update_row?(row)
@@ -912,7 +882,7 @@ class Grid < Entity
     connection.update(sql, "#{self.class.name} Update")
     true
   end
-  
+
   def row_update_dates!(uuid)
     log_debug "Grid#row_update_dates!(uuid=#{uuid}"
     previous_item = nil
@@ -994,7 +964,7 @@ class Grid < Entity
     end
     validated
   end
-  
+
 private
 
   def quote(sql) ; connection.quote(sql) ; end
@@ -1008,9 +978,9 @@ private
     "grid_locs.base_locale, grid_locs.locale, " +
     "grid_locs.name, grid_locs.description"
   end
-  
+
   def column_all_select_columns
-    "columns.id, columns.uuid, columns.version, columns.lock_version, " +
+    "columns.id, columns.uuid, columns.uri, columns.version, columns.lock_version, " +
     "columns.begin, columns.end, columns.enabled, " +
     "columns.display, columns.kind, " + 
     "columns.grid_reference_uuid, " + 
@@ -1020,16 +990,16 @@ private
     "column_locs.base_locale, column_locs.locale, " +
     "column_locs.name, column_locs.description"
   end
-  
+
   def column_all_select_columns_mapping
     column_all_select_columns + ", column_mappings.db_column"
   end
-  
+
   def row_all_select_columns
     columns = ""
     column_all.each{|column| columns << ", rows." + column.physical_column}
     "#{quote(self.uuid)} grid_uuid" +
-    ", rows.id, rows.uuid, rows.version, rows.lock_version" + 
+    ", rows.id, rows.uuid, rows.uri, rows.version, rows.lock_version" + 
     ", rows.begin, rows.end, rows.enabled" + 
     ", rows.created_at, rows.updated_at" +
     ", rows.create_user_uuid, rows.update_user_uuid" +
@@ -1039,59 +1009,60 @@ private
       "") + 
     columns
   end
-  
+
   def row_loc_select_columns
     "row_locs.id, row_locs.uuid, " +
     "row_locs.version, row_locs.lock_version, " +
     "row_locs.base_locale, row_locs.locale, " + 
     "row_locs.name, row_locs.description" 
   end
-  
+
   def row_all_insert_columns
     columns = ""
     column_all.each{|column| columns << ", " + column.physical_column}
-    "uuid, version, lock_version, begin, end, enabled" + 
+    "uuid, uri, version, lock_version, begin, end, enabled" + 
     (@has_mapping ? "" : ", grid_uuid") + 
     ", created_at, updated_at, create_user_uuid, update_user_uuid" + 
     columns
   end
-  
+
   def row_all_insert_loc_columns
     "uuid, version, lock_version, locale, base_locale, name, description" 
   end
-  
+
   def row_all_insert_values(row)
     columns = ""
     column_all.each{|column| columns << ", #{quote(row.read_value(column))}"}
-    "#{quote(row.uuid)}, #{quote(row.version)}, #{quote(row.lock_version)}" +
+    "#{quote(row.uuid)}, #{quote(row.uri)}, #{quote(row.version)}, #{quote(row.lock_version)}" +
     ", #{quote(row.begin)}, #{quote(row.end)}, #{quote(row.enabled)}" +
     (@has_mapping ? "" : ", #{quote(uuid)}") + 
     ", #{quote(row.created_at)}, #{quote(row.updated_at)}" +
     ", #{quote(row.create_user_uuid)}, #{quote(row.update_user_uuid)}" +
     columns
   end
-  
+
   def row_all_insert_loc_values(row)
     "#{quote(row.uuid)}" +
     ", #{quote(row.version)}, #{quote(row.lock_version)}" +
     ", #{quote(row.locale)}, #{quote(row.base_locale)}" +
     ", #{quote(row.name)}, #{quote(row.description)}"
   end
-  
+
   def row_all_update_values(row)
     columns = ""
     column_all.each{|column| columns << ", #{column.physical_column}=#{quote(row.read_value(column))}"}
     "lock_version=#{quote(row.lock_version+1)}" +
+    ", uri=#{quote(row.uri)}" +
     ", begin=#{quote(row.begin)}, end=#{quote(row.end)}, enabled=#{quote(row.enabled)}" +
     ", updated_at=#{quote(row.updated_at)}, update_user_uuid=#{quote(row.update_user_uuid)}" +
     columns
   end
-  
+
   def row_loc_update_values(row)
     "lock_version=#{quote(row.lock_version+1)}, base_locale=#{quote(row.base_locale)}" +
     ", name=#{quote(row.name)}, description=#{quote(row.description)}"
   end
-  
+
   def load_workspace
     log_debug "Grid#load_workspace [#{to_s}]"
     self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
@@ -1126,7 +1097,7 @@ private
               "@can_create_data=#{@can_create_data}," +
               "@can_update_data=#{@can_update_data} [#{to_s}]"
   end
-  
+
   # Loads in memory information about database mapping.
   def load_mapping
     log_debug "Grid#load_mapping [#{to_s}]"
@@ -1204,7 +1175,7 @@ private
     end
     @filtered_columns.sort!{|a, b| a.display <=> b.display}
   end
-  
+
   def get_security_workspace(uuid)
     log_debug "Grid#get_security_workspace [#{to_s}]"
     sql = "SELECT workspace_sharings.role_uuid" + 

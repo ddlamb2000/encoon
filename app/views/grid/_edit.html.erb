@@ -27,6 +27,14 @@
           "#{column.name}" %>
       <%= edit_entity(@row, column, description) %>
     <% end %>
+    <tr id="header-name">
+      <td class="header">
+        <%= label_tag :uri, t('field.uri') %>
+      </td>
+      <td class="string">
+        <%= text_field_tag :uri, @row.uri, :size => "70x1" %>
+      </td>
+    </tr>
     <% if @grid.has_translation and @grid.has_description %>
       <tr>
         <td class="header">

@@ -85,6 +85,7 @@ fr:
     attachments:  "Documents"
     data:         "Données"
     file:         "Fichier"
+    uri:          "Alias"
   general:
     home:         "Accueil"
     undefined:    "(non défini)"

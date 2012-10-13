@@ -94,13 +94,6 @@ class Row < Entity
     ""
   end
 
-  def self.loc_select_columns
-    "row_locs.id, row_locs.uuid, " + 
-    "row_locs.version, row_locs.lock_version, " + 
-    "row_locs.base_locale, row_locs.locale, " +
-    "row_locs.name, row_locs.description"
-  end
-  
   def self.all_locales(collection, uuid, version)
     collection.find(:all, 
                     :select => self.loc_select_columns,
@@ -260,6 +253,15 @@ class Row < Entity
         end
       end
     end
+  end
+  
+private
+
+  def self.loc_select_columns
+    "row_locs.id, row_locs.uuid, " + 
+    "row_locs.version, row_locs.lock_version, " + 
+    "row_locs.base_locale, row_locs.locale, " +
+    "row_locs.name, row_locs.description"
   end
 end
 

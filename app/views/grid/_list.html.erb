@@ -28,7 +28,7 @@
               show(300).
               load("<%= url_for(new_path(:grid => @grid.uuid,
                                          :filters => @filters,
-                                         :container => "#grid-filters_uuid(@grid, @filters)}",
+                                         :container => "#grid-" + filters_uuid(@grid, @filters),
                                          :refresh_list => true)) %>");
           }
         });

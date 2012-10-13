@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121003121846) do
+ActiveRecord::Schema.define(:version => 20121013061004) do
 
   create_table "attachments", :force => true do |t|
     t.string   "uuid",                  :limit => 36
@@ -65,9 +65,11 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.string   "db_column"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uri"
   end
 
   add_index "column_mappings", ["column_uuid"], :name => "index_column_mappings_on_column_uuid"
+  add_index "column_mappings", ["uri"], :name => "index_column_mappings_on_uri"
 
   create_table "columns", :force => true do |t|
     t.date     "begin"
@@ -87,9 +89,11 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.boolean  "enabled"
     t.boolean  "required"
     t.string   "regex"
+    t.string   "uri"
   end
 
   add_index "columns", ["grid_uuid"], :name => "index_columns_on_grid_uuid"
+  add_index "columns", ["uri"], :name => "index_columns_on_uri"
   add_index "columns", ["uuid", "begin", "end"], :name => "index_columns_on_uuid_and_begin_and_end"
   add_index "columns", ["uuid"], :name => "index_columns_on_uuid"
 
@@ -119,9 +123,11 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.string   "db_loc_table"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uri"
   end
 
   add_index "grid_mappings", ["grid_uuid"], :name => "index_grid_mappings_on_grid_uuid"
+  add_index "grid_mappings", ["uri"], :name => "index_grid_mappings_on_uri"
 
   create_table "grids", :force => true do |t|
     t.date     "begin"
@@ -168,8 +174,10 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.string   "update_user_uuid", :limit => 36
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "uri"
   end
 
+  add_index "roles", ["uri"], :name => "index_roles_on_uri"
   add_index "roles", ["uuid", "begin", "end"], :name => "index_roles_on_uuid_and_begin_and_end"
   add_index "roles", ["uuid"], :name => "index_roles_on_uuid"
 
@@ -297,9 +305,11 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.float    "float18"
     t.float    "float19"
     t.float    "float20"
+    t.string   "uri"
   end
 
   add_index "rows", ["grid_uuid"], :name => "index_rows_on_grid_uuid"
+  add_index "rows", ["uri"], :name => "index_rows_on_uri"
   add_index "rows", ["uuid", "begin", "end"], :name => "index_rows_on_uuid_and_begin_and_end"
   add_index "rows", ["uuid"], :name => "index_rows_on_uuid"
 
@@ -330,7 +340,10 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.integer  "updated"
     t.integer  "skipped"
     t.integer  "elapsed"
+    t.string   "uri"
   end
+
+  add_index "uploads", ["uri"], :name => "index_uploads_on_uri"
 
   create_table "users", :force => true do |t|
     t.string   "identifier"
@@ -363,6 +376,7 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.integer  "failed_attempts",                      :default => 0
     t.string   "unlock_token"
     t.datetime "locked_at"
+    t.string   "uri"
   end
 
   add_index "users", ["confirmation_token"], :name => "index_users_on_confirmation_token", :unique => true
@@ -370,6 +384,7 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
   add_index "users", ["identifier"], :name => "index_users_on_identifier", :unique => true
   add_index "users", ["reset_password_token"], :name => "index_users_on_reset_password_token", :unique => true
   add_index "users", ["unlock_token"], :name => "index_users_on_unlock_token", :unique => true
+  add_index "users", ["uri"], :name => "index_users_on_uri"
   add_index "users", ["uuid", "begin", "end"], :name => "index_users_on_uuid_and_begin_and_end"
   add_index "users", ["uuid"], :name => "index_users_on_uuid"
 
@@ -399,8 +414,10 @@ ActiveRecord::Schema.define(:version => 20121003121846) do
     t.string   "update_user_uuid", :limit => 36
     t.datetime "created_at",                                    :null => false
     t.datetime "updated_at",                                    :null => false
+    t.string   "uri"
   end
 
+  add_index "workspace_sharings", ["uri"], :name => "index_workspace_sharings_on_uri"
   add_index "workspace_sharings", ["uuid", "begin", "end"], :name => "index_workspace_sharings_on_uuid_and_begin_and_end"
   add_index "workspace_sharings", ["workspace_uuid", "user_uuid"], :name => "index_workspace_sharings_on_workspace_uuid_and_user_uuid"
 

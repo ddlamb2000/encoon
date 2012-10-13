@@ -21,9 +21,9 @@ class GridController < ApplicationController
                                                :attach, :save_attachment, :delete_attachment,
                                                :import, :upload]
 
-  # Message used to aknowledge AJAX requests in dialogs. 
+  # Message used to aknowledge requests in dialogs that use an iframe. 
   OK_MSG = "<div id='ok'>OK</div>"
-  
+
   # Shows a row of data as a page or as an .xml file.
   # Workspace, grid and row should be provided as parameters according to routes.
   def show
@@ -94,7 +94,7 @@ class GridController < ApplicationController
     end
     render :partial => "no_data", :status => 404
   end
-  
+
   # Renders the content of a list for a given grid through an Ajax request.
   def list
     log_debug "GridController#list"
@@ -112,7 +112,7 @@ class GridController < ApplicationController
     end
     render :partial => "no_data", :status => 404
   end
-  
+
   # Renders the attachments of an article through an Ajax request.
   def attachments
     log_debug "GridController#attachments"
@@ -238,7 +238,7 @@ class GridController < ApplicationController
     end
     render :partial => "no_data", :status => 404
   end
-  
+
   # Updates a given row of data through an Ajax POST request.
   def update
     log_debug "GridController#update"
@@ -401,7 +401,7 @@ class GridController < ApplicationController
     end
     render :partial => "no_data", :status => 404
   end
-  
+
   # Attaches a document to the select data row.
   # Attachments are managed using PaperClip, through attribute 'document'.
   def save_attachment
@@ -614,6 +614,8 @@ private
         log_debug "GridController#populate_from_params #{column.physical_column} = #{value}"
         @row.write_value(column, value)
       end
+      @row.uri = params["uri"]
+      @row.clean_uri!
     end
   end
 
@@ -629,7 +631,7 @@ private
     end
     true
   end
-  
+
   # Selects workspace, then grid information based on paramaters.
   # The workspace is selected based on given uri or uuid.
   # The grid is selected for the given workspace based on uri or uuid.
@@ -662,8 +664,7 @@ private
         @workspace = Workspace.select_entity_by_uri(Workspace, params[:workspace])
       end
       if @workspace.nil?
-        Entity.log_debug "GridController#selectWorkspaceAndGrid " + 
-                         "Invalid: can't find workspace #{params[:workspace]}"
+        Entity.log_debug "GridController#selectWorkspaceAndGrid can't find workspace #{params[:workspace]}"
       else
         Entity.log_debug "GridController#selectWorkspaceAndGrid workspace found name=#{@workspace.name}"
         if Entity.uuid?(params[:grid])
@@ -672,8 +673,7 @@ private
           @grid = Grid.select_entity_by_workspace_and_uri(Grid, @workspace.uuid, params[:grid])
         end
         if @grid.nil?
-          Entity.log_debug "GridController#selectWorkspaceAndGrid " + 
-                           "Invalid: can't find grid #{params[:grid]}"
+          Entity.log_debug "GridController#selectWorkspaceAndGrid can't find grid #{params[:grid]}"
         else
           Entity.log_debug "GridController#selectWorkspaceAndGrid grid found name=#{@grid.name}"
         end
@@ -693,15 +693,13 @@ private
         @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
       end
       if @grid.nil?
-        Entity.log_debug "GridController#selectGridAndWorkspace " + 
-                         "Invalid: can't find grid #{params[:grid]}"
+        Entity.log_debug "GridController#selectGridAndWorkspace can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
         @grid.load
         @workspace = @grid.workspace
         if @workspace.nil?
-          Entity.log_debug "GridController#selectGridAndWorkspace " + 
-                           "Invalid: can't find workspace #{@grid.workspace_uuid}"
+          Entity.log_debug "GridController#selectGridAndWorkspace can't find workspace #{@grid.workspace_uuid}"
         else
           Entity.log_debug "GridController#selectGridAndWorkspace: workspace found name=#{@workspace.name}"
         end
@@ -721,10 +719,7 @@ private
         @row = @row_loc = @grid.row_select_entity_by_uri(params[:row])
       end
       if @row.nil?
-        Entity.log_debug "GridController#selectRow " +
-                         "Invalid: can't find row with " +
-                         "grid_uuid=#{@grid.uuid} " +
-                         "and uuid=#{params[:row]}"
+        Entity.log_debug "GridController#selectRow can't find row #{params[:row]}"
       else
         Entity.log_debug "GridController#selectRow: row found name=#{@row.name}"
         change_as_of_date(@row)

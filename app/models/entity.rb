@@ -27,12 +27,12 @@ class Entity < ActiveRecord::Base
   @@end_of_time = Date::civil(9999,12,31)
 
   belongs_to :create_user, 
-             :select => "id, uuid, version, begin, end, enabled, email, first_name, last_name" , 
+             :select => "id, uuid, uri, version, begin, end, enabled, email, first_name, last_name" , 
              :class_name => "User", 
              :foreign_key => "create_user_uuid", 
              :primary_key => "uuid"
   belongs_to :update_user, 
-             :select => "id, uuid, version, begin, end, enabled, email, first_name, last_name" , 
+             :select => "id, uuid, uri, version, begin, end, enabled, email, first_name, last_name" , 
              :class_name => "User", 
              :foreign_key => "update_user_uuid", 
              :primary_key => "uuid"
@@ -50,13 +50,9 @@ class Entity < ActiveRecord::Base
     @@uuid_gen
   end
 
-  def self.begin_of_time
-    @@begin_of_time
-  end
+  def self.begin_of_time ; @@begin_of_time ; end
 
-  def self.end_of_time
-    @@end_of_time
-  end
+  def self.end_of_time ; @@end_of_time ; end
 
   # Defaults begin date and version
   def defaults
@@ -67,26 +63,26 @@ class Entity < ActiveRecord::Base
     self.version = 1 if self.version.blank?
     default_dates
   end
-  
+
   def default_dates
     self.begin = @@begin_of_time if self.begin.blank? 
     self.end = @@end_of_time if self.end.blank?
   end
-  
+
   def valid_dates
     if self.begin.present? and self.end.present?
       self.end = self.begin if self.end < self.begin
     end
   end
-  
+
   def has_begin?
     self.begin.present? and self.begin != @@begin_of_time 
   end
- 
+
   def has_end?
     self.end.present? and self.end != @@end_of_time 
   end
- 
+
   # Returns the name of the user who created the record
   def who_created
     self.create_user.blank? ? "?" : self.create_user
@@ -96,15 +92,13 @@ class Entity < ActiveRecord::Base
   def who_updated
     self.update_user.blank? ? "?" : self.update_user
   end
-  
+
   def was_updated?
     self.updated_at != self.created_at
   end
-  
+
   # Returns a revision number
-  def revision
-    1 + self.lock_version
-  end
+  def revision ; 1 + self.lock_version ; end
 
   def to_s
     attribute_present?(:name) ? read_attribute(:name) : self.uuid
@@ -118,14 +112,12 @@ class Entity < ActiveRecord::Base
     attribute_present?(:description) ? read_attribute(:description) : ""
   end
 
-  # Returns the URI that should be used in URLs.  
-  def display_uri
-    uri = attribute_present?(:uri) ? read_attribute(:uri) : nil
-    uri || self.uuid
-  end
-  
+  # Returns the URI (alias) that should be used in URLs.  
+  def display_uri ; self.uri.blank? ? self.uuid : self.uri ; end
+
+  # Removes unwanted caracters for the URI (alias).  
   def clean_uri!
-    if attribute_present?(:uri)
+    if not self.uri.blank?
       self.uri = self.uri.downcase.
                   gsub(/[ '’@.]/,"-").
                   gsub(/[àâäÀÂÄ]/,"a").
@@ -139,18 +131,12 @@ class Entity < ActiveRecord::Base
                   gsub(/-\z/,"\\1")
     end
   end
-  
+
   # Indicates if the given uuid is a valid uuid
   def self.uuid?(uuid)
-    uuid.present? and uuid =~ /\A(urn:uuid:)?[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/i
+    uuid.present? and uuid =~ /\A(urn:uuid:)?[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/
   end
-  
-  def self.loc_select_columns
-    "id, uuid, version, lock_version, " +
-    "base_locale, locale, " +
-    "name, description"
-  end
-  
+
   def self.all_locales(collection, uuid, version)
     log_debug "Entity#all_locales(uuid=#{uuid}), version=#{version.to_s}"
     collection.find(:all, 
@@ -162,14 +148,13 @@ class Entity < ActiveRecord::Base
   end
 
   def self.as_of_date_clause(synonym)
-    "'#{session_as_of_date}' BETWEEN #{synonym}.begin AND #{synonym}.end" + 
-    " AND #{synonym}.enabled = 't'"
+    "'#{session_as_of_date}' BETWEEN #{synonym}.begin AND #{synonym}.end AND #{synonym}.enabled = 't'"
   end
-  
+
   def as_of_date_clause(synonym)
     Entity.as_of_date_clause(synonym) 
   end
-  
+
   def self.locale_clause(synonym)
     "#{synonym}.locale = '#{session_locale}'"
   end
@@ -178,9 +163,11 @@ class Entity < ActiveRecord::Base
     Entity.locale_clause(synonym)
   end
 
+  # Exports the entity into an .xml output.
   def export(xml)
     log_debug "Entity#export"
     xml.uuid(self.uuid)
+    xml.uri(self.uri)
     xml.version(self.version)
     xml.begin(self.begin) if has_begin?
     xml.end(self.end) if has_end?
@@ -190,10 +177,12 @@ class Entity < ActiveRecord::Base
     xml.updated_at(self.updated_at) if was_updated?
   end
 
+  # Imports the entity from an .xml input.
   def import(xml_attribute, xml_value)
     log_debug "Entity#import(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when 'uuid' then self.uuid = xml_value
+      when 'uri' then self.uri = xml_value
       when 'version' then self.version = xml_value.to_i
       when 'begin' then self.begin = Date::parse(xml_value)
       when 'end' then self.end = Date::parse(xml_value)
@@ -201,9 +190,10 @@ class Entity < ActiveRecord::Base
       when 'revision' then self.lock_version = xml_value.to_i-1
     end
   end
-  
+
   def copy_attributes(entity)
     log_debug "Entity#copy_attributes"
+    entity.uri = self.uri
     entity.begin = self.begin
     entity.end = self.end
     entity.enabled = self.enabled
@@ -299,23 +289,23 @@ class Entity < ActiveRecord::Base
       last_item.save!
     end
   end
-  
+
   def self.session_user_uuid=user_uuid
     Thread.current[:session_user_uuid] = user_uuid
   end
-  
+
   def self.session_user_uuid
     Thread.current[:session_user_uuid]
   end
-  
+
   def self.session_user_display_name=user_display_name
     Thread.current[:session_user_display_name] = user_display_name
   end
-  
+
   def self.session_user_display_name
     Thread.current[:session_user_display_name]
   end
-  
+
   def self.session_as_of_date=as_of_date
     Thread.current[:session_as_of_date] = as_of_date
   end
@@ -456,4 +446,10 @@ class Entity < ActiveRecord::Base
   def log_warning(message) ; Entity.log_warning(message) ; end
   def log_security_warning(message) ; Entity.log_security_warning(message) ; end
   def log_error(message, exception=nil) ; Entity.log_error(message, exception) ; end
+  
+private
+
+  def self.loc_select_columns
+    "id, uuid, version, lock_version, base_locale, locale, name, description"
+  end
 end
