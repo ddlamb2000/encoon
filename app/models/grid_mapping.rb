@@ -44,7 +44,7 @@ class GridMapping < Entity
     else
       mapping = grid.mapping_select_entity_by_uuid_version(self.uuid, self.version)
       if mapping.present?
-        if self.revision > mapping.revision 
+        if self.updated_at > mapping.updated_at 
           log_debug "GridMapping#import! update"
           copy_attributes(mapping)
           mapping.update_user_uuid = Entity.session_user_uuid

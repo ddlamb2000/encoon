@@ -66,7 +66,7 @@ class User < Entity
     log_debug "User#import!"
     user = User.select_entity_by_uuid_version(User, self.uuid, self.version)
     if user.present?
-      if self.revision > user.revision 
+      if self.updated_at > user.updated_at 
         log_debug "User#import! update"
         copy_attributes(user)
         user.update_user_uuid = Entity.session_user_uuid

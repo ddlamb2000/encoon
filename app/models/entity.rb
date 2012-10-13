@@ -187,7 +187,6 @@ class Entity < ActiveRecord::Base
       when 'begin' then self.begin = Date::parse(xml_value)
       when 'end' then self.end = Date::parse(xml_value)
       when 'enabled' then self.enabled = ['true','t','1'].include?(xml_value)
-      when 'revision' then self.lock_version = xml_value.to_i-1
     end
   end
 
@@ -198,7 +197,6 @@ class Entity < ActiveRecord::Base
     entity.begin = self.begin
     entity.end = self.end
     entity.enabled = self.enabled
-    entity.lock_version = self.lock_version
   end
 
   def import_loc_base!(collection, loc)

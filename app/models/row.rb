@@ -143,7 +143,7 @@ class Row < Entity
       row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
       if row.present?
         log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
-        if self.revision > row.revision 
+        if self.updated_at > row.updated_at 
           log_debug "Row#import! update"
           copy_attributes(row)
           row.update_user_uuid = Entity.session_user_uuid
