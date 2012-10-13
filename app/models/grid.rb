@@ -79,20 +79,6 @@ class Grid < Entity
                          :uri => uri}])
   end
   
-  # Selects data based on id
-  def self.select_entity_by_id(collection, id)
-    log_debug "Grid#select_entity_by_id(#{collection}, #{id}) [#{to_s}]"
-    collection.find(:first, 
-                    :joins => :grid_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                        ["grids.id = :id " +
-                         " AND grid_locs.version = grids.version" +
-                         " AND " + locale_clause("grid_locs") +
-                         " AND " + grid_security_clause("grids"), 
-                        {:id => id}]) 
-  end
-  
   def self.select_entity_by_uuid_version(collection, uuid, version)
     log_debug "Grid#select_entity_by_uuid_version(#{collection}, #{uuid}, #{version}) [#{to_s}]"
     collection.find(:first, 
@@ -391,35 +377,6 @@ class Grid < Entity
       nil
   end
 
-  # Selects data based on id
-  def row_select_entity_by_id(id)
-    log_debug "Grid#row_select_entity_by_id(#{id}) [#{to_s}]"
-    if not @can_select_data
-      log_security_warning "Grid#row_select_entity_by_id Can't select data"
-      return nil
-    end
-    Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
-                     " FROM grids grids, #{@db_table} rows" + 
-                     (@has_translation ? ", #{@db_loc_table} row_locs" : "") +
-                     " WHERE grids.uuid = #{quote(self.uuid)}" +
-                     " AND " + as_of_date_clause("grids") +
-                     " AND " + Grid::grid_security_clause("grids") + 
-                     " AND rows.id = :id" + 
-                     (@has_translation ? 
-                        " AND rows.uuid = row_locs.uuid" +
-                        " AND rows.version = row_locs.version" +
-                        " AND " + locale_clause("row_locs") : "") +
-                     ((self.uuid == WORKSPACE_UUID) ? 
-                        " AND " + Grid::workspace_security_clause("rows") : "") + 
-                     ((self.uuid == GRID_UUID) ? 
-                         " AND " + Grid::grid_security_clause("rows") : ""), 
-                       {:id => id}])[0]
-    rescue ActiveRecord::StatementInvalid => exception
-      log_error "Grid#row_select_entity_by_id #{exception.to_s}" +
-                ", data grid='#{name}'"
-      nil
-  end
-
   def row_all_versions(uuid)
     log_debug "Grid#row_all_versions(#{uuid}) [#{to_s}]"
     if not @can_select_data
@@ -641,6 +598,8 @@ class Grid < Entity
     end
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "Grid#import!"
     grid = Grid.select_entity_by_uuid_version(Grid, self.uuid, self.version)
@@ -648,8 +607,8 @@ class Grid < Entity
       if self.revision > grid.revision 
         log_debug "Grid#import! update"
         copy_attributes(grid)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
+        grid.update_user_uuid = Entity.session_user_uuid
+        grid.updated_at = Time.now
         make_audit(Audit::IMPORT)
         grid.save!
         grid.update_dates!(Grid)

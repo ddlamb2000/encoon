@@ -44,17 +44,17 @@ class WorkspaceSharing < Entity
     end
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "WorkspaceSharing#import!"
-    workspace = WorkspaceSharing.select_entity_by_uuid_version(WorkspaceSharing, 
-                                                        self.uuid, 
-                                                        self.version)
+    workspace = WorkspaceSharing.select_entity_by_uuid_version(WorkspaceSharing, self.uuid, self.version)
     if workspace.present?
       if self.revision > workspace.revision 
         log_debug "WorkspaceSharing#import! update"
         copy_attributes(workspace)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
+        workspace.update_user_uuid = Entity.session_user_uuid
+        workspace.updated_at = Time.now
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)

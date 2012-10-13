@@ -108,6 +108,8 @@ class Workspace < Entity
     end
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "Workspace#import!"
     workspace = Workspace.select_entity_by_uuid_version(Workspace, self.uuid, self.version)
@@ -115,8 +117,8 @@ class Workspace < Entity
       if self.revision > workspace.revision 
         log_debug "Workspace#import! update"
         copy_attributes(workspace)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
+        workspace.update_user_uuid = Entity.session_user_uuid
+        workspace.updated_at = Time.now
         make_audit(Audit::IMPORT)
         workspace.save!
         workspace.update_dates!(Workspace)

@@ -76,8 +76,8 @@ class Upload < Entity
                   if imported != ""
                     if imported != "skipped"
                       locs.each { |entity_loc|  entity.import_loc!(entity_loc) } if locs.length > 0
+                      entity.create_missing_loc!
                     end
-                    entity.create_missing_loc!
                     self.inserted = self.inserted + 1 if "inserted" == imported
                     self.updated = self.updated + 1 if "updated" == imported
                     self.skipped = self.skipped + 1 if "skipped" == imported

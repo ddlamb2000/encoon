@@ -191,12 +191,14 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # Copies attribute values to the entity target.
   def copy_attributes(entity)
     log_debug "Entity#copy_attributes"
     entity.uri = self.uri
     entity.begin = self.begin
     entity.end = self.end
     entity.enabled = self.enabled
+    entity.lock_version = self.lock_version
   end
 
   def import_loc_base!(collection, loc)

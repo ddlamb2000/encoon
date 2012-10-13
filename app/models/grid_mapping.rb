@@ -35,33 +35,37 @@ class GridMapping < Entity
     entity.db_loc_table = self.db_loc_table
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "GridMapping#import!"
-    log_error "Can't import grid mapping when " + 
-          "there is no grid reference" if grid.nil?
-    mapping = grid.mapping_select_entity_by_uuid_version(self.uuid, self.version)
-    if mapping.present?
-      if self.revision > mapping.revision 
-        log_debug "GridMapping#import! update"
-        copy_attributes(mapping)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
-        make_audit(Audit::IMPORT)
-        mapping.save!
-        mapping.update_dates!(grid.grid_mappings)
-        return "updated"
-      else
-        log_debug "GridMapping#import! skip update"
-        return "skipped"
-      end
+    if grid.nil?
+      log_error "Can't import grid mapping when there is no grid reference"
     else
-      log_debug "GridMapping#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
-      self.created_at = self.updated_at = Time.now
-      make_audit(Audit::IMPORT)
-      save!
-      update_dates!(grid.grid_mappings)
-      return "inserted"
+      mapping = grid.mapping_select_entity_by_uuid_version(self.uuid, self.version)
+      if mapping.present?
+        if self.revision > mapping.revision 
+          log_debug "GridMapping#import! update"
+          copy_attributes(mapping)
+          mapping.update_user_uuid = Entity.session_user_uuid
+          mapping.updated_at = Time.now
+          make_audit(Audit::IMPORT)
+          mapping.save!
+          mapping.update_dates!(grid.grid_mappings)
+          return "updated"
+        else
+          log_debug "GridMapping#import! skip update"
+          return "skipped"
+        end
+      else
+        log_debug "GridMapping#import! new"
+        self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+        self.created_at = self.updated_at = Time.now
+        make_audit(Audit::IMPORT)
+        save!
+        update_dates!(grid.grid_mappings)
+        return "inserted"
+      end
     end
     ""
   end

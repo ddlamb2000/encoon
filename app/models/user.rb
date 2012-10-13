@@ -60,6 +60,8 @@ class User < Entity
     end
   end
   
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "User#import!"
     user = User.select_entity_by_uuid_version(User, self.uuid, self.version)
@@ -67,8 +69,8 @@ class User < Entity
       if self.revision > user.revision 
         log_debug "User#import! update"
         copy_attributes(user)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
+        user.update_user_uuid = Entity.session_user_uuid
+        user.updated_at = Time.now
         make_audit(Audit::IMPORT)
         user.save!
         user.update_dates!(User)

@@ -133,6 +133,8 @@ class Row < Entity
     end
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "Row#import!"
     if grid.nil?
@@ -144,8 +146,8 @@ class Row < Entity
         if self.revision > row.revision 
           log_debug "Row#import! update"
           copy_attributes(row)
-          self.update_user_uuid = Entity.session_user_uuid
-          self.updated_at = Time.now
+          row.update_user_uuid = Entity.session_user_uuid
+          row.updated_at = Time.now
           make_audit(Audit::IMPORT)
           updated = grid.update_row!(self)
           grid.row_update_dates!(self.uuid)

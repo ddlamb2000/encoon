@@ -96,32 +96,37 @@ class Column < Entity
     entity.regex = self.regex
   end
 
+  # Imports the instance of the object in the database,
+  # as a new instance or as an update of an existing instance.
   def import!
     log_debug "Column#import!"
-    log_error "Can't import column when there is no grid reference" if grid.nil?
-    column = grid.column_select_entity_by_uuid_version(self.uuid, self.version)
-    if column.present?
-      if self.revision > column.revision 
-        log_debug "Column#import! update"
-        copy_attributes(column)
-        self.update_user_uuid = Entity.session_user_uuid
-        self.updated_at = Time.now
-        make_audit(Audit::IMPORT)
-        column.save!
-        column.update_dates!(grid.columns)
-        return "updated"
-      else
-        log_debug "Column#import! skip update"
-        return "skipped"
-      end
+    if grid.nil?
+      log_error "Can't import column when there is no grid reference"
     else
-      log_debug "Column#import! new"
-      self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
-      self.created_at = self.updated_at = Time.now
-      make_audit(Audit::IMPORT)
-      save!
-      update_dates!(grid.columns)
-      return "inserted"
+      column = grid.column_select_entity_by_uuid_version(self.uuid, self.version)
+      if column.present?
+        if self.revision > column.revision 
+          log_debug "Column#import! update"
+          copy_attributes(column)
+          column.update_user_uuid = Entity.session_user_uuid
+          column.updated_at = Time.now
+          make_audit(Audit::IMPORT)
+          column.save!
+          column.update_dates!(grid.columns)
+          return "updated"
+        else
+          log_debug "Column#import! skip update"
+          return "skipped"
+        end
+      else
+        log_debug "Column#import! new"
+        self.create_user_uuid = self.update_user_uuid = Entity.session_user_uuid
+        self.created_at = self.updated_at = Time.now
+        make_audit(Audit::IMPORT)
+        save!
+        update_dates!(grid.columns)
+        return "inserted"
+      end
     end
     ""
   end
