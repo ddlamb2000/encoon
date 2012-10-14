@@ -38,8 +38,6 @@ protected
   # Loads user credentials.
   def load_credentials
     log_debug "ApplicationController#load_credentials"
-    session[:as_of_date] = Date.current if session[:as_of_date].nil?
-    Entity.session_as_of_date = session[:as_of_date]
     if user_signed_in?
       Entity.session_user_uuid = current_user.uuid
       Entity.session_user_display_name = current_user
@@ -60,6 +58,7 @@ protected
   
   # Sets the as of date based on parameter.
   def set_asofdate
+    session[:as_of_date] = Date.current if session[:as_of_date].nil?
     if params[:as_of_date].present?
       log_debug "ApplicationController#refresh date=#{[:as_of_date]}"
       begin
@@ -74,6 +73,7 @@ protected
         flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
       end
     end
+    Entity.session_as_of_date = session[:as_of_date]
   end
 
   # Selects the workspaces available to the connected user.
