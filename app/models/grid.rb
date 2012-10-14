@@ -492,6 +492,7 @@ class Grid < Entity
     end
   end
 
+  # Creates a new associated locale row.
   def new_loc
     loc = grid_locs.new
     loc.uuid = self.uuid
@@ -521,6 +522,7 @@ class Grid < Entity
     end
   end
 
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "Grid#copy_attributes"
     super
@@ -529,6 +531,7 @@ class Grid < Entity
     entity.has_description = self.has_description
   end
 
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "Grid#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
@@ -570,6 +573,9 @@ class Grid < Entity
     ""
   end
 
+  # Imports the given loc data into the appropriate locale row.
+  # Fetches on the collection of local row and copies the attributes
+  # of the provided loc data into the row that matches the language.
   def import_loc!(loc)
     log_debug "Grid#import_loc!"
     import_loc_base!(Grid.locales(grid_locs, self.uuid, self.version), loc)

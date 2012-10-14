@@ -66,6 +66,7 @@ class Column < Entity
     end
   end
   
+  # Creates a new associated locale row.
   def new_loc
     loc = column_locs.new
     loc.uuid = self.uuid
@@ -73,6 +74,7 @@ class Column < Entity
     loc
   end
   
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "Column#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
@@ -85,6 +87,7 @@ class Column < Entity
     end
   end
   
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "Column#copy_attributes"
     super
@@ -131,6 +134,9 @@ class Column < Entity
     ""
   end
 
+  # Imports the given loc data into the appropriate locale row.
+  # Fetches on the collection of local row and copies the attributes
+  # of the provided loc data into the row that matches the language.
   def import_loc!(loc)
     log_debug "Column#import_loc!(loc=#{loc})"
     import_loc_base!(Column.locales(column_locs, self.uuid, self.version), loc)

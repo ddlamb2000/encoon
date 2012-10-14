@@ -27,6 +27,7 @@ class WorkspaceSharing < Entity
                        {:uuid => uuid, :version => version}])
   end
 
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "WorkspaceSharing#copy_attributes"
     super
@@ -35,6 +36,7 @@ class WorkspaceSharing < Entity
     entity.user_uuid = self.user_uuid
   end
 
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "WorkspaceSharing#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute

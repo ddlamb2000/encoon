@@ -51,6 +51,7 @@ class User < Entity
                        {:uuid => uuid, :version => version}]) 
   end
   
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "User#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute

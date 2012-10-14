@@ -18,7 +18,7 @@
 # Entities are abstract active records identified using 
 # an universal unique identifier,
 # are version-based, dated and user-tracked. 
-# Every entity is managed through a data grid.
+# Every entity is managed through a grid.
 class Entity < ActiveRecord::Base
   self.abstract_class = true
   
@@ -45,17 +45,13 @@ class Entity < ActiveRecord::Base
     defaults
   end
 
-  def uuid_gen
-    @@uuid_gen = UUID.new if @@uuid_gen.nil?
-    @@uuid_gen
-  end
-
   def self.begin_of_time ; @@begin_of_time ; end
 
   def self.end_of_time ; @@end_of_time ; end
 
   # Defaults begin date and version
   def defaults
+    log_debug "Entity#defaults"
     if self.uuid.blank?
       self.uuid = uuid_gen.generate
       self.enabled = true
@@ -201,7 +197,7 @@ class Entity < ActiveRecord::Base
     end
   end
 
-  # Copies attribute values to the entity target.
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "Entity#copy_attributes"
     entity.uri = self.uri
@@ -210,6 +206,9 @@ class Entity < ActiveRecord::Base
     entity.enabled = self.enabled
   end
 
+  # Imports the given loc data into the appropriate locale row.
+  # Fetches on the collection of local row and copies the attributes
+  # of the provided loc data into the row that matches the language.
   def import_loc_base!(collection, loc)
     log_debug "Entity#import_loc_base!(loc=#{loc})"
     updated = 0
@@ -462,6 +461,13 @@ class Entity < ActiveRecord::Base
   def log_error(message, exception=nil) ; Entity.log_error(message, exception) ; end
   
 private
+
+  # Initializes the generator used to retrieve UUIDs.
+  def uuid_gen
+    log_debug "Entity#uuid_gen"
+    @@uuid_gen = UUID.new if @@uuid_gen.nil?
+    @@uuid_gen
+  end
 
   def self.loc_select_columns
     "id, uuid, version, lock_version, base_locale, locale, name, description"

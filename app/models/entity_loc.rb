@@ -69,6 +69,7 @@ class EntityLoc < ActiveRecord::Base
     end
   end
 
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity_loc)
     Entity.log_debug "EntityLoc#copy_attributes(#{entity_loc.inspect})"
     entity_loc.base_locale = self.base_locale

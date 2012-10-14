@@ -18,6 +18,7 @@ class ColumnMapping < Entity
   belongs_to :column, :foreign_key => "column_uuid", :primary_key => "uuid"
   validates_presence_of :column_uuid, :db_column
 
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "ColumnMapping#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
@@ -26,6 +27,7 @@ class ColumnMapping < Entity
     end
   end
   
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "ColumnMapping#copy_attributes"
     super

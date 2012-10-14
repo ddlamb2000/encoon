@@ -18,6 +18,7 @@ class GridMapping < Entity
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid, :db_table
 
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "GridMapping#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
@@ -27,6 +28,7 @@ class GridMapping < Entity
     end
   end
   
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "GridMapping#copy_attributes"
     super

@@ -14,6 +14,9 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # 
 # See doc/COPYRIGHT.rdoc for more details.
+#
+# Workspaces are used to register sets of grids. 
+# Every grid is attached to a workspace.
 class Workspace < Entity
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
@@ -25,6 +28,7 @@ class Workspace < Entity
       joins(:workspace_locs).
       where("workspaces.uuid = ?", uuid).
       where(as_of_date_clause("workspaces")).
+      where(Grid::workspace_security_clause("workspaces")).
       where("workspace_locs.version = workspaces.version").
       where(locale_clause("workspace_locs")).
       first
@@ -37,6 +41,7 @@ class Workspace < Entity
       joins(:workspace_locs).
       where("workspaces.uri = ?", uri).
       where(as_of_date_clause("workspaces")).
+      where(Grid::workspace_security_clause("workspaces")).
       where("workspace_locs.version = workspaces.version").
       where(locale_clause("workspace_locs")).
       first
@@ -44,33 +49,21 @@ class Workspace < Entity
 
   # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
-    collection.find(:first, 
-                    :joins => :workspace_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                      ["workspaces.uuid = :uuid " + 
-                       " AND workspaces.version = :version " + 
-                       " AND workspace_locs.version = workspaces.version " +
-                       " AND " + locale_clause("workspace_locs"), 
-                       {:uuid => uuid, :version => version}]) 
+    collection.
+      select(self.all_select_columns).
+      joins(:workspace_locs).
+      where("workspaces.uuid = ?", uuid).
+      where("workspaces.version = ?", version).
+      where(as_of_date_clause("workspaces")).
+      where(Grid::workspace_security_clause("workspaces")).
+      where("workspace_locs.version = workspaces.version").
+      where(locale_clause("workspace_locs")).
+      first
   end
-  
-  def self.all_versions(collection, uuid)
-    collection.find(:all,
-                    :joins => :workspace_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                      ["workspaces.uuid = :uuid " +
-                       " AND workspace_locs.version = workspaces.version " + 
-                       " AND " + Grid::workspace_security_clause("workspaces") +
-                       " AND " + locale_clause("workspace_locs"), 
-                       {:uuid => uuid}], 
-                    :order => "workspaces.begin")
-  end
-  
+
   # Selects the workspaces the current user can access to.
   def self.user_workspaces
-    select(self.all_select_columns).
+    select(self.user_select_columns).
     joins(:workspace_locs).
     where("workspace_locs.version = workspaces.version").
     where(as_of_date_clause("workspaces")).
@@ -78,14 +71,16 @@ class Workspace < Entity
     where(locale_clause("workspace_locs")).
     order("workspace_locs.name")
   end
-  
+
+  # Creates a new associated locale row.
   def new_loc
     loc = workspace_locs.new
     loc.uuid = self.uuid
     loc.version = self.version
     loc
   end
-  
+
+  # Copies attributes from the object to the target entity.
   def copy_attributes(entity)
     log_debug "Workspace#copy_attributes"
     super
@@ -94,6 +89,7 @@ class Workspace < Entity
     entity.uri = self.uri
   end
 
+  # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)
     log_debug "Workspace#import_attribute(#{xml_attribute}, #{xml_value})"
     case xml_attribute
@@ -134,6 +130,9 @@ class Workspace < Entity
     ""
   end
 
+  # Imports the given loc data into the appropriate locale row.
+  # Fetches on the collection of local row and copies the attributes
+  # of the provided loc data into the row that matches the language.
   def import_loc!(loc)
     log_debug "Workspace#import_loc!"
     import_loc_base!(Workspace.locales(workspace_locs, self.uuid, self.version), loc)
@@ -146,17 +145,19 @@ class Workspace < Entity
     log_debug "Workspace#create_missing_loc!"
     create_missing_loc_base!(Workspace.locales(workspace_locs, self.uuid, self.version))
   end
-  
+
 private
 
+  def self.user_select_columns
+    "workspaces.id, workspaces.uuid, workspaces.uri, workspace_locs.name, workspace_locs.description"
+  end
+
   def self.all_select_columns
-    "workspaces.id, workspaces.uuid, " + 
-    "workspaces.version, workspaces.lock_version, " + 
+    "workspaces.id, workspaces.uuid, workspaces.version, workspaces.lock_version, " + 
     "workspaces.begin, workspaces.end, workspaces.enabled, " +
     "workspaces.created_at, workspaces.updated_at, " +
     "workspaces.create_user_uuid, workspaces.update_user_uuid, " +
     "workspaces.public, workspaces.default_role_uuid, workspaces.uri, " +
-    "workspace_locs.base_locale, workspace_locs.locale, " +
-    "workspace_locs.name, workspace_locs.description"
+    "workspace_locs.base_locale, workspace_locs.locale, workspace_locs.name, workspace_locs.description"
   end
 end
