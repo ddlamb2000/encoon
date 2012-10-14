@@ -43,10 +43,11 @@ class Grid < Entity
   def self.get_cached_grid(uuid, filters)
     cached = @@grid_cache.find {|value| value[:user_uuid] == Entity.session_user_uuid and
                                         value[:asofdate] == Entity.session_as_of_date and
+                                        value[:locale] == Entity.session_locale and
                                         value[:uuid] == uuid and
                                         value[:filters] == filters}
                                         
-    log_debug "Grid#get_cached_grid #################### cached=#{cached.inspect}"
+    log_debug "Grid#get_cached_grid cached=#{cached.inspect}"
     return cached[:grid] if cached.present?
   end
   
@@ -1135,6 +1136,7 @@ private
     if cached.nil?
       @@grid_cache << {:user_uuid => Entity.session_user_uuid,
                        :asofdate => Entity.session_as_of_date,
+                       :locale => Entity.session_locale,
                        :uuid => grid.uuid,
                        :filters => filters,
                        :grid => grid}
