@@ -16,7 +16,15 @@
 # See doc/COPYRIGHT.rdoc for more details.
 Encoon::Application.routes.draw do
   root :to => 'grid#home'
-  devise_for :users
+  devise_for :users,
+             :path => "access",
+             :path_names => {:sign_in => 'login',
+                             :sign_out => 'logout',
+                             :password => 'password',
+                             :confirmation => 'confirmation',
+                             :unlock => 'unblock',
+                             :registration => 'register',
+                             :sign_up => 'sign_up'}
   match '/credits' => 'grid#credits', :as => 'credits'
   match '/__history' => 'grid#history', :as => 'history'
   match '/__refresh' => 'grid#refresh', :as => 'refresh'
