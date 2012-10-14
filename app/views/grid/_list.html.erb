@@ -36,9 +36,8 @@
       <a id="search-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.search' %></a>
     </span>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
-      <span class="button" title="<%= t 'actions.import_help' %>">
+      <span class="button import-button" title="<%= t 'actions.import_help' %>">
         <a id="import-<%= @grid.uuid %>">
-          <%= icon('import') %>
           <%= t 'actions.import' %>
         </a>
       </span>
@@ -59,12 +58,11 @@
           }
         });
       </script>
-      <span title="<%= t 'actions.export_help' %>" class="button">
+      <span title="<%= t 'actions.export_help' %>" class="button export-button">
         <%= link_to export_list_xml_path(
                       :workspace => @grid.workspace.display_uri,
                       :grid => @grid.display_uri,
                       :filters => @filters) do %>
-          <%= icon('export') %>
           <%= t 'actions.export' %>
         <% end %>
       </span>
@@ -93,7 +91,7 @@
       </script>
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
-      <span title="<%= t 'actions.column_help' %>" class="button edit-button">
+      <span title="<%= t 'actions.column_help' %>" class="button table-button">
         <a id="attributes-grid-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.columns' %></a>
       </span>
       <script>

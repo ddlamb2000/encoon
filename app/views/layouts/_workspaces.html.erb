@@ -3,14 +3,14 @@
   <label for="navigator-button"></label>
 </div>
 <nav>
-  <span class="button">
-    <%= link_to_unless_current(t('general.home'), root_path) do |name| %>
-      <span class="highlighted"><%= name %></span>
-    <% end %>
-  </span>
   <% unless @workspaces.nil? %>
+    <% first = true %>
     <% for row in @workspaces %>
-      <span class="separator">|</span>
+      <% if first %>
+        <% first = false %>
+      <% else %>
+        <span class="separator">|</span>
+      <% end %>
       <span class="button" title="<%= row.description.html_safe %>">
           <%= link_to_unless_current(
                 row.name.html_safe,

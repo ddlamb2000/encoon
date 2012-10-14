@@ -1,4 +1,4 @@
-#header-application {
+#header-application a {
   padding-left:8*$padding;
   background: {
     image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/icon.png);
@@ -62,10 +62,37 @@
     size:contain;
   }
 }
-.attach-button a {
+.attachment-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/attachment.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.entity-button a {
   padding-left:8*$padding;
   background: {
     image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/attach.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.import-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/import.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.export-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/export.png);
     position:left top;
     repeat:no-repeat;
     size:contain;
@@ -129,6 +156,15 @@
   padding-left:8*$padding;
   background: {
     image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/info.png);
+    position:left top;
+    repeat:no-repeat;
+    size:contain;
+  }
+}
+.table-button a {
+  padding-left:8*$padding;
+  background: {
+    image:url(/system/icon/7d647930-ef79-012f-2349-4417fe7fde95/table.png);
     position:left top;
     repeat:no-repeat;
     size:contain;
