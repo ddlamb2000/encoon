@@ -53,11 +53,10 @@ class Column < Entity
           @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
                                                                  grid.workspace_uuid) if grid.present?
         else
-          @grid_reference = 
-            Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
+          @grid_reference = Grid.select_entity_by_uuid(Grid, self.grid_reference_uuid)
           log_debug "Column#load_cached_information @grid_reference=#{@grid_reference.to_s}"
           if @grid_reference.present? 
-            @grid_reference.load if not(@grid_reference.loaded)
+            @grid_reference = @grid_reference.load if not(@grid_reference.loaded)
             @workspace_reference = Workspace.select_entity_by_uuid(Workspace,
                                                                    @grid_reference.workspace_uuid)
           end

@@ -153,21 +153,19 @@ class Entity < ActiveRecord::Base
                     :order => "locale")
   end
 
+  # Returns a part of the where clause to be used in order to
+  # filter data based on the as of date.
   def self.as_of_date_clause(synonym)
     "'#{session_as_of_date}' BETWEEN #{synonym}.begin AND #{synonym}.end AND #{synonym}.enabled = 't'"
   end
 
-  def as_of_date_clause(synonym)
-    Entity.as_of_date_clause(synonym) 
-  end
+  def as_of_date_clause(synonym) ; Entity.as_of_date_clause(synonym) ; end
 
   def self.locale_clause(synonym)
     "#{synonym}.locale = '#{self.session_locale}'"
   end
 
-  def locale_clause(synonym)
-    Entity.locale_clause(synonym)
-  end
+  def locale_clause(synonym) ; Entity.locale_clause(synonym) ; end
 
   # Exports the entity into an .xml output.
   def export(xml)

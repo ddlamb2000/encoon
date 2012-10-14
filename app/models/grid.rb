@@ -33,18 +33,39 @@ class Grid < Entity
   validates_associated :workspace
   attr_reader :loaded, :column_all, :filtered_columns, :has_translation
   
+  # Security indicators, sets with false by default.
   @loaded = @can_select_data = @can_create_data = @can_update_data = @has_translation = false
 
+  # Internal cache used for storing loaded grid definitions.
+  @@grid_cache = []
+
+  # Returns loaded grid information from the internal grid cache.
+  def self.get_cached_grid(uuid, filters)
+    cached = @@grid_cache.find {|value| value[:user_uuid] == Entity.session_user_uuid and
+                                        value[:asofdate] == Entity.session_as_of_date and
+                                        value[:uuid] == uuid and
+                                        value[:filters] == filters}
+                                        
+    log_debug "Grid#get_cached_grid #################### cached=#{cached.inspect}"
+    return cached[:grid] if cached.present?
+  end
+  
   # Loads in memory the structure of the grid
   # and all the information to render the grid: workspace, columns
   # definition, table mapping, column mapping and security settings.
   # Load is mandatory before any access to the data using the grid.
   def load(filters=nil, skip_mapping=false)
-    log_debug "Grid#load_grid_structure(#{filters.inspect}, #{skip_mapping}) [#{to_s}]"
+    log_debug "Grid#load(#{filters.inspect}, #{skip_mapping}) [#{to_s}]"
+    if not skip_mapping
+      cached = self.class.get_cached_grid(self.uuid, filters)
+      return cached if cached.present?
+    end
     load_workspace
     load_mapping
     load_columns(filters, false, skip_mapping)
     @loaded = true
+    self.class.grid_cache_push(self, filters) if not skip_mapping
+    self
   end
 
   # Selects data based on its uuid in the given collection.
@@ -102,7 +123,7 @@ class Grid < Entity
     log_debug "Grid#select_reference_rows(#{grid_uuid}) [#{to_s}]"
     grid = Grid.select_entity_by_uuid(Grid, grid_uuid)
     unless grid.nil?
-      grid.load
+      grid = grid.load
       grid.row_all(nil, nil, -1)
     end
   end
@@ -130,7 +151,7 @@ class Grid < Entity
     log_debug "Grid#select_grid_cast(#{row_uuid}) [#{to_s}]"
     if self.uuid == GRID_UUID
       grid = Grid::select_entity_by_uuid(Grid, row_uuid)
-      grid.load if grid.present?
+      grid = grid.load if grid.present?
       grid
     end
   end
@@ -616,7 +637,7 @@ class Grid < Entity
       if self.uuid == WORKSPACE_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, GRID_UUID)
         if grid_def.present?
-          grid_def.load
+          grid_def = grid_def.load
           log_debug "Grid#row_export select grids in the workspace"
           rows = grid_def.row_all([{:column_uuid => GRID_WORKSPACE_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -628,7 +649,7 @@ class Grid < Entity
       if self.uuid == GRID_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, GRID_MAPPING_UUID)
         if grid_def.present?
-          grid_def.load
+          grid_def = grid_def.load
           log_debug "Grid#row_export select mapping in the data grid"
           rows = grid_def.row_all([{:column_uuid => GRID_MAPPING_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -638,7 +659,7 @@ class Grid < Entity
         end
         grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_UUID)
         if grid_def.present?
-          grid_def.load
+          grid_def = grid_def.load
           log_debug "Grid#row_export select columns in the data grid"
           rows = grid_def.row_all([{:column_uuid => COLUMN_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -650,7 +671,7 @@ class Grid < Entity
       if self.uuid == COLUMN_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_MAPPING_UUID)
         if grid_def.present?
-          grid_def.load
+          grid_def = grid_def.load
           log_debug "Grid#row_export select mapping in the column"
           rows = grid_def.row_all([{:column_uuid => COLUMN_MAPPING_COLUMN_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -1106,5 +1127,18 @@ private
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
     security.nil? ? nil : security.default_role_uuid
+  end
+
+  # Pushes loaded grid information into the internal grid cache.
+  def self.grid_cache_push(grid, filters)
+    cached = get_cached_grid(grid.uuid, filters)
+    if cached.nil?
+      @@grid_cache << {:user_uuid => Entity.session_user_uuid,
+                       :asofdate => Entity.session_as_of_date,
+                       :uuid => grid.uuid,
+                       :filters => filters,
+                       :grid => grid}
+    end
+    log_debug "Grid#grid_cache_push @@grid_cache=#{@@grid_cache.inspect}"
   end
 end

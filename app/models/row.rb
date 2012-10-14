@@ -67,7 +67,6 @@ class Row < Entity
         grid = column.grid_reference
         if grid.present?
           log_debug "Row#read_referenced_name grid=#{grid.to_s}"
-          grid.load if not grid.loaded
           return grid.select_reference_row_name(value)  
         end
       end
@@ -86,7 +85,6 @@ class Row < Entity
                   "column.grid_reference_uuid=#{column.grid_reference_uuid}"
         grid = column.grid_reference
         if grid.present?
-          grid.load if not grid.loaded
           return grid.select_reference_row_description(value)  
         end
       end
@@ -115,7 +113,7 @@ class Row < Entity
   def import_attribute(xml_attribute, xml_value)
     log_debug "Row#import_attribute(#{xml_attribute}, #{xml_value})"
     self.initialization
-    grid.load if not grid.loaded 
+    grid = grid.load if not grid.loaded 
     grid.column_all.each do |column|
       log_debug "Row#import_attribute column=#{column}, column.uuid=#{column.uuid}"
       if xml_attribute == column.uuid
@@ -129,7 +127,7 @@ class Row < Entity
     log_debug "Row#copy_attributes"
     super
     entity.grid_uuid = self.grid_uuid
-    grid.load if not grid.loaded 
+    grid = grid.load if not grid.loaded 
     grid.column_all.each do |column|
       log_debug "Row#copy_attributes column=#{column}"
       write_value(column, self.read_value(column))
@@ -143,7 +141,7 @@ class Row < Entity
     if grid.nil?
       log_error "Row#import! Can't import row when there is no grid reference"
     else
-      grid.load if not grid.loaded
+      grid = grid.load if not grid.loaded
       row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
       if row.present?
         log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
