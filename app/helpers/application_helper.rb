@@ -151,9 +151,9 @@ module ApplicationHelper
   # including timing and user who made the creation or last update.
   def display_updated_date_by(entity)
     if entity.was_updated?
-      (t('field.created') + " " + display_created_time_by(entity, entity.who_created, entity.create_user_uuid)).html_safe
-    else
       (t('field.updated') + " " + display_updated_time_by(entity, entity.who_updated, entity.update_user_uuid)).html_safe
+    else
+      (t('field.created') + " " + display_created_time_by(entity, entity.who_created, entity.create_user_uuid)).html_safe
     end
   end
 
