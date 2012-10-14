@@ -4,7 +4,7 @@
     font-size:100%;
     border:1px solid $background-color-table;
     vertical-align:middle;
-    padding:$padding;
+    padding:$padding/2;
     margin:1px;
     @include field-shade;
     @include transition;
@@ -25,7 +25,7 @@
     font-size:100%;
     border:1px solid $background-color-table;
     vertical-align:middle;
-    padding:$padding;
+    padding:$padding/2;
     margin:1px;
     @include field-shade;
     @include transition;
@@ -38,7 +38,7 @@
     vertical-align:middle;
     width:95%; 
     height:auto; 
-    padding:$padding;
+    padding:$padding/2;
     margin:1px;
     @include field-shade;
     @include transition;
