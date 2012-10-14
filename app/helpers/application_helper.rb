@@ -27,15 +27,9 @@ module ApplicationHelper
 
   # Displays an icon using its name
   def icon(name, title=nil)
-    if name.present?
-      tag("img", {:src => asset_path(name + ".gif"), 
-                  :height => "12", 
-                  :width => "12", 
-                  :border => "0",
-                  :title => title})
-    else
+    name.present? ?
+      tag("img", {:src => asset_path(name + ".gif"), :height => "12", :width => "12", :border => "0", :title => title}) :
       ""
-    end
   end
 
   # Displays the filter in plain text.
@@ -152,7 +146,7 @@ module ApplicationHelper
   # Displays information about the creation or the last update of the entity,
   # including timing and user who made the creation or last update.
   def display_updated_date_by(entity)
-    if entity.revision.nil? or entity.revision == 1
+    if entity.was_updated?
       (t('field.created') + " " + display_created_time_by(entity, entity.who_created, entity.create_user_uuid)).html_safe
     else
       (t('field.updated') + " " + display_updated_time_by(entity, entity.who_updated, entity.update_user_uuid)).html_safe
@@ -165,44 +159,22 @@ module ApplicationHelper
     as_of_date != today ? "warning" : ""
   end
 
-  def information(entity, show_required=false)
+  # Displays information related to the given entity.
+  # Shows begin and end dates if any.
+  def display_information(entity)
     output = ""
     if entity.begin != Entity.begin_of_time
       output << t('general.begins', :time => entity.begin.to_s)
     end
     if entity.end != Entity.end_of_time
-      output << " | " if output.length>0
+      output << " " if output.length > 0
       output <<  t('general.ends', :time => entity.end.to_s)
     end
-    if show_required
-      output << " | " if output.length>0 and show_required
-      output << t('general.version', :version => entity.version.to_s)
-    end
     if not entity.enabled
-      output << " " if output.length>0
+      output << " " if output.length > 0
       output << t('general.inactive')
-      output << icon('exclamation')
     end
-    output.length > 0 ? output : ""  
-  end
-
-  def display_information(entity, show_required=false)
-    output = information(entity, show_required)
     output.length > 0 ? content_tag("span", output, :class => "asofdate").html_safe : ""
-  end
-
-  def display_grid_next_versions(grid, entity)
-    output = ""
-    previous_entity_id = grid.row_select_previous_version(entity)
-    next_entity_id = grid.row_select_next_version(entity)
-    if previous_entity_id > 0
-      output << " " + previous_entity_id.to_s
-    end
-    output << " " + display_information(entity) + " "
-    if next_entity_id > 0
-      output << next_entity_id.to_s + " "
-    end
-    output.html_safe
   end
 
   # Displays the language in which the row was captured if this doesn't 

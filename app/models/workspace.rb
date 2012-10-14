@@ -18,32 +18,31 @@ class Workspace < Entity
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   has_many :workspace_locs,  :foreign_key => "uuid", :primary_key => "uuid"
 
-  # Selects data based on uuid
+  # Selects data based on its uuid in the given collection.
   def self.select_entity_by_uuid(collection, uuid)
-    collection.find(:first, 
-                    :joins => :workspace_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                      ["workspaces.uuid = :uuid " + 
-                       " AND " + as_of_date_clause("workspaces") +
-                       " AND workspace_locs.version = workspaces.version " +
-                       " AND " + locale_clause("workspace_locs"), 
-                       {:uuid => uuid}]) 
+    collection.
+      select(self.all_select_columns).
+      joins(:workspace_locs).
+      where("workspaces.uuid = ?", uuid).
+      where(as_of_date_clause("workspaces")).
+      where("workspace_locs.version = workspaces.version").
+      where(locale_clause("workspace_locs")).
+      first
   end
-  
-  # Selects data based on uri
+
+  # Selects data based on its uri in the given collection.
   def self.select_entity_by_uri(collection, uri)
-    collection.find(:first, 
-                    :joins => :workspace_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                      ["workspaces.uri = :uri " + 
-                       " AND " + as_of_date_clause("workspaces") +
-                       " AND workspace_locs.version = workspaces.version " +
-                       " AND " + locale_clause("workspace_locs"), 
-                       {:uri => uri}]) 
+    collection.
+      select(self.all_select_columns).
+      joins(:workspace_locs).
+      where("workspaces.uri = ?", uri).
+      where(as_of_date_clause("workspaces")).
+      where("workspace_locs.version = workspaces.version").
+      where(locale_clause("workspace_locs")).
+      first
   end
-  
+
+  # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
     collection.find(:first, 
                     :joins => :workspace_locs,
@@ -53,8 +52,7 @@ class Workspace < Entity
                        " AND workspaces.version = :version " + 
                        " AND workspace_locs.version = workspaces.version " +
                        " AND " + locale_clause("workspace_locs"), 
-                       {:uuid => uuid, 
-                       :version => version}]) 
+                       {:uuid => uuid, :version => version}]) 
   end
   
   def self.all_versions(collection, uuid)

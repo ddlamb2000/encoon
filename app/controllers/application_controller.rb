@@ -17,17 +17,21 @@
 class ApplicationController < ActionController::Base
   before_filter :load_credentials
 
-  # Application layout
+  # Defines the application layout.
   layout "application"
 
-  # Include all helpers, all the time
-  helper :all 
+  # Includes helpers required for page rendering.
+  helper "application", "entity"
 
-  # Security
+  # A feature in Rails that protects against Cross-site Request Forgery (CSRF) attacks.
+  # This feature makes all generated forms have a hidden id field.
+  # This id field must match the stored id or the form submission is not accepted.
+  # This prevents malicious forms on other sites or forms inserted with XSS from submitting to the Rails application.
   protect_from_forgery
 
 protected
 
+  # Loads user credentials.
   def load_credentials
     session[:as_of_date] = Date.current if session[:as_of_date].nil?
     Entity.session_as_of_date = session[:as_of_date]
@@ -43,11 +47,13 @@ protected
     Entity.session_locale = I18n.locale.to_s
   end
 
+  # Selects the workspaces available to the connected user.
   def load_workspaces
     log_debug "ApplicationController#load_workspaces: user_uuid=#{Entity.session_user_uuid}?"
     @workspaces = Workspace.user_workspaces(Workspace)
   end
 
+  # Keeps track of the current page in the history of navigation.
   def push_history
     session[:history_table] = [] if session[:history_table].nil?
     visited = { :page_title => @page_title, :url => request.url, :when => Time.now }
@@ -68,27 +74,25 @@ protected
     end
     super
   end
-    
+
+  # Change the as of date session based on the selection of historical data for the given entity.
   def change_as_of_date(entity)
     if entity.begin > session[:as_of_date]
-      session[:as_of_date] = entity.begin 
-      flash[:notice] = "As of date changed to #{session[:as_of_date].to_s}" 
+      session[:as_of_date] = entity.begin
+      flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
     end
     if entity.end < session[:as_of_date]
-      session[:as_of_date] = entity.end 
-      flash[:notice] = "As of date changed to #{session[:as_of_date].to_s}" 
+      session[:as_of_date] = entity.end
+      flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
     end
   end
-  
-  def param_begin_date
-    params[:begin_date].present? ? Date.parse(params[:begin_date]) : Entity.begin_of_time
-  end
 
+  # Controller helper used for debug messages.
   def log_debug(message) ; Entity.log_debug(message) ; end
 
+  # Controller helper used for error messages.
   def log_error(message, invalid) ; Entity.log_error(message, invalid) ; end
 
+  # Controller helper used for security messages.
   def log_security_warning(message) ; Entity.log_security_warning(message) ; end
-
-  def as_of_date_clause(synonym) ; Entity.as_of_date_clause(synonym) ; end
 end

@@ -64,9 +64,10 @@ class Entity < ActiveRecord::Base
     default_dates
   end
 
+  # Initializes the dates with default values.
   def default_dates
-    self.begin = @@begin_of_time if self.begin.blank? 
-    self.end = @@end_of_time if self.end.blank?
+    self.begin = self.class.begin_of_time if self.begin.blank?
+    self.end = self.class.end_of_time if self.end.blank?
   end
 
   def valid_dates
@@ -75,12 +76,14 @@ class Entity < ActiveRecord::Base
     end
   end
 
+  # Indicates if the entity has a begin date.
   def has_begin?
-    self.begin.present? and self.begin != @@begin_of_time 
+    self.begin.present? and self.begin != self.class.begin_of_time
   end
 
+  # Indicates if the entity has a end date.
   def has_end?
-    self.end.present? and self.end != @@end_of_time 
+    self.end.present? and self.end != self.class.end_of_time
   end
 
   # Returns the name of the user who created the record
@@ -93,11 +96,12 @@ class Entity < ActiveRecord::Base
     self.update_user
   end
 
+  # Indicates if the entity was updated.
   def was_updated?
     self.updated_at != self.created_at
   end
 
-  # Returns a revision number
+  # Returns a revision number.
   def revision ; 1 + self.lock_version ; end
 
   def to_s

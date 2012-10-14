@@ -41,14 +41,14 @@ class User < Entity
     name
   end
   
+  # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
     collection.find(:first, 
                     :select => self.all_select_columns,
                     :conditions => 
                       ["users.uuid = :uuid " + 
                        " AND users.version = :version ", 
-                       {:uuid => uuid, 
-                       :version => version}]) 
+                       {:uuid => uuid, :version => version}]) 
   end
   
   def import_attribute(xml_attribute, xml_value)

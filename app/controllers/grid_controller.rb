@@ -596,14 +596,35 @@ class GridController < ApplicationController
     render :nothing => true
   end
 
-  # Forces page to be refreshed after an as of date change.
+  # Forces page to be refreshed after an as of date or locale change.
   def refresh
-    log_debug "GridController#refresh date=#{params[:home][:session_date]}"
-    session[:as_of_date] = Date.strptime(params[:home][:session_date], t('datepicker.decode'))
+    log_debug "GridController#refresh"
+    if params[:home].present?
+      if params[:home][:session_date].present?
+        log_debug "GridController#refresh date=#{params[:home][:session_date]}"
+        begin
+          requested_date = Date.parse(params[:home][:session_date])
+        rescue Exception => invalid
+          flash[:notice] = t('error.invalid_date', :date => params[:home][:session_date])
+          redirect_to session[:last_url]
+          return
+        end
+        if requested_date != session[:as_of_date]
+          session[:as_of_date] = requested_date
+          flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
+        end
+      end
+    end
     redirect_to session[:last_url]
   end
 
 private
+
+  # Returns the begin date is present as part of parameters.
+  # Returns a default value when the begin date is absent from the parameters.
+  def param_begin_date
+    params[:begin_date].present? ? Date.parse(params[:begin_date]) : Entity.begin_of_time
+  end
 
   # Sets parameter values into data row using physical column names.
   # Used for creation and update of rows. 
@@ -714,9 +735,9 @@ private
     @row = nil
     if @grid.present? and params[:row].present?
       if Entity.uuid?(params[:row])
-        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
+        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row], nil, params[:version])
       else
-        @row = @row_loc = @grid.row_select_entity_by_uri(params[:row])
+        @row = @row_loc = @grid.row_select_entity_by_uri(params[:row], params[:version])
       end
       if @row.nil?
         Entity.log_debug "GridController#selectRow can't find row #{params[:row]}"

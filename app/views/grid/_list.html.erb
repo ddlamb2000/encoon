@@ -9,9 +9,7 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.create_help' %>" class="button add-button">
-        <a id="create-<%= filters_uuid(@grid, @filters) %>">
-          <%= t 'actions.create' %>
-        </a>
+        <a id="create-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.create' %></a>
       </span>
       <script>
         $("#create-<%= filters_uuid(@grid, @filters) %>").click(function (event){
@@ -35,9 +33,7 @@
       </script>
     <% end %>
     <span title="<%= t 'actions.create_help' %>" class="button search-button">
-      <a id="search-<%= filters_uuid(@grid, @filters) %>">
-        <%= t 'actions.search' %>
-      </a>
+      <a id="search-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.search' %></a>
     </span>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span class="button" title="<%= t 'actions.import_help' %>">
@@ -75,9 +71,7 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.update_grid_help' %>" class="button edit-button">
-        <a id="update-grid-<%= filters_uuid(@grid, @filters) %>">
-          <%= t 'actions.update_grid' %>
-        </a>
+        <a id="update-grid-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.update_grid' %></a>
       </span>
       <script>
         $("#update-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
@@ -100,9 +94,7 @@
     <% end %>
     <% if user_signed_in? and @grid.can_create_row?(@filters) %>
       <span title="<%= t 'actions.column_help' %>" class="button edit-button">
-        <a id="attributes-grid-<%= filters_uuid(@grid, @filters) %>">
-          <%= t 'actions.columns' %>
-        </a>
+        <a id="attributes-grid-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.columns' %></a>
       </span>
       <script>
         $("#attributes-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
@@ -141,6 +133,9 @@
   <hgroup>
     <%= render :partial => 'breadcrumbs' %>
     <small>
+      <%= display_information(@grid) %>
+      <%= display_locale(@grid) %>
+      <%= display_updated_date_by(@grid) %>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
       <% if user_signed_in? and not(@grid.can_create_row?(@filters)) %>
         <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>

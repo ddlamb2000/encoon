@@ -71,7 +71,7 @@ en:
     active:       "Active"    
     begin_date:   "Begin date"
     end_date:     "End date"
-    asof_date:    "As of date"
+    asof_date:    "Reference date"
     first_name:   "First name"
     last_name:    "Last name"
     version:      "Version"
@@ -104,8 +104,8 @@ en:
     records:      "%{count} rows / %{total}"
     audit_create: "Creation of version %{version} (%{language})"
     audit_update: "Revision %{revision} of version %{version} (%{language})"
-    audit_import: "<u>Import</u> of version %{version} (%{language})"
-    audit_delete: "<strong>Delete</strong> version %{version} (%{language})"
+    audit_import: "Import of version %{version} (%{language})"
+    audit_delete: "Delete version %{version} (%{language})"
     audit_attach: "Attach document"
     audit_detach: "Remove attached document"
     audit_pass:   "Password changed"
@@ -119,17 +119,10 @@ en:
     attached_row: "%{grid} (%{column})"
     locked:       "Data can't be modified."
     no_data:      "No data"
+    asofdate:     "The reference date was changed to %{date}."
   filters:
     search:       "(Name) or (Text) contains (%{value})"
     equals_to:    "(%{column}) equals to  (%{value})"
-  datepicker:
-    format:           "yy-mm-dd"
-    decode:           "%Y-%m-%d"
-    dayNamesMin:      [Su, Mo, Tu, We, Th, Fr, Sa]
-    monthNames:       [January, February, March, April, May, June, July, August, September, October, November, December]
-    monthNamesShort:  [Jan, Feb, Mar, Apr, May, June, July, Augu, Sept, Oct, Nov, Dec]
-    currentText:      "Today"
-    closeText:        "Close"
   transaction:
     created:      "%{name} (%{type}) created."
     updated:      "%{name} (%{type}) updated."
@@ -151,6 +144,7 @@ en:
     cant_create:  "You're not authorized to create data."
     cant_update:  "You're not authorized to update data."
     cant_select:  "You're not authorized to select this data for '%{column}'."
+    invalid_date: "The date %{date} is not in a correct format."
   message:
     delete:       "Are you sure you want to delete '%{name}'?"
     uploaded:     "The file was uploaded: %{record_count} records, %{insert_count} inserted, %{update_count} updated."

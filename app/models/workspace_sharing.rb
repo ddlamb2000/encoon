@@ -17,22 +17,22 @@
 class WorkspaceSharing < Entity
   has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
   
+  # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
     collection.find(:first, 
                     :select => self.all_select_columns,
                     :conditions => 
-                      ["workspace_sharings.uuid = :uuid " + 
-                       " AND workspace_sharings.version = :version ", 
-                       {:uuid => uuid, 
-                       :version => version}]) 
+                      ["workspace_sharings.uuid = :uuid " +
+                       " AND workspace_sharings.version = :version ",
+                       {:uuid => uuid, :version => version}])
   end
-  
+
   def copy_attributes(entity)
     log_debug "WorkspaceSharing#copy_attributes"
     super
-    entity.workspace_uuid = self.workspace_uuid    
-    entity.role_uuid = self.role_uuid    
-    entity.user_uuid = self.user_uuid    
+    entity.workspace_uuid = self.workspace_uuid
+    entity.role_uuid = self.role_uuid
+    entity.user_uuid = self.user_uuid
   end
 
   def import_attribute(xml_attribute, xml_value)

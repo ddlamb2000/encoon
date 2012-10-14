@@ -71,7 +71,7 @@ fr:
     active:       "Actif"    
     begin_date:   "Date de début"
     end_date:     "Date de fin"
-    asof_date:    "Date"
+    asof_date:    "Date de référence"
     first_name:   "Prénom"
     last_name:    "Nom"
     version:      "Version"
@@ -104,8 +104,8 @@ fr:
     records:      "%{count} lignes / %{total}"
     audit_create: "Création de la version %{version} (%{language})"
     audit_update: "Révision %{revision} de la version %{version} (%{language})"
-    audit_import: "<u>Importation</u> de la version %{version} (%{language})"
-    audit_delete: "<strong>Suppression</strong> de la version %{version} (%{language})"
+    audit_import: "Importation de la version %{version} (%{language})"
+    audit_delete: "Suppression de la version %{version} (%{language})"
     audit_attach: "Ajout de document"
     audit_detach: "Suppression d’un document"
     audit_pass:   "Mot de passe modifié"
@@ -119,17 +119,10 @@ fr:
     attached_row: "%{grid} (%{column})"
     locked:       "La données ne peut pas être modifiée."
     no_data:      "Pas de données"
+    asofdate:     "La date de référence a été changée pour le %{date}."
   filters:
     search:       "(Nom) ou (Texte) contient (%{value})"
     equals_to:    "(%{column}) est égal à (%{value})"
-  datepicker:
-    format:           "dd/mm/yy"
-    decode:           "%d/%m/%Y"
-    dayNamesMin:      [Di, Lu, Ma, Me, Je, Ve, Sa]
-    monthNames:       [Janvier, Février, Mars, Avril, Mai, Juin, Juillet, Août, Septembre, Octobre, Novembre, Décembre]
-    monthNamesShort:  [Jan, Fév, Mar, Avr, Mai, Juin, Juil, Août, Sept, Oct, Nov, Déc]
-    currentText:      "Aujourd’hui"
-    closeText:        "Fermer"
   transaction:
     created:      "%{name} (%{type}) créé."
     updated:      "%{name} (%{type}) modifié."
@@ -151,6 +144,7 @@ fr:
     cant_create:  "Vous n’êtes pas autorisé à créér une donnée."
     cant_update:  "Vous n’êtes pas autorisé à modifier la donnée."
     cant_select:  "Vous n’êtes pas autorisé à sélectionner cette donnée pour '%{column}'."
+    invalid_date: "La date %{date} n’est pas au bon format."
   message:
     delete:       "Êtes vous sûr de vouloir supprimer ’%{name}’ ?"
     uploaded:     "Le fichier a été chargé: %{record_count} enregistrements, %{insert_count} insertions, %{update_count} mises à jour."

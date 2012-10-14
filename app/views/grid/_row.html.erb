@@ -64,7 +64,7 @@
     <hgroup>
       <%= render :partial => 'breadcrumbs' %>
       <small>
-        <%= display_grid_next_versions(@grid, @row) %>
+        <%= display_information(@row) %>
         <%= display_locale(@row) if @grid.has_translation %>
         <%= display_updated_date_by(@row) %>
         <% if user_signed_in? and not(@grid.can_update_row?(@row)) %>

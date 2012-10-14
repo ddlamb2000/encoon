@@ -59,12 +59,12 @@
           <ul>
           <% for row in @versions %>
             <li>
-              <%= link_to information(row, true),
+              <%= link_to t('general.version', :version => row.version.to_s),
                           show_path(:workspace => @grid.workspace_uuid,
                                     :grid => @grid.uuid,
-                                    :row => row.uuid) %>
-              <%= truncate_html(row.description).html_safe %>
-              <small><%= display_updated_date(row) %></small>
+                                    :row => row.uuid,
+                                    :version => row.version) %>
+              <small><%= display_information(row) %></small>
             </li>
           </ul>
           <% end %>

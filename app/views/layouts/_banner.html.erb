@@ -1,9 +1,7 @@
 <section id="header-application"><%= current_application_title %></section>
 <section id="header-links">
-  <%= form_tag '', :method => 'GET', :class => 'locale' do %>
-    <%= select_tag 'locale', 
-                   options_for_select(LANGUAGES, I18n.locale.to_s),
-                   :onchange => 'this.form.submit()' %>
+  <%= form_for :home, :url => refresh_path do |f| %>
+    <%= select_tag 'locale', options_for_select(LANGUAGES, I18n.locale.to_s), :onchange => 'this.form.submit()' %>
   <% end %>
   <% if user_signed_in? %>
     <span class="button user-button">

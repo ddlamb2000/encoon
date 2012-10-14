@@ -47,38 +47,36 @@ class Grid < Entity
     @loaded = true
   end
 
-  # Selects data based on uuid.
+  # Selects data based on its uuid in the given collection.
   def self.select_entity_by_uuid(collection, uuid)
     log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid}) [#{to_s}]"
-    collection.find(:first, 
-                    :joins => :grid_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                        ["grids.uuid = :uuid" +
-                         " AND grid_locs.version = grids.version" +
-                         " AND " + as_of_date_clause("grids") +
-                         " AND " + locale_clause("grid_locs") +
-                         " AND " + grid_security_clause("grids"), 
-                        {:uuid => uuid}])
+    collection.
+      select(self.all_select_columns).
+      joins(:grid_locs).
+      where("grids.uuid = ?", uuid).
+      where("grid_locs.version = grids.version").
+      where(as_of_date_clause("grids")).
+      where(locale_clause("grid_locs")).
+      where(grid_security_clause("grids")).
+      first 
   end
   
-  # Selects data based on workspace and uri.
+  # Selects data based on workspace and uri in the given collection.
   def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri)
     log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{uri}) [#{to_s}]"
-    collection.find(:first, 
-                    :joins => :grid_locs,
-                    :select => self.all_select_columns,
-                    :conditions => 
-                        ["grids.workspace_uuid = :workspace_uuid" +
-                         " AND grids.uri = :uri" +
-                         " AND grid_locs.version = grids.version" +
-                         " AND " + as_of_date_clause("grids") +
-                         " AND " + locale_clause("grid_locs") +
-                         " AND " + grid_security_clause("grids"), 
-                        {:workspace_uuid => workspace_uuid,
-                         :uri => uri}])
+    collection.
+      select(self.all_select_columns).
+      joins(:grid_locs).
+      where("grids.workspace_uuid = ?", workspace_uuid).
+      where("grids.uri = ?", uri).
+      where("grid_locs.version = grids.version").
+      where(as_of_date_clause("grids")).
+      where(locale_clause("grid_locs")).
+      where(grid_security_clause("grids")).
+      first 
   end
   
+  # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
     log_debug "Grid#select_entity_by_uuid_version(#{collection}, #{uuid}, #{version}) [#{to_s}]"
     collection.find(:first, 
@@ -185,8 +183,7 @@ class Grid < Entity
                       " AND grid_locs.version = grids.version" +
                       " AND " + grid_security_clause("grids") + 
                       " ORDER BY grid_locs.name, column_locs.name", 
-                       {:kind => COLUMN_TYPE_REFERENCE, 
-                        :uuid => uuid}])
+                       {:kind => COLUMN_TYPE_REFERENCE, :uuid => uuid}])
   end
 
   def column_select_by_uuid(uuid)
@@ -308,73 +305,42 @@ class Grid < Entity
       count ? 0 : []
   end
 
-  # Selects data based on uuid
-  def row_select_entity_by_uuid(uuid, uri=nil)
-    log_debug "Grid#row_select_entity_by_uuid(#{uuid}) [#{to_s}]"
+  # Selects a row based on its uuid or uri.
+  def row_select_entity_by_uuid(uuid, uri=nil, version=nil)
+    log_debug "Grid#row_select_entity_by_uuid(#{uuid}, #{uri}, #{version}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_select_entity_by_uuid Can't select data"
       return nil
     end
-    sql = "SELECT #{row_all_select_columns}" + 
-          " FROM grids grids, #{@db_table} rows" + 
+    sql = "SELECT #{row_all_select_columns}" +
+          " FROM grids grids, #{@db_table} rows" +
           (@has_translation ? ", #{@db_loc_table} row_locs" : "") +
           " WHERE grids.uuid = #{quote(self.uuid)}" +
           " AND " + as_of_date_clause("grids") +
-          " AND " + Grid::grid_security_clause("grids") + 
+          " AND " + Grid::grid_security_clause("grids") +
           (uri.nil? ? " AND rows.uuid = #{quote(uuid)}" : " AND rows.uri = #{quote(uri)}") +
-          " AND " + as_of_date_clause("rows") +
+          (version.nil? ? " AND " + as_of_date_clause("rows") : " AND rows.version = #{version}") +
           (@has_mapping ? "" : " AND rows.grid_uuid = #{quote(self.uuid)}") +
           (@has_translation ? 
               " AND rows.uuid = row_locs.uuid" +
               " AND rows.version = row_locs.version" +
               " AND " + locale_clause("row_locs") : "") +
-          ((self.uuid == WORKSPACE_UUID) ? 
-              " AND " + Grid::workspace_security_clause("rows") : "") + 
-          ((self.uuid == GRID_UUID) ? 
-              " AND " + Grid::grid_security_clause("rows") : "") 
+          ((self.uuid == WORKSPACE_UUID) ? " AND " + Grid::workspace_security_clause("rows") : "") +
+          ((self.uuid == GRID_UUID) ? " AND " + Grid::grid_security_clause("rows") : "")
     Row.find_by_sql([sql])[0]
     rescue ActiveRecord::StatementInvalid => exception
-      log_error "Grid#row_select_entity_by_uuid #{exception.to_s}" +
-                ", data grid='#{name}', sql=#{sql}"
+      log_error "Grid#row_select_entity_by_uuid #{exception.to_s} #{sql} [#{to_s}]"
       nil
   end
 
-  # Selects data based on uri.
-  def row_select_entity_by_uri(uri)
-    row_select_entity_by_uuid(nil, uri)
+  # Selects a row based on its uuid or uri.
+  def row_select_entity_by_uri(uri, version=nil)
+    row_select_entity_by_uuid(nil, uri, version)
   end
 
-  def row_select_entity_by_uuid_version(uuid, version)
-    load if not loaded
-    log_debug "Grid#row_select_entity_by_uuid_version(#{uuid}, #{version}) [#{to_s}]"
-    if not @can_select_data
-      log_security_warning "Grid#row_select_entity_by_uuid_version Can't select data"
-      return nil
-    end
-    Row.find_by_sql(["SELECT #{row_all_select_columns}" + 
-                     " FROM grids grids, #{@db_table} rows" + 
-                     (@has_translation ? ", #{@db_loc_table} row_locs" : "") +
-                     " WHERE grids.uuid = #{quote(self.uuid)}" +
-                     " AND " + as_of_date_clause("grids") +
-                     " AND " + Grid::grid_security_clause("grids") + 
-                     " AND rows.uuid = :uuid" +
-                     " AND rows.version = :version" +
-                     (@has_mapping ? "" : " AND rows.grid_uuid = :grid_uuid") +
-                     (@has_translation ? 
-                        " AND rows.uuid = row_locs.uuid" +
-                        " AND rows.version = row_locs.version" +
-                        " AND " + locale_clause("row_locs") : "") + 
-                     ((self.uuid == WORKSPACE_UUID) ? 
-                        " AND " + Grid::workspace_security_clause("rows") : "") + 
-                     ((self.uuid == GRID_UUID) ? 
-                         " AND " + Grid::grid_security_clause("rows") : ""), 
-                       {:grid_uuid => self.uuid,
-                        :version => version,
-                        :uuid => uuid}])[0]
-    rescue ActiveRecord::StatementInvalid => exception
-      log_error "Grid#row_select_entity_by_uuid_version #{exception.to_s}" +
-                ", data grid='#{name}', sql=#{sql}"
-      nil
+  # Selects a row based on its uuid and version number.
+  def row_select_entity_by_uuid_version(uuid, version=nil)
+    row_select_entity_by_uuid(uuid, nil, version)
   end
 
   def row_all_versions(uuid)
@@ -497,34 +463,6 @@ class Grid < Entity
                           {:version => version, :uuid => uuid}])
   end
 
-  def row_select_next_version(row)
-    log_debug "Grid#row_select_next_version"
-    sql = "SELECT id" + 
-          " FROM #{@db_table}" + 
-          " WHERE uuid = #{quote(row.uuid)}" +
-          " AND id != #{quote(row.id)}" +
-          " AND (begin > #{quote(row.begin)}" +
-          " OR (begin = #{quote(row.begin)}" +
-          " AND version > #{quote(row.version)}))" +
-          (@has_mapping ? "" : " AND grid_uuid = #{quote(self.uuid)}") +
-          " ORDER BY begin, version"
-    connection.select_value(sql).to_i
-  end
-
-  def row_select_previous_version(row)
-    log_debug "Grid#row_select_previous_version"
-    sql = "SELECT id" + 
-          " FROM #{@db_table}" + 
-          " WHERE uuid = #{quote(row.uuid)}" +
-          " AND id != #{quote(row.id)}" +
-          " AND (begin < #{quote(row.begin)}" +
-          " OR (begin = #{quote(row.begin)}" +
-          " AND version < #{quote(row.version)}))" +
-          (@has_mapping ? "" : " AND grid_uuid = #{quote(self.uuid)}") +
-          " ORDER BY begin DESC, version DESC"
-    connection.select_value(sql).to_i
-  end
-
   def row_initialization(row, filters)
     log_debug "Grid#row_initialization(filters=#{filters.inspect}) [#{to_s}]"
     row.initialization
@@ -583,9 +521,9 @@ class Grid < Entity
   def copy_attributes(entity)
     log_debug "Grid#copy_attributes"
     super
-    entity.workspace_uuid = self.workspace_uuid    
-    entity.has_name = self.has_name    
-    entity.has_description = self.has_description    
+    entity.workspace_uuid = self.workspace_uuid
+    entity.has_name = self.has_name
+    entity.has_description = self.has_description
   end
 
   def import_attribute(xml_attribute, xml_value)

@@ -5,7 +5,6 @@
     </span>
     <%= f.text_field 'session_date',
                      :size => "10x1",
-                     :type => "date",
                      :value => I18n.l(session[:as_of_date]),
                      :onchange => 'this.form.submit()' %>
   <% end %>

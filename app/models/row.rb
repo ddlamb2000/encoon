@@ -140,6 +140,7 @@ class Row < Entity
     if grid.nil?
       log_error "Row#import! Can't import row when there is no grid reference"
     else
+      grid.load if not grid.loaded
       row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
       if row.present?
         log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"
