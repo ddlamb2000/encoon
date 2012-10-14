@@ -16,6 +16,10 @@
 # See doc/COPYRIGHT.rdoc for more details.
 class ApplicationController < ActionController::Base
   before_filter :load_credentials, :set_locale, :set_asofdate
+  before_filter :load_workspaces, :except => [:create, :update,
+                                              :attributes, :details,
+                                              :attach, :save_attachment, :delete_attachment,
+                                              :import, :upload]
 
   # Defines the application layout.
   layout "application"
@@ -47,7 +51,6 @@ protected
   # Sets locale based on parameter.
   def set_locale
     log_debug "ApplicationController#set params[:locale]=#{params[:locale]}"
-    log_debug "ApplicationController#set I18n.locale=#{I18n.locale}"
     session[:locale] = params[:locale] if params[:locale].present?
     session[:locale] = I18n.default_locale if I18n.locale.nil?
     I18n.locale = session[:locale]

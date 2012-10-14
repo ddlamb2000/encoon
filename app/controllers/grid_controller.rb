@@ -15,11 +15,8 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class GridController < ApplicationController
-  before_filter :load_workspaces, :only => [:home, :credits, :show]
-  before_filter :authenticate_user!, :only => [:new, :edit, :create, :update,
-                                               :attributes, :details,
-                                               :attach, :save_attachment, :delete_attachment,
-                                               :import, :upload]
+  before_filter :authenticate_user!, :except => [:show, :row, :details, :list,
+                                                 :attachments, :home, :credits, :history, :refresh]
 
   # Message used to aknowledge requests in dialogs that use an iframe. 
   OK_MSG = "<div id='ok'>OK</div>"
@@ -663,6 +660,7 @@ private
           params[:grid] = GRID_UUID
         end
       end 
+      Entity.log_debug "GridController#selectWorkspaceAndGrid select workspace"
       if Entity.uuid?(params[:workspace])
         @workspace = Workspace.select_entity_by_uuid(Workspace, params[:workspace])
       else
@@ -672,6 +670,7 @@ private
         Entity.log_debug "GridController#selectWorkspaceAndGrid can't find workspace #{params[:workspace]}"
       else
         Entity.log_debug "GridController#selectWorkspaceAndGrid workspace found name=#{@workspace.name}"
+        Entity.log_debug "GridController#selectWorkspaceAndGrid select grid"
         if Entity.uuid?(params[:grid])
           @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
         else
@@ -694,6 +693,7 @@ private
     @workspace = nil
     @grid = nil
     if params[:grid].present?
+      Entity.log_debug "GridController#selectGridAndWorkspace select grid"
       if Entity.uuid?(params[:grid])
         @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
       end
