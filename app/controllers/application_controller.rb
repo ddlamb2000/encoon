@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class ApplicationController < ActionController::Base
-  before_filter :load_credentials
+  before_filter :load_credentials, :set_locale, :set_asofdate
 
   # Defines the application layout.
   layout "application"
@@ -33,24 +33,50 @@ protected
 
   # Loads user credentials.
   def load_credentials
+    log_debug "ApplicationController#load_credentials"
     session[:as_of_date] = Date.current if session[:as_of_date].nil?
     Entity.session_as_of_date = session[:as_of_date]
     if user_signed_in?
       Entity.session_user_uuid = current_user.uuid
       Entity.session_user_display_name = current_user
     else
-      Entity.session_user_uuid = nil
-      Entity.session_user_display_name = nil
+      Entity.session_user_uuid = Entity.session_user_display_name = nil
     end
-    session[:locale] = params[:locale] if params[:locale]
-    I18n.locale = session[:locale] || I18n.default_locale
+  end
+
+  # Sets locale based on parameter.
+  def set_locale
+    log_debug "ApplicationController#set params[:locale]=#{params[:locale]}"
+    log_debug "ApplicationController#set I18n.locale=#{I18n.locale}"
+    session[:locale] = params[:locale] if params[:locale].present?
+    session[:locale] = I18n.default_locale if I18n.locale.nil?
+    I18n.locale = session[:locale]
     Entity.session_locale = I18n.locale.to_s
+    log_debug "ApplicationController#set Entity.session_locale=#{Entity.session_locale}"
+  end
+  
+  # Sets the as of date based on parameter.
+  def set_asofdate
+    if params[:as_of_date].present?
+      log_debug "ApplicationController#refresh date=#{[:as_of_date]}"
+      begin
+        requested_date = Date.parse(params[:as_of_date])
+      rescue Exception => invalid
+        flash[:notice] = t('error.invalid_date', :date => params[:as_of_date])
+        redirect_to session[:last_url]
+        return
+      end
+      if requested_date != session[:as_of_date]
+        session[:as_of_date] = requested_date
+        flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
+      end
+    end
   end
 
   # Selects the workspaces available to the connected user.
   def load_workspaces
-    log_debug "ApplicationController#load_workspaces: user_uuid=#{Entity.session_user_uuid}?"
-    @workspaces = Workspace.user_workspaces(Workspace)
+    log_debug "ApplicationController#load_workspaces"
+    @workspaces = Workspace.user_workspaces
   end
 
   # Keeps track of the current page in the history of navigation.

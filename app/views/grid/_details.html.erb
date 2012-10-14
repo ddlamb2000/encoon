@@ -59,11 +59,7 @@
           <ul>
           <% for row in @versions %>
             <li>
-              <%= link_to t('general.version', :version => row.version.to_s),
-                          show_path(:workspace => @grid.workspace_uuid,
-                                    :grid => @grid.uuid,
-                                    :row => row.uuid,
-                                    :version => row.version) %>
+              <%= link_to t('general.version', :version => row.version.to_s), refresh_path(:as_of_date => row.reference_date) %>
               <small><%= display_information(row) %></small>
             </li>
           </ul>
@@ -78,11 +74,7 @@
           <ul>
             <% for row in @locales %>
               <li>
-                <%= link_to get_language(row.base_locale), 
-                            show_path(:workspace => @grid.workspace_uuid,
-                                      :grid => @grid.uuid,
-                                      :row => row.uuid,
-                                      :locale => row.base_locale) %>
+                <%= link_to get_language(row.base_locale), refresh_path(:locale => row.base_locale) %>
                 <%= row.name %>
               </li>
             <% end %>

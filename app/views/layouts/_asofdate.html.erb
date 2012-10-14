@@ -1,11 +1,8 @@
 <article>
-  <%= form_for :home, :url => refresh_path do |f| %>
+  <%= form_for :home, :url => refresh_path do %>
     <span class="<%= warning_current_date(session[:as_of_date]) %> button highlighted">
       <%= t('field.asof_date') %>
     </span>
-    <%= f.text_field 'session_date',
-                     :size => "10x1",
-                     :value => I18n.l(session[:as_of_date]),
-                     :onchange => 'this.form.submit()' %>
+    <%= text_field_tag :as_of_date, I18n.l(session[:as_of_date]), :size => "10x1", :onchange => 'this.form.submit()' %>
   <% end %>
 </article>

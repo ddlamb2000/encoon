@@ -86,6 +86,12 @@ class Entity < ActiveRecord::Base
     self.end.present? and self.end != self.class.end_of_time
   end
 
+  # Returns the date to be used as a reference based on the entity dates
+  def reference_date
+    return self.begin if has_begin?
+    return self.end if has_end?
+  end
+
   # Returns the name of the user who created the record
   def who_created
     self.create_user
@@ -160,7 +166,7 @@ class Entity < ActiveRecord::Base
   end
 
   def self.locale_clause(synonym)
-    "#{synonym}.locale = '#{session_locale}'"
+    "#{synonym}.locale = '#{self.session_locale}'"
   end
 
   def locale_clause(synonym)
@@ -348,7 +354,7 @@ class Entity < ActiveRecord::Base
       "  AND #{as_of_date_clause("workspace_security")}" +
       "  AND workspace_security.default_role_uuid is not null" +
       " )" : "") +
-    (include_public ? "  OR workspaces.public = :public" : "") +
+    (include_public ? "  OR workspaces.public = 't'" : "") +
       ")"
   end
 
@@ -387,11 +393,11 @@ class Entity < ActiveRecord::Base
   #   # Prints a value in the log for debugging.
   #   Entity.log_debug "Entity#calc Calculated value = #{value.to_s}"
   def self.log_debug(message, out=false)
-    if session_as_of_date.present? and session_locale.present?
+    if self.session_as_of_date.present? and self.session_locale.present?
       logger.debug "[" +
                    "#{session_user_display_name}:" +
-                   "#{I18n.l(session_as_of_date)}" +
-                   "(#{session_locale})] #{message}"
+                   "#{I18n.l(self.session_as_of_date)}" +
+                   "(#{self.session_locale})] #{message}"
     else
       logger.debug message
     end
@@ -399,11 +405,11 @@ class Entity < ActiveRecord::Base
   end
 
   def self.log_warning(message, out=false)
-    if session_as_of_date.present? and session_locale.present?
+    if self.session_as_of_date.present? and self.session_locale.present?
       logger.warn "[" +
                    "#{session_user_display_name}:" +
                    "#{I18n.l(session_as_of_date)}" +
-                   "(#{session_locale})] " +
+                   "(#{self.session_locale})] " +
                    "## WARNING ## #{message}"
     else
       logger.warn "## WARNING ## #{message}"
@@ -412,11 +418,11 @@ class Entity < ActiveRecord::Base
   end
 
   def self.log_security_warning(message)
-    if session_as_of_date.present? and session_locale.present?
+    if self.session_as_of_date.present? and self.session_locale.present?
       logger.warn "[" +
                    "#{session_user_display_name}:" +
-                   "#{I18n.l(session_as_of_date)}" +
-                   "(#{session_locale})] " +
+                   "#{I18n.l(self.session_as_of_date)}" +
+                   "(#{self.session_locale})] " +
                    "## SECURITY ## #{message}"
     else
       logger.warn "## SECURITY ## #{message}"
@@ -424,19 +430,19 @@ class Entity < ActiveRecord::Base
   end
 
   def self.log_error(message, exception=nil)
-    if session_as_of_date.present? and session_locale.present?
+    if self.session_as_of_date.present? and self.session_locale.present?
       logger.error "[" +
                    "#{session_user_display_name}:" +
-                   "#{I18n.l(session_as_of_date)}" +
-                   "(#{session_locale})] " +
+                   "#{I18n.l(self.session_as_of_date)}" +
+                   "(#{self.session_locale})] " +
                    "## ERROR ## #{message}" +
                    (exception.present? ? " - " + exception.inspect : "")
       if exception.present?
         for trace in exception.backtrace
           logger.error "[" +
                        "#{session_user_display_name}:" +
-                       "#{I18n.l(session_as_of_date)}" +
-                       "(#{session_locale})] " +
+                       "#{I18n.l(self.session_as_of_date)}" +
+                       "(#{self.session_locale})] " +
                        "## EXCEPTION ## #{trace}"
         end
       end                   

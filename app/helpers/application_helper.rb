@@ -86,10 +86,14 @@ module ApplicationHelper
     (date.blank? or date == Entity.begin_of_time or date == Entity.end_of_time) ? nil : date
   end
 
+  # Returns the given date if it's different to the begin of time.
+  # Returns a string "unknown" otherwise.
   def display_begin_date(date)
     date == Entity.begin_of_time ? t('general.undefined') : date
   end
 
+  # Returns the given date if it's different to the end of time.
+  # Returns a string "unknown" otherwise.
   def display_end_date(date)
     date == Entity.end_of_time ? t('general.undefined') : date
   end
@@ -153,6 +157,7 @@ module ApplicationHelper
     end
   end
 
+  # Returns a label "warning" when the as of date is different to the system date.
   def warning_current_date(as_of_date)
     now = Time.now
     today = Date::civil(now.year, now.month, now.day)
@@ -182,9 +187,9 @@ module ApplicationHelper
   def display_locale(row)
     if row.locale != row.base_locale
       language = LANGUAGES.find{|lang, locale| row.base_locale == locale}
-      url = request.url.gsub(/[?&]locale=(..)/, "")
-      url = url + (url["?"].nil? ? "?" : "&") + "locale=" + language[1]
-      content_tag("span", link_to(language[0], url), :class => 'warning-alert')
+      if language.present?
+        content_tag("span", link_to(language[0], refresh_path(:locale => language[1])), :class => 'warning-alert')
+      end
     end
   end
 

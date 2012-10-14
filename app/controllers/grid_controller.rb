@@ -15,7 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class GridController < ApplicationController
-  before_filter :load_workspaces, :only => [:home, :credits, :show, :refresh]
+  before_filter :load_workspaces, :only => [:home, :credits, :show]
   before_filter :authenticate_user!, :only => [:new, :edit, :create, :update,
                                                :attributes, :details,
                                                :attach, :save_attachment, :delete_attachment,
@@ -599,22 +599,6 @@ class GridController < ApplicationController
   # Forces page to be refreshed after an as of date or locale change.
   def refresh
     log_debug "GridController#refresh"
-    if params[:home].present?
-      if params[:home][:session_date].present?
-        log_debug "GridController#refresh date=#{params[:home][:session_date]}"
-        begin
-          requested_date = Date.parse(params[:home][:session_date])
-        rescue Exception => invalid
-          flash[:notice] = t('error.invalid_date', :date => params[:home][:session_date])
-          redirect_to session[:last_url]
-          return
-        end
-        if requested_date != session[:as_of_date]
-          session[:as_of_date] = requested_date
-          flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
-        end
-      end
-    end
     redirect_to session[:last_url]
   end
 
@@ -735,9 +719,9 @@ private
     @row = nil
     if @grid.present? and params[:row].present?
       if Entity.uuid?(params[:row])
-        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row], nil, params[:version])
+        @row = @row_loc = @grid.row_select_entity_by_uuid(params[:row])
       else
-        @row = @row_loc = @grid.row_select_entity_by_uri(params[:row], params[:version])
+        @row = @row_loc = @grid.row_select_entity_by_uri(params[:row])
       end
       if @row.nil?
         Entity.log_debug "GridController#selectRow can't find row #{params[:row]}"
