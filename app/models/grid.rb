@@ -499,6 +499,7 @@ class Grid < Entity
     loc
   end
 
+  # Exports the entity into an .xml output.
   def export(xml)
     log_debug "Grid#export [#{to_s}]"
     xml.grid(:title => self.name) do
@@ -507,12 +508,14 @@ class Grid < Entity
       xml.has_name(self.has_name) if self.has_name
       xml.has_description(self.has_description) if self.has_description
       Grid.locales(grid_locs, self.uuid, self.version).each do |loc|
-        log_debug "Grid#export locale #{loc.base_locale}"
-        xml.locale do
-          xml.base_locale(loc.base_locale)
-          xml.locale(loc.locale)
-          xml.name(loc.name)
-          xml.description(loc.description) if loc.description.present?
+        if loc.base_locale == loc.locale
+          log_debug "Grid#export locale #{loc.base_locale}"
+          xml.locale do
+            xml.base_locale(loc.base_locale)
+            xml.locale(loc.locale)
+            xml.name(loc.name)
+            xml.description(loc.description) if loc.description.present?
+          end
         end
       end
     end
@@ -594,11 +597,13 @@ class Grid < Entity
           xml.data(row.read_value(column), :uuid => column.uuid, :name => column.name)
         end
         row_locales(row.uuid, row.version).each do |loc|
-          xml.locale do
-            xml.base_locale(loc.base_locale)
-            xml.locale(loc.locale)
-            xml.name(loc.name) if loc.name.present?
-            xml.description(loc.description) if loc.description.present?
+          if loc.base_locale == loc.locale
+            xml.locale do
+              xml.base_locale(loc.base_locale)
+              xml.locale(loc.locale)
+              xml.name(loc.name) if loc.name.present?
+              xml.description(loc.description) if loc.description.present?
+            end
           end
         end
       end
