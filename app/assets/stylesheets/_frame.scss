@@ -61,12 +61,13 @@ body {
   form {
     display:inline;
     select {
+      color:$color-highlight;
       margin:0px;
       padding:0;
       border:0;
       font-family:$blueprint-font-family;
+      background-color:$background-color-banner;
       @include border-radius;
-      @include transition;
     }
   }
   #workspaces {
