@@ -150,6 +150,7 @@
     <thead>
       <tr>
         <th class="list-header-string"></th>
+        <th class="list-header-string"></th>
         <% for column in @table_columns %>
           <%= show_header_label(column.kind,
                                 column.name.html_safe,
@@ -159,8 +160,28 @@
       </tr>
     </thead>
     <tbody>
+      <% row_number = 0 %>
       <% for row in @table_rows %>
+        <% row_number += 1 %>
         <tr id="row-<%= row.uuid %>">
+          <td>
+            <% if @grid.uuid == WORKSPACE_UUID %>
+              <%= link_to row_number.to_s,
+                          show_workspace_path(
+                            :workspace => row.display_uri) %>
+            <% elsif @grid.uuid == GRID_UUID %>
+              <%= link_to row_number.to_s,
+                          show_grid_path(
+                            :workspace => row.workspace.display_uri,
+                            :grid => row.display_uri) %>
+            <% else %>
+              <%= link_to row_number.to_s,
+                          show_path(
+                            :workspace => @grid.workspace.display_uri,
+                            :grid => @grid.display_uri,
+                            :row => row.display_uri) %>
+            <% end %>
+          </td>
           <td class="list-description">
             <% if user_signed_in? and @grid.can_update_row?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
@@ -202,33 +223,12 @@
             <% end %>
             <span title="<%= truncate_html(row.description.html_safe) %>">
               <% if @grid.has_name %>
-                <% if @grid.uuid == WORKSPACE_UUID %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_workspace_path(
-                                :workspace => row.display_uri) %>
-                <% elsif @grid.uuid == GRID_UUID %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_grid_path(
-                                :workspace => row.workspace.display_uri,
-                                :grid => row.display_uri) %>
-                <% else %>
-                  <%= link_to @grid.row_title(row).html_safe,
-                              show_path(
-                                :workspace => @grid.workspace.display_uri,
-                                :grid => @grid.display_uri,
-                                :row => row.display_uri) %>
-                <% end %>
-              <% else %>
-                <%= link_to icon('entity'),
-                            show_path(
-                              :workspace => @grid.workspace.display_uri,
-                              :grid => @grid.display_uri,
-                              :row => row.display_uri) %>
+                  <%= @grid.row_title(row).html_safe %>
               <% end %>
             </span>
             <small>
               <%= display_information(row) %>
-              <%= display_updated_date_by(row) %>
+              <%= display_updated_date(row) %>
             </small>
             <% if user_signed_in? and not @grid.can_update_row?(row) %>
               <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
