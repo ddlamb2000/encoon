@@ -115,9 +115,9 @@ module ApplicationHelper
 
   # Displays timing about the creation or last update of the entity.
   def display_updated_date(entity)
-    t(entity.revision == 1 ? 'general.created' : 'general.updated', 
+    (t(entity.revision == 1 ? 'general.created' : 'general.updated', 
       :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
-    display_new(entity.updated_at)
+    display_new(entity.updated_at)).html_safe
   end
 
   # Displays information about the creation of the entity,
