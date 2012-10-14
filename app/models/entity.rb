@@ -85,12 +85,12 @@ class Entity < ActiveRecord::Base
 
   # Returns the name of the user who created the record
   def who_created
-    self.create_user.blank? ? "?" : self.create_user
+    self.create_user
   end
 
   # Returns the name of the user who updated the record
   def who_updated
-    self.update_user.blank? ? "?" : self.update_user
+    self.update_user
   end
 
   def was_updated?

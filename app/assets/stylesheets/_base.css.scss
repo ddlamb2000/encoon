@@ -71,9 +71,17 @@ li {
   }
 }
 .new {
-  font-style:normal;
-  color:black;
-  background-color:yellow;
+  background-color:$new-highlight;
+  display:inline;
+  margin-left:$padding;
+  margin-right:$padding;
+  padding-left:$padding;
+  padding-right:$padding;
+  @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
+  @include border-radius;
+}
+.asofdate {
+  background-color:$background-color-table-header;
   display:inline;
   margin-left:$padding;
   margin-right:$padding;

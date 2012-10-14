@@ -142,16 +142,14 @@
     <%= render :partial => 'breadcrumbs' %>
     <small>
       <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      <% if not (user_signed_in? and @grid.can_create_row?(@filters)) %>
+      <% if user_signed_in? and not(@grid.can_create_row?(@filters)) %>
         <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
       <% end %>
     </small>
   </hgroup>
   <h3><%= @grid %></h3>
 </header>
-<% if not @table_rows.nil? and @table_rows.empty? %>
-  <%= t('general.no_data') %>
-<% end %>
+<%= t('general.no_data') if not @table_rows.nil? and @table_rows.empty? %>
 <% unless @table_rows.nil? or
           @table_rows.empty? or
           @table_columns.nil? %>
@@ -235,8 +233,10 @@
                               :row => row.display_uri) %>
               <% end %>
             </span>
-            <%= display_information(row) %>
-            <small><%= display_updated_date(row).html_safe %></small>
+            <small>
+              <%= display_information(row) %>
+              <%= display_updated_date_by(row) %>
+            </small>
             <% if user_signed_in? and not @grid.can_update_row?(row) %>
               <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
             <% end %>

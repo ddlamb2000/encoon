@@ -15,14 +15,16 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 module ApplicationHelper
+  # Returns the title of the page to be displayed in the browser.
   def current_page_title
     @page_title.present? ? (@page_title + " | " + current_application_title) : current_application_title 
   end
-  
+
+  # Returns the name of the application and the environment running it.
   def current_application_title
     APPLICATION_TITLE + ('production' != Rails.env ? (" (" + Rails.env + ")") : "")
   end
-  
+
   # Displays an icon using its name
   def icon(name, title=nil)
     if name.present?
@@ -35,7 +37,8 @@ module ApplicationHelper
       ""
     end
   end
-  
+
+  # Displays the filter in plain text.
   def display_filters(grid, filters, search=nil)
     output = ""
     if filters.present?
@@ -64,6 +67,7 @@ module ApplicationHelper
     output
   end
 
+  # Displays the history of navigation in plain text.
   def display_history(history)
     output = ""
     if history.present?
@@ -96,6 +100,7 @@ module ApplicationHelper
     date == Entity.end_of_time ? t('general.undefined') : date
   end
 
+  # Displays the distance between the date and the current system date.
   def display_distance_date(date)
     if date != Entity.begin_of_time and date != Entity.end_of_time
       now = Time.now
@@ -109,34 +114,49 @@ module ApplicationHelper
       content_tag("div", t('general.new'), :class => "new") :
       ""
   end
-    
+
+  # Displays timing about the creation or last update of the entity.
   def display_updated_date(entity)
     t(entity.revision == 1 ? 'general.created' : 'general.updated', 
       :time => time_ago_in_words(entity.updated_at, :include_seconds => true)) +
     display_new(entity.updated_at)
   end
-  
+
+  # Displays information about the creation of the entity,
+  # including timing and user who created the data.
   def display_created_time_by(entity, who, who_uuid)
-    t('general.time_by', 
+    t('general.time_by',
       :time => time_ago_in_words(entity.created_at, :include_seconds => true),
-      :by => (who.present? and who_uuid.present?) ? 
-               link_to_unless_current(who, 
-                 show_path(:workspace => SYSTEM_WORKSPACE_URI,
-                           :grid => USER_UUID,
+      :by => (who.present? and who_uuid.present?) ?
+               link_to_unless_current(who,
+                 show_path(:workspace => SECURITY_WORKSPACE_URI,
+                           :grid => USER_URI,
                            :row => who_uuid)) :
-               t('general.unknown'))
+               t('general.unknown')).html_safe
   end
 
+  # Displays information about the update of the entity,
+  # including timing and user who last updated the data.
   def display_updated_time_by(entity, who, who_uuid)
-    t('general.time_by', 
+    (t('general.time_by',
       :time => time_ago_in_words(entity.updated_at, :include_seconds => true),
-      :by => (who.present? and who_uuid.present?) ? 
-               link_to_unless_current(who, 
-                 show_path(:workspace => SYSTEM_WORKSPACE_URI,
-                           :grid => USER_UUID,
+      :by => (who.present? and who_uuid.present?) ?
+               link_to_unless_current(who,
+                 show_path(:workspace => SECURITY_WORKSPACE_URI,
+                           :grid => USER_URI,
                            :row => who_uuid)) :
                t('general.unknown')) +
-    display_new(entity.updated_at)
+    display_new(entity.updated_at)).html_safe
+  end
+  
+  # Displays information about the creation or the last update of the entity,
+  # including timing and user who made the creation or last update.
+  def display_updated_date_by(entity)
+    if entity.revision.nil? or entity.revision == 1
+      (t('field.created') + " " + display_created_time_by(entity, entity.who_created, entity.create_user_uuid)).html_safe
+    else
+      (t('field.updated') + " " + display_updated_time_by(entity, entity.who_updated, entity.update_user_uuid)).html_safe
+    end
   end
 
   def warning_current_date(as_of_date)
@@ -144,7 +164,7 @@ module ApplicationHelper
     today = Date::civil(now.year, now.month, now.day)
     as_of_date != today ? "warning" : ""
   end
-  
+
   def information(entity, show_required=false)
     output = ""
     if entity.begin != Entity.begin_of_time
@@ -165,41 +185,42 @@ module ApplicationHelper
     end
     output.length > 0 ? output : ""  
   end
-  
+
   def display_information(entity, show_required=false)
     output = information(entity, show_required)
-    output.length > 0 ? content_tag("small", output) : ""  
+    output.length > 0 ? content_tag("span", output, :class => "asofdate").html_safe : ""
   end
-  
+
   def display_grid_next_versions(grid, entity)
     output = ""
     previous_entity_id = grid.row_select_previous_version(entity)
     next_entity_id = grid.row_select_next_version(entity)
     if previous_entity_id > 0
-      output << "&nbsp;".html_safe + previous_entity_id.to_s
+      output << " " + previous_entity_id.to_s
     end
-    output << "&nbsp;".html_safe + display_information(entity) + "&nbsp;".html_safe
+    output << " " + display_information(entity) + " "
     if next_entity_id > 0
-      output << next_entity_id.to_s + "&nbsp;".html_safe
+      output << next_entity_id.to_s + " "
     end
-    output
+    output.html_safe
   end
 
-  def display_locale(entity)
-    if entity.locale != entity.base_locale
-      language = LANGUAGES.find {|lang, locale| entity.base_locale == locale}
-      content_tag("span",
-                  link_to(language[0], refresh_path(:locale => language[1])),
-                  :class => 'warning-alert')
-    else
-      ""
+  # Displays the language in which the row was captured if this doesn't 
+  # correspond to the language being displayed. 
+  def display_locale(row)
+    if row.locale != row.base_locale
+      language = LANGUAGES.find{|lang, locale| row.base_locale == locale}
+      url = request.url.gsub(/[?&]locale=(..)/, "")
+      url = url + (url["?"].nil? ? "?" : "&") + "locale=" + language[1]
+      content_tag("span", link_to(language[0], url), :class => 'warning-alert')
     end
   end
-  
+
+  # Returns the name of the displayed language for the given locale code.
   def get_language(base_locale)
-    LANGUAGES.find {|lang, locale| base_locale == locale}[0]
+    LANGUAGES.find{|lang, locale| base_locale == locale}[0]
   end
-  
+
   def show_collection_count(collection, total, page)
     length = collection.length
     if length > 0
@@ -225,11 +246,11 @@ module ApplicationHelper
   def calc_previous_page(page)
     page.present? and page.to_i > 1 ? page.to_i-1 : 1
   end
-  
+
   def not_first_page(page)
     page.present? and page.to_i > 1 
   end
-  
+
   def not_all_rows(total)
     total > Grid::DISPLAY_ROWS_LIMIT
   end

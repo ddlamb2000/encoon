@@ -48,7 +48,7 @@
   </table>
   <div class="validation-error"></div>
   <footer class="actions">
-    <% if @row.was_updated? %><div><small><%= display_updated_date(@row).html_safe %></small></div><% end %>
+    <% if @row.was_updated? %><div><small><%= display_updated_date(@row) %></small></div><% end %>
     <span class="button">
       <%= label_tag :begin, t('field.begin_date') %>
       <%= text_field_tag :begin, I18n.l(@row.begin), :size => "10x1", :type => "date" %>

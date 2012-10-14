@@ -64,16 +64,10 @@
     <hgroup>
       <%= render :partial => 'breadcrumbs' %>
       <small>
-        <%= display_grid_next_versions(@grid, @row).html_safe %>
-        <%= display_locale(@row).html_safe if @grid.has_translation %>
-        <% if @row.was_updated? %>
-          <%= t 'field.updated' %>
-          <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid).html_safe %>
-        <% else %>
-          <%= t 'field.created' %>
-          <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
-        <% end %>
-        <% if user_signed_in? and not @grid.can_update_row?(@row) %>
+        <%= display_grid_next_versions(@grid, @row) %>
+        <%= display_locale(@row) if @grid.has_translation %>
+        <%= display_updated_date_by(@row) %>
+        <% if user_signed_in? and not(@grid.can_update_row?(@row)) %>
           <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
         <% end %>
       </small>

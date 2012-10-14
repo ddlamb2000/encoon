@@ -31,7 +31,7 @@
       <td class="string">
         <%= l @row.created_at %>
         <small>
-          <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid).html_safe %>
+          <%= display_created_time_by(@row, @row.who_created, @row.create_user_uuid) %>
         </small>
       </td>
     </tr>
@@ -41,7 +41,7 @@
         <td class="string">
           <%= l @row.updated_at %>
           <small>
-            <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid).html_safe %>
+            <%= display_updated_time_by(@row, @row.who_updated, @row.update_user_uuid) %>
           </small>
         </td>
       </tr>
@@ -64,7 +64,7 @@
                                     :grid => @grid.uuid,
                                     :row => row.uuid) %>
               <%= truncate_html(row.description).html_safe %>
-              <small><%= display_updated_date(row).html_safe %></small>
+              <small><%= display_updated_date(row) %></small>
             </li>
           </ul>
           <% end %>
@@ -99,7 +99,7 @@
               <li>
                 <%= row.kind_name.html_safe %>
                 <small>
-                  <%= display_updated_time_by(row, row.who_updated, row.update_user_uuid).html_safe %>
+                  <%= display_updated_time_by(row, row.who_updated, row.update_user_uuid) %>
                 </small>
               </li>
             <% end %>
@@ -107,10 +107,12 @@
         </td>
       </tr>
     <% end %>
-    <tr>
-      <td class="header"><%= t 'field.uri' %></td>
-      <td class="string"><%= @row.uri %></td>
-    </tr>
+    <% if not(@row.uri.blank?) %>
+      <tr>
+        <td class="header"><%= t 'field.uri' %></td>
+        <td class="string"><%= @row.uri %></td>
+      </tr>
+    <% end %>
     <tr>
       <td class="header"><%= t 'field.uuid' %></td>
       <td class="string"><%= @row.uuid %></td>
