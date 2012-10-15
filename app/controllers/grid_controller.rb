@@ -28,7 +28,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectWorkspaceAndGrid
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.filtered_columns
       selectRow
       if @row.present?
@@ -63,7 +63,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.filtered_columns
       selectRow
       if @row.present?
@@ -103,7 +103,7 @@ class GridController < ApplicationController
     @page = params[:page]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded 
+      @grid.load(@filters) if not @grid.loaded 
       @table_row_count = @grid.row_count(@filters)
       @table_rows = @grid.row_all(@filters, @search, @page, true)
       @table_columns = @grid.filtered_columns
@@ -118,7 +118,7 @@ class GridController < ApplicationController
     log_debug "GridController#attachments"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       selectRow
       if @row.present?
         @attachments = @row.attachments
@@ -137,7 +137,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.column_all
       @row = @grid.rows.build
       @row_loc = RowLoc.new
@@ -156,7 +156,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.column_all
       selectRow
       if @row.present?
@@ -184,7 +184,7 @@ class GridController < ApplicationController
             @row.begin = param_begin_date
             log_debug "GridController#create: populate from parameter values"
             populate_from_params
-            @grid = @grid.load(@filters)
+            @grid.load(@filters)
             if @grid.has_translation
               LANGUAGES.each do |lang, locale|
                 log_debug "GridController#create: locale=#{locale}"
@@ -249,7 +249,7 @@ class GridController < ApplicationController
     @container = params[:container]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) if not @grid.loaded
+      @grid.load(@filters) if not @grid.loaded
       selectRow
       if @row.present?
         if @grid.can_update_row?(@row)
@@ -392,7 +392,7 @@ class GridController < ApplicationController
     log_debug "GridController#attach"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         @attachment = @row.attachments.new
@@ -410,7 +410,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         @attachment = @row.attachments.new
@@ -460,7 +460,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         begin
@@ -498,7 +498,7 @@ class GridController < ApplicationController
     log_debug "GridController#attributes"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       @columns = @grid.column_all
       render :partial => "attributes"
       return
@@ -511,7 +511,7 @@ class GridController < ApplicationController
     log_debug "GridController#import"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       render :partial => "import"
       return
     end
@@ -524,7 +524,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load if not @grid.loaded
+      @grid.load if not @grid.loaded
       @upload = Upload.new
       @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
       begin
@@ -705,7 +705,7 @@ private
         Entity.log_debug "GridController#selectGridAndWorkspace can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
-        @grid = @grid.load(@filters)
+        @grid.load(@filters) if not @grid.loaded
         @workspace = @grid.workspace
         if @workspace.nil?
           Entity.log_debug "GridController#selectGridAndWorkspace can't find workspace #{@grid.workspace_uuid}"

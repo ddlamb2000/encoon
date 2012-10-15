@@ -95,7 +95,7 @@ class Row < Entity
   def import_attribute(xml_attribute, xml_value)
     log_debug "Row#import_attribute(#{xml_attribute}, #{xml_value})"
     self.initialization
-    grid = grid.load if not grid.loaded 
+    grid.load if grid.present? and not grid.loaded 
     grid.column_all.each do |column|
       log_debug "Row#import_attribute column=#{column}, column.uuid=#{column.uuid}"
       if xml_attribute == column.uuid
@@ -109,7 +109,7 @@ class Row < Entity
     log_debug "Row#copy_attributes"
     super
     entity.grid_uuid = self.grid_uuid
-    grid = grid.load if not grid.loaded 
+    grid.load if grid.present? and not grid.loaded 
     grid.column_all.each do |column|
       log_debug "Row#copy_attributes column=#{column}"
       write_value(column, self.read_value(column))
@@ -123,7 +123,7 @@ class Row < Entity
     if grid.nil?
       log_error "Row#import! Can't import row when there is no grid reference"
     else
-      grid = grid.load if not grid.loaded
+      grid.load if grid.present? and not grid.loaded
       row = grid.row_select_entity_by_uuid_version(self.uuid, self.version)
       if row.present?
         log_debug "Row#import! present self=#{self.revision} row=#{row.revision}"

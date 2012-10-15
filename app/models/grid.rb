@@ -45,10 +45,6 @@ class Grid < Entity
   # Load is mandatory before any access to the data using the grid.
   def load(filters=nil, skip_mapping=false)
     log_debug "Grid#load(#{filters.inspect}, #{skip_mapping}) [#{to_s}]"
-    if not skip_mapping
-      cached = self.class.get_cached_grid(self.uuid, nil, nil, filters)
-      return cached if cached.present?
-    end
     load_workspace
     load_mapping
     load_columns(filters, false, skip_mapping)
@@ -105,18 +101,13 @@ class Grid < Entity
                         {:uuid => uuid, :version => version}]) 
   end
   
-  # Returns the name of the grid used as a reference
-  def reference_name
-    name + (workspace.present? ? " [" + workspace.name + "]" : "")
-  end
-
   # Selects the reference rows attached to one grid.
   # This is used to display values in a drop-down list.
   def self.select_reference_rows(grid_uuid)
     log_debug "Grid#select_reference_rows(#{grid_uuid})"
     grid = Grid.select_entity_by_uuid(Grid, grid_uuid)
     unless grid.nil?
-      grid = grid.load
+      grid.load if grid.present? and not grid.loaded
       grid.row_all(nil, nil, -1)
     end
   end
@@ -132,7 +123,7 @@ class Grid < Entity
     log_debug "Grid#select_grid_cast(#{row_uuid}) [#{to_s}]"
     if self.uuid == GRID_UUID
       grid = Grid::select_entity_by_uuid(Grid, row_uuid)
-      grid = grid.load if grid.present?
+      grid.load if grid.present? and not grid.loaded
       grid
     end
   end
@@ -616,7 +607,7 @@ class Grid < Entity
       if self.uuid == WORKSPACE_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, GRID_UUID)
         if grid_def.present?
-          grid_def = grid_def.load
+          grid_def.load if grid_def.present? and not grid_def.loaded
           log_debug "Grid#row_export select grids in the workspace"
           rows = grid_def.row_all([{:column_uuid => GRID_WORKSPACE_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -628,7 +619,7 @@ class Grid < Entity
       if self.uuid == GRID_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, GRID_MAPPING_UUID)
         if grid_def.present?
-          grid_def = grid_def.load
+          grid_def.load if grid_def.present? and not grid_def.loaded
           log_debug "Grid#row_export select mapping in the data grid"
           rows = grid_def.row_all([{:column_uuid => GRID_MAPPING_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -638,7 +629,7 @@ class Grid < Entity
         end
         grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_UUID)
         if grid_def.present?
-          grid_def = grid_def.load
+          grid_def.load if grid_def.present? and not grid_def.loaded
           log_debug "Grid#row_export select columns in the data grid"
           rows = grid_def.row_all([{:column_uuid => COLUMN_GRID_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
@@ -650,7 +641,7 @@ class Grid < Entity
       if self.uuid == COLUMN_UUID
         grid_def = Grid::select_entity_by_uuid(Grid, COLUMN_MAPPING_UUID)
         if grid_def.present?
-          grid_def = grid_def.load
+          grid_def.load if grid_def.present? and not grid_def.loaded
           log_debug "Grid#row_export select mapping in the column"
           rows = grid_def.row_all([{:column_uuid => COLUMN_MAPPING_COLUMN_UUID,
                                     :row_uuid => row.uuid}], nil, -1, true)
