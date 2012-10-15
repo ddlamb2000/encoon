@@ -39,18 +39,6 @@ class Grid < Entity
   # Internal cache used for storing loaded grid definitions.
   @@grid_cache = []
 
-  # Returns loaded grid information from the internal grid cache.
-  def self.get_cached_grid(uuid, filters)
-    cached = @@grid_cache.find {|value| value[:user_uuid] == Entity.session_user_uuid and
-                                        value[:asofdate] == Entity.session_as_of_date and
-                                        value[:locale] == Entity.session_locale and
-                                        value[:uuid] == uuid and
-                                        value[:filters] == filters}
-                                        
-    log_debug "Grid#get_cached_grid cached=#{cached.inspect}"
-    return cached[:grid] if cached.present?
-  end
-  
   # Loads in memory the structure of the grid
   # and all the information to render the grid: workspace, columns
   # definition, table mapping, column mapping and security settings.
@@ -58,7 +46,7 @@ class Grid < Entity
   def load(filters=nil, skip_mapping=false)
     log_debug "Grid#load(#{filters.inspect}, #{skip_mapping}) [#{to_s}]"
     if not skip_mapping
-      cached = self.class.get_cached_grid(self.uuid, filters)
+      cached = self.class.get_cached_grid(self.uuid, nil, nil, filters)
       return cached if cached.present?
     end
     load_workspace
@@ -71,7 +59,9 @@ class Grid < Entity
 
   # Selects data based on its uuid in the given collection.
   def self.select_entity_by_uuid(collection, uuid)
-    log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid}) [#{to_s}]"
+    log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid})"
+    cached = get_cached_grid(uuid)
+    return cached if cached.present?
     collection.
       select(self.all_select_columns).
       joins(:grid_locs).
@@ -85,7 +75,9 @@ class Grid < Entity
   
   # Selects data based on workspace and uri in the given collection.
   def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri)
-    log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{uri}) [#{to_s}]"
+    log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{workspace_uuid}, #{uri})"
+    cached = get_cached_grid(nil, workspace_uuid, uri)
+    return cached if cached.present?
     collection.
       select(self.all_select_columns).
       joins(:grid_locs).
@@ -100,7 +92,7 @@ class Grid < Entity
   
   # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)
-    log_debug "Grid#select_entity_by_uuid_version(#{collection}, #{uuid}, #{version}) [#{to_s}]"
+    log_debug "Grid#select_entity_by_uuid_version(#{collection}, #{uuid}, #{version})"
     collection.find(:first, 
                     :joins => :grid_locs,
                     :select => self.all_select_columns,
@@ -115,13 +107,13 @@ class Grid < Entity
   
   # Returns the name of the grid used as a reference
   def reference_name
-    name + (workspace.present? ? " [" + workspace_name + "]" : "")
+    name + (workspace.present? ? " [" + workspace.name + "]" : "")
   end
 
-  # Selects the reference rows attached to one grid
-  # This is used to display a drop-down list
+  # Selects the reference rows attached to one grid.
+  # This is used to display values in a drop-down list.
   def self.select_reference_rows(grid_uuid)
-    log_debug "Grid#select_reference_rows(#{grid_uuid}) [#{to_s}]"
+    log_debug "Grid#select_reference_rows(#{grid_uuid})"
     grid = Grid.select_entity_by_uuid(Grid, grid_uuid)
     unless grid.nil?
       grid = grid.load
@@ -130,22 +122,10 @@ class Grid < Entity
   end
 
   # Selects the name of one reference row attached to one grid
-  def select_reference_row_name(row_uuid)
-    log_debug "Grid#select_reference_row_name(#{row_uuid}) [#{to_s}]"
+  def select_reference_row_name_and_description(row_uuid)
+    log_debug "Grid#select_reference_row_name_and_description(#{row_uuid}) [#{to_s}]"
     row = row_select_entity_by_uuid(row_uuid)
-    row.present? ? row_title(row) : ""
-  end
-
-  # Selects the description of one reference row attached to one grid
-  def select_reference_row_description(row_uuid)
-    log_debug "Grid#select_reference_row_description(#{row_uuid}) [#{to_s}]"
-    row = row_select_entity_by_uuid(row_uuid)
-    row.present? ? row.description : ""
-  end
-
-  def workspace_name
-    workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
-    workspace.present? ? workspace.name : ""
+    row.present? ? [row_title(row), row.description] : ["",""]
   end
 
   def select_grid_cast(row_uuid)
@@ -167,14 +147,13 @@ class Grid < Entity
 
   # Builds a filter based on the given row used to select dependent tables.
   def get_filters_on_row(row, row_name)
-    self.filter_column_uuid.nil? ? [] : [{:column_uuid => self.filter_column_uuid,
-                                          :row_uuid => row.uuid,
-                                          :row_name => row_name}]
+    self.filter_column_uuid.nil? ? [] : 
+      [{:column_uuid => self.filter_column_uuid, :row_uuid => row.uuid, :row_name => row_name}]
   end
 
   # Selects the grids attached to one row via one or more columns.
   def self.select_referenced_grids(uuid)
-    log_debug "Grid#select_referenced_grids(uuid=#{uuid}) [#{to_s}]"
+    log_debug "Grid#select_referenced_grids(uuid=#{uuid})"
     Grid.find_by_sql(["SELECT grids.id," + 
                       " grids.uuid," + 
                       " grids.uri," + 
@@ -442,6 +421,8 @@ class Grid < Entity
     connection.select_value(sql).to_i
   end
 
+  # Returns a title for the given row based on its definition.
+  # If the row has a name returns the name otherwise reads reference information.
   def row_title(row, full=false)
     summary = (row.present? and self.has_name) ? row.name : ""
     if not full and row.present?
@@ -449,10 +430,8 @@ class Grid < Entity
       count = 0
       load if not loaded
       @filtered_columns.each do |column|
-        if [COLUMN_TYPE_REFERENCE, 
-            COLUMN_TYPE_STRING, 
-            COLUMN_TYPE_TEXT].include?(column.kind)
-          value = row.read_referenced_name(column)
+        if [COLUMN_TYPE_REFERENCE, COLUMN_TYPE_STRING, COLUMN_TYPE_TEXT].include?(column.kind)
+          value = row.read_referenced_name_and_description(column, row.read_value(column))[0]
           if value.length > 0
             summary = summary + " | " if count > 0
             summary = summary + value
@@ -467,8 +446,7 @@ class Grid < Entity
   end
 
   def row_loc_select_entity_by_uuid(uuid, version=0)
-    log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, " +
-              "version=#{version}) [#{to_s}]"
+    log_debug "Grid#row_loc_select_entity_by_uuid(uuid=#{uuid}, version=#{version}) [#{to_s}]"
     if not @can_select_data
       log_security_warning "Grid#row_loc_select_entity_by_uuid Can't select data"
       return []
@@ -527,7 +505,7 @@ class Grid < Entity
     log_debug "Grid#export [#{to_s}]"
     xml.grid(:title => self.name) do
       super(xml)
-      xml.workspace_uuid(self.workspace_uuid, :title => self.workspace_name)
+      xml.workspace_uuid(self.workspace_uuid)
       xml.has_name(self.has_name) if self.has_name
       xml.has_description(self.has_description) if self.has_description
       Grid.locales(grid_locs, self.uuid, self.version).each do |loc|
@@ -691,9 +669,7 @@ class Grid < Entity
   # Thus, if the filter contains a reference to a workspace, 
   # the security applies based on the workspace provided by the filter.
   def can_create_row?(filters=nil)
-    return false if not(@can_create_data or [WORKSPACE_SHARING_UUID,
-                                             GRID_UUID,
-                                             COLUMN_UUID].include?(self.uuid))
+    return false if not(@can_create_data or [WORKSPACE_SHARING_UUID, GRID_UUID, COLUMN_UUID].include?(self.uuid))
     if filters.present?
       filters.each do |filter|
         column_uuid = filter[:column_uuid]
@@ -703,16 +679,14 @@ class Grid < Entity
              column.kind == COLUMN_TYPE_REFERENCE and
              column.grid_reference_uuid == WORKSPACE_UUID
             security = get_security_workspace(row_uuid)
-            return [ROLE_READ_WRITE_ALL_UUID,
-                    ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
+            return [ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
           elsif column.uuid == column_uuid and 
                 column.kind == COLUMN_TYPE_REFERENCE and
                 column.grid_reference_uuid == GRID_UUID
             grid = Grid::select_entity_by_uuid(Grid, row_uuid)
             if grid.present?
               security = get_security_workspace(grid.workspace_uuid)
-              return [ROLE_READ_WRITE_ALL_UUID,
-                      ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
+              return [ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(security) if not security.nil?
             end
           end
         end
@@ -738,8 +712,7 @@ class Grid < Entity
     elsif self.uuid == COLUMN_UUID and row.grid.present?
       security = get_security_workspace(row.grid.workspace_uuid)
     end
-    return [ROLE_READ_WRITE_ALL_UUID,
-            ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
+    return [ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(security) if security.present?
     return (@can_update_data or (row.create_user_uuid == Entity.session_user_uuid))
   end
 
@@ -906,22 +879,16 @@ private
     "grids.id, grids.uuid, grids.version, grids.lock_version, " + 
     "grids.begin, grids.end, grids.enabled, grids.workspace_uuid, " + 
     "grids.has_name, grids.has_description, grids.uri, " + 
-    "grids.created_at, grids.updated_at, " +
-    "grids.create_user_uuid, grids.update_user_uuid, " +
-    "grid_locs.base_locale, grid_locs.locale, " +
-    "grid_locs.name, grid_locs.description"
+    "grids.created_at, grids.updated_at, grids.create_user_uuid, grids.update_user_uuid, " +
+    "grid_locs.base_locale, grid_locs.locale, grid_locs.name, grid_locs.description"
   end
 
   def column_all_select_columns
     "columns.id, columns.uuid, columns.uri, columns.version, columns.lock_version, " +
     "columns.begin, columns.end, columns.enabled, " +
-    "columns.display, columns.kind, " + 
-    "columns.grid_reference_uuid, " + 
-    "columns.required, columns.regex, " + 
-    "columns.created_at, columns.updated_at, " + 
-    "columns.create_user_uuid, columns.update_user_uuid, " + 
-    "column_locs.base_locale, column_locs.locale, " +
-    "column_locs.name, column_locs.description"
+    "columns.display, columns.kind, columns.grid_reference_uuid, columns.required, columns.regex, " +
+    "columns.created_at, columns.updated_at, columns.create_user_uuid, columns.update_user_uuid, " +
+    "column_locs.base_locale, column_locs.locale, column_locs.name, column_locs.description"
   end
 
   def column_all_select_columns_mapping
@@ -944,10 +911,8 @@ private
   end
 
   def row_loc_select_columns
-    "row_locs.id, row_locs.uuid, " +
-    "row_locs.version, row_locs.lock_version, " +
-    "row_locs.base_locale, row_locs.locale, " + 
-    "row_locs.name, row_locs.description" 
+    "row_locs.id, row_locs.uuid, row_locs.version, row_locs.lock_version, " +
+    "row_locs.base_locale, row_locs.locale, row_locs.name, row_locs.description"
   end
 
   def row_all_insert_columns
@@ -996,18 +961,15 @@ private
     ", name=#{quote(row.name)}, description=#{quote(row.description)}"
   end
 
+  # Loads the workspace associated to the grid and sets security flags based on the workspace. 
   def load_workspace
     log_debug "Grid#load_workspace [#{to_s}]"
     self.workspace = Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid)
     log_debug "Grid#load_workspace workspace=#{self.workspace.to_s}"
     if self.workspace.present? and self.workspace.default_role_uuid.present?
       @can_select_data = true
-      @can_create_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
-      @can_update_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_create_data = [ROLE_READ_WRITE_UUID, ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID, ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(self.workspace.default_role_uuid)
     end
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
@@ -1018,12 +980,8 @@ private
     security = Grid.find_by_sql([sql])[0]
     if security.present?
       @can_select_data = true
-      @can_create_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
-      @can_update_data = [ROLE_READ_WRITE_UUID,
-                          ROLE_READ_WRITE_ALL_UUID,
-                          ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_create_data = [ROLE_READ_WRITE_UUID, ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
+      @can_update_data = [ROLE_READ_WRITE_UUID, ROLE_READ_WRITE_ALL_UUID, ROLE_TOTAL_CONTROL_UUID].include?(security.role_uuid)
     end
     log_debug "Grid#load_workspace " +
               "@can_select_data=#{@can_select_data}," +
@@ -1051,10 +1009,7 @@ private
 
   # Loads in memory information about columns.
   def load_columns(filters, skip_reference=false, skip_mapping=false)
-    log_debug "Grid#load_columns " +
-              "filters=#{filters},"+
-              "skip_reference=#{skip_reference}," +
-              "skip_mapping=#{skip_mapping}) [#{to_s}]"
+    log_debug "Grid#load_columns(#{filters}, #{skip_reference}, #{skip_mapping}) [#{to_s}]"
     if not(skip_mapping) and @has_mapping
       @column_all = columns.find(:all,
                                  :joins => [:column_locs, :column_mappings],
@@ -1110,11 +1065,12 @@ private
     @filtered_columns.sort!{|a, b| a.display <=> b.display}
   end
 
-  def get_security_workspace(uuid)
+  # Returns security settings for the given workspace.
+  def get_security_workspace(workspace_uuid)
     log_debug "Grid#get_security_workspace [#{to_s}]"
     sql = "SELECT workspace_sharings.role_uuid" + 
           " FROM workspace_sharings" + 
-          " WHERE workspace_sharings.workspace_uuid = '#{uuid}'" + 
+          " WHERE workspace_sharings.workspace_uuid = '#{workspace_uuid}'" + 
           " AND workspace_sharings.user_uuid = '#{Entity.session_user_uuid}'" +
           " AND " + as_of_date_clause("workspace_sharings") +
           " LIMIT 1"
@@ -1122,7 +1078,7 @@ private
     return security.role_uuid if not security.nil?
     sql = "SELECT default_role_uuid, create_user_uuid" + 
           " FROM workspaces workspace_security" + 
-          " WHERE workspace_security.uuid = '#{uuid}'" + 
+          " WHERE workspace_security.uuid = '#{workspace_uuid}'" + 
           " AND workspace_security.default_role_uuid is not null" +
           " AND " + as_of_date_clause("workspace_security") +
           " LIMIT 1"
@@ -1130,17 +1086,29 @@ private
     security.nil? ? nil : security.default_role_uuid
   end
 
+  # Returns loaded grid information from the internal grid cache.
+  def self.get_cached_grid(uuid, workspace_uuid=nil, uri=nil, filters=nil)
+    cached = @@grid_cache.find {|value| value[:user_uuid] == Entity.session_user_uuid and
+                                        value[:asofdate] == Entity.session_as_of_date and
+                                        value[:locale] == Entity.session_locale and
+                                        ((uuid.present? and value[:uuid] == uuid) or 
+                                         (uri.present? and value[:workspace_uuid] == workspace_uuid and value[:uri] == uri)) and
+                                        value[:filters] == filters}
+    log_debug "Grid#get_cached_grid(#{uuid}, #{uri}, #{filters}) *** found cached grid #{cached.inspect}"  if cached.present?
+    return cached[:grid] if cached.present?
+  end
+  
   # Pushes loaded grid information into the internal grid cache.
   def self.grid_cache_push(grid, filters)
     cached = get_cached_grid(grid.uuid, filters)
-    if cached.nil?
-      @@grid_cache << {:user_uuid => Entity.session_user_uuid,
-                       :asofdate => Entity.session_as_of_date,
-                       :locale => Entity.session_locale,
-                       :uuid => grid.uuid,
-                       :filters => filters,
-                       :grid => grid}
-    end
-    log_debug "Grid#grid_cache_push @@grid_cache=#{@@grid_cache.inspect}"
+    @@grid_cache << {:user_uuid => Entity.session_user_uuid,
+                     :asofdate => Entity.session_as_of_date,
+                     :locale => Entity.session_locale,
+                     :uuid => grid.uuid,
+                     :uri => grid.uri,
+                     :workspace_uuid => grid.workspace_uuid,
+                     :filters => filters,
+                     :grid => grid} if cached.nil?
+    log_debug "Grid#grid_cache_push @@grid_cache=#{@@grid_cache.inspect}" if cached.nil?
   end
 end

@@ -46,10 +46,10 @@
         </td>
       </tr>
     <% end %>
-    <% if @row.has_attachment? %>
+    <% if not @attachments.empty? %>
       <tr>
         <td class="header"><%= t 'field.attachments' %></td>
-        <td class="string"><%= @row.count_attachments %></td>
+        <td class="string"><%= @attachments.count %></td>
       </tr>
     <% end %>
     <% if @versions.present? %>

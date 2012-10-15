@@ -57,39 +57,21 @@ class Row < Entity
     Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid) if attribute_present?(:workspace_uuid)
   end
 
-  def read_referenced_name(column)
-    value = read_value(column)
+  def read_referenced_name_and_description(column, value)
     if value.present? 
       if column.kind == COLUMN_TYPE_REFERENCE and 
          column.grid_reference_uuid.present?
-        log_debug "Row#read_referenced_name value=#{value}, " +
-                  "column.grid_reference_uuid=#{column.grid_reference_uuid}"
+        log_debug "Row#read_referenced_name_and_description value=#{value}, grid_reference_uuid=#{column.grid_reference_uuid}"
         grid = column.grid_reference
-        if grid.present?
-          log_debug "Row#read_referenced_name grid=#{grid.to_s}"
-          return grid.select_reference_row_name(value)  
+        if grid.present? and grid.loaded
+          log_debug "Row#read_referenced_name_and_description grid=#{grid.to_s}"
+          return grid.select_reference_row_name_and_description(value)
         end
       end
-      value
+      [value, ""]
     else
-      ""
+      ["", ""]
     end
-  end
-
-  def read_referenced_description(column)
-    if column.kind == COLUMN_TYPE_REFERENCE and 
-       column.grid_reference_uuid.present?
-      value = read_value(column)
-      if value.present? 
-        log_debug "Row#read_referenced_description value=#{value}, " +
-                  "column.grid_reference_uuid=#{column.grid_reference_uuid}"
-        grid = column.grid_reference
-        if grid.present?
-          return grid.select_reference_row_description(value)  
-        end
-      end
-    end
-    ""
   end
 
   # Creates a new associated locale row.
@@ -100,9 +82,9 @@ class Row < Entity
     loc
   end
 
+  # Imports the instance of the row in the database.
   def import(xml_attribute, xml_value)
-    log_debug "Row#import(xml_attribute=#{xml_attribute}, " + 
-               "xml_value=#{xml_value})"
+    log_debug "Row#import(#{xml_attribute}, #{xml_value})"
     case xml_attribute
       when 'grid_uuid' then self.grid_uuid = xml_value
       else super

@@ -28,7 +28,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectWorkspaceAndGrid
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.filtered_columns
       selectRow
       if @row.present?
@@ -38,6 +38,7 @@ class GridController < ApplicationController
         else
           @attached_grids = Grid.select_referenced_grids(@grid.uuid)
         end
+        @attachments = @row.attachments
         @page_title = @grid.row_title(@row)
         respond_to do |format|
           format.html do
@@ -56,16 +57,17 @@ class GridController < ApplicationController
     render :no_data, :status => 404
   end
 
-  # Renders the details of an article through an Ajax request.
+  # Renders the content of the article through an Ajax request.
   def row
     log_debug "GridController#row"
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.filtered_columns
       selectRow
       if @row.present?
+        @attachments = @row.attachments
         render :partial => "row"
         return
       end
@@ -78,12 +80,13 @@ class GridController < ApplicationController
     log_debug "GridController#details"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid.load
+      @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         @versions = @grid.row_all_versions(@row.uuid)
         @locales = @grid.row_locales(@row.uuid, @row.version, false)
         @audits = @row.all_audits
+        @attachments = @row.attachments
         session[:show_details] = true
         render :partial => "details"
         return
@@ -100,7 +103,7 @@ class GridController < ApplicationController
     @page = params[:page]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters) 
+      @grid = @grid.load(@filters) if not @grid.loaded 
       @table_row_count = @grid.row_count(@filters)
       @table_rows = @grid.row_all(@filters, @search, @page, true)
       @table_columns = @grid.filtered_columns
@@ -115,9 +118,10 @@ class GridController < ApplicationController
     log_debug "GridController#attachments"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       selectRow
       if @row.present?
+        @attachments = @row.attachments
         render :partial => "attachments"
         return
       end
@@ -133,7 +137,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.column_all
       @row = @grid.rows.build
       @row_loc = RowLoc.new
@@ -152,7 +156,7 @@ class GridController < ApplicationController
     @filters = params[:filters]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.column_all
       selectRow
       if @row.present?
@@ -245,7 +249,7 @@ class GridController < ApplicationController
     @container = params[:container]
     selectGridAndWorkspace(@filters)
     if @workspace.present? and @grid.present?
-      @grid = @grid.load(@filters)
+      @grid = @grid.load(@filters) if not @grid.loaded
       selectRow
       if @row.present?
         if @grid.can_update_row?(@row)
@@ -388,7 +392,7 @@ class GridController < ApplicationController
     log_debug "GridController#attach"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         @attachment = @row.attachments.new
@@ -406,7 +410,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         @attachment = @row.attachments.new
@@ -456,7 +460,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       selectRow
       if @row.present?
         begin
@@ -494,7 +498,7 @@ class GridController < ApplicationController
     log_debug "GridController#attributes"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       @columns = @grid.column_all
       render :partial => "attributes"
       return
@@ -507,7 +511,7 @@ class GridController < ApplicationController
     log_debug "GridController#import"
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       render :partial => "import"
       return
     end
@@ -520,7 +524,7 @@ class GridController < ApplicationController
     saved = false
     selectGridAndWorkspace
     if @workspace.present? and @grid.present?
-      @grid = @grid.load
+      @grid = @grid.load if not @grid.loaded
       @upload = Upload.new
       @upload.create_user_uuid = @upload.update_user_uuid = Entity.session_user_uuid
       begin
@@ -695,11 +699,6 @@ private
     if params[:grid].present?
       Entity.log_debug "GridController#selectGridAndWorkspace select grid"
       if Entity.uuid?(params[:grid])
-        @grid = Grid.get_cached_grid(params[:grid], filters)
-        if @grid.present?
-          @workspace = @grid.workspace
-          return
-        end
         @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
       end
       if @grid.nil?

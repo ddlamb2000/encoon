@@ -48,12 +48,11 @@ protected
 
   # Sets locale based on parameter.
   def set_locale
-    log_debug "ApplicationController#set params[:locale]=#{params[:locale]}"
     session[:locale] = params[:locale] if params[:locale].present?
     session[:locale] = I18n.default_locale if I18n.locale.nil?
     I18n.locale = session[:locale]
     Entity.session_locale = I18n.locale.to_s
-    log_debug "ApplicationController#set Entity.session_locale=#{Entity.session_locale}"
+    log_debug "ApplicationController#set_locale Entity.session_locale=#{Entity.session_locale}"
   end
   
   # Sets the as of date based on parameter.
@@ -74,6 +73,7 @@ protected
       end
     end
     Entity.session_as_of_date = session[:as_of_date]
+    log_debug "ApplicationController#set_asofdate Entity.session_as_of_date=#{Entity.session_as_of_date}"
   end
 
   # Selects the workspaces available to the connected user.

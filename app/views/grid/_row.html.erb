@@ -77,20 +77,19 @@
     <table>
       <tbody>
         <% for column in @table_columns %>
-          <%= show_entity(
-                column, 
-                @row.read_value(column),
-                ((column.workspace_reference.present? and
-                  column.grid_reference.present? and
-                  @row.read_value(column).present?) ?  
-                  link_to(@row.read_referenced_name(column),
-                          show_path(
-                            :workspace => column.workspace_reference.display_uri,
-                            :grid => column.grid_reference.display_uri,
-                            :row => @row.read_value(column))) : ""),
-                @row.read_referenced_name(column),
-                @row.read_referenced_description(column)
-           ) %>
+          <% value = @row.read_value(column) %>
+          <% if column.workspace_reference.present? and column.grid_reference.present? and value.present? %>
+             <% reference_information = @row.read_referenced_name_and_description(column, value) %>
+             <% reference_link = link_to(reference_information[0],
+                                         show_path(
+                                           :workspace => column.workspace_reference.display_uri,
+                                           :grid => column.grid_reference.display_uri,
+                                           :row => value)) %>
+          <% else %>
+             <% reference_information = ["", ""] %>
+             <% reference_link = "" %>
+          <% end %>
+          <%= show_entity(column, value, reference_link, reference_information[0], reference_information[1]) %>
         <% end %>
       </tbody>
     </table>
