@@ -6,4 +6,4 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require tiny_mce/tiny_mce
+//= require_tree tiny_mce
