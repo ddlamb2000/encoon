@@ -93,10 +93,10 @@
         <% end %>
       </tbody>
     </table>
+    <br/>
   <% end %>
   <% if @grid.has_translation and @row_loc.description.present? %>
-    <% if not @table_columns.empty? %><br/><% end %>
-    <p><%= @row_loc.description.html_safe %></p>
+    <%= @row_loc.description.html_safe %>
   <% end %>
   <section id="attachments-<%= @row.uuid %>">
     <%= render :partial => 'attachments' %>

@@ -1,4 +1,4 @@
-<%= render :partial => 'layouts/tinymce_init' %>
+<%= render :partial => 'layouts/tinymce' %>
 <header class="action-header">
   <%= @workspace %> » <%= @grid %>
   <% if not new_row %> » <%= @grid.row_title(@row) %><% end %>
@@ -37,6 +37,14 @@
       </td>
     </tr>
     <% if @grid.has_translation and @grid.has_description %>
+      <tr>
+        <td class="header">&nbsp;
+          
+        </td>
+        <td class="string">&nbsp;
+          
+        </td>
+      </tr>
       <tr>
         <td class="header">
           <%= label_tag :description, t('field.description') %>
