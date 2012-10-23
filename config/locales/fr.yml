@@ -151,14 +151,20 @@ fr:
   date:
     formats:
       default: "%d/%m/%Y"
+      datepicker: "dd/mm/yy"
       short: "%e %b"
       long: "%e %B %Y"
       long_ordinal: "%e %B %Y"
       only_day: "%e"
     day_names: [dimanche, lundi, mardi, mercredi, jeudi, vendredi, samedi]
     abbr_day_names: [dim, lun, mar, mer, jeu, ven, sam]
+    datepicker-dayNamesMin: "['Di','Lu','Ma','Me','Je','Ve','Sa']"
+    datepicker-monthNames: "['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre']"
+    datepicker-monthNamesShort: "['Jan.','Fév.','Mar.','Avr.','Mai','Juin','Juil.','Août','Sept.','Oct.','Nov.','Déc.']"
     month_names: [~, janvier, février, mars, avril, mai, juin, juillet, août, septembre, octobre, novembre, décembre]
     abbr_month_names: [~, jan., fév., mar., avr., mai, juin, juil., août, sept., oct., nov., déc.]
+    datepicker-currentText: "Aujourd’hui"
+    datepicker-closeText: "Fermer"
     order:
         - :day
         - :month

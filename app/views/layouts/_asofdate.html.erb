@@ -7,5 +7,16 @@
   <% end %>
 </article>
 <script>
-  $( "#as_of_date" ).datepicker( $.datepicker.regional[ "fr" ] );
+  $( "#as_of_date" ).datepicker({
+    numberOfMonths: 3,
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    currentText: "<%= t 'date.datepicker-currentText' %>",
+    closeText: "<%= t 'date.datepicker-closeText' %>",
+    dateFormat: "<%= t 'date.formats.datepicker' %>",
+    dayNamesMin: <%= t('date.datepicker-dayNamesMin').html_safe %>,
+    monthNames: <%= t('date.datepicker-monthNames').html_safe %>,
+    monthNamesShort: <%= t('date.datepicker-monthNamesShort').html_safe %>
+  });
 </script>

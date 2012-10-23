@@ -152,3 +152,12 @@ en:
     errors:
       full_messages:
         format:   "%{message}"
+  date:
+    formats:
+      default: "%m-%d-%Y"
+      datepicker: "mm-dd-yy"
+    datepicker-dayNamesMin: "['Su','Mo','Tu','We','Th','Fr','Sa']"
+    datepicker-monthNames: "['January','February','March','April','May','June','July','August','September','October','November','December']"
+    datepicker-monthNamesShort: "['Jan.','Feb.','Mar.','Apr.','May','June','July','Aug.','Sept.','Oct.','Nov.','Dec.']"
+    datepicker-currentText: "Today"
+    datepicker-closeText: "Close"
