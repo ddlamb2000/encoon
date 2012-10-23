@@ -225,9 +225,9 @@ body .ui-tooltip { border-width:2px; }
 
 /* Component containers
 ----------------------------------*/
-.ui-widget { font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-size: 1.1em; }
+.ui-widget { font-family: sans-serif; font-size: 1em; }
 .ui-widget .ui-widget { font-size: 1em; }
-.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: Lucida Grande,Lucida Sans,Arial,sans-serif; font-size: 1em; }
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button { font-family: sans-serif; font-size: 1em; }
 .ui-widget-content { border: 1px solid #7e7783; background: #3d3644 url(ui-bg_gloss-wave_30_3d3644_500x100.png) 50% top repeat-x; color: #ffffff; }
 .ui-widget-content a { color: #ffffff; }
 .ui-widget-header { border: 1px solid #231d2b; background: #30273a url(ui-bg_highlight-soft_25_30273a_1x100.png) 50% 50% repeat-x; color: #ffffff; font-weight: bold; }
