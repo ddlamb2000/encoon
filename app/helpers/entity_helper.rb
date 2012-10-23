@@ -28,7 +28,7 @@ module EntityHelper
       style = "header"
     end
     content_tag(list ? "th" : "td",
-      "<span title=\"#{truncate_html(description)}\">#{label}</span>".html_safe,
+      "<span>#{label}</span>".html_safe,
       :class => style
      )
   end
@@ -48,7 +48,9 @@ module EntityHelper
   def show_boolean(value, list=false)
     content_tag("td", "", 
         :class => (list ? "list-" : "") + "boolean " +
-          ((value == "1" or value == "t" or value == "true") ? (list ? "list-ok" : "ok") : ""))
+          ((value == "1" or value == "t" or value == "true") ? 
+           (list ? "list-ok" : "ok") : 
+           ""))
   end
 
   def show_reference(value, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
@@ -153,11 +155,11 @@ module EntityHelper
   def edit_date(attribute, value)
     content_tag("td",
                 text_field_tag(attribute,
-                               value,
+                               l(value),
                                {:size => "10x1",
-                                :type => "date",
                                 :id => "row_#{attribute}",
-                                :name => "row_#{attribute}"}),
+                                :name => "row_#{attribute}",
+                                :class => "datepicker"}),
                 :class => "string")
   end
 

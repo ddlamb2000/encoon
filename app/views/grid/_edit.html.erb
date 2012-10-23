@@ -37,14 +37,7 @@
       </td>
     </tr>
     <% if @grid.has_translation and @grid.has_description %>
-      <tr>
-        <td class="header">&nbsp;
-          
-        </td>
-        <td class="string">&nbsp;
-          
-        </td>
-      </tr>
+      <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
       <tr>
         <td class="header">
           <%= label_tag :description, t('field.description') %>
@@ -60,7 +53,7 @@
     <% if @row.was_updated? %><div><small><%= display_updated_date(@row) %></small></div><% end %>
     <span class="button">
       <%= label_tag :begin, t('field.begin_date') %>
-      <%= text_field_tag :begin, I18n.l(@row.begin), :size => "10x1", :type => "date" %>
+      <%= text_field_tag :begin, I18n.l(@row.begin), :size => "10x1", :class => "datepicker" %>
     </span>
     <% if not new_row %>
       <span class="button">
@@ -81,6 +74,18 @@
   </footer>
 <% end %>
 <script>
+  $( ".datepicker" ).datepicker({
+    numberOfMonths: 1,
+    changeMonth: true,
+    changeYear: true,
+    showButtonPanel: true,
+    currentText: "<%= t 'date.datepicker-currentText' %>",
+    closeText: "<%= t 'date.datepicker-closeText' %>",
+    dateFormat: "<%= t 'date.formats.datepicker' %>",
+    dayNamesMin: <%= t('date.datepicker-dayNamesMin').html_safe %>,
+    monthNames: <%= t('date.datepicker-monthNames').html_safe %>,
+    monthNamesShort: <%= t('date.datepicker-monthNamesShort').html_safe %>
+  });
   $('#edit-form')
     .bind("ajax:beforeSend", function(evt, xhr, settings){
       $(this).find('div.validation-error').html('<%= escape_javascript(render :partial => "layouts/loading") %>');
