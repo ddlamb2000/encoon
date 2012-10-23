@@ -6,3 +6,6 @@
     <%= text_field_tag :as_of_date, I18n.l(session[:as_of_date]), :size => "10x1", :onchange => 'this.form.submit()' %>
   <% end %>
 </article>
+<script>
+  $( "#as_of_date" ).datepicker( $.datepicker.regional[ "fr" ] );
+</script>
