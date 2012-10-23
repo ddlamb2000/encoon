@@ -11,7 +11,7 @@
       <% else %>
         <span class="separator">|</span>
       <% end %>
-      <span class="button" title="<%= row.description.html_safe %>">
+      <span class="button">
           <%= link_to_unless_current(
                 row.name.html_safe,
                 show_workspace_path(:workspace => row.display_uri)) do |name| %>
