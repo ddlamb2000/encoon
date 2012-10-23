@@ -85,10 +85,14 @@ body {
 .main-area {
   @include float-right;
   width:70%;
+  position:relative;
+  top:$document-top;
 }
 .large-area {
   @include float-left;
   width:100%;
+  position:relative;
+  top:$document-top;
 }
 #navigator {
   position:fixed;
@@ -200,8 +204,6 @@ body {
   }
 }
 .document {
-  position:relative;
-  top:$document-top;
   margin-left:$padding;
   margin-right:2*$padding;
   margin-top:4*$padding;
