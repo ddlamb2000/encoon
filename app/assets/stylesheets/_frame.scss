@@ -197,8 +197,8 @@ body {
     }
   }
   .inline-calendar {
-    margin-top:$padding;
-    margin-bottom:0;
+    margin-top:2*$padding;
+    margin-bottom:$padding;
     margin-left:14*$padding;
   }
 }
