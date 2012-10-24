@@ -161,7 +161,7 @@ module ApplicationHelper
   def warning_current_date(as_of_date)
     now = Time.now
     today = Date::civil(now.year, now.month, now.day)
-    as_of_date != today ? "warning" : ""
+    as_of_date != today ? "warning" : "default"
   end
 
   # Displays information related to the given entity.

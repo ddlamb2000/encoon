@@ -134,6 +134,9 @@
     size:contain;
   }
 }
+.default {
+  padding-left:$padding;
+}
 .locked {
   padding-left:4*$padding;
   background: {

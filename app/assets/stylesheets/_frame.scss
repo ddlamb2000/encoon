@@ -123,10 +123,7 @@ body {
     @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
     background-color:$background-color-navigator-section;
     @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
-    line-height:160%;
     @include border-radius;
-    opacity:0.9;
-    filter:alpha(opacity=90);
     a {
       @include link-colors($color-highlight);
     }
@@ -154,15 +151,12 @@ body {
   }
   .button { 
     margin-right:$padding;
-    padding-top:$padding;
-    padding-bottom:$padding;
+    padding-top:0;
+    padding-bottom:0;
     padding-right:$padding;
     @include border-radius;
     a {
       color:$detail-color;
-      padding-top:$padding;
-      padding-bottom:$padding;
-      padding-right:$padding;
       cursor:pointer;
       @include undecored-link;
       @include link-colors($color-highlight);
@@ -201,6 +195,11 @@ body {
       width:25%;
       font-weight:bolder;
     }
+  }
+  .inline-calendar {
+    margin-top:$padding;
+    margin-bottom:0;
+    margin-left:14*$padding;
   }
 }
 .document {
