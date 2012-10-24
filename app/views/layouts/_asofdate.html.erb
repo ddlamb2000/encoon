@@ -9,7 +9,10 @@
       <input type="checkbox" id="asofdate-button" <%= session[:show_asofdate] ? 'checked' : '' %> />
       <label for="asofdate-button"></label>
     </div>
-    <div id="asofdate-content" class="inline-calendar" style="<%= session[:show_asofdate] ? '' : 'display: none;' %>"><div id="datepicker"></div></div>
+    <div id="asofdate-content" class="inline-calendar" style="<%= session[:show_asofdate] ? '' : 'display: none;' %>">
+      <hr/>
+      <div id="datepicker"></div>
+    </div>
   <% end %>
 </article>
 <script>
