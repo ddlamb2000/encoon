@@ -13,22 +13,16 @@
       </span>
       <script>
         $("#create-<%= filters_uuid(@grid, @filters) %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").
-              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-              css({left:left, top:top, width:width}).
-              show(300).
-              load("<%= url_for(new_path(:grid => @grid.uuid,
-                                         :filters => @filters,
-                                         :container => "#grid-" + filters_uuid(@grid, @filters),
-                                         :refresh_list => true)) %>");
-          }
+          $("#dialog").dialog({
+              modal: true,
+              position: [$("#document").offset().left+5,
+                         $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
+            }).
+            html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+            load("<%= url_for(new_path(:grid => @grid.uuid,
+                                       :filters => @filters,
+                                       :container => "#grid-" + filters_uuid(@grid, @filters),
+                                       :refresh_list => true)) %>");
         });
       </script>
     <% end %>
@@ -43,19 +37,13 @@
       </span>
       <script>
         $("#import-<%= @grid.uuid %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= @grid.uuid %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").
-              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-              css({left:left, top:top, width:width}).
-              show(300).
-              load("<%= url_for(import_path(:grid => @grid.uuid)) %>");
-          }
+          $("#dialog").dialog({
+              modal: true,
+              position: [$("#document").offset().left+5,
+                         $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
+            }).
+            html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+            load("<%= url_for(import_path(:grid => @grid.uuid)) %>");
         });
       </script>
       <span title="<%= t 'actions.export_help' %>" class="button export-button">
@@ -73,20 +61,14 @@
       </span>
       <script>
         $("#update-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").
-              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-              css({left:left, top:top, width:width}).
-              show(300).
-              load("<%= url_for(edit_path(:grid => GRID_UUID,
-                                          :row => @grid.uuid)) %>");
-          }
+          $("#dialog").dialog({
+              modal: true,
+              position: [$("#document").offset().left+5,
+                         $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
+            }).
+            html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+            load("<%= url_for(edit_path(:grid => GRID_UUID,
+                                        :row => @grid.uuid)) %>");
         });
       </script>
     <% end %>
@@ -96,19 +78,16 @@
       </span>
       <script>
         $("#attributes-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $(this).offset().top+20;
-            var left = $("#document").offset().left+5+$("#document").width()/2-250/2;
-            var width = 250;
-            $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").
-              html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-              css({left:left, top:top, width:width}).
-              show(300).
-              load("<%= url_for(attributes_path(:grid => @grid.uuid)) %>");
-          }
+          $("#dialog").dialog({
+              modal: true,
+              position: [$("#document").offset().left+5+$("#document").width()/2-250/2,
+                         $(this).offset().top+20], 
+            }).
+            html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+            load("<%= url_for(list_path(:grid => COLUMN_UUID,
+                                        :filters => [{:column_uuid => COLUMN_GRID_UUID,
+                                                      :row_uuid => @grid.uuid,
+                                                      :row_name => @grid}])) %>");
         });
       </script>
     <% end %>
@@ -201,22 +180,17 @@
                     }
                   );
                   $("#update-<%= row.uuid %>").click(function (event){
-                    if(!$('#dialog').is(':visible')){
-                      var top = $("#row-<%= row.uuid %>").offset().top+15;
-                      var left = $("#document").offset().left+5;
-                      var width = $("#document").width()-35;
-                      $("#actions-<%= row.uuid %>").hide();
-                      $("#document, #document article").addClass("disabled");
-                      $("a").addClass("disabled");
-                      $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-                      $("#dialog").css({left:left, top:top, width:width}).show(300);
-                      $("#dialog").load("<%= url_for(edit_path(
-                                                          :grid => @grid.uuid,
-                                                          :row => row.uuid,
-                                                          :filters => @filters,
-                                                          :container => "#grid-#{filters_uuid(@grid, @filters)}",
-                                                          :refresh_list => true)) %>");
-                    }
+                    $("#dialog").dialog({
+                        modal: true,
+                        position: [$("#document").offset().left+5,
+                                   $("#row-<%= row.uuid %>").offset().top+15], 
+                      }).
+                      html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+                      load("<%= url_for(edit_path(:grid => @grid.uuid,
+                                                  :row => row.uuid,
+                                                  :filters => @filters,
+                                                  :container => "#grid-#{filters_uuid(@grid, @filters)}",
+                                                  :refresh_list => true)) %>");
                   });
                 </script>
               </div>

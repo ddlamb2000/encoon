@@ -1,4 +1,3 @@
-<header class="action-header"><%= @workspace %> » <%= @grid %></header>
 <%= form_tag(save_attachment_path(:grid => @grid.uuid, :row => @row.uuid),
              :multipart => true,
              :target => "target-dialog",
@@ -10,17 +9,23 @@
     </tr>
   </table>
   <div class="validation-error"></div>
-  <footer class="actions">
-    <span class="button cancel-button"><a id="cancel-dialog"><%= t 'actions.cancel' %></a></span>
-    <span class="button"><%= submit_tag t('actions.attach'), :id => "ok-dialog" %></span>
-  </footer>
 <% end %>
 <iframe id="target-dialog" style="display: none;"></iframe>
 <script>
-  $("#cancel-dialog").click(function (event){
-    $("#document, #document article").removeClass("disabled");
-    $("a").attr('class', 'enabled');
-    $("#dialog").hide(300);
+  $("#dialog").dialog({
+    resizable: false,
+    closeOnEscape: true,
+    hide: "puff",
+    width: $("#document").width()-15,
+    title : "<%= @workspace %> » <%= @grid %>",
+    buttons: {
+      "<%= t 'actions.cancel' %>": function() {
+        $("#dialog").dialog("close"); 
+      },
+      "<%= t('actions.attach') %>": function() {
+        $("#attach-form").submit();
+      }
+    }
   });
   $("#target-dialog").load(function (event){
     var ok = $("#target-dialog").contents().find("#ok");
@@ -43,9 +48,7 @@
         $("#more-content").load("<%= url_for(details_path(:grid => @grid.uuid,
                                                           :row => @row.uuid)) %>");
       }
-      $("#document, #document article").removeClass("disabled");
-      $("a").attr('class', 'enabled');
-      $("#dialog").hide(300);
+      $("#dialog").dialog("close"); 
     }
   });
 </script>

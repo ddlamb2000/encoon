@@ -151,18 +151,18 @@
   @include title-shade; 
 }
 .dialog {
+  padding:0;
+  color:$color-highlight;
+  border:0;
+  margin:0;
+}
+.static-dialog {
   padding:2*$padding;
   color:$color-highlight;
   border:0;
+  margin-top:4*$padding;
   @include background-image(radial-gradient(60% 30%, adjust-lightness($background-color-navigator-section, 5%) 5%, $background-color-navigator-section));
   background-color:$background-color-navigator-section;
   @include single-box-shadow($shadow-color, 2px, 2px, 2px);
   @include border-radius;
-  opacity:0.9;
-  filter:alpha(opacity=90);
-}
-.float-dialog {
-  position:absolute;
-  width:60%;
-  z-index:10;
 }

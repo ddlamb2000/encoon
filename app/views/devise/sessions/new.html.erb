@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<section class="dialog document">
+<section class="static-dialog document">
   <header class="action-header"><%= t('devise.sign_in') %></header>
   <%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
     <table class="form">

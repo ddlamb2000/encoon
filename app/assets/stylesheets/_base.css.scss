@@ -92,15 +92,6 @@ li {
   @include single-box-shadow($shadow-color, 2px, 2px, 2px); 
   @include border-radius;
 }
-.disabled {
-  background:transparent;
-  text-decoration:none;
-  cursor:default;
-  &:hover {
-    text-decoration:none;
-    background-color:transparent;
-  }
-}
 .filter {
   font-size:95%;
 }

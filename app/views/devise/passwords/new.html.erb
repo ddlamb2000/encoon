@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<section class="dialog document">
+<section class="static-dialog document">
   <header class="action-header"><%= t('devise.send_instructions') %></header>
   <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :post }) do |f| %>
     <table class="form">

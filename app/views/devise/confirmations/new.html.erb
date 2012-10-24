@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<section class="dialog document">
+<section class="static-dialog document">
   <header class="action-header"><%= t('devise.resend_conf') %></header>
   <%= form_for(resource, :as => resource_name, :url => confirmation_path(resource_name), :html => { :method => :post }) do |f| %>
     <table class="form">

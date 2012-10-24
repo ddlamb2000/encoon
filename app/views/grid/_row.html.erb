@@ -29,32 +29,24 @@
           }
         );
         $("#update-<%= @row.uuid %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= @row.uuid %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= @row.uuid %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(edit_path(:grid => @grid.uuid,
-                                                     :row => @row.uuid,
-                                                     :container => "#row-#{@row.uuid}")) %>");
-          }
+          $("#dialog").dialog({
+            modal: true,
+            position: [$("#document").offset().left+5,
+                       $("#actions-<%= @row.uuid %>").offset().top+15]
+          }).
+          html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+          load("<%= url_for(edit_path(:grid => @grid.uuid,
+                                      :row => @row.uuid,
+                                      :container => "#row-#{@row.uuid}")) %>");
         });
         $("#attach-<%= @row.uuid %>").click(function (event){
-          if(!$('#dialog').is(':visible')){
-            var top = $("#actions-<%= @row.uuid %>").offset().top+15;
-            var left = $("#document").offset().left+5;
-            var width = $("#document").width()-35;
-            $("#actions-<%= @row.uuid %>").fadeOut(3);
-            $("#document, #document article").addClass("disabled");
-            $("a").addClass("disabled");
-            $("#dialog").html('<%= escape_javascript(render :partial => "layouts/loading") %>');
-            $("#dialog").css({left:left, top:top, width:width}).show(300);
-            $("#dialog").load("<%= url_for(attach_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
-          }
+          $("#dialog").dialog({
+            modal: true,
+            position: [$("#document").offset().left+5,
+                       $("#actions-<%= @row.uuid %>").offset().top+15]
+          }).
+          html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+          load("<%= url_for(attach_path(:grid => @grid.uuid, :row => @row.uuid)) %>");
         });
       </script>
     </div>

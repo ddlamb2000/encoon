@@ -1,7 +1,7 @@
 <% content_for :navigator do %>
   <%= render "links" %>
 <% end %>
-<section class="dialog document">
+<section class="static-dialog document">
   <header class="action-header"><%= t('devise.change_passwd') %></header>
   <%= form_for(resource, :as => resource_name, :url => password_path(resource_name), :html => { :method => :put }) do |f| %>
     <%= f.hidden_field :reset_password_token %>

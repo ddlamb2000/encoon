@@ -493,19 +493,6 @@ class GridController < ApplicationController
     render :partial => "no_data", :status => 404
   end
 
-  # Renders the attributes of a grid through an Ajax request.
-  def attributes
-    log_debug "GridController#attributes"
-    selectGridAndWorkspace
-    if @workspace.present? and @grid.present?
-      @grid.load if not @grid.loaded
-      @columns = @grid.column_all
-      render :partial => "attributes"
-      return
-    end
-    render :partial => "no_data", :status => 404
-  end
-
   # Renders the import dialog page through an Ajax request.
   def import
     log_debug "GridController#import"
