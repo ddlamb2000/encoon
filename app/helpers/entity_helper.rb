@@ -38,7 +38,7 @@ module EntityHelper
   end
 
   def show_date(value, list=false)
-    content_tag("td", value.nil? ? nil : I18n.l(value), :class => (list ? "list-" : "") + "date")
+    content_tag("td", value.nil? ? nil : l(value), :class => (list ? "list-" : "") + "date")
   end
 
   def show_number(value, list=false)

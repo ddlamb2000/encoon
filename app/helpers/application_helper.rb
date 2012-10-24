@@ -89,13 +89,13 @@ module ApplicationHelper
   # Returns the given date if it's different to the begin of time.
   # Returns a string "unknown" otherwise.
   def display_begin_date(date)
-    date == Entity.begin_of_time ? t('general.undefined') : date
+    date == Entity.begin_of_time ? t('general.undefined') : l(date)
   end
 
   # Returns the given date if it's different to the end of time.
   # Returns a string "unknown" otherwise.
   def display_end_date(date)
-    date == Entity.end_of_time ? t('general.undefined') : date
+    date == Entity.end_of_time ? t('general.undefined') : l(date)
   end
 
   # Displays the distance between the date and the current system date.
@@ -169,11 +169,11 @@ module ApplicationHelper
   def display_information(entity)
     output = ""
     if entity.begin != Entity.begin_of_time
-      output << t('general.begins', :time => entity.begin.to_s)
+      output << t('general.begins', :time => l(entity.begin))
     end
     if entity.end != Entity.end_of_time
       output << " " if output.length > 0
-      output <<  t('general.ends', :time => entity.end.to_s)
+      output <<  t('general.ends', :time => l(entity.end))
     end
     if not entity.enabled
       output << " " if output.length > 0

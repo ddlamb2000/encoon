@@ -59,7 +59,7 @@
           <ul>
           <% for row in @versions %>
             <li>
-              <%= link_to t('general.version', :version => row.version.to_s), refresh_path(:as_of_date => row.reference_date) %>
+              <%= link_to t('general.version', :version => row.version.to_s), refresh_path(:as_of_date => row.reference_date.nil? ? nil : l(row.reference_date)) %>
               <small><%= display_information(row) %></small>
             </li>
           </ul>
