@@ -31,7 +31,7 @@
         $("#update-<%= @row.uuid %>").click(function (event){
           $("#dialog").dialog({
             modal: true,
-            position: [$("#document").offset().left+5,
+            position: [$("#document").offset().left+$("#document").width()/2-650/2,
                        $("#actions-<%= @row.uuid %>").offset().top+15]
           }).
           html('<%= escape_javascript(render :partial => "layouts/loading") %>').
@@ -42,7 +42,7 @@
         $("#attach-<%= @row.uuid %>").click(function (event){
           $("#dialog").dialog({
             modal: true,
-            position: [$("#document").offset().left+5,
+            position: [$("#document").offset().left+$("#document").width()/2-650/2,
                        $("#actions-<%= @row.uuid %>").offset().top+15]
           }).
           html('<%= escape_javascript(render :partial => "layouts/loading") %>').

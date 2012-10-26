@@ -15,7 +15,7 @@
         $("#create-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           $("#dialog").dialog({
               modal: true,
-              position: [$("#document").offset().left+5,
+              position: [$("#document").offset().left+$("#document").width()/2-650/2,
                          $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
             }).
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
@@ -39,7 +39,7 @@
         $("#import-<%= @grid.uuid %>").click(function (event){
           $("#dialog").dialog({
               modal: true,
-              position: [$("#document").offset().left+5,
+              position: [$("#document").offset().left+$("#document").width()/2-650/2,
                          $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
             }).
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
@@ -63,7 +63,7 @@
         $("#update-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           $("#dialog").dialog({
               modal: true,
-              position: [$("#document").offset().left+5,
+              position: [$("#document").offset().left+$("#document").width()/2-650/2,
                          $("#actions-<%= filters_uuid(@grid, @filters) %>").offset().top+15], 
             }).
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
@@ -80,7 +80,7 @@
         $("#attributes-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
           $("#dialog").dialog({
               modal: true,
-              position: [$("#document").offset().left+5+$("#document").width()/2-250/2,
+              position: [$("#document").offset().left+$("#document").width()/2-650/2,
                          $(this).offset().top+20], 
             }).
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
@@ -182,7 +182,7 @@
                   $("#update-<%= row.uuid %>").click(function (event){
                     $("#dialog").dialog({
                         modal: true,
-                        position: [$("#document").offset().left+5,
+                        position: [$("#document").offset().left+$("#document").width()/2-650/2,
                                    $("#row-<%= row.uuid %>").offset().top+15], 
                       }).
                       html('<%= escape_javascript(render :partial => "layouts/loading") %>').

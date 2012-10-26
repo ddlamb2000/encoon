@@ -37,7 +37,7 @@
       <tr>
         <td class="header"></td>
         <td class="string">
-          <%= text_area_tag :description, @row_loc.description, :size => "70x10" %>
+          <%= text_area_tag :description, @row_loc.description, :size => "70x15" %>
         </td>
       </tr>
     <% end %>
@@ -80,7 +80,7 @@
     resizable: false,
     closeOnEscape: true,
     hide: "puff",
-    width: $("#document").width()-15,
+    width: 650,
     title : "<%= @workspace %> » <%= @grid %><% if not new_row %> » <%= @grid.row_title(@row) %><% end %>",
     buttons: {
       "<%= t 'actions.cancel' %>": function() {
