@@ -112,8 +112,12 @@ class Grid < Entity
   # Selects the name of one reference row attached to one grid
   def select_reference_row_name_and_description(row_uuid)
     log_debug "Grid#select_reference_row_name_and_description(#{row_uuid}) [#{to_s}]"
+    name_and_description = Cache.get_cached_referenced_row(self.uuid, row_uuid)
+    return name_and_description if name_and_description.present?
     row = row_select_entity_by_uuid(row_uuid)
-    row.present? ? [row_title(row), row.description] : ["",""]
+    description = row.nil? ? ["",""] : [row_title(row), row.description]
+    Cache.referenced_row_cache_push(self.uuid, row_uuid, description)
+    description
   end
 
   def select_grid_cast(row_uuid)
