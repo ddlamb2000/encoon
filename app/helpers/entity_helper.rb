@@ -15,6 +15,12 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 module EntityHelper
+  # Displays a description, truncated in small. 
+  def show_description(description)
+    description.present? ? (" " + content_tag("small", truncate_html(description))).html_safe : ""
+  end
+
+  # Displays a column header in a form or a list.
   def show_header_label(kind, label, description, list=false)
     if list
       case kind
@@ -27,24 +33,25 @@ module EntityHelper
     else
       style = "header"
     end
-    content_tag(list ? "th" : "td",
-      "<span>#{label}</span>".html_safe,
-      :class => style
-     )
+    content_tag(list ? "th" : "td", label.html_safe, :class => style)
   end
 
-  def show_generic(value, list=false)
+  # Displays a string in a table cell, in a form or a list.
+  def show_string(value, list=false)
     content_tag("td", value, :class => (list ? "list-" : "") + "string")
   end
 
+  # Displays a date in a table cell, in a form or a list.
   def show_date(value, list=false)
     content_tag("td", value.nil? ? nil : l(value), :class => (list ? "list-" : "") + "date")
   end
 
+  # Displays a number in a table cell, in a form or a list.
   def show_number(value, list=false)
     content_tag("td", value, :class => (list ? "list-" : "") + "number")
   end
 
+  # Displays a boolean in a table cell, in a form or a list.
   def show_boolean(value, list=false)
     content_tag("td", "", 
         :class => (list ? "list-" : "") + "boolean " +
@@ -53,6 +60,7 @@ module EntityHelper
            ""))
   end
 
+  # Displays a reference in a table cell, in a form or a list.
   def show_reference(value, grid_uuid, referenced_link, referenced_name, referenced_description, list=false)
     content_tag("td", 
                 (referenced_link.blank? ? "" : referenced_link.html_safe) + 
@@ -61,10 +69,12 @@ module EntityHelper
                 :class => (list ? "list-" : "") + "string")
   end
 
+  # Displays a hyperlink in a table cell, in a form or a list.
   def show_hyperlink(value, list=false)
     content_tag("td", content_tag("a", value, :href => value), :class => (list ? "list-" : "") + "string")
   end
 
+  # Displays a password in a table cell, in a form or a list.
   def show_password(value, list=false)
     content_tag("td", icon('password'), :class => (list ? "list-" : "") + "string")
   end
@@ -83,10 +93,10 @@ module EntityHelper
                                                  referenced_description,
                                                  list)
       when COLUMN_TYPE_PASSWORD then show_password(value, list)
-      else show_generic(value, list)
+      else show_string(value, list)
     end
   end
-  
+
   def show_entity(column, value, referenced_link, referenced_name, referenced_description)
     content_tag("tr",
       show_header_label(column.kind, 
@@ -111,69 +121,75 @@ module EntityHelper
          true)
   end
 
-  def edit_string(attribute, value)
+  def edit_string(attribute, value, description)
     content_tag("td",
                 text_field_tag(attribute,
                                value,
                                {:size => "70x1",
                                 :id => "row_#{attribute}",
-                                :name => "row_#{attribute}"}),
+                                :name => "row_#{attribute}"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_integer(attribute, value)
+  def edit_integer(attribute, value, description)
     content_tag("td",
                 number_field_tag(attribute,
                                  value,
                                  {:size => "10x1",
                                   :id => "row_#{attribute}",
-                                  :name => "row_#{attribute}"}),
+                                  :name => "row_#{attribute}"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_text(attribute, value)
+  def edit_text(attribute, value, description)
     content_tag("td",
                 text_area_tag(attribute,
                                value,
                                {:size => "70x10",
                                 :id => "row_#{attribute}",
-                                :name => "row_#{attribute}"}),
+                                :name => "row_#{attribute}"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_boolean(attribute, value)
+  def edit_boolean(attribute, value, description)
     content_tag("td",
                 check_box_tag(attribute,
                               "t",
                               value,
                               {:size => "70x10",
                                :id => "row_#{attribute}",
-                               :name => "row_#{attribute}"}),
+                               :name => "row_#{attribute}"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_date(attribute, value)
+  def edit_date(attribute, value, description)
     content_tag("td",
                 text_field_tag(attribute,
-                               l(value),
+                               value.nil? ? "" : l(value),
                                {:size => "10x1",
                                 :id => "row_#{attribute}",
                                 :name => "row_#{attribute}",
-                                :class => "datepicker"}),
+                                :class => "datepicker"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_password(attribute, value)
+  def edit_password(attribute, value, description)
     content_tag("td",
                 password_field_tag(attribute,
                                    value,
                                    {:size => "70x1",
                                     :id => "row_#{attribute}",
-                                    :name => "row_#{attribute}"}),
+                                    :name => "row_#{attribute}"}) +
+                show_description(description),
                 :class => "string")
   end
 
-  def edit_reference(attribute, grid_uuid, include_blanks, value)
+  def edit_reference(attribute, grid_uuid, include_blanks, value, description)
     collection = Grid.select_reference_rows(grid_uuid)
     unless collection.nil?
       content_tag("td", 
@@ -181,39 +197,40 @@ module EntityHelper
                              options_from_collection_for_select(collection, :uuid, :title, value),
                              {:include_blank => include_blanks,
                               :id => "row_#{attribute}",
-                              :name => "row_#{attribute}"}),
+                              :name => "row_#{attribute}"}) +
+                  show_description(description),
                   :class => "string")
     end
   end
 
-  def edit(attribute, value, kind, grid_uuid, include_blanks)
+  def edit(attribute, value, kind, grid_uuid, include_blanks, description)
     case kind
-      when COLUMN_TYPE_TEXT then edit_text(attribute, value)
-      when COLUMN_TYPE_BOOLEAN then edit_boolean(attribute, value)
-      when COLUMN_TYPE_INTEGER then edit_integer(attribute, value)
-      when COLUMN_TYPE_DATE then edit_date(attribute, value)
-      when COLUMN_TYPE_REFERENCE then edit_reference(attribute, grid_uuid, include_blanks, value)
-      when COLUMN_TYPE_PASSWORD then edit_password(attribute, value)
-      else edit_string(attribute, value)
+      when COLUMN_TYPE_TEXT then edit_text(attribute, value, description)
+      when COLUMN_TYPE_BOOLEAN then edit_boolean(attribute, value, description)
+      when COLUMN_TYPE_INTEGER then edit_integer(attribute, value, description)
+      when COLUMN_TYPE_DATE then edit_date(attribute, value, description)
+      when COLUMN_TYPE_REFERENCE then edit_reference(attribute, grid_uuid, include_blanks, value, description)
+      when COLUMN_TYPE_PASSWORD then edit_password(attribute, value, description)
+      else edit_string(attribute, value, description)
     end
   end
 
-  def show_edit_header_label(label, required, attribute)
+  def show_edit_header_label(name, required, attribute)
     content_tag("td",
       content_tag("label",
-                  label,
+                  name.html_safe,
                   :for => "row_#{attribute}",
                   :class => (required ? "required" : "")),
       :class => "header"
     )
   end
 
-  def edit_entity(row, column, description)
+  def edit_entity(row, column)
     attribute = row.initialized ? column.default_physical_column : column.physical_column
     value = row.read_value(column)
     content_tag("tr",
-      show_edit_header_label(description.html_safe, column.required, attribute) +
-      edit(attribute, value, column.kind, column.grid_reference_uuid, true),
+      show_edit_header_label(column.name, column.required, attribute) +
+      edit(attribute, value, column.kind, column.grid_reference_uuid, true, column.description),
       :id => "header-" + attribute
     )
   end

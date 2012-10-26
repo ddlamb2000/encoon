@@ -1,7 +1,7 @@
 <%= render :partial => 'layouts/tinymce' %>
 <%= form_tag(new_row ?
-              create_path(:grid => @grid.uuid, :filters => @filters) :
-              update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
+               create_path(:grid => @grid.uuid, :filters => @filters) :
+               update_path(:grid => @grid.uuid, :row => @row.uuid, :filters => @filters),
              :remote => true,
              :id => 'edit-form') do %>
   <%= hidden_field_tag "lock_version", @row.lock_version %>
@@ -10,35 +10,22 @@
   <table class="form">
     <% if @grid.has_translation and @grid.has_name %>
       <tr id="header-name">
-        <td class="header">
-          <%= label_tag :name, t('field.name'), :class => "required" %>
-        </td>
-        <td class="string">
-          <%= text_field_tag :name, @row_loc.name, :size => "70x1" %>
-        </td>
+        <td class="header"><%= label_tag :name, t('field.name'), :class => "required" %></td>
+        <td class="string"><%= text_field_tag :name, @row_loc.name, :size => "70x1" %></td>
       </tr>
     <% end %>
     <% for column in @table_columns %>
-      <% description = column.description.present? ?
-          ("<span title='#{column.description}' class='help'>#{column.name}</span>") :
-          "#{column.name}" %>
-      <%= edit_entity(@row, column, description) %>
+      <%= edit_entity(@row, column) %>
     <% end %>
     <tr id="header-name">
-      <td class="header">
-        <%= label_tag :uri, t('field.uri') %>
-      </td>
-      <td class="string">
-        <%= text_field_tag :uri, @row.uri, :size => "70x1" %>
-      </td>
+      <td class="header"><%= label_tag :uri, t('field.uri') %></td>
+      <td class="string"><%= text_field_tag :uri, @row.uri, :size => "70x1" %></td>
     </tr>
     <% if @grid.has_translation and @grid.has_description %>
       <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
       <tr>
-        <td class="header"></td>
-        <td class="string">
-          <%= text_area_tag :description, @row_loc.description, :size => "70x15" %>
-        </td>
+        <td class="header">&nbsp;</td>
+        <td class="string"><%= text_area_tag :description, @row_loc.description, :size => "70x15" %></td>
       </tr>
     <% end %>
   </table>
@@ -50,14 +37,11 @@
     </span>
     <% if not new_row %>
       <span class="button">
-        <%= radio_button_tag :mode, :correction, true %>
-        <%= t 'version.update' %>
-        <%= radio_button_tag :mode, :new_version %>
-        <%= t 'version.new' %>
+        <%= radio_button_tag :mode, :correction, true %> <%= t 'version.update' %>
+        <%= radio_button_tag :mode, :new_version %> <%= t 'version.new' %>
       </span> |
       <span class="button">
-        <%= check_box_tag :enabled, "t", @row.enabled %>
-        <%= t 'field.active' %>
+        <%= check_box_tag :enabled, "t", @row.enabled %> <%= t 'field.active' %>
       </span>
     <% end %>
     <div class="validation-error"></div>
@@ -83,12 +67,8 @@
     width: 650,
     title : "<%= @workspace %> » <%= @grid %><% if not new_row %> » <%= @grid.row_title(@row) %><% end %>",
     buttons: {
-      "<%= t 'actions.cancel' %>": function() {
-        $("#dialog").dialog("close"); 
-      },
-      "<%= t(new_row ? 'actions.create' : 'actions.update') %>": function() {
-        $("#edit-form").submit();
-      }
+      "<%= t 'actions.cancel' %>": function() {$("#dialog").dialog("close");},
+      "<%= t(new_row ? 'actions.create' : 'actions.update') %>": function() {$("#edit-form").submit();}
     }
   });
   $('#edit-form')
