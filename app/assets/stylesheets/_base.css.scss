@@ -39,6 +39,13 @@ li {
   padding:0;
   margin:0;
 }
+hr {
+  height:1px;
+  padding:0;
+  color:$title-color;
+  background-color:$title-color;
+  border:0;
+}
 thead th {
   background:transparent;
 }
