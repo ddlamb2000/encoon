@@ -36,9 +36,6 @@ class Grid < Entity
   # Security indicators, sets with false by default.
   @loaded = @can_select_data = @can_create_data = @can_update_data = @has_translation = false
 
-  # Internal cache used for storing loaded grid definitions.
-  @@grid_cache = []
-
   # Loads in memory the structure of the grid
   # and all the information to render the grid: workspace, columns
   # definition, table mapping, column mapping and security settings.
@@ -49,14 +46,14 @@ class Grid < Entity
     load_mapping
     load_columns(filters, false, skip_mapping)
     @loaded = true
-    self.class.grid_cache_push(self, filters) if not skip_mapping
+    Cache.grid_cache_push(self, filters) if not skip_mapping
     self
   end
 
   # Selects data based on its uuid in the given collection.
-  def self.select_entity_by_uuid(collection, uuid)
-    log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid})"
-    cached = get_cached_grid(uuid)
+  def self.select_entity_by_uuid(collection, uuid, filters=nil)
+    log_debug "Grid#select_entity_by_uuid(#{collection}, #{uuid}, #{filters})"
+    cached = Cache.get_cached_grid(uuid, nil, nil, filters)
     return cached if cached.present?
     collection.
       select(self.all_select_columns).
@@ -70,9 +67,9 @@ class Grid < Entity
   end
   
   # Selects data based on workspace and uri in the given collection.
-  def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri)
-    log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{workspace_uuid}, #{uri})"
-    cached = get_cached_grid(nil, workspace_uuid, uri)
+  def self.select_entity_by_workspace_and_uri(collection, workspace_uuid, uri, filters=nil)
+    log_debug "Grid#select_entity_by_workspace_and_uri(#{collection}, #{workspace_uuid}, #{uri}, #{filters})"
+    cached = Cache.get_cached_grid(nil, workspace_uuid, uri, filters)
     return cached if cached.present?
     collection.
       select(self.all_select_columns).
@@ -1075,31 +1072,5 @@ private
           " LIMIT 1"
     security = Grid.find_by_sql([sql])[0]
     security.nil? ? nil : security.default_role_uuid
-  end
-
-  # Returns loaded grid information from the internal grid cache.
-  def self.get_cached_grid(uuid, workspace_uuid=nil, uri=nil, filters=nil)
-    cached = @@grid_cache.find {|value| value[:user_uuid] == Entity.session_user_uuid and
-                                        value[:asofdate] == Entity.session_as_of_date and
-                                        value[:locale] == Entity.session_locale and
-                                        ((uuid.present? and value[:uuid] == uuid) or 
-                                         (uri.present? and value[:workspace_uuid] == workspace_uuid and value[:uri] == uri)) and
-                                        value[:filters] == filters}
-    log_debug "Grid#get_cached_grid(#{uuid}, #{uri}, #{filters}) *** found cached grid #{cached.inspect}"  if cached.present?
-    return cached[:grid] if cached.present?
-  end
-  
-  # Pushes loaded grid information into the internal grid cache.
-  def self.grid_cache_push(grid, filters)
-    cached = get_cached_grid(grid.uuid, filters)
-    @@grid_cache << {:user_uuid => Entity.session_user_uuid,
-                     :asofdate => Entity.session_as_of_date,
-                     :locale => Entity.session_locale,
-                     :uuid => grid.uuid,
-                     :uri => grid.uri,
-                     :workspace_uuid => grid.workspace_uuid,
-                     :filters => filters,
-                     :grid => grid} if cached.nil?
-    log_debug "Grid#grid_cache_push @@grid_cache=#{@@grid_cache.inspect}" if cached.nil?
   end
 end

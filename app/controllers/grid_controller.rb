@@ -26,7 +26,7 @@ class GridController < ApplicationController
   def show
     log_debug "GridController#show"
     @filters = params[:filters]
-    selectWorkspaceAndGrid
+    selectWorkspaceAndGrid(@filters)
     if @workspace.present? and @grid.present?
       @grid.load(@filters) if not @grid.loaded
       @table_columns = @grid.filtered_columns
@@ -493,6 +493,19 @@ class GridController < ApplicationController
     render :partial => "no_data", :status => 404
   end
 
+  # Renders the attributes of a grid through an Ajax request.
+  def attributes
+    log_debug "GridController#attributes"
+    selectGridAndWorkspace
+    if @workspace.present? and @grid.present?
+      @grid.load if not @grid.loaded
+      @columns = @grid.column_all
+      render :partial => "attributes"
+      return
+    end
+    render :partial => "no_data", :status => 404
+  end
+
   # Renders the import dialog page through an Ajax request.
   def import
     log_debug "GridController#import"
@@ -628,7 +641,7 @@ private
   # Selects workspace, then grid information based on paramaters.
   # The workspace is selected based on given uri or uuid.
   # The grid is selected for the given workspace based on uri or uuid.
-  def selectWorkspaceAndGrid
+  def selectWorkspaceAndGrid(filters=nil)
     Entity.log_debug "GridController#selectWorkspaceAndGrid"
     @workspace = nil
     @grid = nil
@@ -663,9 +676,9 @@ private
         Entity.log_debug "GridController#selectWorkspaceAndGrid workspace found name=#{@workspace.name}"
         Entity.log_debug "GridController#selectWorkspaceAndGrid select grid"
         if Entity.uuid?(params[:grid])
-          @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
+          @grid = Grid.select_entity_by_uuid(Grid, params[:grid], filters)
         else
-          @grid = Grid.select_entity_by_workspace_and_uri(Grid, @workspace.uuid, params[:grid])
+          @grid = Grid.select_entity_by_workspace_and_uri(Grid, @workspace.uuid, params[:grid], filters)
         end
         if @grid.nil?
           Entity.log_debug "GridController#selectWorkspaceAndGrid can't find grid #{params[:grid]}"
@@ -686,13 +699,13 @@ private
     if params[:grid].present?
       Entity.log_debug "GridController#selectGridAndWorkspace select grid"
       if Entity.uuid?(params[:grid])
-        @grid = Grid.select_entity_by_uuid(Grid, params[:grid])
+        @grid = Grid.select_entity_by_uuid(Grid, params[:grid], filters)
       end
       if @grid.nil?
         Entity.log_debug "GridController#selectGridAndWorkspace can't find grid #{params[:grid]}"
       else
         Entity.log_debug "GridController#selectGridAndWorkspace: grid found name=#{@grid.name}"
-        @grid.load(@filters) if not @grid.loaded
+        @grid.load(filters) if not @grid.loaded
         @workspace = @grid.workspace
         if @workspace.nil?
           Entity.log_debug "GridController#selectGridAndWorkspace can't find workspace #{@grid.workspace_uuid}"
