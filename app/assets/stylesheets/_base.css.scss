@@ -29,16 +29,6 @@ a {
 img {
   @include border-radius;
 }
-ul {
-  @include no-bullets;
-  padding:0;
-  margin:0;
-}
-li {
-  @include no-bullets;
-  padding:0;
-  margin:0;
-}
 hr {
   height:1px;
   padding:0;
