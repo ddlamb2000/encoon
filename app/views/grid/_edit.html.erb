@@ -24,13 +24,14 @@
     <% if @grid.has_translation and @grid.has_description %>
       <tr><td>&nbsp;</td><td>&nbsp;</td></tr>
       <tr>
-        <td class="header">&nbsp;</td>
-        <td class="string"><%= text_area_tag :description, @row_loc.description, :size => "70x15" %></td>
+        <td>&nbsp;</td>
+        <td><%= text_area_tag :description, @row_loc.description, :size => "70x15" %></td>
       </tr>
     <% end %>
   </table>
   <footer class="actions">
     <% if @row.was_updated? %><div><small><%= display_updated_date(@row) %></small></div><% end %>
+    <hr/>
     <span class="button">
       <%= label_tag :begin, t('field.begin_date') %>
       <%= text_field_tag :begin, I18n.l(@row.begin), :size => "10x1", :class => "datepicker" %>
@@ -68,7 +69,10 @@
     title : "<%= @workspace %> » <%= @grid %><% if not new_row %> » <%= @grid.row_title(@row) %><% end %>",
     buttons: {
       "<%= t 'actions.cancel' %>": function() {$("#dialog").dialog("close");},
-      "<%= t(new_row ? 'actions.create' : 'actions.update') %>": function() {$("#edit-form").submit();}
+      "<%= t(new_row ? 'actions.create' : 'actions.update') %>": function() {
+        tinyMCE.triggerSave();
+        $("#edit-form").submit();
+      }
     }
   });
   $('#edit-form')
