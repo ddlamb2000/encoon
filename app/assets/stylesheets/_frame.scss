@@ -130,6 +130,16 @@ body {
       @include link-colors($color-highlight);
     }
   }
+  ul {
+    @include no-bullets;
+    padding:0;
+    margin:0;
+  }
+  li {
+    @include no-bullets;
+    padding:0;
+    margin:0;
+  }
   form {
     display:inline;
     input {
@@ -224,6 +234,16 @@ body {
   }
   .highlighted {
     background:$background-color-table-header;
+  }
+  ul {
+    list-style:disc;
+    margin-bottom:$padding;
+    padding-left:$padding*4;
+  }
+  ol {
+    list-style:decimal;
+    margin-bottom:$padding;
+    padding-left:$padding*4;
   }
   table {
     width:100%;
