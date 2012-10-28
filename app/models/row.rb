@@ -69,6 +69,7 @@ class Row < Entity
         log_debug "Row#write_value decoded value=#{decoded_value}"
       rescue
         log_debug "Row#write_value invalid date"
+        errors.add(output, I18n.t('error.badformat', :column => column))
         decoded_value = nil
       end
     else
@@ -77,6 +78,8 @@ class Row < Entity
     send("#{output}=", decoded_value)
   end
 
+  # Returns the workspace the row is attached to,
+  # based on the existence of a reference column. 
   def workspace
     Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid) if attribute_present?(:workspace_uuid)
   end
