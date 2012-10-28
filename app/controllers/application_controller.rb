@@ -109,9 +109,8 @@ protected
     if entity.begin > session[:as_of_date]
       session[:as_of_date] = entity.begin
       flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
-    end
-    if entity.end < session[:as_of_date]
-      session[:as_of_date] = entity.end
+    elsif entity.end < session[:as_of_date]
+      session[:as_of_date] = entity.end + 1.day
       flash[:notice] = t('general.asofdate', :date => l(session[:as_of_date]))
     end
   end
