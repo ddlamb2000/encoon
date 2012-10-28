@@ -19,6 +19,8 @@ for file in ["administrator",
              "system_credentials",
              "system",
              "kinds",
+             "display-modes",
+             "sort-orders",
              "roles",
              "security_credentials",
              "security",
@@ -26,7 +28,6 @@ for file in ["administrator",
              "home",
              "pages",
              "countries"]
-  Entity.log_debug "rake db:seed upload #{file}.xml", true
   Entity.session_locale = 'en'
   Entity.session_as_of_date = Date.current
   Entity.session_user_uuid = SYSTEM_ADMINISTRATOR_UUID
@@ -34,7 +35,7 @@ for file in ["administrator",
     upload = Upload.create
     upload.upload("db/#{file}.xml")
     upload.save!
-    Entity.log_debug "rake db:seed complete " +
+    Entity.log_debug "rake db:seed complete #{file} - " +
                      "#{upload.records} records, " + 
                      "#{upload.inserted} inserted, " + 
                      "#{upload.updated} updated, " +

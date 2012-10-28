@@ -2,11 +2,12 @@
 <encoon>
   <row title="System" grid_uuid="f54309d0-ea30-012c-1054-00166f92f624" grid="Domain">
     <uuid>eec10850-dd45-012c-aafe-0026b0d63708</uuid>
+    <uri>system</uri>
     <version>1</version>
-    <revision>56</revision>
+    <revision>59</revision>
     <enabled>true</enabled>
     <created_at>2009-12-17 17:43:45 UTC</created_at>
-    <updated_at>2012-10-09 20:00:57 UTC</updated_at>
+    <updated_at>2012-10-28 07:12:04 UTC</updated_at>
     <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
     <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public"></data>
     <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">50088bf0-9c87-012f-089e-4417fe7fde95</data>
@@ -14,23 +15,25 @@
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>System</name>
-      <description>Holds the definition of data used at low-level by the application. It's designed, developed and maintained for the development of the system itself in an iterative and recursive process. For instance the definition of workspaces and data grids is defined by a set of data grids.  
-It's used internally and it's not recommended to alter it.</description>
+      <description>&lt;p&gt;Holds the definition of data used at low-level by the application.&lt;/p&gt;
+&lt;p&gt;It's designed, developed and maintained for the development of the system itself in an iterative and recursive process. For instance the definition of domains and categories are defined by a set of categories. It's used internally and &lt;strong&gt;it's not recommended to alter it&lt;/strong&gt;.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
       <name>Système</name>
-      <description>Contient les définitions de données utilisées par l'application. Il est conçu, mis au point et maintenu dans le cadre du développement du système lui-même dans le cadre d'un processus itératif et récursif. Par exemple la définition des espaces de travail et des grilles de données repose sur un jeu de grilles de données. Il est utilisé de manière interne et il n'est pas recommandé de le modifier.</description>
+      <description>&lt;p&gt;Contient les d&amp;eacute;finitions de donn&amp;eacute;es utilis&amp;eacute;es par l'application.&lt;/p&gt;
+&lt;p&gt;Il est con&amp;ccedil;u, mis au point et maintenu dans le cadre du d&amp;eacute;veloppement du syst&amp;egrave;me lui-m&amp;ecirc;me dans le cadre d'un processus it&amp;eacute;ratif et r&amp;eacute;cursif. Par exemple la d&amp;eacute;finition des domaines et des cat&amp;eacute;gories repose sur un jeu de cat&amp;eacute;gories. Il est utilis&amp;eacute; de mani&amp;egrave;re interne et &lt;strong&gt;il n'est pas recommand&amp;eacute; de le modifier&lt;/strong&gt;.&lt;/p&gt;</description>
     </locale>
   </row>
   <row title="Attribute" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>03bfafe0-ea31-012c-105a-00166f92f624</uuid>
+    <uri>attributes</uri>
     <version>1</version>
-    <revision>12</revision>
+    <revision>13</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:41 UTC</created_at>
-    <updated_at>2012-09-23 19:40:37 UTC</updated_at>
+    <updated_at>2012-10-28 07:11:47 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
@@ -39,7 +42,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Attribute</name>
-      <description>An attribute specifies a structured piece of information attached to a data category. Attributes can be of several types, including String, Text or Number. A large number of attributes can be defined for a data category but this number is limited, depending on the kind of column.</description>
+      <description>&lt;p&gt;An attribute specifies a structured piece of information attached to a &amp;nbsp;category. Attributes can be of several types, including string, date or number. A large number of attributes can be defined for a category but this number is limited, depending on the kind of attribute.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -50,6 +53,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Attribute | columns | column_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77b6e8a0-06c2-012d-c0b0-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -61,6 +65,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>461e5940-ea31-012c-106b-00166f92f624</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>15</revision>
     <enabled>true</enabled>
@@ -88,6 +93,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3427a80-06cd-012d-c202-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -98,6 +104,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Display order" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>4c766f00-06cd-012d-c1fb-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>6</revision>
     <enabled>true</enabled>
@@ -125,6 +132,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Display order | display" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3441b00-06cd-012d-c202-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -135,6 +143,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Kind" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>50270360-ea31-012c-106f-00166f92f624</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>11</revision>
     <enabled>true</enabled>
@@ -162,6 +171,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Kind | kind" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3436d00-06cd-012d-c202-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -172,6 +182,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Reference" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>5a5107e0-0990-012d-e81a-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>13</revision>
     <enabled>true</enabled>
@@ -199,6 +210,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Reference | grid_reference_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>8bbfddb0-0a53-012d-9616-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -209,6 +221,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Regular expression" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>68792a30-1da5-012d-2556-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
@@ -236,6 +249,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Regular expression | regex" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>2d72bb91-1da6-012d-6655-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -246,6 +260,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Required" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>8df46b61-1da3-012d-46db-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>4</revision>
     <enabled>true</enabled>
@@ -273,6 +288,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Required | required" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>dae4cf91-1da4-012d-7a05-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -283,11 +299,12 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Attribute mapping" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>b800e230-042b-012d-0a08-0015c5091b01</uuid>
+    <uri>attribute-mappings</uri>
     <version>1</version>
-    <revision>7</revision>
+    <revision>8</revision>
     <enabled>true</enabled>
     <created_at>2010-02-25 11:06:16 UTC</created_at>
-    <updated_at>2012-10-03 19:11:51 UTC</updated_at>
+    <updated_at>2012-10-28 07:13:12 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
@@ -296,7 +313,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Attribute mapping</name>
-      <description>Defines physical storage mapping of data category attributes. The mapping is based on SQL tables that depend on the underlying database. Attribute mapping is used only when a data category is mapped to a physical table, through data mapping.</description>
+      <description>&lt;p&gt;Defines physical storage mapping of category attributes. The mapping is based on SQL tables that depend on the underlying database. Attribute mapping is used only when a category is mapped to a physical table, through data mapping.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -307,6 +324,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Attribute mapping | column_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>b7c8cba0-0a54-012d-64b1-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -318,6 +336,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Attribute" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>d0352c30-042b-012d-0a0c-0015c5091b01</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>5</revision>
     <enabled>true</enabled>
@@ -343,6 +362,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Attribute | column_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81f79090-0a56-012d-64e2-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -353,6 +373,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database column" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>eb71d430-042b-012d-0a11-0015c5091b01</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>4</revision>
     <enabled>true</enabled>
@@ -373,6 +394,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database column | db_column" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81fa0190-0a56-012d-64e2-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -383,11 +405,12 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>fe92c430-ea30-012c-1057-00166f92f624</uuid>
+    <uri>grids</uri>
     <version>1</version>
-    <revision>15</revision>
+    <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:32 UTC</created_at>
-    <updated_at>2012-09-23 19:40:24 UTC</updated_at>
+    <updated_at>2012-10-28 07:12:36 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
@@ -396,7 +419,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Category</name>
-      <description>Categories let users structure and enter data in the system in a completely transparent and flexible way. Data can be translatable and can be managed through dated versions. A category is a kind of virtual table made of columns and rows ; it's based on several underlying physical tables that can be changed by database administrators. Because every single piece of data is managed in the application through categories, users can navigate through data is a very consistent way.</description>
+      <description>&lt;p&gt;Categories let users structure and enter data in the system in a completely transparent and flexible way. Data can be translatable and can be managed through dated versions. A category is a kind of virtual table made of columns and rows ; it's based on several underlying physical tables that can be changed by database administrators. Because every single piece of data is managed in the application through categories, users can navigate through data is a very consistent way.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -407,6 +430,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category | grids | grid_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77b56ab0-06c2-012d-c0b0-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -418,6 +442,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Domain" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>1fe00120-ea31-012c-1065-00166f92f624</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>10</revision>
     <enabled>true</enabled>
@@ -445,6 +470,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Domain | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b33ffeb0-06cd-012d-c202-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -455,6 +481,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Has description" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>8afbf6b1-293a-012d-1701-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
@@ -476,6 +503,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Has description | has_description" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>a5788301-293a-012d-d9f3-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -486,6 +514,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Has name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>78a7e2d1-293a-012d-2869-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
@@ -507,6 +536,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Has name | has_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>92a3cd71-293a-012d-a54f-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -515,12 +545,32 @@ It's used internally and it's not recommended to alter it.</description>
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
   </row>
-  <row title="Category sort order" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
-    <uuid>08e6e470-e5f4-012f-0006-4417fe7fde95</uuid>
+  <row title="Category display mode" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>575c1b90-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri>display-modes</uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
+    <created_at>2012-10-28 07:02:21 UTC</created_at>
+    <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Category display mode</name>
+      <description>&lt;p&gt;Defines for a category how rows are displayed in lists.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Category sort order" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>08e6e470-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri>sort-orders</uri>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
     <created_at>2012-09-21 08:26:59 UTC</created_at>
+    <updated_at>2012-10-28 07:03:23 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
@@ -529,10 +579,12 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Category sort order</name>
+      <description>&lt;p&gt;Defines for a category the sort order for rows in lists.&lt;/p&gt;</description>
     </locale>
   </row>
   <row title="Country" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>e1fa0830-dd46-012c-538a-0016cbad334a</uuid>
+    <uri>countries</uri>
     <version>1</version>
     <revision>15</revision>
     <enabled>true</enabled>
@@ -559,6 +611,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="ISO Code 2" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e1ff3f70-dd46-012c-538a-0016cbad334a</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
@@ -585,6 +638,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="ISO Code 3" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e1ffc240-dd46-012c-538a-0016cbad334a</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
@@ -611,6 +665,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="ISO Num" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>e2004620-dd46-012c-538a-0016cbad334a</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>16</revision>
     <enabled>true</enabled>
@@ -637,11 +692,12 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Data kind" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>5a2e26e0-ea31-012c-1074-00166f92f624</uuid>
+    <uri>kinds</uri>
     <version>1</version>
-    <revision>8</revision>
+    <revision>9</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:41:06 UTC</created_at>
-    <updated_at>2012-06-26 15:11:15 UTC</updated_at>
+    <updated_at>2012-10-28 07:13:47 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
@@ -650,7 +706,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Data kind</name>
-      <description>Defines the kinds (or types) of data that is managed in data category attributes.</description>
+      <description>&lt;p&gt;Defines the kinds (or types) of data that is managed in category attributes.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -661,11 +717,12 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Data mapping" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>a6beb050-0427-012d-09bf-0015c5091b01</uuid>
+    <uri>mappings</uri>
     <version>1</version>
-    <revision>23</revision>
+    <revision>24</revision>
     <enabled>true</enabled>
     <created_at>2010-02-25 10:37:09 UTC</created_at>
-    <updated_at>2012-10-03 19:12:15 UTC</updated_at>
+    <updated_at>2012-10-28 07:14:10 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
@@ -674,7 +731,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Data mapping</name>
-      <description>Defines physical storage mapping of data categories. The mapping is based on SQL tables that depend on the underlying database.</description>
+      <description>&lt;p&gt;Defines physical storage mapping of categories. The mapping is based on SQL tables that depend on the underlying database.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -685,6 +742,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Data mapping | grid_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>b7c681b0-0a54-012d-64b1-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -696,6 +754,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>bdbcc440-0427-012d-09c5-0015c5091b01</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>11</revision>
     <enabled>true</enabled>
@@ -721,6 +780,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>3125b701-0a56-012d-64db-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -731,6 +791,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database table" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>ce612c50-0427-012d-09c8-0015c5091b01</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>4</revision>
     <enabled>true</enabled>
@@ -751,6 +812,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database table | db_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>312800f0-0a56-012d-64db-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -761,6 +823,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database table for translation" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>d8badca0-0427-012d-09cb-0015c5091b01</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>4</revision>
     <enabled>true</enabled>
@@ -781,6 +844,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Database table for translation | db_loc_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>312800f1-0a56-012d-64db-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -791,11 +855,12 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Domain" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
+    <uri>domains</uri>
     <version>1</version>
-    <revision>11</revision>
+    <revision>13</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:16 UTC</created_at>
-    <updated_at>2012-09-23 19:40:50 UTC</updated_at>
+    <updated_at>2012-10-28 07:15:02 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
@@ -804,7 +869,7 @@ It's used internally and it's not recommended to alter it.</description>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Domain</name>
-      <description>Domains let you define data categories that are grouped together in a logical way. Domains can be private or be shared with others. You can define as many domains as you need to define large sets of data categories. Data categories can be moved from a domain to another. It's mandatory that each data category is attached to one domain.</description>
+      <description>&lt;p&gt;Domains let you define categories that are grouped together in a logical way. Domains can be private or be shared with others. You can define as many domains as you need to define large sets of categories. Categories can be moved from a domain to another. It's mandatory that each category is attached to one domain.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -815,6 +880,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Domain | workspaces | workspace_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77aa8520-06c2-012d-c0b0-0026b0d63708</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -826,6 +892,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Default role" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>0e1f4990-a26c-012f-de85-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -846,6 +913,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Default role | default_role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>186c3270-a26c-012f-de85-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -856,6 +924,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Public" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>f1ca9820-a26b-012f-de85-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -876,6 +945,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Public | public" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>f93205a0-a26b-012f-de85-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -886,6 +956,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Images" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>ed000e90-ef78-012f-2349-4417fe7fde95</uuid>
+    <uri>images</uri>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
@@ -904,6 +975,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Upload" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>c306f4d0-14a2-012d-c0f4-4417fe7fde95</uuid>
+    <uri>uploads</uri>
     <version>1</version>
     <revision>9</revision>
     <enabled>true</enabled>
@@ -928,6 +1000,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Upload | uploads" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>ff979a01-1a54-012d-f23b-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -939,6 +1012,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Elapsed" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>b38b5480-c9fd-012f-4735-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -958,6 +1032,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Elapsed | elapsed" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b9cfe310-c9fd-012f-4735-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -968,6 +1043,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="File name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>f3fa9441-1a54-012d-364e-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
@@ -993,6 +1069,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="File name | file_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>079c5dd1-1a55-012d-32dd-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -1003,6 +1080,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Inserted" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>3e9db251-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
@@ -1028,6 +1106,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Inserted | inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>6252aa30-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -1038,6 +1117,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Records" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>89f824c0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
@@ -1063,6 +1143,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Records | records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>8f95cec0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -1073,6 +1154,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Skipped" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>9b8fdee0-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
@@ -1098,6 +1180,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Skipped | skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>a166c150-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>
@@ -1108,6 +1191,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Updated" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>6c5f3380-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>3</revision>
     <enabled>true</enabled>
@@ -1133,6 +1217,7 @@ It's used internally and it's not recommended to alter it.</description>
   </row>
   <row title="Updated | updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>72edab00-c2a7-012f-e9be-4417fe7fde95</uuid>
+    <uri></uri>
     <version>1</version>
     <revision>1</revision>
     <enabled>true</enabled>

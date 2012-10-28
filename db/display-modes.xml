@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encoon>
+  <row title="Category display mode" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>575c1b90-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri>display-modes</uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:02:21 UTC</created_at>
+    <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Category display mode</name>
+      <description>&lt;p&gt;Defines for a category how rows are displayed in lists.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="List" grid_uuid="575c1b90-02fb-0130-b20f-4417fe7fde95" grid="Category display mode">
+    <uuid>e53341e0-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:06:18 UTC</created_at>
+    <grid_uuid title="Category display mode">575c1b90-02fb-0130-b20f-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>List</name>
+      <description>&lt;p&gt;Simple list with row titles only.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Table" grid_uuid="575c1b90-02fb-0130-b20f-4417fe7fde95" grid="Category display mode">
+    <uuid>a71981a0-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:04:34 UTC</created_at>
+    <grid_uuid title="Category display mode">575c1b90-02fb-0130-b20f-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Table</name>
+      <description>&lt;p&gt;Rows are displayed in a table.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Table with text summary" grid_uuid="575c1b90-02fb-0130-b20f-4417fe7fde95" grid="Category display mode">
+    <uuid>b1214640-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:04:51 UTC</created_at>
+    <grid_uuid title="Category display mode">575c1b90-02fb-0130-b20f-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Table with text summary</name>
+    </locale>
+  </row>
+  <row title="Text summary" grid_uuid="575c1b90-02fb-0130-b20f-4417fe7fde95" grid="Category display mode">
+    <uuid>d3814de0-02fb-0130-b20f-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>2</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:05:49 UTC</created_at>
+    <updated_at>2012-10-28 07:06:39 UTC</updated_at>
+    <grid_uuid title="Category display mode">575c1b90-02fb-0130-b20f-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Text summary</name>
+      <description>&lt;p&gt;Single list of text summary only.&lt;/p&gt;</description>
+    </locale>
+  </row>
+</encoon>

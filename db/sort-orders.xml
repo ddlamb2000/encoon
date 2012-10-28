@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<encoon>
+  <row title="Category sort order" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
+    <uuid>08e6e470-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri>sort-orders</uri>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:26:59 UTC</created_at>
+    <updated_at>2012-10-28 07:03:23 UTC</updated_at>
+    <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
+    <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
+    <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
+    <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Category sort order</name>
+      <description>&lt;p&gt;Defines for a category the sort order for rows in lists.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Alphabetical ascending" grid_uuid="08e6e470-e5f4-012f-0006-4417fe7fde95" grid="Category sort order">
+    <uuid>16122180-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:27:21 UTC</created_at>
+    <grid_uuid title="Category sort order">08e6e470-e5f4-012f-0006-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Alphabetical ascending</name>
+    </locale>
+  </row>
+  <row title="Alphabetical descending" grid_uuid="08e6e470-e5f4-012f-0006-4417fe7fde95" grid="Category sort order">
+    <uuid>1b8e6a90-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:27:30 UTC</created_at>
+    <grid_uuid title="Category sort order">08e6e470-e5f4-012f-0006-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Alphabetical descending</name>
+    </locale>
+  </row>
+  <row title="Chronological" grid_uuid="08e6e470-e5f4-012f-0006-4417fe7fde95" grid="Category sort order">
+    <uuid>204e59e0-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:27:38 UTC</created_at>
+    <grid_uuid title="Category sort order">08e6e470-e5f4-012f-0006-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Chronological</name>
+    </locale>
+  </row>
+  <row title="Reverse chronological" grid_uuid="08e6e470-e5f4-012f-0006-4417fe7fde95" grid="Category sort order">
+    <uuid>521f5c60-e5f4-012f-0006-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-09-21 08:29:01 UTC</created_at>
+    <grid_uuid title="Category sort order">08e6e470-e5f4-012f-0006-4417fe7fde95</grid_uuid>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Reverse chronological</name>
+    </locale>
+  </row>
+</encoon>
