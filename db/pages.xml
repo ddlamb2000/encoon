@@ -2,6 +2,7 @@
 <encoon>
   <row title="Page" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>84d08550-d677-012f-413c-4417fe7fde95</uuid>
+    <uri>pages</uri>
     <version>1</version>
     <revision>2</revision>
     <enabled>true</enabled>
@@ -11,7 +12,6 @@
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">c30cdd60-a26c-012f-de85-4417fe7fde95</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">pages</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -20,37 +20,56 @@
   </row>
   <row title="Credits" grid_uuid="84d08550-d677-012f-413c-4417fe7fde95" grid="Page">
     <uuid>731d6e10-e9ca-012f-7569-4417fe7fde95</uuid>
+    <uri>credits</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>3</revision>
     <enabled>true</enabled>
     <created_at>2012-09-26 05:39:23 UTC</created_at>
+    <updated_at>2012-10-28 06:31:24 UTC</updated_at>
     <grid_uuid title="Page">84d08550-d677-012f-413c-4417fe7fde95</grid_uuid>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Credits</name>
-      <description>This application is designed by David Lambert (C) 2012.</description>
+      <description>&lt;p&gt;This application is designed by David Lambert &amp;copy;&amp;nbsp;2012.&lt;/p&gt;</description>
+    </locale>
+    <locale>
+      <base_locale>fr</base_locale>
+      <locale>fr</locale>
+      <name>Credits</name>
+      <description>&lt;p&gt;Cette application est con&amp;ccedil;ue par David Lambert &amp;copy;&amp;nbsp;2012.&lt;/p&gt;</description>
     </locale>
   </row>
   <row title="Welcome" grid_uuid="84d08550-d677-012f-413c-4417fe7fde95" grid="Page">
     <uuid>a8ed4160-e9ca-012f-7569-4417fe7fde95</uuid>
+    <uri>welcome</uri>
     <version>1</version>
-    <revision>3</revision>
+    <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2012-09-26 05:40:53 UTC</created_at>
-    <updated_at>2012-09-26 05:41:32 UTC</updated_at>
+    <updated_at>2012-10-28 06:40:16 UTC</updated_at>
     <grid_uuid title="Page">84d08550-d677-012f-413c-4417fe7fde95</grid_uuid>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Welcome</name>
-      <description>Welcome to εncooη! For the time being, εncooη is an experimental web-based application oriented toward data management. The object of the reasearches εncooη is based on is to propose a true engine that allows data structuration, data relationship management, data presentation, and, mainly, to make obvious data navigation. This brand new application doesn't require database system learning or skills, because everything in the application is managed through a very simple web-based user interface, in real time. Primary dedicated to small business structures, the application lets manage a large amount of multi-purposes information within the organization, and share this information across business stakeholders in an easy and natural way, using one Internet browser only. The application is supposed to be hosted within the organization itself, on a local server (Windows, Mac or Linux), or even on the Web. εncooη is also the foundation for the development of a true business-oriented applications development toolkit.</description>
+      <description>&lt;p&gt;For the time being, &amp;epsilon;ncoo&amp;eta; is an &lt;strong&gt;experimental&lt;/strong&gt; web-based application oriented toward &lt;strong&gt;data management&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The object of the reasearches &amp;epsilon;ncoo&amp;eta; is based on is to propose an engine that allows &lt;strong&gt;data structuration&lt;/strong&gt;, &lt;strong&gt;data relationship management&lt;/strong&gt;, &lt;strong&gt;data presentation&lt;/strong&gt;, and, mainly, to make obvious &lt;strong&gt;data navigation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This brand new application doesn't require database system learning or skills, because everything in the application is managed through a very simple web-based user interface, in real time.&lt;/p&gt;
+&lt;p&gt;Primary dedicated to small business structures, the application lets manage a large amount of multi-purposes information within the organization, and share this information across business stakeholders in an easy and natural way, using one Internet browser only.&lt;/p&gt;
+&lt;p&gt;&lt;span&gt;One important native strength of &lt;/span&gt;&lt;span&gt;&amp;epsilon;ncoo&amp;eta; is to be able to manage &lt;strong&gt;historical multi-languages&lt;/strong&gt; data.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The application is supposed to be hosted within the organization itself, on a local server, or on the Web. &amp;epsilon;ncoo&amp;eta; is also the foundation for the development of a true business-oriented applications development toolkit.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
       <locale>fr</locale>
       <name>Bienvenue</name>
-      <description>Bienvenue sur Encoon ! εncooη est aujourd’hui une application web expérimentale orientée vers la gestion de données. Les travaux de recherche sur lesquels s’appuie εncooη ont pour objet de proposer un véritable moteur qui permette de structurer des données, de gérer des relations entre données, de les présenter, et surtout de rendre évidente la navigation. Cette nouvelle application ne requière pas d’apprentissage et de compétence en matière de bases de données car tout est piloté de façon simple par une interface entièrement Web en temps réel. Destinée dans un premier temps aux petites structures d’entreprise, l’application permet de gérer au sein de l’organisation un grand nombre d’information de tout nature et de partager cette information avec les collaborateurs de l’entreprise de façon simple et naturelle à l’aide d’un simple navigateur Internet. L’application est destinée à terme à être hébergée au sein même de l’entreprise sur un serveur local (Windows, Mac ou Linux), ou bien sur le Web. εncooη sert également de base à la construction d’un véritable outil de création d’applications d’entreprise.</description>
+      <description>&lt;p&gt;&amp;epsilon;ncoo&amp;eta; est aujourd&amp;rsquo;hui une application web &lt;strong&gt;exp&amp;eacute;rimentale&lt;/strong&gt; orient&amp;eacute;e vers la &lt;strong&gt;gestion de donn&amp;eacute;es&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Les travaux de recherche sur lesquels s&amp;rsquo;appuie &amp;epsilon;ncoo&amp;eta; ont pour objet de proposer un moteur qui permette de &lt;strong&gt;structurer des donn&amp;eacute;es&lt;/strong&gt;, de &lt;strong&gt;g&amp;eacute;rer des relations entre donn&amp;eacute;es&lt;/strong&gt;, de les &lt;strong&gt;pr&amp;eacute;senter&lt;/strong&gt;, et surtout de rendre &amp;eacute;vidente la &lt;strong&gt;navigation&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Cette nouvelle application ne requi&amp;egrave;re pas d&amp;rsquo;apprentissage et de comp&amp;eacute;tence en mati&amp;egrave;re de bases de donn&amp;eacute;es car tout est pilot&amp;eacute; de fa&amp;ccedil;on simple par une interface enti&amp;egrave;rement Web, en temps r&amp;eacute;el.&lt;/p&gt;
+&lt;p&gt;Destin&amp;eacute;e dans un premier temps aux petites structures d&amp;rsquo;entreprise, l&amp;rsquo;application permet de g&amp;eacute;rer au sein de l&amp;rsquo;organisation un grand nombre d&amp;rsquo;information de tout nature et de partager cette information avec les intervenants dans l&amp;rsquo;entreprise de fa&amp;ccedil;on simple et naturelle &amp;agrave; l&amp;rsquo;aide d&amp;rsquo;un simple navigateur Internet.&lt;/p&gt;
+&lt;p&gt;La principale force d'&lt;span&gt;&amp;epsilon;ncoo&amp;eta; est de savoir g&amp;eacute;rer des &lt;strong&gt;historiques de donn&amp;eacute;es multi-langues&lt;/strong&gt; de fa&amp;ccedil;on native.&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;L&amp;rsquo;application est destin&amp;eacute;e &amp;agrave; terme &amp;agrave; &amp;ecirc;tre h&amp;eacute;berg&amp;eacute;e au sein m&amp;ecirc;me de l&amp;rsquo;entreprise sur un serveur local, ou bien sur le Web. &amp;epsilon;ncoo&amp;eta; sert &amp;eacute;galement de base &amp;agrave; la construction d&amp;rsquo;un v&amp;eacute;ritable outil de cr&amp;eacute;ation d&amp;rsquo;applications d&amp;rsquo;entreprise.&lt;/p&gt;</description>
     </locale>
   </row>
 </encoon>
