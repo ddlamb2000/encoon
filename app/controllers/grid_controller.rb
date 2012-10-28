@@ -181,7 +181,7 @@ class GridController < ApplicationController
         begin
           @row.transaction do
             log_debug "GridController#create: initialize transaction"
-            @row.begin = param_begin_date
+            @row.begin = param_begin_date(@row)
             log_debug "GridController#create: populate from parameter values"
             populate_from_params
             @grid.load(@filters)
@@ -269,7 +269,7 @@ class GridController < ApplicationController
                   @row = @row.clone
                   @row.version = new_version
                   @row.lock_version = 0
-                  @row.begin = param_begin_date
+                  @row.begin = param_begin_date(@row)
                   if multiple_versions_ok?
                     @row.enabled = params[:enabled]
                     log_debug "GridController#update populate from parameter values"
@@ -313,7 +313,7 @@ class GridController < ApplicationController
                   end
                 else
                   log_debug "GridController#update update existing version"
-                  @row.begin = param_begin_date
+                  @row.begin = param_begin_date(@row)
                   if multiple_versions_ok?
                     log_debug "GridController#update versions OK"
                     @row.enabled = params[:enabled]
@@ -607,12 +607,13 @@ private
 
   # Returns the begin date is present as part of parameters.
   # Returns a default value when the begin date is absent from the parameters.
-  def param_begin_date
+  def param_begin_date(row)
     begin
-      params[:begin_date].present? ? 
-        Date.strptime(params[:begin_date], t('date.formats.default')) :
+      params[:begin].present? ? 
+        Date.strptime(params[:begin], t('date.formats.default')) :
         Entity.begin_of_time
-    rescue Exception => invalid
+    rescue
+      @row.errors.add(:begin, I18n.t('error.badformat', :column => I18n.t('field.begin_date')))
       Entity.begin_of_time
     end
   end
