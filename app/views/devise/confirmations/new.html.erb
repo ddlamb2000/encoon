@@ -12,7 +12,10 @@
     </table>
     <%= devise_error_messages! %>
     <footer class="actions">
-      <span class="button"><%= f.submit t('devise.resend_conf') %></span>
+      <span class="button"><%= f.submit t('devise.resend_conf'), :id => "commit" %></span>
     </footer>
   <% end %>
 </section>
+<script>
+  $("#commit").button();
+</script>

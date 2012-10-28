@@ -19,7 +19,10 @@
       </tr>
     </table>
     <footer class="actions">
-      <span class="button"><%= f.submit t('devise.sign_in') %></span>
+      <span class="button"><%= f.submit t('devise.sign_in'), :id => "commit" %></span>
     </footer>
   <% end %>
 </section>
+<script>
+  $("#commit").button();
+</script>
