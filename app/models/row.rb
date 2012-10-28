@@ -18,8 +18,11 @@ class Row < Entity
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   has_many :row_locs, :foreign_key => "uuid", :primary_key => "uuid"
   has_many :attachments, :foreign_key => "uuid", :primary_key => "uuid", :order => "document_file_name"
+
+  # Basic controls.
   validates_presence_of :grid_uuid
   validates_associated :grid
+
   attr_reader :initialized
   
   @initialized = false
@@ -31,28 +34,49 @@ class Row < Entity
 
   def to_s ; name ; end
 
+  # Returns the name information associated to the row if exists.
   def name
     attribute_present?(:name) ? read_attribute(:name) : ""
   end
 
+  # Returns the title information associated to the row if exists.
+  # If a name column doesn't exist, the title is set by the grid the row is attached to.
   def title
-    attribute_present?(:name) ? 
-      read_attribute(:name) : 
-      (grid.present? ? grid.row_title(self) : "")
+    attribute_present?(:name) ? read_attribute(:name) : (grid.present? ? grid.row_title(self) : "")
   end
 
+  # Returns the description information associated to the row if exists.
   def description
     attribute_present?(:description) ? read_attribute(:description) : ""
   end
 
+  # Reads the value of a given row column.
+  # Reads the value from a generic column
+  # or from the physical column of a table when the category is mapped to a table. 
   def read_value(column)
     read_attribute(@initialized ? column.default_physical_column : column.physical_column)
   end
-  
+
+  # Writes the given value in the data row column.
+  # Writes the value in a generic column that depends on the type of value,
+  # or in the physical column of a table when the category is mapped to a table. 
   def write_value(column, value)
-    send("#{@initialized ? column.default_physical_column : column.physical_column}=", value)
+    output = @initialized ? column.default_physical_column : column.physical_column
+    if column.kind == COLUMN_TYPE_DATE and value.is_a?(String)
+      begin
+        log_debug "Row#write_value decode date value=#{value}, format=#{I18n.t('date.formats.default')}"
+        decoded_value = Date.strptime(value, I18n.t('date.formats.default'))
+        log_debug "Row#write_value decoded value=#{decoded_value}"
+      rescue Exception => invalid
+        log_debug "Row#write_value invalid date"
+        decoded_value = nil
+      end
+    else
+      decoded_value = value
+    end
+    send("#{output}=", decoded_value)
   end
-  
+
   def workspace
     Workspace.select_entity_by_uuid(Workspace, self.workspace_uuid) if attribute_present?(:workspace_uuid)
   end
@@ -71,6 +95,31 @@ class Row < Entity
       [value, ""]
     else
       ["", ""]
+    end
+  end
+
+  # Indicates if attachments exist or not.
+  def has_attachment?
+    not self.attachments.nil? and not self.attachments.empty? 
+  end
+
+  # Returns the number of attachments.
+  def count_attachments
+    self.has_attachment? ? self.attachments.count : 0
+  end
+
+  # Removes the attachment that matches the given file name.
+  def remove_attachment!(input_file)
+    if input_file.present?
+      log_debug "Row#remove_attachment!(#{input_file.original_filename})"
+      for attachment in self.attachments
+        if attachment.original_file_name.present? and
+           attachment.original_file_name == input_file.original_filename
+          log_debug "Row#remove_attachment! destroy"
+          attachment.document = nil
+          attachment.destroy
+        end
+      end
     end
   end
 
@@ -214,37 +263,11 @@ class Row < Entity
       end
     end
   end
-  
-  def has_attachment?
-    not self.attachments.nil? and not self.attachments.empty? 
-  end
-  
-  def count_attachments
-    self.has_attachment? ? self.attachments.count : 0
-  end
-  
-  def remove_attachment!(input_file)
-    if input_file.present?
-      log_debug "Row#remove_attachment!(#{input_file.original_filename})"
-      for attachment in self.attachments
-        if attachment.original_file_name.present? and
-           attachment.original_file_name == input_file.original_filename
-          log_debug "Row#remove_attachment! destroy"
-          attachment.destroy
-        end
-      end
-    end
-  end
-  
+
 private
 
   def self.loc_select_columns
-    "row_locs.id, row_locs.uuid, " + 
-    "row_locs.version, row_locs.lock_version, " + 
-    "row_locs.base_locale, row_locs.locale, " +
-    "row_locs.name, row_locs.description"
+    "row_locs.id, row_locs.uuid, row_locs.version, row_locs.lock_version, " + 
+    "row_locs.base_locale, row_locs.locale, row_locs.name, row_locs.description"
   end
-end
-
-class RowLoc < EntityLoc
 end
