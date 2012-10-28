@@ -35,12 +35,12 @@ for file in ["administrator",
     upload = Upload.create
     upload.upload("db/#{file}.xml")
     upload.save!
-    Entity.log_debug "rake db:seed complete #{file} - " +
-                     "#{upload.records} records, " + 
+    Entity.log_debug "rake db:seed #{file} " +
+                     "(#{upload.records} records): " + 
                      "#{upload.inserted} inserted, " + 
                      "#{upload.updated} updated, " +
-                     "#{upload.skipped} skipped, " +
-                     "#{upload.elapsed} elapsed (ms).", true
+                     "#{upload.skipped} skipped " +
+                     "(#{upload.elapsed} ms).", true
     total_count = total_count + upload.records
     total_inserted = total_inserted + upload.inserted
     total_updated = total_updated + upload.updated
@@ -53,9 +53,9 @@ for file in ["administrator",
   end
 end
 Entity.log_debug "rake db:seed total " +
-                 "#{errors} errors, " + 
                  "#{total_count} records, " + 
+                 "#{errors} errors, " + 
                  "#{total_inserted} inserted, " + 
                  "#{total_updated} updated, " +
-                 "#{total_skipped} skipped, " +
-                 "#{total_elapsed} elapsed (ms).", true
+                 "#{total_skipped} skipped " +
+                 "(#{total_elapsed} ms).", true

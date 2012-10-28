@@ -30,14 +30,17 @@
     <uuid>03bfafe0-ea31-012c-105a-00166f92f624</uuid>
     <uri>attributes</uri>
     <version>1</version>
-    <revision>13</revision>
+    <revision>14</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:41 UTC</created_at>
-    <updated_at>2012-10-28 07:11:47 UTC</updated_at>
+    <updated_at>2012-10-28 07:48:38 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -301,14 +304,17 @@
     <uuid>b800e230-042b-012d-0a08-0015c5091b01</uuid>
     <uri>attribute-mappings</uri>
     <version>1</version>
-    <revision>8</revision>
+    <revision>9</revision>
     <enabled>true</enabled>
     <created_at>2010-02-25 11:06:16 UTC</created_at>
-    <updated_at>2012-10-28 07:13:12 UTC</updated_at>
+    <updated_at>2012-10-28 07:48:47 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -407,14 +413,17 @@
     <uuid>fe92c430-ea30-012c-1057-00166f92f624</uuid>
     <uri>grids</uri>
     <version>1</version>
-    <revision>16</revision>
+    <revision>17</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:32 UTC</created_at>
-    <updated_at>2012-10-28 07:12:36 UTC</updated_at>
+    <updated_at>2012-10-28 07:47:25 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -439,6 +448,70 @@
     <data uuid="bdbcc440-0427-012d-09c5-0015c5091b01" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="ce612c50-0427-012d-09c8-0015c5091b01" name="Database table">grids</data>
     <data uuid="d8badca0-0427-012d-09cb-0015c5091b01" name="Database table for translation">grid_locs</data>
+  </row>
+  <row title="Default display mode" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>c69b5160-0300-0130-10d1-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:41:15 UTC</created_at>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">575c1b90-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Default display mode</name>
+      <description>&lt;p&gt;Defines the default mode for displaying data in lists.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Default display mode | display_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>65824bc0-0301-0130-10d1-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:45:41 UTC</created_at>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">c69b5160-0300-0130-10d1-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">display_uuid</data>
+  </row>
+  <row title="Default sort order" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>ecdd8d90-0300-0130-10d1-4417fe7fde95</uuid>
+    <uri>default-sort-order</uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:42:19 UTC</created_at>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">08e6e470-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Default sort order</name>
+      <description>&lt;p&gt;&lt;span&gt;Defines the default sort order for displaying data in lists.&lt;/span&gt;&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Default sort order | sort_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>6d60eed0-0301-0130-10d1-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:45:54 UTC</created_at>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">ecdd8d90-0300-0130-10d1-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">sort_uuid</data>
   </row>
   <row title="Domain" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>1fe00120-ea31-012c-1065-00166f92f624</uuid>
@@ -545,17 +618,53 @@
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
   </row>
+  <row title="Template" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>30f91a90-0301-0130-10d1-4417fe7fde95</uuid>
+    <uri>template</uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:44:13 UTC</created_at>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required"></data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Template</name>
+      <description>&lt;p&gt;Defines a category to be used as a template for the category definition.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Template | template_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>54e28630-0301-0130-10d1-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2012-10-28 07:45:13 UTC</created_at>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">30f91a90-0301-0130-10d1-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">template_uuid</data>
+  </row>
   <row title="Category display mode" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>575c1b90-02fb-0130-b20f-4417fe7fde95</uuid>
     <uri>display-modes</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>2</revision>
     <enabled>true</enabled>
     <created_at>2012-10-28 07:02:21 UTC</created_at>
+    <updated_at>2012-10-28 07:48:57 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -567,14 +676,17 @@
     <uuid>08e6e470-e5f4-012f-0006-4417fe7fde95</uuid>
     <uri>sort-orders</uri>
     <version>1</version>
-    <revision>3</revision>
+    <revision>4</revision>
     <enabled>true</enabled>
     <created_at>2012-09-21 08:26:59 UTC</created_at>
-    <updated_at>2012-10-28 07:03:23 UTC</updated_at>
+    <updated_at>2012-10-28 07:49:07 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -586,20 +698,22 @@
     <uuid>e1fa0830-dd46-012c-538a-0016cbad334a</uuid>
     <uri>countries</uri>
     <version>1</version>
-    <revision>15</revision>
+    <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-04-21 18:06:41 UTC</created_at>
-    <updated_at>2012-09-23 19:40:07 UTC</updated_at>
+    <updated_at>2012-10-28 07:47:40 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Country</name>
-      <description>In geography, a country is a geographical region. The term is often applied to a political division or the territory of a state, or to a smaller, or former, political division of a geographical region. Usually, but not always, a country coincides with a sovereign territory and is associated with a state, nation and government.
-[http://en.wikipedia.org/wiki/Country]</description>
+      <description>&lt;p&gt;In geography, a country is a geographical region. The term is often applied to a political division or the territory of a state, or to a smaller, or former, political division of a geographical region. Usually, but not always, a country coincides with a sovereign territory and is associated with a state, nation and government. [http://en.wikipedia.org/wiki/Country]&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -694,14 +808,17 @@
     <uuid>5a2e26e0-ea31-012c-1074-00166f92f624</uuid>
     <uri>kinds</uri>
     <version>1</version>
-    <revision>9</revision>
+    <revision>10</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:41:06 UTC</created_at>
-    <updated_at>2012-10-28 07:13:47 UTC</updated_at>
+    <updated_at>2012-10-28 07:47:58 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -719,14 +836,17 @@
     <uuid>a6beb050-0427-012d-09bf-0015c5091b01</uuid>
     <uri>mappings</uri>
     <version>1</version>
-    <revision>24</revision>
+    <revision>25</revision>
     <enabled>true</enabled>
     <created_at>2010-02-25 10:37:09 UTC</created_at>
-    <updated_at>2012-10-28 07:14:10 UTC</updated_at>
+    <updated_at>2012-10-28 07:49:17 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -857,14 +977,17 @@
     <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
     <uri>domains</uri>
     <version>1</version>
-    <revision>13</revision>
+    <revision>14</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:16 UTC</created_at>
-    <updated_at>2012-10-28 07:15:02 UTC</updated_at>
+    <updated_at>2012-10-28 07:48:06 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -958,38 +1081,44 @@
     <uuid>ed000e90-ef78-012f-2349-4417fe7fde95</uuid>
     <uri>images</uri>
     <version>1</version>
-    <revision>2</revision>
+    <revision>3</revision>
     <enabled>true</enabled>
     <created_at>2012-10-03 11:10:55 UTC</created_at>
-    <updated_at>2012-10-03 11:12:10 UTC</updated_at>
+    <updated_at>2012-10-28 07:49:29 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Images</name>
-      <description>Stores a set of images and icons used by the application.</description>
+      <description>&lt;p&gt;Stores a set of images and icons used by the application.&lt;/p&gt;</description>
     </locale>
   </row>
   <row title="Upload" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>c306f4d0-14a2-012d-c0f4-4417fe7fde95</uuid>
     <uri>uploads</uri>
     <version>1</version>
-    <revision>9</revision>
+    <revision>10</revision>
     <enabled>true</enabled>
     <created_at>2010-03-18 09:58:44 UTC</created_at>
-    <updated_at>2012-10-03 19:11:24 UTC</updated_at>
+    <updated_at>2012-10-28 07:48:17 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">521f5c60-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Upload</name>
-      <description>Keeps track of the uploads of data into the system.</description>
+      <description>&lt;p&gt;Keeps track of the uploads of data into the system.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>

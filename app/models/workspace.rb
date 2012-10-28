@@ -95,7 +95,6 @@ class Workspace < Entity
     case xml_attribute
       when WORKSPACE_PUBLIC_UUID then self.public = ['true','t','1'].include?(xml_value)
       when WORKSPACE_DEFAULT_ROLE_UUID then self.default_role_uuid = xml_value
-      when WORKSPACE_URI_UUID then self.uri = xml_value
     end
   end
 

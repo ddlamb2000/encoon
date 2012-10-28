@@ -32,13 +32,15 @@
   <footer class="actions">
     <% if @row.was_updated? %><div><small><%= display_updated_date(@row) %></small></div><% end %>
     <hr/>
-    <%= radio_button_tag :mode, :correction, true %> <%= t 'version.update' %>
-    <%= radio_button_tag :mode, :new_version %> <%= t 'version.new' %>
-    &nbsp;&nbsp;&nbsp;&nbsp;
+    <% if not new_row %>
+      <%= radio_button_tag :mode, :correction, true %> <%= t 'version.update' %>
+      <%= radio_button_tag :mode, :new_version %> <%= t 'version.new' %>
+      &nbsp;&nbsp;&nbsp;&nbsp;
+    <% end %>
     <%= label_tag :begin, t('field.begin_date') %>
     <%= text_field_tag :begin, @row.has_begin? ? I18n.l(@row.begin) : "", :size => "10x1", :class => "datepicker" %>
-    &nbsp;&nbsp;&nbsp;&nbsp;
     <% if not new_row %>
+      &nbsp;&nbsp;&nbsp;&nbsp;
       <%= check_box_tag :enabled, "t", @row.enabled %> <%= t 'field.active' %>
     <% end %>
     <div class="validation-error"></div>

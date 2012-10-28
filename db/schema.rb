@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121013061004) do
+ActiveRecord::Schema.define(:version => 20121028070611) do
 
   create_table "attachments", :force => true do |t|
     t.string   "uuid",                  :limit => 36
@@ -144,6 +144,9 @@ ActiveRecord::Schema.define(:version => 20121013061004) do
     t.boolean  "has_name",                       :default => true
     t.boolean  "has_description",                :default => true
     t.string   "uri"
+    t.string   "template_uuid",    :limit => 36
+    t.string   "display_uuid",     :limit => 36
+    t.string   "sort_uuid",        :limit => 36
   end
 
   add_index "grids", ["uri"], :name => "index_grids_on_uri"

@@ -2,6 +2,7 @@
 <encoon>
   <row title="Home" grid_uuid="f54309d0-ea30-012c-1054-00166f92f624" grid="Domain">
     <uuid>c30cdd60-a26c-012f-de85-4417fe7fde95</uuid>
+    <uri>home</uri>
     <version>1</version>
     <revision>6</revision>
     <enabled>true</enabled>
@@ -10,7 +11,6 @@
     <grid_uuid title="Domain">f54309d0-ea30-012c-1054-00166f92f624</grid_uuid>
     <data uuid="f1ca9820-a26b-012f-de85-4417fe7fde95" name="Public">f</data>
     <data uuid="0e1f4990-a26c-012f-de85-4417fe7fde95" name="Default role">50088bf0-9c87-012f-089e-4417fe7fde95</data>
-    <data uuid="44b03b60-a26c-012f-de85-4417fe7fde95" name="Uri">home</data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -26,16 +26,19 @@
   </row>
   <row title="Change log" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>9b05e2f0-d59e-012f-590e-4417fe7fde95</uuid>
+    <uri>log</uri>
     <version>1</version>
-    <revision>3</revision>
+    <revision>4</revision>
     <enabled>true</enabled>
     <created_at>2012-08-31 13:35:08 UTC</created_at>
-    <updated_at>2012-09-26 05:35:50 UTC</updated_at>
+    <updated_at>2012-10-28 08:07:05 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">c30cdd60-a26c-012f-de85-4417fe7fde95</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">log</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">d3814de0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">521f5c60-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -49,16 +52,19 @@
   </row>
   <row title="Help" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>cfdb5f60-d59e-012f-590e-4417fe7fde95</uuid>
+    <uri>help</uri>
     <version>1</version>
-    <revision>4</revision>
+    <revision>5</revision>
     <enabled>true</enabled>
     <created_at>2012-08-31 13:36:37 UTC</created_at>
-    <updated_at>2012-09-26 05:35:45 UTC</updated_at>
+    <updated_at>2012-10-28 08:07:18 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">c30cdd60-a26c-012f-de85-4417fe7fde95</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">help</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">d3814de0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -72,16 +78,19 @@
   </row>
   <row title="Page" grid_uuid="fe92c430-ea30-012c-1057-00166f92f624" grid="Category">
     <uuid>84d08550-d677-012f-413c-4417fe7fde95</uuid>
+    <uri>pages</uri>
     <version>1</version>
-    <revision>2</revision>
+    <revision>3</revision>
     <enabled>true</enabled>
     <created_at>2012-09-01 15:27:52 UTC</created_at>
-    <updated_at>2012-09-26 05:35:28 UTC</updated_at>
+    <updated_at>2012-10-28 08:07:31 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">c30cdd60-a26c-012f-de85-4417fe7fde95</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
-    <data uuid="88d0bed0-e7e3-012f-7269-4417fe7fde95" name="Uri">pages</data>
+    <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>

@@ -501,6 +501,9 @@ class Grid < Entity
       xml.workspace_uuid(self.workspace_uuid)
       xml.has_name(self.has_name) if self.has_name
       xml.has_description(self.has_description) if self.has_description
+      xml.template_uuid(self.template_uuid)
+      xml.display_uuid(self.display_uuid)
+      xml.sort_uuid(self.sort_uuid)
       Grid.locales(grid_locs, self.uuid, self.version).each do |loc|
         if loc.base_locale == loc.locale
           log_debug "Grid#export locale #{loc.base_locale}"
@@ -522,6 +525,9 @@ class Grid < Entity
     entity.workspace_uuid = self.workspace_uuid
     entity.has_name = self.has_name
     entity.has_description = self.has_description
+    entity.template_uuid = self.template_uuid
+    entity.display_uuid = self.display_uuid
+    entity.sort_uuid = self.sort_uuid
   end
 
   # Imports attribute value from the xml flow into the object.
@@ -531,7 +537,9 @@ class Grid < Entity
       when GRID_WORKSPACE_UUID then self.workspace_uuid = xml_value
       when GRID_HAS_NAME_UUID then self.has_name = ['true','t','1'].include?(xml_value)
       when GRID_HAS_DESCRIPTION_UUID then self.has_description = ['true','t','1'].include?(xml_value)
-      when GRID_URI_UUID then self.uri = xml_value
+      when GRID_DEFAULT_TEMPLATE_UUID then self.template_uuid = xml_value
+      when GRID_DEFAULT_DISPLAY_MODE_UUID then self.display_uuid = xml_value
+      when GRID_DEFAULT_SORT_ORDER_UUID then self.sort_uuid = xml_value
     end
   end
 
@@ -593,7 +601,16 @@ class Grid < Entity
         row.export(xml)
         xml.grid_uuid(self.uuid, :title => name)
         column_all.each do |column|
-          xml.data(row.read_value(column), :uuid => column.uuid, :name => column.name)
+          if column.uri.blank? or column.uri == ""
+            xml.data(row.read_value(column),
+                     :uuid => column.uuid,
+                     :name => column.name)
+          else
+            xml.data(row.read_value(column),
+                     :uuid => column.uuid,
+                     :uri => column.uri,
+                     :name => column.name)
+          end
         end
         row_locales(row.uuid, row.version).each do |loc|
           if loc.base_locale == loc.locale
@@ -868,14 +885,17 @@ private
 
   def quote(sql) ; connection.quote(sql) ; end
 
+  # Defines the columns to be selection of category definition.
   def self.all_select_columns
     "grids.id, grids.uuid, grids.version, grids.lock_version, " + 
     "grids.begin, grids.end, grids.enabled, grids.workspace_uuid, " + 
     "grids.has_name, grids.has_description, grids.uri, " + 
+    "grids.template_uuid, grids.display_uuid, grids.sort_uuid, " + 
     "grids.created_at, grids.updated_at, grids.create_user_uuid, grids.update_user_uuid, " +
     "grid_locs.base_locale, grid_locs.locale, grid_locs.name, grid_locs.description"
   end
 
+  # Defines the columns to be selection of the column definitions of the category.
   def column_all_select_columns
     "columns.id, columns.uuid, columns.uri, columns.version, columns.lock_version, " +
     "columns.begin, columns.end, columns.enabled, " +
