@@ -455,6 +455,7 @@ class Grid < Entity
                           {:version => version, :uuid => uuid}])
   end
 
+  # Initializes data row with values based on the given filters.
   def row_initialization(row, filters)
     log_debug "Grid#row_initialization(filters=#{filters.inspect}) [#{to_s}]"
     row.initialization
