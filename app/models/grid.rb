@@ -425,7 +425,7 @@ class Grid < Entity
         if [COLUMN_TYPE_REFERENCE, COLUMN_TYPE_STRING, COLUMN_TYPE_TEXT].include?(column.kind)
           value = row.read_referenced_name_and_description(column, row.read_value(column))[0]
           if value.length > 0
-            summary = summary + " | " if count > 0
+            summary = summary + " • " if count > 0
             summary = summary + value
             count += 1
           end
@@ -480,6 +480,10 @@ class Grid < Entity
           row.write_value(column, true)
         elsif self.uuid == GRID_UUID and column.uuid == GRID_HAS_DESCRIPTION_UUID
           row.write_value(column, true)
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_DEFAULT_DISPLAY_MODE_UUID
+          row.write_value(column, GRID_DISPLAY_MODE_TABLE_UUID)
+        elsif self.uuid == GRID_UUID and column.uuid == GRID_DEFAULT_SORT_ORDER_UUID
+          row.write_value(column, "?")
         end
       end
     end

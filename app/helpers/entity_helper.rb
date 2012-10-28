@@ -21,7 +21,7 @@ module EntityHelper
   end
 
   # Displays a column header in a form or a list.
-  def show_header_label(kind, label, description, list=false)
+  def show_header_label(kind, label, list=false)
     if list
       case kind
         when COLUMN_TYPE_INTEGER then style = "list-header-number"
@@ -99,9 +99,7 @@ module EntityHelper
 
   def show_entity(column, value, referenced_link, referenced_name, referenced_description)
     content_tag("tr",
-      show_header_label(column.kind, 
-                        column.name.html_safe, 
-                        column.description.html_safe) +
+      show_header_label(column.kind, column.name.html_safe) +
       show(value, 
            column.kind, 
            column.grid_reference_uuid, 

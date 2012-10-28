@@ -107,6 +107,7 @@ class GridController < ApplicationController
       @table_row_count = @grid.row_count(@filters)
       @table_rows = @grid.row_all(@filters, @search, @page, true)
       @table_columns = @grid.filtered_columns
+      @display_option = @grid.display_uuid
       render :partial => "list"
       return
     end

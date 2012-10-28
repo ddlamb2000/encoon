@@ -1,8 +1,6 @@
 <% if (user_signed_in? and @grid.can_create_row?(@filters)) or not_all_rows(@table_row_count) %>
   <div id="actions-<%= filters_uuid(@grid, @filters) %>" class="actions float-actions" style="display: none;">
-    <% if not_last_page(params[:page], @table_row_count) %>
-      <%= calc_next_page(params[:page]) %>
-    <% end %>
+    <% if not_last_page(params[:page], @table_row_count) %><%= calc_next_page(params[:page]) %><% end %>
     <% if not_first_page(params[:page]) %>
       <%= calc_previous_page(params[:page]) %>
       <%= icon('previous') %>
@@ -125,112 +123,157 @@
 <% unless @table_rows.nil? or
           @table_rows.empty? or
           @table_columns.nil? %>
-  <table>
-    <thead>
-      <tr>
-        <th class="list-header-string"></th>
-        <th class="list-header-string"></th>
-        <% for column in @table_columns %>
-          <%= show_header_label(column.kind,
-                                column.name.html_safe,
-                                column.description.html_safe,
-                                true) %>
-        <% end %>
-      </tr>
-    </thead>
-    <tbody>
-      <% row_number = 0 %>
-      <% for row in @table_rows %>
-        <% row_number += 1 %>
-        <tr id="row-<%= row.uuid %>">
-          <td>
-            <% if @grid.uuid == WORKSPACE_UUID %>
-              <%= link_to row_number.to_s,
-                          show_workspace_path(
-                            :workspace => row.display_uri) %>
-            <% elsif @grid.uuid == GRID_UUID %>
-              <%= link_to row_number.to_s,
-                          show_grid_path(
-                            :workspace => row.workspace.display_uri,
-                            :grid => row.display_uri) %>
-            <% else %>
-              <%= link_to row_number.to_s,
-                          show_path(
-                            :workspace => @grid.workspace.display_uri,
-                            :grid => @grid.display_uri,
-                            :row => row.display_uri) %>
+  <% if @display_option == GRID_DISPLAY_MODE_TABLE_UUID or @display_option == GRID_DISPLAY_MODE_TABLE_TEXT_UUID %>
+    <table>
+      <thead>
+        <tr>
+          <th class="list-header-string"></th>
+          <th class="list-header-string"></th>
+          <% for column in @table_columns %>
+            <%= show_header_label(column.kind, column.name.html_safe, true) %>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% row_number = 0 %>
+        <% for row in @table_rows %>
+          <% row_number += 1 %>
+          <tr id="row-<%= row.uuid %>">
+            <td>
+              <% if @grid.uuid == WORKSPACE_UUID %>
+                <%= link_to row_number.to_s,
+                            show_workspace_path(
+                              :workspace => row.display_uri) %>
+              <% elsif @grid.uuid == GRID_UUID %>
+                <%= link_to row_number.to_s,
+                            show_grid_path(
+                              :workspace => row.workspace.display_uri,
+                              :grid => row.display_uri) %>
+              <% else %>
+                <%= link_to row_number.to_s,
+                            show_path(
+                              :workspace => @grid.workspace.display_uri,
+                              :grid => @grid.display_uri,
+                              :row => row.display_uri) %>
+              <% end %>
+            </td>
+            <td class="list-description">
+              <% if user_signed_in? and @grid.can_update_row?(row) %>
+                <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
+                  <span class="mini-button edit-button" title="<%= t 'actions.update_help' %>">
+                    <a id="update-<%= row.uuid %>"><%= t 'actions.update' %></a>
+                  </span>
+                </div>
+              <% end %>
+              <% if @grid.has_name %><%= @grid.row_title(row).html_safe %><% end %>
+              <small>
+                <%= display_information(row) %>
+                <%= display_updated_date(row) %>
+              </small>
+              <% if user_signed_in? and not @grid.can_update_row?(row) %>
+                <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
+              <% end %>
+            </td>
+            <% for column in @table_columns %>
+              <% value = row.read_value(column) %>
+              <% if column.workspace_reference.present? and column.grid_reference.present? and value.present? %>
+                 <% reference_information = row.read_referenced_name_and_description(column, value) %>
+                 <% reference_link = link_to(reference_information[0],
+                                             show_path(
+                                               :workspace => column.workspace_reference.display_uri,
+                                               :grid => column.grid_reference.display_uri,
+                                               :row => value)) %>
+              <% else %>
+                 <% reference_information = ["", ""] %>
+                 <% reference_link = "" %>
+              <% end %>
+              <%= show_entity_in_list(
+                      column,
+                      value,
+                      reference_link,
+                      reference_information[0]) %>
             <% end %>
-          </td>
-          <td class="list-description">
+          </tr>
+          <% if @display_option == GRID_DISPLAY_MODE_TABLE_TEXT_UUID %>
+            <tr>
+              <td></td>
+              <td spancol="999">
+                <%= truncate_html(row.description.html_safe) %>
+              </td>
+            </tr>
+          <% end %>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <table>
+      <tbody>
+        <% for row in @table_rows %>
+          <tr id="row-<%= row.uuid %>"><td>
             <% if user_signed_in? and @grid.can_update_row?(row) %>
               <div id="actions-<%= row.uuid %>" class="actions float-actions" style="display: none;">
                 <span class="mini-button edit-button" title="<%= t 'actions.update_help' %>">
                   <a id="update-<%= row.uuid %>"><%= t 'actions.update' %></a>
                 </span>
-                <script>
-                  $("#row-<%= row.uuid %>").hover(
-                    function (event){
-                      var left = $(this).width()-$("#actions-<%= row.uuid %>").width();
-                      $("#actions-<%= row.uuid %>").css({left:left}).show();
-                      $(this).addClass("highlighted");
-                    },
-                    function (event){
-                      $("#actions-<%= row.uuid %>").hide();
-                      $(this).removeClass("highlighted");
-                    }
-                  );
-                  $("#update-<%= row.uuid %>").click(function (event){
-                    $("#dialog").dialog({
-                        modal: true,
-                        position: [$("#document").offset().left+$("#document").width()/2-650/2,
-                                   $("#row-<%= row.uuid %>").offset().top+15], 
-                      }).
-                      html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-                      load("<%= url_for(edit_path(:grid => @grid.uuid,
-                                                  :row => row.uuid,
-                                                  :filters => @filters,
-                                                  :container => "#grid-#{filters_uuid(@grid, @filters)}",
-                                                  :refresh_list => true)) %>");
-                  });
-                </script>
               </div>
             <% end %>
-            <span title="<%= truncate_html(row.description.html_safe) %>">
-              <% if @grid.has_name %>
-                  <%= @grid.row_title(row).html_safe %>
-              <% end %>
-            </span>
+            <% if @grid.uuid == WORKSPACE_UUID %>
+              <%= link_to @grid.row_title(row).html_safe,
+                          show_workspace_path(
+                            :workspace => row.display_uri) %>
+            <% elsif @grid.uuid == GRID_UUID %>
+              <%= link_to @grid.row_title(row).html_safe,
+                          show_grid_path(
+                            :workspace => row.workspace.display_uri,
+                            :grid => row.display_uri) %>
+            <% else %>
+              <%= link_to @grid.row_title(row).html_safe,
+                          show_path(
+                            :workspace => @grid.workspace.display_uri,
+                            :grid => @grid.display_uri,
+                            :row => row.display_uri) %>
+            <% end %>
             <small>
               <%= display_information(row) %>
               <%= display_updated_date(row) %>
             </small>
-            <% if user_signed_in? and not @grid.can_update_row?(row) %>
-              <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
+            <% if @display_option == GRID_DISPLAY_MODE_TEXT_UUID %>
+              <br/>
+              <%= truncate_html(row.description.html_safe) %>
             <% end %>
-          </td>
-          <% for column in @table_columns %>
-            <% value = row.read_value(column) %>
-            <% if column.workspace_reference.present? and column.grid_reference.present? and value.present? %>
-               <% reference_information = row.read_referenced_name_and_description(column, value) %>
-               <% reference_link = link_to(reference_information[0],
-                                           show_path(
-                                             :workspace => column.workspace_reference.display_uri,
-                                             :grid => column.grid_reference.display_uri,
-                                             :row => value)) %>
-            <% else %>
-               <% reference_information = ["", ""] %>
-               <% reference_link = "" %>
-            <% end %>
-            <%= show_entity_in_list(
-                    column,
-                    value,
-                    reference_link,
-                    reference_information[0]) %>
-          <% end %>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+          </td></tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+  <script>
+    <% for row in @table_rows %>
+      $("#row-<%= row.uuid %>").hover(
+        function (event){
+          var left = $(this).width()-$("#actions-<%= row.uuid %>").width();
+          $("#actions-<%= row.uuid %>").css({left:left}).show();
+          $(this).addClass("highlighted");
+        },
+        function (event){
+          $("#actions-<%= row.uuid %>").hide();
+          $(this).removeClass("highlighted");
+        }
+      );
+      $("#update-<%= row.uuid %>").click(function (event){
+        $("#dialog").dialog({
+            modal: true,
+            position: [$("#document").offset().left+$("#document").width()/2-650/2,
+                       $("#row-<%= row.uuid %>").offset().top+15], 
+          }).
+          html('<%= escape_javascript(render :partial => "layouts/loading") %>').
+          load("<%= url_for(edit_path(:grid => @grid.uuid,
+                                      :row => row.uuid,
+                                      :filters => @filters,
+                                      :container => "#grid-#{filters_uuid(@grid, @filters)}",
+                                      :refresh_list => true)) %>");
+      });
+    <% end %>
+  </script>
 <% end %>
 <small>
   <%= show_collection_count(@table_rows, @table_row_count, params[:page]) %>
