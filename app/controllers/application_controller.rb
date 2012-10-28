@@ -62,7 +62,7 @@ protected
       log_debug "ApplicationController#refresh date=#{[:as_of_date]}"
       begin
         requested_date = Date.strptime(params[:as_of_date], t('date.formats.default'))
-      rescue Exception => invalid
+      rescue
         flash[:notice] = t('error.invalid_date', :date => params[:as_of_date])
         redirect_to session[:last_url]
         return

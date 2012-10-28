@@ -67,7 +67,7 @@ class Row < Entity
         log_debug "Row#write_value decode date value=#{value}, format=#{I18n.t('date.formats.default')}"
         decoded_value = Date.strptime(value, I18n.t('date.formats.default'))
         log_debug "Row#write_value decoded value=#{decoded_value}"
-      rescue Exception => invalid
+      rescue
         log_debug "Row#write_value invalid date"
         decoded_value = nil
       end
