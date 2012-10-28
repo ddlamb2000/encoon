@@ -608,7 +608,13 @@ private
   # Returns the begin date is present as part of parameters.
   # Returns a default value when the begin date is absent from the parameters.
   def param_begin_date
-    params[:begin_date].present? ? Date.parse(params[:begin_date]) : Entity.begin_of_time
+    begin
+      params[:begin_date].present? ? 
+        Date.strptime(params[:begin_date], t('date.formats.default')) :
+        Entity.begin_of_time
+    rescue Exception => invalid
+      Entity.begin_of_time
+    end
   end
 
   # Sets parameter values into data row using physical column names.
@@ -619,6 +625,7 @@ private
         value = params["row_#{column.physical_column}"]
         log_debug "GridController#populate_from_params #{column.physical_column} = #{value}"
         @row.write_value(column, value)
+        log_debug "GridController#populate_from_params verify value : #{@row.read_value(column)}"
       end
       @row.uri = params["uri"]
       @row.clean_uri!
