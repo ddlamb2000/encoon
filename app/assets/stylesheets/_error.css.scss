@@ -35,8 +35,14 @@
   margin:$padding;
   padding:$padding;
   text-align:left;
+  line-height:120%;
   h2 {
     display:none;
+  }
+  ul, ol {
+    list-style:none;
+    margin-bottom:0;
+    padding-left:0;
   }
 }
 .field_with_errors {
