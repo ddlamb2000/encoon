@@ -172,11 +172,11 @@ module ApplicationHelper
       output << t('general.begins', :time => l(entity.begin))
     end
     if entity.end != Entity.end_of_time
-      output << " " if output.length > 0
+      output << " • " if output.length > 0
       output <<  t('general.ends', :time => l(entity.end))
     end
     if not entity.enabled
-      output << " " if output.length > 0
+      output << " • " if output.length > 0
       output << t('general.inactive')
     end
     output.length > 0 ? content_tag("span", output, :class => "asofdate").html_safe : ""

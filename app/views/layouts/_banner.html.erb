@@ -11,7 +11,7 @@
   <% end %>
   <% if user_signed_in? %>
     <span class="button user-button"><%= link_to current_user.to_s, edit_user_registration_path %></span>
-    <span class="separator">|</span>
+    <span class="separator">•</span>
     <span class="button cancel-button"><%= link_to t('banner.signout'), destroy_user_session_path, :method => :delete %></span>
   <% else %>
     <span class="button user-button"><%= link_to I18n.t('devise.sign_in'), new_session_path("user") %></span>
