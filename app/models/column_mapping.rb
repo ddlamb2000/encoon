@@ -17,6 +17,7 @@
 class ColumnMapping < Entity
   belongs_to :column, :foreign_key => "column_uuid", :primary_key => "uuid"
   validates_presence_of :column_uuid, :db_column
+  validates_associated :column
 
   # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)

@@ -21,6 +21,7 @@ class Attachment < ActiveRecord::Base
              :class_name => "User", 
              :foreign_key => "create_user_uuid", 
              :primary_key => "uuid"
+  validates_associated :row
 
   # Paperclip interpolation rule: used to include row uuid in attachment paths.
   Paperclip.interpolates :uuid do |attachment, style|

@@ -15,7 +15,9 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class WorkspaceSharing < Entity
-  has_many :grids, :foreign_key => "workspace_uuid", :primary_key => "uuid"
+  belongs_to :workspace, :foreign_key => "workspace_uuid", :primary_key => "uuid"
+  validates_presence_of :workspace_uuid
+  validates_associated :workspace
   
   # Selects data based on its uuid in the given collection and for a given version number.
   def self.select_entity_by_uuid_version(collection, uuid, version)

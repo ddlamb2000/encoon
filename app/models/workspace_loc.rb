@@ -15,5 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class WorkspaceLoc < EntityLoc
+  belongs_to :workspace, :foreign_key => "uuid", :primary_key => "uuid"
+  validates_associated :workspace
   validates_presence_of :name
 end

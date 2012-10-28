@@ -14,8 +14,7 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 # 
 # See doc/COPYRIGHT.rdoc for more details.
-class GridLoc < EntityLoc
-  belongs_to :grid, :foreign_key => "uuid", :primary_key => "uuid"
-  validates_associated :grid
-  validates_presence_of :name
+class RowLoc < EntityLoc
+  belongs_to :row, :foreign_key => "uuid", :primary_key => "uuid"
+  validates_associated :row
 end

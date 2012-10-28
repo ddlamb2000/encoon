@@ -17,6 +17,7 @@
 class GridMapping < Entity
   belongs_to :grid, :foreign_key => "grid_uuid", :primary_key => "uuid"
   validates_presence_of :grid_uuid, :db_table
+  validates_associated :grid
 
   # Imports attribute value from the xml flow into the object.
   def import_attribute(xml_attribute, xml_value)

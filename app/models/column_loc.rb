@@ -15,5 +15,7 @@
 # 
 # See doc/COPYRIGHT.rdoc for more details.
 class ColumnLoc < EntityLoc
+  belongs_to :column, :foreign_key => "uuid", :primary_key => "uuid"
+  validates_associated :column
   validates_presence_of :name
 end
