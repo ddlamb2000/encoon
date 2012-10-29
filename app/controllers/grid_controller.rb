@@ -740,6 +740,10 @@ private
         Entity.log_debug "GridController#selectRow can't find row #{params[:row]}"
       else
         Entity.log_debug "GridController#selectRow: row found name=#{@row.name}"
+        if @grid.uuid == GRID_UUID
+          Entity.log_debug "GridController#selectRow: reselect workspace"
+          @workspace = Workspace.select_entity_by_uuid(Workspace, @row.workspace_uuid)
+        end
         change_as_of_date(@row)
       end
     end
