@@ -30,22 +30,23 @@
     <uuid>03bfafe0-ea31-012c-105a-00166f92f624</uuid>
     <uri>attributes</uri>
     <version>1</version>
-    <revision>14</revision>
+    <revision>16</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:41 UTC</created_at>
-    <updated_at>2012-10-28 07:48:38 UTC</updated_at>
+    <updated_at>2012-10-29 06:47:24 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Attribute</name>
-      <description>&lt;p&gt;An attribute specifies a structured piece of information attached to a &amp;nbsp;category. Attributes can be of several types, including string, date or number. A large number of attributes can be defined for a category but this number is limited, depending on the kind of attribute.&lt;/p&gt;</description>
+      <description>&lt;p&gt;An attribute specifies a structured piece of information attached to a &amp;nbsp;category. Attributes can be of several types, including string, date or number.&lt;/p&gt;
+&lt;p&gt;A large number of attributes can be defined for a category but this number is limited, depending on the kind of attribute.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -54,7 +55,7 @@
       <description>Un attribut définit une structure d'information attachée à une catégorie de données. Les attributs peuvent être de types variés, par exemple Chaine de caractères, Texte ou Nombre. Un grand nombre d'attributs peuvent être définies pour une catégorie de données mais ce nombre est limité, en fonction du type d'attribut.</description>
     </locale>
   </row>
-  <row title="Attribute | columns | column_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Attribute • columns • column_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77b6e8a0-06c2-012d-c0b0-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -94,7 +95,7 @@
       <description>Catégorie à laquelle est attaché l'attribut.</description>
     </locale>
   </row>
-  <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Category • grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3427a80-06cd-012d-c202-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -133,7 +134,7 @@
       <description>Défini l'ordre de la colonne lorsqu'elle est affichée dans la grille de données.</description>
     </locale>
   </row>
-  <row title="Display order | display" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Display order • display" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3441b00-06cd-012d-c202-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -172,7 +173,7 @@
       <description>Défini le type de données (Chaîne de caractères, Nombre...).</description>
     </locale>
   </row>
-  <row title="Kind | kind" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Kind • kind" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b3436d00-06cd-012d-c202-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -211,7 +212,7 @@
       <description>Défini la catégorie de données à laquelle l'attribut fait référence. Ceci est utilisé afin de fournir une aide à la saise, quand l'attribut est défini avec le type 'Référence'.</description>
     </locale>
   </row>
-  <row title="Reference | grid_reference_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Reference • grid_reference_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>8bbfddb0-0a53-012d-9616-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -250,7 +251,7 @@
       <description>Défini une expression régulière qui est utilisée afin de contrôler la donnée définie dans la colonne.</description>
     </locale>
   </row>
-  <row title="Regular expression | regex" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Regular expression • regex" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>2d72bb91-1da6-012d-6655-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -289,7 +290,7 @@
       <description>Indique si la données est obligatoire dans la colonne.</description>
     </locale>
   </row>
-  <row title="Required | required" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Required • required" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>dae4cf91-1da4-012d-7a05-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -313,8 +314,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -328,7 +329,7 @@
       <description>Définit le stockage physique des attributs de catégories de données. La mise en correspondance est basée sur des tables SQL qui dépendent de la base de données sous-jascente. La mise en correspondance d'attribut est utilisée uniquement lorsque la catégorie de données est mise en correspondance avec une table physique.</description>
     </locale>
   </row>
-  <row title="Attribute mapping | column_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Attribute mapping • column_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>b7c8cba0-0a54-012d-64b1-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -366,7 +367,7 @@
       <name>Attribut</name>
     </locale>
   </row>
-  <row title="Attribute | column_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Attribute • column_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81f79090-0a56-012d-64e2-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -398,7 +399,7 @@
       <name>Database column</name>
     </locale>
   </row>
-  <row title="Database column | db_column" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Database column • db_column" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>81fa0190-0a56-012d-64e2-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -422,8 +423,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -437,7 +438,7 @@
       <description>Les catégories permettent aux utilisateurs de structurer et d'entrer des données dans le système de façon transparente et flexible. Les données peuvent être traduisibles et peuvent être gérées au travers de versions datées. Une catégorie est une sorte de table virtuelle faite de colonnes et de lignes ; elle s'appuie sur plusieurs tables physiques qui peuvent être modifiées par les administrateurs de la base de données. Parce que toutes les données sont gérées au travers de catégories, les utilisateurs peuvent naviguer parmi les données de façon cohérente.</description>
     </locale>
   </row>
-  <row title="Category | grids | grid_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Category • grids • grid_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77b56ab0-06c2-012d-c0b0-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -451,15 +452,16 @@
   </row>
   <row title="Default display mode" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>c69b5160-0300-0130-10d1-4417fe7fde95</uuid>
-    <uri></uri>
+    <uri>default-display-mode</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>4</revision>
     <enabled>true</enabled>
     <created_at>2012-10-28 07:41:15 UTC</created_at>
+    <updated_at>2012-10-29 06:50:28 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">575c1b90-02fb-0130-b20f-4417fe7fde95</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
@@ -470,7 +472,7 @@
       <description>&lt;p&gt;Defines the default mode for displaying data in lists.&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Default display mode | display_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Default display mode • display_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>65824bc0-0301-0130-10d1-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -485,13 +487,14 @@
     <uuid>ecdd8d90-0300-0130-10d1-4417fe7fde95</uuid>
     <uri>default-sort-order</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>2</revision>
     <enabled>true</enabled>
     <created_at>2012-10-28 07:42:19 UTC</created_at>
+    <updated_at>2012-10-29 06:50:40 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">4</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">08e6e470-e5f4-012f-0006-4417fe7fde95</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
@@ -502,7 +505,7 @@
       <description>&lt;p&gt;&lt;span&gt;Defines the default sort order for displaying data in lists.&lt;/span&gt;&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Default sort order | sort_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Default sort order • sort_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>6d60eed0-0301-0130-10d1-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -515,12 +518,12 @@
   </row>
   <row title="Domain" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>1fe00120-ea31-012c-1065-00166f92f624</uuid>
-    <uri></uri>
+    <uri>domain</uri>
     <version>1</version>
-    <revision>10</revision>
+    <revision>11</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:39:28 UTC</created_at>
-    <updated_at>2012-06-26 02:53:52 UTC</updated_at>
+    <updated_at>2012-10-29 06:49:08 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
@@ -532,7 +535,7 @@
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Domain</name>
-      <description>Defines the domain the data category is attached to. Every data category must be defined within one domain.</description>
+      <description>&lt;p&gt;Defines the domain the data category is attached to. Every data category must be defined within one domain.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -541,7 +544,7 @@
       <description>Défini le domaine à laquel est attachée la catégorie de données. Chaque catégorie de données doit être définie dans un domaine.</description>
     </locale>
   </row>
-  <row title="Domain | workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Domain • workspace_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b33ffeb0-06cd-012d-c202-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -552,62 +555,29 @@
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">1fe00120-ea31-012c-1065-00166f92f624</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">workspace_uuid</data>
   </row>
-  <row title="Has description" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
-    <uuid>8afbf6b1-293a-012d-1701-4417fe7fde95</uuid>
-    <uri></uri>
-    <version>1</version>
-    <revision>2</revision>
-    <enabled>true</enabled>
-    <created_at>2010-04-13 14:55:36 UTC</created_at>
-    <updated_at>2010-04-13 15:10:54 UTC</updated_at>
-    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
-    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
-    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
-    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
-    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
-    <locale>
-      <base_locale>en</base_locale>
-      <locale>en</locale>
-      <name>Has description</name>
-      <description>Indicates each data in the grid has a description, which is translatable.</description>
-    </locale>
-  </row>
-  <row title="Has description | has_description" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
-    <uuid>a5788301-293a-012d-d9f3-4417fe7fde95</uuid>
-    <uri></uri>
-    <version>1</version>
-    <revision>1</revision>
-    <enabled>true</enabled>
-    <created_at>2010-04-13 14:56:21 UTC</created_at>
-    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
-    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">8afbf6b1-293a-012d-1701-4417fe7fde95</data>
-    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_description</data>
-  </row>
   <row title="Has name" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>78a7e2d1-293a-012d-2869-4417fe7fde95</uuid>
-    <uri></uri>
+    <uri>has-name</uri>
     <version>1</version>
-    <revision>2</revision>
+    <revision>3</revision>
     <enabled>true</enabled>
     <created_at>2010-04-13 14:55:06 UTC</created_at>
-    <updated_at>2010-04-13 14:57:10 UTC</updated_at>
+    <updated_at>2012-10-29 06:48:45 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">0</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Has name</name>
-      <description>Indicates each data in the grid has a name, which is translatable.</description>
+      <description>&lt;p&gt;Indicates each data in the grid has a name, which is translatable.&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Has name | has_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Has name • has_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>92a3cd71-293a-012d-a54f-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -618,17 +588,51 @@
     <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">78a7e2d1-293a-012d-2869-4417fe7fde95</data>
     <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_name</data>
   </row>
+  <row title="Has text" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
+    <uuid>8afbf6b1-293a-012d-1701-4417fe7fde95</uuid>
+    <uri>has-text</uri>
+    <version>1</version>
+    <revision>3</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:55:36 UTC</created_at>
+    <updated_at>2012-10-29 06:48:21 UTC</updated_at>
+    <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
+    <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
+    <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">3</data>
+    <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
+    <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
+    <locale>
+      <base_locale>en</base_locale>
+      <locale>en</locale>
+      <name>Has text</name>
+      <description>&lt;p&gt;Indicates each data in the grid has an associated text, which is translatable.&lt;/p&gt;</description>
+    </locale>
+  </row>
+  <row title="Has text • has_description" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+    <uuid>a5788301-293a-012d-d9f3-4417fe7fde95</uuid>
+    <uri></uri>
+    <version>1</version>
+    <revision>1</revision>
+    <enabled>true</enabled>
+    <created_at>2010-04-13 14:56:21 UTC</created_at>
+    <grid_uuid title="Attribute mapping">b800e230-042b-012d-0a08-0015c5091b01</grid_uuid>
+    <data uuid="d0352c30-042b-012d-0a0c-0015c5091b01" name="Attribute">8afbf6b1-293a-012d-1701-4417fe7fde95</data>
+    <data uuid="eb71d430-042b-012d-0a11-0015c5091b01" name="Database column">has_description</data>
+  </row>
   <row title="Template" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>30f91a90-0301-0130-10d1-4417fe7fde95</uuid>
     <uri>template</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>2</revision>
     <enabled>true</enabled>
     <created_at>2012-10-28 07:44:13 UTC</created_at>
+    <updated_at>2012-10-29 06:50:52 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
-    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">5</data>
+    <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">6</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">fe92c430-ea30-012c-1057-00166f92f624</data>
     <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required"></data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
@@ -639,7 +643,7 @@
       <description>&lt;p&gt;Defines a category to be used as a template for the category definition.&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Template | template_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Template • template_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>54e28630-0301-0130-10d1-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -663,8 +667,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -685,8 +689,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -707,8 +711,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -817,8 +821,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -845,8 +849,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -860,7 +864,7 @@
       <description>Définit le stockage physique d'une catégorie de données. La mise en correspondance est basée sur des tables SQL qui dépendent de la base de données sous-jascente. </description>
     </locale>
   </row>
-  <row title="Data mapping | grid_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Data mapping • grid_mappings" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>b7c681b0-0a54-012d-64b1-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -898,7 +902,7 @@
       <name>Catégorie</name>
     </locale>
   </row>
-  <row title="Category | grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Category • grid_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>3125b701-0a56-012d-64db-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -930,7 +934,7 @@
       <name>Database table</name>
     </locale>
   </row>
-  <row title="Database table | db_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Database table • db_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>312800f0-0a56-012d-64db-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -962,7 +966,7 @@
       <name>Database table for translation</name>
     </locale>
   </row>
-  <row title="Database table for translation | db_loc_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Database table for translation • db_loc_table" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>312800f1-0a56-012d-64db-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -977,22 +981,23 @@
     <uuid>f54309d0-ea30-012c-1054-00166f92f624</uuid>
     <uri>domains</uri>
     <version>1</version>
-    <revision>14</revision>
+    <revision>15</revision>
     <enabled>true</enabled>
     <created_at>2010-01-23 09:38:16 UTC</created_at>
-    <updated_at>2012-10-28 07:48:06 UTC</updated_at>
+    <updated_at>2012-10-29 06:51:28 UTC</updated_at>
     <grid_uuid title="Category">fe92c430-ea30-012c-1057-00166f92f624</grid_uuid>
     <data uuid="1fe00120-ea31-012c-1065-00166f92f624" name="Domain">eec10850-dd45-012c-aafe-0026b0d63708</data>
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Domain</name>
-      <description>&lt;p&gt;Domains let you define categories that are grouped together in a logical way. Domains can be private or be shared with others. You can define as many domains as you need to define large sets of categories. Categories can be moved from a domain to another. It's mandatory that each category is attached to one domain.&lt;/p&gt;</description>
+      <description>&lt;p&gt;Domains let you define categories that are grouped together in a logical way.&lt;/p&gt;
+&lt;p&gt;Domains can be private or be shared with others. You can define as many domains as you need to define large sets of categories. Categories can be moved from a domain to another. It's mandatory that each category is attached to one domain.&lt;/p&gt;</description>
     </locale>
     <locale>
       <base_locale>fr</base_locale>
@@ -1001,7 +1006,7 @@
       <description>Les domaines permettent de regrouper des catégories de données de façon logique. Les domaines peuvent être privés ou partagés avec d'autres. Vous pouvez définir autant de domaines que vous avez besoin pour gérer un grand nombre de catégories de données. Les catégories de données peuvent être déplacées d'un domaine à un autre. Il est obligatoire que chaque catégorie de données soit attachée à un domaine.</description>
     </locale>
   </row>
-  <row title="Domain | workspaces | workspace_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Domain • workspaces • workspace_locs" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>77aa8520-06c2-012d-c0b0-0026b0d63708</uuid>
     <uri></uri>
     <version>1</version>
@@ -1015,26 +1020,27 @@
   </row>
   <row title="Default role" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>0e1f4990-a26c-012f-de85-4417fe7fde95</uuid>
-    <uri></uri>
+    <uri>default-role</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>2</revision>
     <enabled>true</enabled>
     <created_at>2012-06-27 09:54:48 UTC</created_at>
+    <updated_at>2012-10-29 06:51:57 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">04950150-06cd-012d-c1e7-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">2</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference">62630550-0cb5-012d-bcb2-4417fe7fde95</data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Default role</name>
-      <description>Default role for registered users.</description>
+      <description>&lt;p&gt;Default role for registered users.&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Default role | default_role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Default role • default_role_uuid" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>186c3270-a26c-012f-de85-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1047,26 +1053,27 @@
   </row>
   <row title="Public" grid_uuid="03bfafe0-ea31-012c-105a-00166f92f624" grid="Attribute">
     <uuid>f1ca9820-a26b-012f-de85-4417fe7fde95</uuid>
-    <uri></uri>
+    <uri>public</uri>
     <version>1</version>
-    <revision>1</revision>
+    <revision>2</revision>
     <enabled>true</enabled>
     <created_at>2012-06-27 09:54:00 UTC</created_at>
+    <updated_at>2012-10-29 06:52:15 UTC</updated_at>
     <grid_uuid title="Attribute">03bfafe0-ea31-012c-105a-00166f92f624</grid_uuid>
     <data uuid="461e5940-ea31-012c-106b-00166f92f624" name="Category">f54309d0-ea30-012c-1054-00166f92f624</data>
     <data uuid="50270360-ea31-012c-106f-00166f92f624" name="Kind">ff2dd910-06cc-012d-c1e3-0026b0d63708</data>
     <data uuid="4c766f00-06cd-012d-c1fb-0026b0d63708" name="Display order">1</data>
     <data uuid="5a5107e0-0990-012d-e81a-4417fe7fde95" name="Reference"></data>
-    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">f</data>
+    <data uuid="8df46b61-1da3-012d-46db-4417fe7fde95" name="Required">t</data>
     <data uuid="68792a30-1da5-012d-2556-4417fe7fde95" name="Regular expression"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
       <name>Public</name>
-      <description>The domain is public so accessble to unregistered users.</description>
+      <description>&lt;p&gt;The domain is public so accessible to unregistered users.&lt;/p&gt;</description>
     </locale>
   </row>
-  <row title="Public | public" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Public • public" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>f93205a0-a26b-012f-de85-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1090,8 +1097,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name">t</data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description">t</data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">e53341e0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">16122180-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1112,8 +1119,8 @@
     <data uuid="78a7e2d1-293a-012d-2869-4417fe7fde95" name="Has name"></data>
     <data uuid="8afbf6b1-293a-012d-1701-4417fe7fde95" name="Has description"></data>
     <data uuid="c69b5160-0300-0130-10d1-4417fe7fde95" name="Default display mode">a71981a0-02fb-0130-b20f-4417fe7fde95</data>
-    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" name="Default sort order">521f5c60-e5f4-012f-0006-4417fe7fde95</data>
-    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" name="Template"></data>
+    <data uuid="ecdd8d90-0300-0130-10d1-4417fe7fde95" uri="default-sort-order" name="Default sort order">521f5c60-e5f4-012f-0006-4417fe7fde95</data>
+    <data uuid="30f91a90-0301-0130-10d1-4417fe7fde95" uri="template" name="Template"></data>
     <locale>
       <base_locale>en</base_locale>
       <locale>en</locale>
@@ -1127,7 +1134,7 @@
       <description>Enregistre les chargements effectués dans le système.</description>
     </locale>
   </row>
-  <row title="Upload | uploads" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
+  <row title="Upload • uploads" grid_uuid="a6beb050-0427-012d-09bf-0015c5091b01" grid="Data mapping">
     <uuid>ff979a01-1a54-012d-f23b-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1159,7 +1166,7 @@
       <name>Elapsed</name>
     </locale>
   </row>
-  <row title="Elapsed | elapsed" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Elapsed • elapsed" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>b9cfe310-c9fd-012f-4735-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1196,7 +1203,7 @@
       <name>Nom de fichier</name>
     </locale>
   </row>
-  <row title="File name | file_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="File name • file_name" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>079c5dd1-1a55-012d-32dd-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1233,7 +1240,7 @@
       <name>Insertions</name>
     </locale>
   </row>
-  <row title="Inserted | inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Inserted • inserted" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>6252aa30-c2a7-012f-e9be-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1270,7 +1277,7 @@
       <name>Enregistrements</name>
     </locale>
   </row>
-  <row title="Records | records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Records • records" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>8f95cec0-c2a7-012f-e9be-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1307,7 +1314,7 @@
       <name>Sans changement</name>
     </locale>
   </row>
-  <row title="Skipped | skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Skipped • skipped" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>a166c150-c2a7-012f-e9be-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>
@@ -1344,7 +1351,7 @@
       <name>Modifications</name>
     </locale>
   </row>
-  <row title="Updated | updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
+  <row title="Updated • updated" grid_uuid="b800e230-042b-012d-0a08-0015c5091b01" grid="Attribute mapping">
     <uuid>72edab00-c2a7-012f-e9be-4417fe7fde95</uuid>
     <uri></uri>
     <version>1</version>

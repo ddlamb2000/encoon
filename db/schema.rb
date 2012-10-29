@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121028070611) do
+ActiveRecord::Schema.define(:version => 20121029054455) do
 
   create_table "attachments", :force => true do |t|
     t.string   "uuid",                  :limit => 36
@@ -41,13 +41,17 @@ ActiveRecord::Schema.define(:version => 20121028070611) do
   add_index "audits", ["uuid"], :name => "index_audits_on_uuid"
 
   create_table "column_locs", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.integer "version"
-    t.string  "locale",       :limit => 10
-    t.string  "base_locale",  :limit => 10
-    t.string  "name"
-    t.text    "description"
-    t.integer "lock_version",               :default => 0
+    t.string   "uuid",             :limit => 36
+    t.integer  "version"
+    t.string   "locale",           :limit => 10
+    t.string   "base_locale",      :limit => 10
+    t.string   "name"
+    t.text     "description"
+    t.integer  "lock_version",                   :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
   end
 
   add_index "column_locs", ["uuid", "version", "locale"], :name => "index_column_locs_on_uuid_and_version_and_locale"
@@ -98,13 +102,17 @@ ActiveRecord::Schema.define(:version => 20121028070611) do
   add_index "columns", ["uuid"], :name => "index_columns_on_uuid"
 
   create_table "grid_locs", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.integer "version"
-    t.string  "locale",       :limit => 10
-    t.string  "base_locale",  :limit => 10
-    t.string  "name"
-    t.text    "description"
-    t.integer "lock_version",               :default => 0
+    t.string   "uuid",             :limit => 36
+    t.integer  "version"
+    t.string   "locale",           :limit => 10
+    t.string   "base_locale",      :limit => 10
+    t.string   "name"
+    t.text     "description"
+    t.integer  "lock_version",                   :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
   end
 
   add_index "grid_locs", ["uuid", "version", "locale"], :name => "index_grid_locs_on_uuid_and_version_and_locale"
@@ -155,13 +163,17 @@ ActiveRecord::Schema.define(:version => 20121028070611) do
   add_index "grids", ["workspace_uuid"], :name => "index_grids_on_workspace_uuid"
 
   create_table "role_locs", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.integer "version"
-    t.string  "locale",       :limit => 10
-    t.string  "base_locale",  :limit => 10
-    t.string  "name"
-    t.text    "description"
-    t.integer "lock_version",               :default => 0
+    t.string   "uuid",             :limit => 36
+    t.integer  "version"
+    t.string   "locale",           :limit => 10
+    t.string   "base_locale",      :limit => 10
+    t.string   "name"
+    t.text     "description"
+    t.integer  "lock_version",                   :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
   end
 
   add_index "role_locs", ["uuid", "version", "locale"], :name => "index_role_locs_on_uuid_and_version_and_locale"
@@ -185,13 +197,17 @@ ActiveRecord::Schema.define(:version => 20121028070611) do
   add_index "roles", ["uuid"], :name => "index_roles_on_uuid"
 
   create_table "row_locs", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.integer "version"
-    t.string  "locale",       :limit => 10
-    t.string  "base_locale",  :limit => 10
-    t.string  "name"
-    t.text    "description"
-    t.integer "lock_version",               :default => 0
+    t.string   "uuid",             :limit => 36
+    t.integer  "version"
+    t.string   "locale",           :limit => 10
+    t.string   "base_locale",      :limit => 10
+    t.string   "name"
+    t.text     "description"
+    t.integer  "lock_version",                   :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
   end
 
   add_index "row_locs", ["uuid", "version", "locale"], :name => "index_row_locs_on_uuid_and_version_and_locale"
@@ -392,13 +408,17 @@ ActiveRecord::Schema.define(:version => 20121028070611) do
   add_index "users", ["uuid"], :name => "index_users_on_uuid"
 
   create_table "workspace_locs", :force => true do |t|
-    t.string  "uuid",         :limit => 36
-    t.integer "version"
-    t.string  "locale",       :limit => 10
-    t.string  "base_locale",  :limit => 10
-    t.string  "name"
-    t.text    "description"
-    t.integer "lock_version",               :default => 0
+    t.string   "uuid",             :limit => 36
+    t.integer  "version"
+    t.string   "locale",           :limit => 10
+    t.string   "base_locale",      :limit => 10
+    t.string   "name"
+    t.text     "description"
+    t.integer  "lock_version",                   :default => 0
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "create_user_uuid", :limit => 36
+    t.string   "update_user_uuid", :limit => 36
   end
 
   add_index "workspace_locs", ["uuid", "version", "locale"], :name => "index_workspace_locs_on_uuid_and_version_and_locale"

@@ -23,7 +23,11 @@ class Entity < ActiveRecord::Base
   self.abstract_class = true
   
   @@uuid_gen = nil
+  
+  # Defines the value for the lowest date to be used for begin and end dates.
   @@begin_of_time = Date::civil(1,1,1) 
+
+  # Defines the value for the greatest date to be used for begin and end dates.
   @@end_of_time = Date::civil(9999,12,31)
 
   belongs_to :create_user, 
@@ -45,8 +49,10 @@ class Entity < ActiveRecord::Base
     defaults
   end
 
+  # Returns the lowest date to be used in the system.
   def self.begin_of_time ; @@begin_of_time ; end
 
+  # Returns the greatest date to be used in the system.
   def self.end_of_time ; @@end_of_time ; end
 
   # Defaults begin date and version
@@ -106,14 +112,15 @@ class Entity < ActiveRecord::Base
   # Returns a revision number.
   def revision ; 1 + self.lock_version ; end
 
-  def to_s
-    attribute_present?(:name) ? read_attribute(:name) : self.uuid
-  end
+  # Returns the name of the entity.
+  def to_s ; name ; end
 
+  # Returns the name information associated to the entity if exists.
   def name
     attribute_present?(:name) ? read_attribute(:name) : ""
   end
 
+  # Returns the description information associated to the entity if exists.
   def description
     attribute_present?(:description) ? read_attribute(:description) : ""
   end
@@ -143,28 +150,35 @@ class Entity < ActiveRecord::Base
     uuid.present? and uuid =~ /[\da-f]{8}-([\da-f]{4}-){3}[\da-f]{12}\z/
   end
 
+  # Selects the associated locale data in the collection
+  # for the given uuid and version number. 
   def self.locales(collection, uuid, version)
     log_debug "Entity#locales(uuid=#{uuid}), version=#{version.to_s}"
-    collection.find(:all, 
-                    :select => self.loc_select_columns,
-                    :conditions => 
-                           ["uuid = :uuid AND version = :version",
-                           {:uuid => uuid, :version => version}],
-                    :order => "locale")
+    collection.
+      select(self.loc_select_columns).
+      where("uuid = ?", uuid).
+      where("version = ?", version).
+      order("locale")
   end
 
   # Returns a part of the where clause to be used in order to
-  # filter data based on the as of date.
+  # filter data based on the session as of date.
   def self.as_of_date_clause(synonym)
     "'#{session_as_of_date}' BETWEEN #{synonym}.begin AND #{synonym}.end AND #{synonym}.enabled = 't'"
   end
 
+  # Returns a part of the where clause to be used in order to
+  # filter data based on the session as of date.
   def as_of_date_clause(synonym) ; Entity.as_of_date_clause(synonym) ; end
 
+  # Returns a part of the where clause to be used in order to
+  # filter data based on the session locale.
   def self.locale_clause(synonym)
     "#{synonym}.locale = '#{self.session_locale}'"
   end
 
+  # Returns a part of the where clause to be used in order to
+  # filter data based on the session locale.
   def locale_clause(synonym) ; Entity.locale_clause(synonym) ; end
 
   # Exports the entity into an .xml output.

@@ -730,6 +730,8 @@ class Grid < Entity
     return (@can_update_data or (row.create_user_uuid == Entity.session_user_uuid))
   end
 
+  # Creates a record in the database for the given row.
+  # Security is validated for the given filters.
   def create_row!(row, filters=nil)
     log_debug "Grid#create_row!(row=#{row.inspect})"
     if not can_create_row?(filters)
@@ -751,24 +753,8 @@ class Grid < Entity
     true
   end
 
-  def create_row_loc!(row, row_loc, filters=nil)
-    log_debug "Grid#create_row_loc!(row_loc=#{row_loc.inspect})"
-    if not can_create_row?(filters)
-      log_security_warning "Grid#create_row_loc! Can't create data"
-      row.errors.add(:uuid, I18n.t('error.cant_create'))
-      raise "Grid#create_row_loc! Can't create data"
-    end
-    sql = "INSERT INTO #{@db_loc_table}" +
-          "(#{row_all_insert_loc_columns})" +
-          " VALUES(#{row_all_insert_loc_values(row_loc)})"
-    self.id = connection.insert(sql, 
-                                "#{self.class.name} Create",
-                                self.class.primary_key, 
-                                self.id, 
-                                self.class.sequence_name)
-    true
-  end
-
+  # Updates record in the database for the given row.
+  # Security is validated for the given row.
   def update_row!(row, audit=Audit::UPDATE)
     log_debug "Grid#update_row!(row=#{row.inspect})"
     if not can_update_row?(row)
@@ -788,6 +774,30 @@ class Grid < Entity
     true
   end
 
+  # Creates a record in the database for the given locale row.
+  # Security is validated for the given filters.
+  def create_row_loc!(row, row_loc, filters=nil)
+    log_debug "Grid#create_row_loc!(row_loc=#{row_loc.inspect})"
+    if not can_create_row?(filters)
+      log_security_warning "Grid#create_row_loc! Can't create data"
+      row.errors.add(:uuid, I18n.t('error.cant_create'))
+      raise "Grid#create_row_loc! Can't create data"
+    end
+    row_loc.created_at = row_loc.updated_at = Time.now
+    row_loc.create_user_uuid = row_loc.update_user_uuid = Entity.session_user_uuid
+    sql = "INSERT INTO #{@db_loc_table}" +
+          "(#{row_all_insert_loc_columns})" +
+          " VALUES(#{row_all_insert_loc_values(row_loc)})"
+    self.id = connection.insert(sql, 
+                                "#{self.class.name} Create",
+                                self.class.primary_key, 
+                                self.id, 
+                                self.class.sequence_name)
+    true
+  end
+
+  # Updates record in the database for the given locale row.
+  # Security is validated for the given row.
   def update_row_loc!(row, row_loc)
     log_debug "Grid#update_row_loc!(row_loc=#{row_loc.inspect})"
     if not can_update_row?(row)
@@ -795,6 +805,8 @@ class Grid < Entity
       row.errors.add(:uuid, I18n.t('error.cant_update'))
       raise "Grid#update_row_loc! Can't update data"
     end
+    row_loc.updated_at = Time.now
+    row_loc.update_user_uuid = Entity.session_user_uuid
     sql = "UPDATE #{@db_loc_table}" +
           " SET #{row_loc_update_values(row_loc)}" +
           " WHERE id = #{quote(row_loc.id)}" +
@@ -803,6 +815,10 @@ class Grid < Entity
     true
   end
 
+  # Updates begin and end dates for the given uuid.
+  # The system ensures there is no overlap nor conflicts with historical data,
+  # it fetches all the versions of data in a chronological order
+  # and updates the dates in sequence if required.
   def row_update_dates!(uuid)
     log_debug "Grid#row_update_dates!(uuid=#{uuid}"
     previous_item = nil
@@ -821,7 +837,7 @@ class Grid < Entity
     end
     log_debug "Grid#row_update_dates! last_item=#{last_item.inspect}"
     if last_item.present? and last_item.end != @@end_of_time
-      log_debug "Entity#update_dates last_item set end date"
+      log_debug "Grid#update_dates last_item set end date"
       last_item.end = @@end_of_time
       last_item.update_user_uuid = Entity.session_user_uuid
       update_row!(last_item)
@@ -889,7 +905,7 @@ private
 
   def quote(sql) ; connection.quote(sql) ; end
 
-  # Defines the columns to be selection of category definition.
+  # Defines the columns for the selection of grid definition.
   def self.all_select_columns
     "grids.id, grids.uuid, grids.version, grids.lock_version, " + 
     "grids.begin, grids.end, grids.enabled, grids.workspace_uuid, " + 
@@ -899,7 +915,7 @@ private
     "grid_locs.base_locale, grid_locs.locale, grid_locs.name, grid_locs.description"
   end
 
-  # Defines the columns to be selection of the column definitions of the category.
+  # Defines the columns for the selection of the column definitions of the grid.
   def column_all_select_columns
     "columns.id, columns.uuid, columns.uri, columns.version, columns.lock_version, " +
     "columns.begin, columns.end, columns.enabled, " +
@@ -908,10 +924,12 @@ private
     "column_locs.base_locale, column_locs.locale, column_locs.name, column_locs.description"
   end
 
+  # Defines the columns for the selection of the columns and column mappings of the grid.
   def column_all_select_columns_mapping
     column_all_select_columns + ", column_mappings.db_column"
   end
 
+  # Defines the columns for the selection of the row attached to the grid.
   def row_all_select_columns
     columns = ""
     column_all.each{|column| columns << ", rows." + column.physical_column}
@@ -927,11 +945,7 @@ private
     columns
   end
 
-  def row_loc_select_columns
-    "row_locs.id, row_locs.uuid, row_locs.version, row_locs.lock_version, " +
-    "row_locs.base_locale, row_locs.locale, row_locs.name, row_locs.description"
-  end
-
+  # Defines the columns for the insert of the row attached to the grid.
   def row_all_insert_columns
     columns = ""
     column_all.each{|column| columns << ", " + column.physical_column}
@@ -941,10 +955,7 @@ private
     columns
   end
 
-  def row_all_insert_loc_columns
-    "uuid, version, lock_version, locale, base_locale, name, description" 
-  end
-
+  # Defines the values for the insert of the row attached to the grid.
   def row_all_insert_values(row)
     columns = ""
     column_all.each{|column| columns << ", #{quote(row.read_value(column))}"}
@@ -956,13 +967,7 @@ private
     columns
   end
 
-  def row_all_insert_loc_values(row)
-    "#{quote(row.uuid)}" +
-    ", #{quote(row.version)}, #{quote(row.lock_version)}" +
-    ", #{quote(row.locale)}, #{quote(row.base_locale)}" +
-    ", #{quote(row.name)}, #{quote(row.description)}"
-  end
-
+  # Defines the values for the update of the row attached to the grid.
   def row_all_update_values(row)
     columns = ""
     column_all.each{|column| columns << ", #{column.physical_column}=#{quote(row.read_value(column))}"}
@@ -973,9 +978,33 @@ private
     columns
   end
 
+  # Defines the columns for the selection of the locale row attached to the grid.
+  def row_loc_select_columns
+    "row_locs.id, row_locs.uuid, row_locs.version, row_locs.lock_version, " +
+    "row_locs.base_locale, row_locs.locale, row_locs.name, row_locs.description"
+  end
+
+  # Defines the columns for the insert of the locale row attached to the grid.
+  def row_all_insert_loc_columns
+    "uuid, version, lock_version, locale, base_locale, name, description" +
+    ", created_at, updated_at, create_user_uuid, update_user_uuid" 
+  end
+
+  # Defines the values for the insert of the locale row attached to the grid.
+  def row_all_insert_loc_values(row)
+    "#{quote(row.uuid)}" +
+    ", #{quote(row.version)}, #{quote(row.lock_version)}" +
+    ", #{quote(row.locale)}, #{quote(row.base_locale)}" +
+    ", #{quote(row.name)}, #{quote(row.description)}" +
+    ", #{quote(row.created_at)}, #{quote(row.updated_at)}" +
+    ", #{quote(row.create_user_uuid)}, #{quote(row.update_user_uuid)}"
+  end
+
+  # Defines the values for the update of the locale row attached to the grid.
   def row_loc_update_values(row)
     "lock_version=#{quote(row.lock_version+1)}, base_locale=#{quote(row.base_locale)}" +
-    ", name=#{quote(row.name)}, description=#{quote(row.description)}"
+    ", name=#{quote(row.name)}, description=#{quote(row.description)}" +
+    ", updated_at=#{quote(row.updated_at)}, update_user_uuid=#{quote(row.update_user_uuid)}"
   end
 
   # Loads the workspace associated to the grid and sets security flags based on the workspace. 

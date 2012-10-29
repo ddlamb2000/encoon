@@ -32,22 +32,10 @@ class Row < Entity
     @initialized = true
   end
 
-  def to_s ; name ; end
-
-  # Returns the name information associated to the row if exists.
-  def name
-    attribute_present?(:name) ? read_attribute(:name) : ""
-  end
-
   # Returns the title information associated to the row if exists.
   # If a name column doesn't exist, the title is set by the grid the row is attached to.
   def title
     attribute_present?(:name) ? read_attribute(:name) : (grid.present? ? grid.row_title(self) : "")
-  end
-
-  # Returns the description information associated to the row if exists.
-  def description
-    attribute_present?(:description) ? read_attribute(:description) : ""
   end
 
   # Reads the value of a given row column.
