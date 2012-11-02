@@ -305,6 +305,10 @@ body {
       font-weight:bolder;
       background-color:$background-color-table-header;
     }
+    .list-identifier {
+      font-weight:bolder;
+      border-bottom:1px solid $background-color-table;
+    }
     .list-date {
       width:80px;
       text-align:center;

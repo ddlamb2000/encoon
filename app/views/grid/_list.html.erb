@@ -133,7 +133,7 @@
     <table>
       <thead>
         <tr>
-          <th class="list-header-string"></th>
+          <th class="list-identifier"></th>
           <th class="list-header-string"></th>
           <% for column in @table_columns %>
             <%= show_header_label(column.kind, column.name.html_safe, true) %>
@@ -145,7 +145,7 @@
         <% for row in @table_rows %>
           <% row_number += 1 %>
           <tr id="row-<%= row.uuid %>">
-            <td>
+            <td class="list-identifier">
               <% if @grid.uuid == WORKSPACE_UUID %>
                 <%= link_to row_number.to_s,
                             show_workspace_path(
