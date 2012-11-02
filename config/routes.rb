@@ -31,6 +31,7 @@ Encoon::Application.routes.draw do
   match '*flag/__set' => 'grid#set', :as => 'set'
   match '*flag/__unset' => 'grid#unset', :as => 'unset'
   match '/*grid/__list' => 'grid#list', :as => 'list'
+  match '/*grid/__attributes' => 'grid#attributes', :as => 'attributes'
   match '/*grid/__new' => 'grid#new', :as => 'new'
   match '/*grid/__create' => 'grid#create', :as => 'create', :via => [:post]
   match '/*grid/__import' => 'grid#import', :as => 'import'

@@ -27,7 +27,7 @@
     <span title="<%= t 'actions.create_help' %>" class="button search-button">
       <a id="search-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.search' %></a>
     </span>
-    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) and not defined?(dialog) %>
       <span class="button import-button" title="<%= t 'actions.import_help' %>">
         <a id="import-<%= @grid.uuid %>">
           <%= t 'actions.import' %>
@@ -53,7 +53,7 @@
         <% end %>
       </span>
     <% end %>
-    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) and not defined?(dialog) %>
       <span title="<%= t 'actions.update_grid_help' %>" class="button edit-button">
         <a id="update-grid-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.update_grid' %></a>
       </span>
@@ -70,22 +70,22 @@
         });
       </script>
     <% end %>
-    <% if user_signed_in? and @grid.can_create_row?(@filters) %>
+    <% if user_signed_in? and @grid.can_create_row?(@filters) and not defined?(dialog) %>
       <span title="<%= t 'actions.column_help' %>" class="button table-button">
         <a id="attributes-grid-<%= filters_uuid(@grid, @filters) %>"><%= t 'actions.columns' %></a>
       </span>
       <script>
         $("#attributes-grid-<%= filters_uuid(@grid, @filters) %>").click(function (event){
-          $("#dialog").dialog({
+          $("#dialog-list").dialog({
               modal: true,
               position: [$("#document").offset().left+$("#document").width()/2-650/2,
                          $(this).offset().top+20], 
             }).
             html('<%= escape_javascript(render :partial => "layouts/loading") %>').
-            load("<%= url_for(list_path(:grid => COLUMN_UUID,
-                                        :filters => [{:column_uuid => COLUMN_GRID_UUID,
-                                                      :row_uuid => @grid.uuid,
-                                                      :row_name => @grid}])) %>");
+            load("<%= url_for(attributes_path(:grid => COLUMN_UUID,
+                                              :filters => [{:column_uuid => COLUMN_GRID_UUID,
+                                                            :row_uuid => @grid.uuid,
+                                                            :row_name => @grid}])) %>");
         });
       </script>
     <% end %>
@@ -94,36 +94,42 @@
         function (event){
           var left = $(this).width()-$("#actions-<%= filters_uuid(@grid, @filters) %>").width();
           $("#actions-<%= filters_uuid(@grid, @filters) %>").css({left:left}).fadeIn(300);
-          $(this).addClass("highlighted");
+          <% if not defined?(dialog) %>$(this).addClass("highlighted");<% end %>
         },
         function (event){
           $("#actions-<%= filters_uuid(@grid, @filters) %>").fadeOut(3);
-          $(this).removeClass("highlighted");
+          <% if not defined?(dialog) %>$(this).removeClass("highlighted");<% end %>
         }
       );
     </script>
   </div>
 <% end %>
 <header>
-  <hgroup>
-    <%= render :partial => 'breadcrumbs' %>
-    <small>
-      <%= display_information(@grid) %>
-      <%= display_locale(@grid) %>
-      <%= display_updated_date_by(@grid) %>
-      <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
-      <% if user_signed_in? and not(@grid.can_create_row?(@filters)) %>
-        <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
-      <% end %>
-    </small>
-  </hgroup>
-  <h3><%= @grid %></h3>
+  <% if not defined?(dialog) %>
+    <hgroup>
+      <%= render :partial => 'breadcrumbs' %>
+      <small>
+        <%= display_information(@grid) %>
+        <%= display_locale(@grid) %>
+        <%= display_updated_date_by(@grid) %>
+        <%= display_filters(@grid, @filters, defined?(@search) ? @search : nil).html_safe %>
+        <% if user_signed_in? and not(@grid.can_create_row?(@filters)) %>
+          <span title="<%= t('general.locked') %>" class="locked">&nbsp;</span>
+        <% end %>
+      </small>
+    </hgroup>
+    <h3><%= @grid %></h3>
+  <% else %>
+    <br/><br/>
+  <% end %>
 </header>
 <%= t('general.no_data') if not @table_rows.nil? and @table_rows.empty? %>
 <% unless @table_rows.nil? or
           @table_rows.empty? or
           @table_columns.nil? %>
-  <% if @display_option == GRID_DISPLAY_MODE_TABLE_UUID or @display_option == GRID_DISPLAY_MODE_TABLE_TEXT_UUID %>
+  <% if @display_option == GRID_DISPLAY_MODE_TABLE_UUID or
+        @display_option == GRID_DISPLAY_MODE_TABLE_TEXT_UUID or
+        defined?(dialog) %>
     <table>
       <thead>
         <tr>

@@ -250,9 +250,11 @@ body {
       padding:2px;
     }
     thead th {
+      color:$detail-color;
       @include table-shade;
     }
     .highlighted {
+      color:$detail-color;
       background:$background-color-table;
     }
     td {

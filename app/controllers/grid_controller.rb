@@ -114,6 +114,25 @@ class GridController < ApplicationController
     render :partial => "no_data", :status => 404
   end
 
+  # Renders the list of attributes for a given grid through an Ajax request.
+  def attributes
+    log_debug "GridController#attributes"
+    @filters = params[:filters]
+    @search = params[:search]
+    @page = params[:page]
+    selectGridAndWorkspace(@filters)
+    if @workspace.present? and @grid.present?
+      @grid.load(@filters) if not @grid.loaded 
+      @table_row_count = @grid.row_count(@filters)
+      @table_rows = @grid.row_all(@filters, @search, @page, true)
+      @table_columns = @grid.filtered_columns
+      @display_option = @grid.display_uuid
+      render :partial => "attributes"
+      return
+    end
+    render :partial => "no_data", :status => 404
+  end
+
   # Renders the attachments of an article through an Ajax request.
   def attachments
     log_debug "GridController#attachments"
@@ -490,19 +509,6 @@ class GridController < ApplicationController
           return
         end
       end
-    end
-    render :partial => "no_data", :status => 404
-  end
-
-  # Renders the attributes of a grid through an Ajax request.
-  def attributes
-    log_debug "GridController#attributes"
-    selectGridAndWorkspace
-    if @workspace.present? and @grid.present?
-      @grid.load if not @grid.loaded
-      @columns = @grid.column_all
-      render :partial => "attributes"
-      return
     end
     render :partial => "no_data", :status => 404
   end
