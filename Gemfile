@@ -16,7 +16,7 @@
 # See doc/COPYRIGHT.rdoc for more details.
 source 'http://rubygems.org'
 
-gem 'rails', '3.2.8'
+gem 'rails', '3.2.17'
 gem 'sqlite3', '1.3.5', :require => 'sqlite3'
 gem 'jquery-rails', '>=2.0.0'
 gem "paperclip", "~> 2.4"
