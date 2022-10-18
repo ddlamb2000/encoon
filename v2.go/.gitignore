@@ -3,7 +3,6 @@
 .DS_Store
 .loadpath
 .tmp*
-log/
 *.autosave
 tmp/
-log/*.log
+logs/*.log
