@@ -7,21 +7,28 @@ import (
 	"testing"
 )
 
+func TestGetNewUUID(t *testing.T) {
+	uuid := GetNewUUID()
+	if uuid == "" {
+		t.Fatalf(`No uuid generated`)
+	}
+}
+
 func TestGetUserByID1(t *testing.T) {
-	LoadUsers()
+	loadUsers()
 	user, found := GetUserByID("c788a76d-4aa6-4073-8904-35a9b99a3289")
 	if !found {
-		t.Fatalf(`No user found %q`, user.ID.Uuid)
+		t.Fatalf(`No user found %q`, user.Id.Uuid)
 	}
-	if user.ID.Uri != "root" {
-		t.Fatalf(`Incorrect uri %q, expected %q`, user.ID.Uri, "root")
+	if user.Id.Uri != "root" {
+		t.Fatalf(`Incorrect uri %q, expected %q`, user.Id.Uri, "root")
 	}
 }
 
 func TestGetUserByID2(t *testing.T) {
-	LoadUsers()
+	loadUsers()
 	user, found := GetUserByID("c788a76d-4aa6-4073-8904-35a9b99a3288")
 	if found {
-		t.Fatalf(`User found: %q`, user.ID.Uuid)
+		t.Fatalf(`User found: %q`, user.Id.Uuid)
 	}
 }

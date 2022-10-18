@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>{{ .title }}</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" media="screen" href="stylesheets/encoon.css" />
+	</head>
+	<body>
+		<h1>
+			{{ .title }}
+		</h1>
+		<table>
+			<tr>
+				<th>Id</th>
+				<th>Email</th>
+				<th>FirstName</th>
+				<th>LastName</th>
+			</tr>
+			{{ range .users }}
+				<tr>
+					<td>{{ .Id }}</td> 
+					<td>{{ .Email }}</td>
+					<td>{{ .FirstName }}</td>
+					<td>{{ .LastName }}</td>
+				</tr>
+			{{ end }}
+		</table>
+	</body>
+</html>

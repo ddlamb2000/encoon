@@ -4,7 +4,6 @@
 package main
 
 import (
-	"fmt"
 	"io"
 	"os"
 
@@ -12,23 +11,22 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main() {
-	f, _ := os.Create("logs/encoon.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-
-	fmt.Fprintf(gin.DefaultWriter, "[encoon] εncooη : data structuration, presentation and navigation.\n")
-
-	core.LoadUsers()
-
+func setRouter() *gin.Engine {
 	router := gin.Default()
 	router.LoadHTMLGlob("templates/*") // see templates https://pkg.go.dev/text/template, https://gohugo.io/templates/
 	router.Static("/stylesheets", "./stylesheets")
-	router.GET("/albums.html", core.GetAlbumsHtml)
-	router.GET("/albums", core.GetAlbums)
-	router.GET("/albums/:id", core.GetAlbumByID)
-	router.POST("/albums", core.PostAlbums)
-
 	router.GET("/users", core.GetUsersJson)
+	router.GET("/users/:uuid", core.GetAlbumByIDJson)
+	router.POST("/users", core.PostUsers)
+	router.GET("/users.html", core.GetUsersHtml)
+	router.GET("/ping", core.Ping)
+	return router
+}
 
+func main() {
+	f, _ := os.Create("logs/encoon.log")
+	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	core.LoadData()
+	router := setRouter()
 	router.Run("localhost:8080")
 }
