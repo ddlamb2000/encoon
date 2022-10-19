@@ -10,6 +10,23 @@
 			{{ .title }}
 		</h1>
 
-        Links: <a href="users.html">Users</a>
+		<div id="errors" style="
+		background: #c00;
+		color: #fff;
+		display: none;
+		margin: -20px -20px 20px;
+		padding: 20px;
+		white-space: pre-wrap;
+		"></div>
+		<div id="root"></div>
+		<br/>
+		<img src="images/info.png" alt="Information"> Links: <a href="users.html">Users</a>
+
+		<!-- Load React. -->
+    	<!-- Note: when deploying, replace "development.js" with "production.min.js". -->
+		<script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    	<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+		<script src="https://unpkg.com/babel-standalone@6/babel.min.js" crossorigin></script>
+		<script type="text/babel" src="javascript/index.js"></script>
 	</body>
 </html>

@@ -22,10 +22,11 @@ const portApi = ":8081"
 
 func setAndStartServerHtml() *http.Server {
 	router := gin.Default()
-	// see https://pkg.go.dev/text/template,
-	// see https://gohugo.io/templates/
 	router.LoadHTMLGlob("templates/*.html")
 	router.Static("/stylesheets", "./stylesheets")
+	router.Static("/javascript", "./javascript")
+	router.Static("/images", "./images")
+	router.StaticFile("favicon.ico", "./images/favicon.ico")
 	router.GET("/", core.GetIndexHtml)
 	router.GET("/users.html", core.GetUsersHtml)
 	srv := &http.Server{
