@@ -9,10 +9,3 @@ type entity struct {
 	Version int8   `json:"version"`
 	Enabled bool   `json:"enabled"`
 }
-
-type user struct {
-	Id        entity `json:"id"`
-	Email     string `json:"email"`
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-}
