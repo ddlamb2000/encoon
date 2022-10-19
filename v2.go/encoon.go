@@ -17,58 +17,85 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func setRouter() *gin.Engine {
+const portHtml = ":8080"
+const portApi = ":8081"
+
+func setAndStartServerHtml() *http.Server {
 	router := gin.Default()
-	router.LoadHTMLGlob("templates/*.html") // see templates https://pkg.go.dev/text/template, https://gohugo.io/templates/
+	// see https://pkg.go.dev/text/template,
+	// see https://gohugo.io/templates/
+	router.LoadHTMLGlob("templates/*.html")
 	router.Static("/stylesheets", "./stylesheets")
 	router.GET("/users.html", core.GetUsersHtml)
-	router.GET("/ping", core.Ping)
-	v1 := router.Group("/v1")
-	{
-		v1.GET("/users", core.GetUsersJson)
-		v1.GET("/users/:uuid", core.GetAlbumByIDJson)
-		v1.POST("/users", core.PostUsers)
+	srv := &http.Server{
+		Addr:         portHtml,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
 	}
-	return router
+	startServer(srv)
+	return srv
 }
 
-func main() {
+func setAndStartServerApi() *http.Server {
+	router := gin.Default()
+	router.GET("/ping", core.PingApi)
+	v1 := router.Group("/v1")
+	{
+		v1.GET("/users", core.GetUsersApi)
+		v1.GET("/users/:uuid", core.GetUserByIDApi)
+		v1.POST("/users", core.PostUsersApi)
+	}
+	srv := &http.Server{
+		Addr:         portApi,
+		Handler:      router,
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+	startServer(srv)
+	return srv
+}
+
+func initWithLog() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	utils.Log("Starting.")
-	core.LoadData()
-	router := setRouter()
-	srv := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
-	}
+}
 
+func startServer(srv *http.Server) {
 	go func() {
-		// service connections
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			utils.LogFatal("Listen: %s\n", err)
+			utils.LogFatal("Listen:", err)
+			return
 		}
 	}()
+	utils.Log("Listen on port " + srv.Addr)
+}
 
-	// Wait for interrupt signal to gracefully shutdown the server with
-	// a timeout of 2 seconds.
-	quit := make(chan os.Signal)
-	// kill (no param) default send syscanll.SIGTERM
-	// kill -2 is syscall.SIGINT
-	// kill -9 is syscall. SIGKILL but can"t be catch, so don't need add it
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	utils.Log("Shuting down...")
-
-	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
-	defer cancel()
+func shutDownServer(srv *http.Server, ctx context.Context) {
+	utils.Log("Shut down server on port " + srv.Addr + ".")
 	if err := srv.Shutdown(ctx); err != nil {
 		utils.LogFatal("Server Shutdown:", err)
+		return
 	}
-	// catching ctx.Done(). timeout of 2 seconds.
-	select {
-	case <-ctx.Done():
-		utils.Log("Timeout of 2 seconds.")
-	}
-	utils.Log("Server exiting")
+	utils.Log("Server on port " + srv.Addr + " stopped.")
+}
+
+func initServers() (*http.Server, *http.Server) {
+	initWithLog()
+	srvHtml := setAndStartServerHtml()
+	srvApi := setAndStartServerApi()
+	core.LoadData()
+	return srvHtml, srvApi
+}
+
+func main() {
+	srvHtml, srvApi := initServers()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	<-quit
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	shutDownServer(srvHtml, ctx)
+	shutDownServer(srvApi, ctx)
 }

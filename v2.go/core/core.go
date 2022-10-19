@@ -13,7 +13,7 @@ func LoadData() {
 	loadUsers()
 }
 
-func Ping(c *gin.Context) {
+func PingApi(c *gin.Context) {
 	uuid := GetNewUUID()
 	c.IndentedJSON(http.StatusOK, gin.H{"message": "ping", "uuid": uuid})
 }
