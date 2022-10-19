@@ -37,6 +37,10 @@ func GetUsersApi(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, maps.Values(users))
 }
 
+func GetIndexHtml(c *gin.Context) {
+	c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη"})
+}
+
 func GetUsersHtml(c *gin.Context) {
 	c.HTML(http.StatusOK, "users.html", gin.H{"title": "Users", "users": users})
 }

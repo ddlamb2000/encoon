@@ -26,6 +26,7 @@ func setAndStartServerHtml() *http.Server {
 	// see https://gohugo.io/templates/
 	router.LoadHTMLGlob("templates/*.html")
 	router.Static("/stylesheets", "./stylesheets")
+	router.GET("/", core.GetIndexHtml)
 	router.GET("/users.html", core.GetUsersHtml)
 	srv := &http.Server{
 		Addr:         portHtml,
