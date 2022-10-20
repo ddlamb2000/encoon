@@ -34,7 +34,7 @@ func addUser(user user) {
 }
 
 func GetUsersApi(c *gin.Context) {
-	c.IndentedJSON(http.StatusOK, maps.Values(users))
+	c.IndentedJSON(http.StatusOK, gin.H{"users": maps.Values(users)})
 }
 
 func GetIndexHtml(c *gin.Context) {

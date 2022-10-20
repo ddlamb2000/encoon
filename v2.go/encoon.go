@@ -17,39 +17,30 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const portHtml = ":8080"
-const portApi = ":8081"
+const port = ":8080"
 
-func setAndStartServerHtml() *http.Server {
+func setAndStartServer() *http.Server {
 	router := gin.Default()
+
 	router.LoadHTMLGlob("templates/*.html")
 	router.Static("/stylesheets", "./stylesheets")
 	router.Static("/javascript", "./javascript")
 	router.Static("/images", "./images")
 	router.StaticFile("favicon.ico", "./images/favicon.ico")
+
 	router.GET("/", core.GetIndexHtml)
 	router.GET("/users.html", core.GetUsersHtml)
-	srv := &http.Server{
-		Addr:         portHtml,
-		Handler:      router,
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-	startServer(srv)
-	return srv
-}
 
-func setAndStartServerApi() *http.Server {
-	router := gin.Default()
 	router.GET("/ping", core.PingApi)
-	v1 := router.Group("/v1")
+	v1 := router.Group("/api/v1")
 	{
 		v1.GET("/users", core.GetUsersApi)
 		v1.GET("/users/:uuid", core.GetUserByIDApi)
 		v1.POST("/users", core.PostUsersApi)
 	}
+
 	srv := &http.Server{
-		Addr:         portApi,
+		Addr:         port,
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -83,21 +74,19 @@ func shutDownServer(srv *http.Server, ctx context.Context) {
 	utils.Log("Server on port " + srv.Addr + " stopped.")
 }
 
-func initServers() (*http.Server, *http.Server) {
+func initServers() *http.Server {
 	initWithLog()
-	srvHtml := setAndStartServerHtml()
-	srvApi := setAndStartServerApi()
+	srv := setAndStartServer()
 	core.LoadData()
-	return srvHtml, srvApi
+	return srv
 }
 
 func main() {
-	srvHtml, srvApi := initServers()
+	srv := initServers()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	shutDownServer(srvHtml, ctx)
-	shutDownServer(srvApi, ctx)
+	shutDownServer(srv, ctx)
 }
