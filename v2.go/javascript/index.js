@@ -78,28 +78,35 @@ class Game extends React.Component {
       status = 'Prochain joueur : ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
-    const { items } = this.state;
-    return (
-      <div className="game">
-        <div className="game-board">
-          <Board
-            squares={current.squares}
-            onClick={(i) => this.handleClick(i)}
-          />
+    const { items, isLoaded, error } = this.state;
+
+    if (error) {
+      return <div>Erreur : {error.message}</div>;
+    } else if (!isLoaded) {
+      return <div>Chargement…</div>;
+    } else {
+      return (
+        <div className="game">
+          <div className="game-board">
+            <Board
+              squares={current.squares}
+              onClick={(i) => this.handleClick(i)}
+            />
+          </div>
+          <div className="game-info">
+            <div>{status}</div>
+            <ol>{moves}</ol>
+            <ul>
+            {items.map(item => (
+              <li key={item.email}>
+                {item.email} {item.firstName}
+              </li>
+            ))}
+          </ul>
+          </div>
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <ol>{moves}</ol>
-          <ul>
-          {items.map(item => (
-            <li key={item.email}>
-              {item.email} {item.firstName}
-            </li>
-          ))}
-        </ul>
-        </div>
-      </div>
-    );
+      );
+    }
   }
 
   handleClick(i) {

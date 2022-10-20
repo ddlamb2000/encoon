@@ -9,7 +9,7 @@ Gin
 Minification of javascripts
     https://gist.github.com/gaearon/42a2ffa41b8319948f9be4076286e1f3
 
-JSX
+React and JSX
     <!-- Don't use this in production: -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
@@ -21,3 +21,9 @@ JSX
 
     You can also use React without JSX, in which case you can remove Babel:
     https://reactjs.org/docs/react-without-jsx.html
+
+Bootstrap
+    https://getbootstrap.com/
+
+Icons
+    https://icons.getbootstrap.com/
