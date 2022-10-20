@@ -10,7 +10,7 @@ import (
 func TestGetNewUUID(t *testing.T) {
 	uuid := GetNewUUID()
 	if uuid == "" {
-		t.Fatalf(`No uuid generated`)
+		t.Fatal(`No uuid generated`)
 	}
 }
 

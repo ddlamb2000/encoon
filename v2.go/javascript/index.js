@@ -78,7 +78,7 @@ class Game extends React.Component {
       status = 'Prochain joueur : ' + (this.state.xIsNext ? 'X' : 'O');
     }
 
-    const { error, isLoaded, items } = this.state;
+    const { items } = this.state;
     return (
       <div className="game">
         <div className="game-board">
@@ -136,9 +136,6 @@ class Game extends React.Component {
             items: result.users
           });
         },
-        // Remarque : il est important de traiter les erreurs ici
-        // au lieu d'utiliser un bloc catch(), pour ne pas passer à la trappe
-        // des exceptions provenant de réels bugs du composant.
         (error) => {
           this.setState({
             isLoaded: true,
