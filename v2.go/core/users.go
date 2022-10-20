@@ -4,6 +4,7 @@
 package core
 
 import (
+	"fmt"
 	"net/http"
 
 	"d.lambert.fr/encoon/utils"
@@ -16,6 +17,10 @@ type user struct {
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
+}
+
+func (u user) String() string {
+	return fmt.Sprintf("%s %s", u.FirstName, u.LastName)
 }
 
 var (

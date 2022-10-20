@@ -4,8 +4,18 @@
 package core
 
 import (
+	"fmt"
 	"testing"
 )
+
+func TestUserAsString(t *testing.T) {
+	user := user{FirstName: "System", LastName: "Encoon"}
+	out := fmt.Sprintf("%s", user)
+	expected := "System Encoon"
+	if out != expected {
+		t.Fatalf(`Incorrect user as string: found %q instead of %q`, out, expected)
+	}
+}
 
 func TestGetNewUUID(t *testing.T) {
 	uuid := GetNewUUID()
