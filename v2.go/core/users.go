@@ -45,6 +45,8 @@ func loadUsers() {
 	(&user{
 		Id:    entity{Uuid: "67b560b9-63ff-4fed-9b64-26c7f86e540c"},
 		Email: "none@encoon.com"}).add()
+
+	utils.Log("Users loaded.")
 }
 
 func (v *user) add() {

@@ -10,7 +10,7 @@ import (
 )
 
 func LoadData() {
-	loadUsers()
+	go loadUsers()
 }
 
 func PingApi(c *gin.Context) {
