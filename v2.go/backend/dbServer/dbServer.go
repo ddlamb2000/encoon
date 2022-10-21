@@ -7,7 +7,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	utils "d.lambert.fr/encoon/backend"
+	"d.lambert.fr/encoon/backend/utils"
 )
 
 const (

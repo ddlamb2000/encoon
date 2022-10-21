@@ -8,8 +8,8 @@ import (
 	"net/http"
 	"time"
 
-	utils "d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/backend/core"
+	"d.lambert.fr/encoon/backend/utils"
 	"github.com/gin-gonic/gin"
 )
 

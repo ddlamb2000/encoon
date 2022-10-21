@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"net/http"
 
-	utils "d.lambert.fr/encoon/backend"
+	"d.lambert.fr/encoon/backend/utils"
 	"github.com/gin-gonic/gin"
 	"golang.org/x/exp/maps"
 )

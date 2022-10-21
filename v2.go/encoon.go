@@ -12,10 +12,10 @@ import (
 
 	_ "github.com/lib/pq"
 
-	utils "d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/backend/core"
 	"d.lambert.fr/encoon/backend/dbServer"
 	"d.lambert.fr/encoon/backend/httpServer"
+	"d.lambert.fr/encoon/backend/utils"
 )
 
 func main() {
