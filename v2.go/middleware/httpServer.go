@@ -43,7 +43,7 @@ func setHtmlRoutes() {
 	router.Static("/stylesheets", "./frontend/stylesheets")
 	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
-	router.StaticFile("favicon.ico", "./images/favicon.ico")
+	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
 
 	router.GET("/", core.GetIndexHtml)
 	router.GET("/users.html", core.GetUsersHtml)
