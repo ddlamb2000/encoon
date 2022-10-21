@@ -23,7 +23,7 @@ var (
 	err error
 )
 
-func SetAndStartDbServer() error {
+func SetAndStartDbServer() {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbName)
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -34,11 +34,13 @@ func SetAndStartDbServer() error {
 		panic(err)
 	}
 	utils.Logf("Database connected on port %d", dbPort)
-	return err
 }
 
 func ShutDownDbServer() {
 	utils.Log("Database disconnection...")
-	db.Close()
+	err = db.Close()
+	if err != nil {
+		panic(err)
+	}
 	utils.Log("Database closed.")
 }

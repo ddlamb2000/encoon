@@ -13,7 +13,8 @@ import (
 )
 
 type user struct {
-	Id        entity `json:"id"`
+	entity
+
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
@@ -31,26 +32,26 @@ func loadUsers() {
 	utils.Log("Loading users.")
 
 	(&user{
-		Id:        entity{Uuid: "c788a76d-4aa6-4073-8904-35a9b99a3289", Uri: "root", Version: 1, Enabled: true},
+		entity:    entity{Uuid: "c788a76d-4aa6-4073-8904-35a9b99a3289", Version: 1, Enabled: true},
 		Email:     "root@encoon.com",
 		FirstName: "Root",
 		LastName:  "Encoon"}).add()
 
 	(&user{
-		Id:        entity{Uuid: "bced42a2-6ddd-4023-ad40-0d46962b7872", Uri: "system", Version: 1, Enabled: true},
+		entity:    entity{Uuid: "bced42a2-6ddd-4023-ad40-0d46962b7872", Version: 1, Enabled: true},
 		Email:     "system@encoon.com",
 		FirstName: "System",
 		LastName:  "Encoon"}).add()
 
 	(&user{
-		Id:    entity{Uuid: "67b560b9-63ff-4fed-9b64-26c7f86e540c"},
-		Email: "none@encoon.com"}).add()
+		entity: entity{Uuid: "67b560b9-63ff-4fed-9b64-26c7f86e540c"},
+		Email:  "none@encoon.com"}).add()
 
 	utils.Log("Users loaded.")
 }
 
 func (v *user) add() {
-	users[v.Id.Uuid] = *v
+	users[v.entity.Uuid] = *v
 }
 
 func GetUsersApi(c *gin.Context) {
@@ -85,6 +86,6 @@ func PostUsersApi(c *gin.Context) {
 	if err := c.BindJSON(&newUser); err != nil {
 		return
 	}
-	users[newUser.Id.Uuid] = newUser
+	users[newUser.entity.Uuid] = newUser
 	c.IndentedJSON(http.StatusCreated, newUser)
 }

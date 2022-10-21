@@ -1,3 +1,4 @@
+
 function Square(props) {
   return (
     <button className="square" onClick={props.onClick}>
@@ -98,8 +99,8 @@ class Game extends React.Component {
             <ol>{moves}</ol>
             <ul>
             {items.map(item => (
-              <li key={item.email}>
-                {item.email} {item.firstName}
+              <li key={item.uuid}>
+                {item.uuid} {item.email} {item.firstName} {item.LastName}
               </li>
             ))}
           </ul>
@@ -173,8 +174,6 @@ function calculateWinner(squares) {
   }
   return null;
 }
-
-// ========================================
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(<Game />);
