@@ -41,14 +41,12 @@ func setHtmlRoutes() {
 	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
-
-	router.GET("/", core.GetIndexHtml)
-	router.GET("/users.html", core.GetUsersHtml)
+	router.GET("/", getHomeHtml)
+	router.GET("/:db", getIndexHtml)
 }
 
 func setApiRoutes() {
-	router.GET("/ping", core.PingApi)
-	v1 := router.Group("/api/v1")
+	v1 := router.Group("/:db/api/v1")
 	{
 		v1.GET("/users", core.GetUsersApi)
 		v1.GET("/users/:uuid", core.GetUserByIDApi)
@@ -57,10 +55,22 @@ func setApiRoutes() {
 }
 
 func ShutDownHttpServer(ctx context.Context) {
-	utils.Log("Stopping http server.")
 	if err := srv.Shutdown(ctx); err != nil {
 		utils.LogFatal("Server Shutdown:", err)
 		return
 	}
 	utils.Log("Http server stopped.")
+}
+
+func getHomeHtml(c *gin.Context) {
+	c.HTML(http.StatusOK, "home.html", gin.H{"title": "εncooη --- no database "})
+}
+
+func getIndexHtml(c *gin.Context) {
+	db := c.Param("db")
+	if utils.DatabaseAllowed(db) {
+		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
+	} else {
+		c.HTML(http.StatusForbidden, "forbidden.html", gin.H{"title": "εncooη"})
+	}
 }

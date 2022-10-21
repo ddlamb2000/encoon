@@ -155,7 +155,7 @@ class Game extends React.Component {
   }
 
   componentDidMount() {
-    fetch("/api/v1/users")
+    fetch(db + "/api/v1/users")
       .then(res => res.json())
       .then(
         (result) => {
@@ -195,5 +195,7 @@ function calculateWinner(squares) {
   return null;
 }
 
-const root = ReactDOM.createRoot(document.getElementById("root"));
+const rootElement = document.getElementById("root")
+const root = ReactDOM.createRoot(rootElement);
+const db = "/" + rootElement.getAttribute("db");
 root.render(<Game />);

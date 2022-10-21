@@ -10,31 +10,32 @@ import (
 	"d.lambert.fr/encoon/backend/utils"
 )
 
-var (
-	db  *sql.DB
-	err error
-)
+var dbs = make(map[string]*sql.DB)
 
 func SetAndStartDbServer() {
-	psqlInfo := fmt.Sprintf(
-		"host=%s port=%d user=%s dbname=%s sslmode=disable",
-		utils.Configuration.Database.Host,
-		utils.Configuration.Database.Port,
-		utils.Configuration.Database.User,
-		utils.Configuration.Database.Name,
-	)
-	db, err = sql.Open("postgres", psqlInfo)
-	if err != nil {
-		panic(err)
+	for _, v := range utils.Configuration.DatabaseNames {
+		psqlInfo := fmt.Sprintf(
+			"host=%s port=%d user=%s dbname=%s sslmode=disable",
+			utils.Configuration.Database.Host,
+			utils.Configuration.Database.Port,
+			utils.Configuration.Database.User,
+			v,
+		)
+		var err error
+		dbs[v], err = sql.Open("postgres", psqlInfo)
+		if err != nil {
+			panic(err)
+		}
+		utils.Log(fmt.Sprintf("Database %s connected.", v))
 	}
-	utils.Log(fmt.Sprintf("Database %s connected.", utils.Configuration.Database.Name))
 }
 
 func ShutDownDbServer() {
-	utils.Log(fmt.Sprintf("Database %s disconnection.", utils.Configuration.Database.Name))
-	err = db.Close()
-	if err != nil {
-		panic(err)
+	for _, v := range utils.Configuration.DatabaseNames {
+		err := dbs[v].Close()
+		if err != nil {
+			panic(err)
+		}
+		utils.Log(fmt.Sprintf("Database %s disconnected.", v))
 	}
-	utils.Log(fmt.Sprintf("Database %s disconnected.", utils.Configuration.Database.Name))
 }

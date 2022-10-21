@@ -3,17 +3,6 @@
 
 package core
 
-import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-)
-
 func LoadData() {
 	go loadUsers()
-}
-
-func PingApi(c *gin.Context) {
-	uuid := GetNewUUID()
-	c.IndentedJSON(http.StatusOK, gin.H{"message": "ping", "uuid": uuid})
 }
