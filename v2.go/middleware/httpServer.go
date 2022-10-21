@@ -13,30 +13,29 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-const httpPort = ":8080"
+const (
+	_httpPort = ":8080"
+)
 
 var (
+	router = gin.Default()
 	srv    *http.Server
-	router *gin.Engine
 )
 
 func SetAndStartHttpServer() {
-	router = gin.Default()
 	setHtmlRoutes()
 	setApiRoutes()
 	srv = &http.Server{
-		Addr:         httpPort,
+		Addr:         _httpPort,
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	go func() {
-		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			utils.LogFatal("Listen:", err)
-			return
-		}
-	}()
-	utils.Log("Listen on port " + httpPort)
+	utils.Log("Listen on port " + _httpPort)
+	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+		utils.LogFatal("Listen:", err)
+		return
+	}
 }
 
 func setHtmlRoutes() {
@@ -61,10 +60,10 @@ func setApiRoutes() {
 }
 
 func ShutDownHttpServer(ctx context.Context) {
-	utils.Log("Shut down server on port " + httpPort + ".")
+	utils.Log("Shut down server on port " + _httpPort + ".")
 	if err := srv.Shutdown(ctx); err != nil {
 		utils.LogFatal("Server Shutdown:", err)
 		return
 	}
-	utils.Log("Server on port " + httpPort + " stopped.")
+	utils.Log("Server on port " + _httpPort + " stopped.")
 }

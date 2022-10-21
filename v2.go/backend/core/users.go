@@ -20,13 +20,13 @@ type user struct {
 	LastName  string `json:"lastName"`
 }
 
-func (u user) String() string {
-	return fmt.Sprintf("%s %s", u.FirstName, u.LastName)
-}
-
 var (
 	users = make(map[string]user)
 )
+
+func (u user) String() string {
+	return fmt.Sprintf("%s %s", u.FirstName, u.LastName)
+}
 
 func loadUsers() {
 	utils.Log("Loading users.")

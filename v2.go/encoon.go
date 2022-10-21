@@ -19,9 +19,9 @@ import (
 
 func main() {
 	utils.InitWithLog()
-	go middleware.SetAndStartHttpServer()
 	go middleware.SetAndStartDbServer()
 	go core.LoadData()
+	go middleware.SetAndStartHttpServer()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit

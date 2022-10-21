@@ -11,11 +11,11 @@ import (
 )
 
 const (
-	dbHost     = "localhost"
-	dbPort     = 5432
-	dbUser     = "david.lambert"
-	dbPassword = ""
-	dbName     = "david.lambert"
+	_dbHost     = "localhost"
+	_dbPort     = 5432
+	_dbUser     = "david.lambert"
+	_dbPassword = ""
+	_dbName     = "david.lambert"
 )
 
 var (
@@ -24,7 +24,7 @@ var (
 )
 
 func SetAndStartDbServer() {
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbName)
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", _dbHost, _dbPort, _dbUser, _dbName)
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
 		panic(err)
@@ -33,7 +33,7 @@ func SetAndStartDbServer() {
 	if err != nil {
 		panic(err)
 	}
-	utils.Logf("Database connected on port %d", dbPort)
+	utils.Logf("Database connected on port %d", _dbPort)
 }
 
 func ShutDownDbServer() {

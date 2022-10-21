@@ -7,7 +7,7 @@ import "testing"
 
 func TestSetAndStartHttpServer(t *testing.T) {
 	SetAndStartHttpServer()
-	if srv.Addr != httpPort {
+	if srv.Addr != _httpPort {
 		t.Fatalf(`Incorrect address %q`, srv.Addr)
 	}
 }
