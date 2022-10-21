@@ -87,24 +87,44 @@ class Game extends React.Component {
       return <div>Chargement…</div>;
     } else {
       return (
-        <div className="game">
-          <div className="game-board">
-            <Board
-              squares={current.squares}
-              onClick={(i) => this.handleClick(i)}
-            />
+        <div>
+          <div className="game">
+            <div className="game-board">
+              <Board
+                squares={current.squares}
+                onClick={(i) => this.handleClick(i)}
+              />
+            </div>
+            <div className="game-info">
+              <div>{status}</div>
+              <ol>{moves}</ol>
+            </div>
           </div>
-          <div className="game-info">
-            <div>{status}</div>
-            <ol>{moves}</ol>
-            <ul>
-            {items.map(item => (
-              <li key={item.uuid}>
-                {item.uuid} {item.email} {item.firstName} {item.LastName}
-              </li>
-            ))}
-          </ul>
-          </div>
+          <table class="table table-hover table-sm">
+              <thead class="table-light">
+                <tr>
+                <th scope="col">Email</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-battery-full" viewBox="0 0 16 16">
+                    <path d="M2 6h10v4H2V6z"/>
+                    <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h10zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z"/>
+                  </svg>
+                </th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map(item => (
+                  <tr key={item.uuid}>
+                    <td>{item.email}</td>
+                    <td>{item.firstName}</td>
+                    <td>{item.lastName}</td>
+                    <th scope="row">{item.uuid}</th>
+                  </tr>
+                ))}
+              </tbody>
+          </table>
         </div>
       );
     }
