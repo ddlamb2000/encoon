@@ -19,7 +19,8 @@ import (
 
 func main() {
 	utils.InitWithLog()
-	middleware.SetAndStartDbServer()
+	utils.LoadConfiguration()
+	go middleware.ConnectDbServers()
 	go middleware.SetAndStartHttpServer()
 	go core.LoadData()
 	quit := make(chan os.Signal)
@@ -28,8 +29,8 @@ func main() {
 	utils.Log("Stopping.")
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	middleware.ShutDownHttpServer(ctx)
-	middleware.ShutDownDbServer()
+	go middleware.ShutDownHttpServer(ctx)
+	go middleware.DisconnectDbServers()
 	select {
 	case <-ctx.Done():
 		utils.Log("Stopped.")

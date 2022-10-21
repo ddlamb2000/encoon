@@ -30,7 +30,7 @@ var (
 	Configuration Config
 )
 
-func loadConfiguration() {
+func LoadConfiguration() {
 	f, err := os.Open("configuration.yml")
 	if err != nil {
 		LogFatal("Load configuration:", err)

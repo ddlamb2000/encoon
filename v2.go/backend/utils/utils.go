@@ -25,5 +25,4 @@ func InitWithLog() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	Log("Starting.")
-	loadConfiguration()
 }

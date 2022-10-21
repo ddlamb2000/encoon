@@ -12,7 +12,7 @@ import (
 
 var dbs = make(map[string]*sql.DB)
 
-func SetAndStartDbServer() {
+func ConnectDbServers() {
 	for _, v := range utils.Configuration.DatabaseNames {
 		psqlInfo := fmt.Sprintf(
 			"host=%s port=%d user=%s dbname=%s sslmode=disable",
@@ -30,7 +30,7 @@ func SetAndStartDbServer() {
 	}
 }
 
-func ShutDownDbServer() {
+func DisconnectDbServers() {
 	for _, v := range utils.Configuration.DatabaseNames {
 		err := dbs[v].Close()
 		if err != nil {
