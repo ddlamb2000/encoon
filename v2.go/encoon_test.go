@@ -7,7 +7,7 @@ import "testing"
 
 func TestSetAndStartServer(t *testing.T) {
 	srv := setAndStartServer()
-	if srv.Addr != port {
+	if srv.Addr != httpPort {
 		t.Fatalf(`Incorrect address %q`, srv.Addr)
 	}
 }
@@ -18,7 +18,7 @@ func TestInitWithLog(t *testing.T) {
 
 func TestInitServers(t *testing.T) {
 	srv := initServers()
-	if srv.Addr != port {
+	if srv.Addr != httpPort {
 		t.Fatalf(`Incorrect address %q`, srv.Addr)
 	}
 }

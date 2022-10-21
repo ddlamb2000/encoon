@@ -5,6 +5,8 @@ package main
 
 import (
 	"context"
+	"database/sql"
+	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -12,12 +14,14 @@ import (
 	"syscall"
 	"time"
 
+	_ "github.com/lib/pq"
+
 	"d.lambert.fr/encoon/core"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
-const port = ":8080"
+const httpPort = ":8080"
 
 func setAndStartServer() *http.Server {
 	router := gin.Default()
@@ -40,7 +44,7 @@ func setAndStartServer() *http.Server {
 	}
 
 	srv := &http.Server{
-		Addr:         port,
+		Addr:         httpPort,
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -81,7 +85,30 @@ func initServers() *http.Server {
 	return srv
 }
 
+const (
+	dbHost     = "localhost"
+	dbPort     = 5432
+	dbUser     = "david.lambert"
+	dbPassword = ""
+	dbName     = "david.lambert"
+)
+
 func main() {
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbName)
+
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		panic(err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		panic(err)
+	}
+
+	defer db.Close()
+
 	srv := initServers()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)

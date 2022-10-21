@@ -13,6 +13,9 @@ import (
 func Log(message string) {
 	fmt.Fprint(gin.DefaultWriter, "[εncooη] ", message, "\n")
 }
+func Logf(format string, v ...any) {
+	fmt.Fprintf(gin.DefaultWriter, "[εncooη] "+format, v)
+}
 
 func LogFatal(v ...any) {
 	fmt.Fprint(gin.DefaultWriter, "[εncooη] ", v, "\n")

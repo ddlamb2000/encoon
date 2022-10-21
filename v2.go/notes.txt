@@ -27,3 +27,7 @@ Bootstrap
 
 Icons
     https://icons.getbootstrap.com/
+
+PostgreSQL
+    https://www.postgresql.org/ 
+    https://postgresapp.com/
