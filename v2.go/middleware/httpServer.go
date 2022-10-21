@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package httpServer
+package middleware
 
 import (
 	"context"
@@ -20,7 +20,7 @@ var (
 	router *gin.Engine
 )
 
-func SetAndStartServer() {
+func SetAndStartHttpServer() {
 	router = gin.Default()
 	setHtmlRoutes()
 	setApiRoutes()
@@ -60,7 +60,7 @@ func setApiRoutes() {
 	}
 }
 
-func ShutDownServer(ctx context.Context) {
+func ShutDownHttpServer(ctx context.Context) {
 	utils.Log("Shut down server on port " + httpPort + ".")
 	if err := srv.Shutdown(ctx); err != nil {
 		utils.LogFatal("Server Shutdown:", err)

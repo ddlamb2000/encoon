@@ -13,15 +13,14 @@ import (
 	_ "github.com/lib/pq"
 
 	"d.lambert.fr/encoon/backend/core"
-	"d.lambert.fr/encoon/backend/dbServer"
-	"d.lambert.fr/encoon/backend/httpServer"
 	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/middleware"
 )
 
 func main() {
 	utils.InitWithLog()
-	httpServer.SetAndStartServer()
-	err := dbServer.SetAndStartServer()
+	middleware.SetAndStartHttpServer()
+	err := middleware.SetAndStartDbServer()
 	if err != nil {
 		panic(err)
 	}
@@ -32,6 +31,6 @@ func main() {
 	utils.Log("Shut down (SIGTERM)...")
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
-	httpServer.ShutDownServer(ctx)
-	dbServer.ShutDownServer()
+	middleware.ShutDownHttpServer(ctx)
+	middleware.ShutDownDbServer()
 }

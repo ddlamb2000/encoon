@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package dbServer
+package middleware
 
 import (
 	"database/sql"
@@ -23,7 +23,7 @@ var (
 	err error
 )
 
-func SetAndStartServer() error {
+func SetAndStartDbServer() error {
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable", dbHost, dbPort, dbUser, dbName)
 	db, err = sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -37,7 +37,7 @@ func SetAndStartServer() error {
 	return err
 }
 
-func ShutDownServer() {
+func ShutDownDbServer() {
 	utils.Log("Database disconnection...")
 	db.Close()
 	utils.Log("Database closed.")

@@ -1,12 +1,12 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package httpServer
+package middleware
 
 import "testing"
 
-func TestSetAndStartServer(t *testing.T) {
-	SetAndStartServer()
+func TestSetAndStartHttpServer(t *testing.T) {
+	SetAndStartHttpServer()
 	if srv.Addr != httpPort {
 		t.Fatalf(`Incorrect address %q`, srv.Addr)
 	}
