@@ -3,11 +3,16 @@
 
 package middleware
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+
+	"d.lambert.fr/encoon/backend/utils"
+)
 
 func TestSetAndStartHttpServer(t *testing.T) {
 	SetAndStartHttpServer()
-	if srv.Addr != _httpPort {
+	if srv.Addr != fmt.Sprintf(":%d", utils.Configuration.HttpServer.Port) {
 		t.Fatalf(`Incorrect address %q`, srv.Addr)
 	}
 }

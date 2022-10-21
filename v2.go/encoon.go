@@ -19,15 +19,19 @@ import (
 
 func main() {
 	utils.InitWithLog()
-	go middleware.SetAndStartDbServer()
-	go core.LoadData()
+	middleware.SetAndStartDbServer()
 	go middleware.SetAndStartHttpServer()
+	go core.LoadData()
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	utils.Log("Shut down (SIGTERM)...")
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	utils.Log("Stopping.")
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	defer middleware.ShutDownHttpServer(ctx)
-	defer middleware.ShutDownDbServer()
+	middleware.ShutDownHttpServer(ctx)
+	middleware.ShutDownDbServer()
+	select {
+	case <-ctx.Done():
+		utils.Log("Stopped.")
+	}
 }

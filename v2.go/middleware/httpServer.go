@@ -5,16 +5,13 @@ package middleware
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"time"
 
 	"d.lambert.fr/encoon/backend/core"
 	"d.lambert.fr/encoon/backend/utils"
 	"github.com/gin-gonic/gin"
-)
-
-const (
-	_httpPort = ":8080"
 )
 
 var (
@@ -26,12 +23,12 @@ func SetAndStartHttpServer() {
 	setHtmlRoutes()
 	setApiRoutes()
 	srv = &http.Server{
-		Addr:         _httpPort,
+		Addr:         fmt.Sprintf(":%d", utils.Configuration.HttpServer.Port),
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	utils.Log("Listen on port " + _httpPort)
+	utils.Log("Listening http.")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		utils.LogFatal("Listen:", err)
 		return
@@ -60,10 +57,10 @@ func setApiRoutes() {
 }
 
 func ShutDownHttpServer(ctx context.Context) {
-	utils.Log("Shut down server on port " + _httpPort + ".")
+	utils.Log("Stopping http server.")
 	if err := srv.Shutdown(ctx); err != nil {
 		utils.LogFatal("Server Shutdown:", err)
 		return
 	}
-	utils.Log("Server on port " + _httpPort + " stopped.")
+	utils.Log("Http server stopped.")
 }

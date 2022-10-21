@@ -1,0 +1,15 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2022
+
+# Http Server configurations
+httpServer:
+    host: "localhost"
+    port: 8080
+
+# Database credentials
+database:
+    host: "localhost"
+    port: 5432
+    name: "david.lambert"
+    user: "david.lambert"
+    pass: ""
