@@ -3,7 +3,6 @@
 	{{ template "head.html" . }}
 	<body>
 		{{ template "nav.html" . }}
-		<h2>Users</h2>
 		<div id="root" db="{{ .db }}" uuid="{{ .uuid }}"></div>
 		{{ template "scripts.html" }}
 		<script type="text/babel" src="/javascript/users.js"></script>

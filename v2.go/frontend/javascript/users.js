@@ -20,12 +20,9 @@ class Users extends React.Component {
             if(uuid !== "") {
                 return (
                     <div>
+                        <h2>User</h2>
                         <table className="table table-hover table-sm">
                             <thead className="table-light">
-                                <tr>
-                                    <th scope="col">Filed</th>
-                                    <th scope="col">Value</th>
-                                </tr>
                             </thead>
                             <tbody>
                                 <tr><td>Uuid</td><td>{items.uuid}</td></tr>
@@ -40,6 +37,7 @@ class Users extends React.Component {
             else {
                 return (
                     <div>
+                        <h2>Users</h2>
                         <table className="table table-hover table-sm">
                             <thead className="table-light">
                                 <tr>
