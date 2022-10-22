@@ -18,7 +18,7 @@ func GetUserByIDApi(c *gin.Context) {
 	uuid := c.Param("uuid")
 	user, exists := GetUserByID(uuid)
 	if exists {
-		c.IndentedJSON(http.StatusOK, user)
+		c.IndentedJSON(http.StatusOK, gin.H{"user": user})
 	} else {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"message": "user not found"})
 	}

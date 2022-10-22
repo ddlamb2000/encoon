@@ -42,6 +42,8 @@ func setHtmlRoutes() {
 	router.Static("/images", "./frontend/images")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
 	router.GET("/", getHomeHtml)
+	router.GET("/:db/users", getUsersHtml)
+	router.GET("/:db/user/:uuid", getUserHtml)
 	router.GET("/:db", getIndexHtml)
 }
 
@@ -49,7 +51,7 @@ func setApiRoutes() {
 	v1 := router.Group("/:db/api/v1")
 	{
 		v1.GET("/users", core.GetUsersApi)
-		v1.GET("/users/:uuid", core.GetUserByIDApi)
+		v1.GET("/user/:uuid", core.GetUserByIDApi)
 		v1.POST("/users", core.PostUsersApi)
 	}
 }
@@ -71,6 +73,25 @@ func getIndexHtml(c *gin.Context) {
 	if utils.DatabaseAllowed(db) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
 	} else {
-		c.HTML(http.StatusForbidden, "forbidden.html", gin.H{"title": "εncooη"})
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+	}
+}
+
+func getUsersHtml(c *gin.Context) {
+	db := c.Param("db")
+	if utils.DatabaseAllowed(db) {
+		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db})
+	} else {
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+	}
+}
+
+func getUserHtml(c *gin.Context) {
+	db := c.Param("db")
+	uuid := c.Param("uuid")
+	if utils.DatabaseAllowed(db) {
+		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db, "uuid": uuid})
+	} else {
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
 	}
 }
