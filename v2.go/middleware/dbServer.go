@@ -4,8 +4,10 @@
 package middleware
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	"d.lambert.fr/encoon/backend/utils"
 )
@@ -21,12 +23,26 @@ func ConnectDbServers() {
 			utils.Configuration.Database.User,
 			v,
 		)
-		var err error
-		dbs[v], err = sql.Open("postgres", psqlInfo)
+		db, err := sql.Open("postgres", psqlInfo)
 		if err != nil {
-			panic(err)
+			utils.LogFatal("Database:", err)
 		}
+
+		ctx, stop := context.WithCancel(context.Background())
+		defer stop()
+
+		ping(ctx, db)
+		dbs[v] = db
 		utils.Log(fmt.Sprintf("Database %s connected.", v))
+	}
+}
+
+func ping(ctx context.Context, db *sql.DB) {
+	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	defer cancel()
+
+	if err := db.PingContext(ctx); err != nil {
+		utils.LogFatal(fmt.Sprintf("Unable to connect to database: %v.", err))
 	}
 }
 

@@ -19,20 +19,26 @@ import (
 
 func main() {
 	utils.InitWithLog()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	done := make(chan bool, 1)
+
+	go func() {
+		<-quit
+		utils.Log("Stopping.")
+		done <- true
+	}()
+
 	utils.LoadConfiguration()
 	go middleware.ConnectDbServers()
 	go middleware.SetAndStartHttpServer()
 	go core.LoadData()
-	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
-	<-quit
-	utils.Log("Stopping.")
+
+	<-done
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
-	go middleware.ShutDownHttpServer(ctx)
-	go middleware.DisconnectDbServers()
-	select {
-	case <-ctx.Done():
-		utils.Log("Stopped.")
-	}
+	middleware.ShutDownHttpServer(ctx)
+	middleware.DisconnectDbServers()
+	utils.Log("Stopped.")
 }
