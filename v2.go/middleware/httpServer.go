@@ -44,6 +44,7 @@ func setHtmlRoutes() {
 	router.GET("/", getHomeHtml)
 	router.GET("/:db/users", getUsersHtml)
 	router.GET("/:db/user/:uuid", getUserHtml)
+	router.GET("/:db/login", getLoginHtml)
 	router.GET("/:db", getIndexHtml)
 }
 
@@ -72,6 +73,15 @@ func getIndexHtml(c *gin.Context) {
 	db := c.Param("db")
 	if utils.IsDatabaseEnabled(db) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
+	} else {
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+	}
+}
+
+func getLoginHtml(c *gin.Context) {
+	db := c.Param("db")
+	if utils.IsDatabaseEnabled(db) {
+		c.HTML(http.StatusOK, "login.html", gin.H{"title": "εncooη", "db": db})
 	} else {
 		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
 	}
