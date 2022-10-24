@@ -40,7 +40,7 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) {
 		if pinged := ping(ctx, db); pinged {
 			dbs[dbName] = db
 			utils.Log("Database %q connected.", dbName)
-			migrateDb(ctx, db)
+			migrateDb(ctx, db, dbName)
 		}
 	}
 }

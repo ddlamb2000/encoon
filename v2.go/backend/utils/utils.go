@@ -16,7 +16,7 @@ func Log(format string, a ...any) {
 }
 
 func LogError(format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, "[εncooη][ERROR] "+format+"\n", a...)
+	fmt.Fprintf(gin.DefaultWriter, "[εncooη] [ERROR] "+format+"\n", a...)
 }
 
 func InitWithLog() {

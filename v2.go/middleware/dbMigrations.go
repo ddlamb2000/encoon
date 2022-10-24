@@ -10,31 +10,48 @@ import (
 	"d.lambert.fr/encoon/backend/utils"
 )
 
-func migrateDb(ctx context.Context, db *sql.DB) {
-	var count int
-	if err := db.QueryRow("select 1 from migrations").Scan(&count); err != nil {
+func migrateDb(ctx context.Context, db *sql.DB, dbName string) {
+	var latestMigration int
+	if err := db.QueryRow("select 1 from migrations").Scan(&latestMigration); err != nil {
 		if err == sql.ErrNoRows {
-			utils.Log("Migration table exists.")
+			utils.Log("[%q] Migration table exists.", dbName)
 		} else {
-			utils.Log("Migrations table doesn't exist: %v.", err)
-			_, err := db.Exec("CREATE TABLE migrations (migration integer, command text)")
+			utils.Log("[%q] Migrations table doesn't exist: %v.", dbName, err)
+			command := "CREATE TABLE migrations (migration integer, command text)"
+			_, err := db.Exec(command)
 			if err != nil {
-				utils.LogError("Create table migrations: %v", err)
+				utils.LogError("[%q] Create table migrations: %v", dbName, err)
 				return
 			}
-			utils.Log("Migration table created.")
-			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES (1, 'Migrations table initialized')")
+			utils.Log("[%q] Migration table created.", dbName)
+			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", 1, command)
 			if err != nil {
-				utils.LogError("Insert into migrations: %v", err)
-				return
+				utils.LogError("[%q] Insert into migrations: %v", dbName, err)
 			}
 		}
 	}
 
-	if err := db.QueryRow("select max(migration) from migrations").Scan(&count); err != nil {
-		utils.LogError("Can't access migrations table %v.", err)
+	if err := db.QueryRow("select max(migration) from migrations").Scan(&latestMigration); err != nil {
+		utils.LogError("[%q] Can't access migrations table %v.", dbName, err)
 		return
 	} else {
-		utils.Log("Latest migration: %v.", count)
+		utils.Log("[%q] Latest migration: %v.", dbName, latestMigration)
+		migrageDbCommand(ctx, db, latestMigration, 2, "CREATE TABLE users (uuid text, version integer, enabled boolean, email text, firstName text, lastName text)", dbName)
+	}
+}
+
+func migrageDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migration int, command string, dbName string) {
+	if migration > latestMigration {
+		_, err := db.Exec(command)
+		if err != nil {
+			utils.LogError("[%q] Command %q command: %v", dbName, command, err)
+		} else {
+			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", migration, command)
+			if err != nil {
+				utils.LogError("[%q] Insert into migrations: %v", dbName, err)
+			} else {
+				utils.Log("[%q] Latest migration: %v.", dbName, migration)
+			}
+		}
 	}
 }
