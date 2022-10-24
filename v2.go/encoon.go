@@ -31,7 +31,7 @@ func main() {
 	}()
 
 	utils.LoadConfiguration()
-	go middleware.ConnectDbServers()
+	go middleware.ConnectDbServers(utils.Configuration.DatabaseNames)
 	go middleware.SetAndStartHttpServer()
 	go core.LoadData()
 
@@ -39,6 +39,6 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
 	middleware.ShutDownHttpServer(ctx)
-	middleware.DisconnectDbServers()
+	middleware.DisconnectDbServers(utils.Configuration.DatabaseNames)
 	utils.Log("Stopped.")
 }

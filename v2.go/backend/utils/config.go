@@ -33,14 +33,14 @@ var (
 func LoadConfiguration() {
 	f, err := os.Open("configuration.yml")
 	if err != nil {
-		LogFatal("Load configuration:", err)
+		LogError("Load configuration:", err)
 	}
 	defer f.Close()
 
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&Configuration)
 	if err != nil {
-		LogFatal("Error parsing configuration:", err)
+		LogError("Error parsing configuration:", err)
 	}
 
 	Configuration.DatabaseNames = strings.Split(Configuration.Database.Names, ",")

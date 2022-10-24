@@ -6,19 +6,17 @@ package utils
 import (
 	"fmt"
 	"io"
-	"log"
 	"os"
 
 	"github.com/gin-gonic/gin"
 )
 
-func Log(message string) {
-	fmt.Fprint(gin.DefaultWriter, "[εncooη] "+message+"\n")
+func Log(format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, "[εncooη] "+format+"\n", a...)
 }
 
-func LogFatal(v ...any) {
-	fmt.Fprint(gin.DefaultWriter, "[εncooη] ", v, "\n")
-	log.Fatal("[εncooη]", v)
+func LogError(format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, "[εncooη][ERROR] "+format+"\n", a...)
 }
 
 func InitWithLog() {

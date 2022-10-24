@@ -30,7 +30,7 @@ func SetAndStartHttpServer() {
 	}
 	utils.Log("Listening http.")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		utils.LogFatal("Listen:", err)
+		utils.LogError("Error on http listening: %v.", err)
 		return
 	}
 }
@@ -58,7 +58,7 @@ func setApiRoutes() {
 
 func ShutDownHttpServer(ctx context.Context) {
 	if err := srv.Shutdown(ctx); err != nil {
-		utils.LogFatal("Server Shutdown:", err)
+		utils.LogError("Erorr during server shutdown: %v.", err)
 		return
 	}
 	utils.Log("Http server stopped.")
