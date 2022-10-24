@@ -32,3 +32,6 @@ Icons
 PostgreSQL
     https://www.postgresql.org/ 
     https://postgresapp.com/
+
+Authentication
+    https://blog.logrocket.com/jwt-authentication-go/

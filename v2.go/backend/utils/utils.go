@@ -24,3 +24,15 @@ func InitWithLog() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	Log("Starting.")
 }
+
+func isNotEmptyAndHasAnyInCommon(strs []string, str string) bool {
+	if str == "" {
+		return false
+	}
+	for _, v := range strs {
+		if v == str {
+			return true
+		}
+	}
+	return false
+}

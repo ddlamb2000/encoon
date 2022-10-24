@@ -70,7 +70,7 @@ func getHomeHtml(c *gin.Context) {
 
 func getIndexHtml(c *gin.Context) {
 	db := c.Param("db")
-	if utils.DatabaseAllowed(db) {
+	if utils.IsDatabaseEnabled(db) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
 	} else {
 		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
@@ -79,7 +79,7 @@ func getIndexHtml(c *gin.Context) {
 
 func getUsersHtml(c *gin.Context) {
 	db := c.Param("db")
-	if utils.DatabaseAllowed(db) {
+	if utils.IsDatabaseEnabled(db) {
 		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db})
 	} else {
 		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
@@ -89,7 +89,7 @@ func getUsersHtml(c *gin.Context) {
 func getUserHtml(c *gin.Context) {
 	db := c.Param("db")
 	uuid := c.Param("uuid")
-	if utils.DatabaseAllowed(db) {
+	if utils.IsDatabaseEnabled(db) {
 		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db, "uuid": uuid})
 	} else {
 		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})

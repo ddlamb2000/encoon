@@ -5,7 +5,7 @@ package utils
 
 import (
 	"os"
-	"strings"
+	"regexp"
 
 	"gopkg.in/yaml.v2"
 )
@@ -43,20 +43,9 @@ func LoadConfiguration() {
 		LogError("Error parsing configuration:", err)
 	}
 
-	Configuration.DatabaseNames = strings.Split(Configuration.Database.Names, ",")
-	for i, v := range Configuration.DatabaseNames {
-		Configuration.DatabaseNames[i] = strings.Trim(v, " ")
-	}
+	Configuration.DatabaseNames = regexp.MustCompile(`\s*,\s*`).Split(Configuration.Database.Names, -1)
 }
 
-func DatabaseAllowed(str string) bool {
-	if str == "" {
-		return false
-	}
-	for _, v := range Configuration.DatabaseNames {
-		if v == str {
-			return true
-		}
-	}
-	return false
+func IsDatabaseEnabled(str string) bool {
+	return isNotEmptyAndHasAnyInCommon(Configuration.DatabaseNames, str)
 }
