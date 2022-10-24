@@ -10,23 +10,27 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/backend/utils"
+	"golang.org/x/exp/maps"
 )
 
-var dbs = make(map[string]*sql.DB)
+var (
+	dbs = make(map[string]*sql.DB)
+)
 
-func ConnectDbServers(dbNames []string) {
-	for _, dbName := range dbNames {
-		connectDbServer(dbName)
+func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
+	for _, conf := range maps.Values(dbConfigurations) {
+		connectDbServer(conf)
 	}
 }
 
-func connectDbServer(dbName string) {
+func connectDbServer(dbConfiguration *utils.DatabaseConfig) {
+	dbName := dbConfiguration.Database.Name
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=disable",
-		utils.Configuration.Database.Host,
-		utils.Configuration.Database.Port,
-		utils.Configuration.Database.User,
-		dbName,
+		dbConfiguration.Database.Host,
+		dbConfiguration.Database.Port,
+		dbConfiguration.Database.User,
+		dbConfiguration.Database.Name,
 	)
 	if db, err := sql.Open("postgres", psqlInfo); err != nil {
 		utils.LogError("Can't connect to database: %v", err)
@@ -50,16 +54,15 @@ func ping(ctx context.Context, db *sql.DB) bool {
 	return true
 }
 
-func DisconnectDbServers(dbNames []string) {
-	for _, dbName := range dbNames {
-		disconnectDbServer(dbName)
+func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
+	for _, conf := range maps.Values(dbConfigurations) {
+		disconnectDbServer(conf)
 	}
 }
 
-func disconnectDbServer(dbName string) {
-	if dbs[dbName] == nil {
-		utils.Log("Skip database %q for disconnection.", dbName)
-	} else {
+func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) {
+	dbName := dbConfiguration.Database.Name
+	if dbs[dbName] != nil {
 		err := dbs[dbName].Close()
 		if err != nil {
 			utils.LogError("Unable to disconnect to database: %v.", err)
