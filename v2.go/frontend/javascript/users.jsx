@@ -58,7 +58,7 @@ class Users extends React.Component {
                                         <td>{item.email}</td>
                                         <td>{item.firstName}</td>
                                         <td>{item.lastName}</td>
-                                        <th scope="row"><a href={`/${db}/user/${item.uuid}`}>{item.uuid}</a></th>
+                                        <th scope="row"><a href={`/${dbName}/user/${item.uuid}`}>{item.uuid}</a></th>
                                     </tr>
                                 ))}
                             </tbody>
@@ -71,7 +71,7 @@ class Users extends React.Component {
 
     componentDidMount() {
         if(uuid !== "") {
-            fetch(`/${db}/api/v1/user/${uuid}`)
+            fetch(`/${dbName}/api/v1/user/${uuid}`)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -89,7 +89,7 @@ class Users extends React.Component {
             )
         }
         else {
-            fetch(`/${db}/api/v1/users`)
+            fetch(`/${dbName}/api/v1/users`)
             .then(res => res.json())
             .then(
                 (result) => {
@@ -110,8 +110,10 @@ class Users extends React.Component {
 }
 
 
-const rootElement = document.getElementById("root")
+const bodyRootElement = document.getElementById("bodyRoot");
+const dbName = bodyRootElement.getAttribute("dbName");
+const appName = bodyRootElement.getAttribute("appName");
+const uuid = bodyRootElement.getAttribute("uuid");
+const rootElement = document.getElementById("root");
 const root = ReactDOM.createRoot(rootElement);
-const db = rootElement.getAttribute("db");
-const uuid = rootElement.getAttribute("uuid");
 root.render(<Users />);

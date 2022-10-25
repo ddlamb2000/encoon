@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 	{{ template "head.html" . }}
-	<body>
+	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}">
 		{{ template "nav.html" . }}
 		<div id="root" db="{{ .db }}"></div>
 		{{ template "scripts.html" }}
-		<script type="text/babel" src="/javascript/index.js"></script>
+		<script type="text/babel" src="/javascript/index.jsx"></script>
 	</body>
 </html>

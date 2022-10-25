@@ -43,18 +43,17 @@ func setHtmlRoutes() {
 	router.Static("/images", "./frontend/images")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
 	router.GET("/", getIndexHtml)
-	router.GET("/:db/users", getUsersHtml)
-	router.GET("/:db/user/:uuid", getUserHtml)
-	router.GET("/:db/login", getLoginHtml)
-	router.GET("/:db", getIndexHtml)
+	router.GET("/:dbName", getIndexHtml)
+	router.GET("/:dbName/users", getUsersHtml)
+	router.GET("/:dbName/user/:uuid", getUserHtml)
 }
 
 func setApiRoutes() {
-	v1 := router.Group("/:db/api/v1")
+	v1 := router.Group("/:dbName/api/v1")
 	{
 		v1.GET("/users", core.GetUsersApi)
-		v1.GET("/user/:uuid", core.GetUserByIDApi)
 		v1.POST("/users", core.PostUsersApi)
+		v1.GET("/user/:uuid", core.GetUserByIDApi)
 	}
 }
 
@@ -67,43 +66,34 @@ func ShutDownHttpServer(ctx context.Context) {
 }
 
 func getIndexHtml(c *gin.Context) {
-	db := c.Param("db")
-	if db == "" {
-		c.HTML(http.StatusOK, "home.html", gin.H{"title": "εncooη --- no database "})
-	} else if utils.IsDatabaseEnabled(db) {
-		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
+	dbName := c.Param("dbName")
+	if dbName == "" {
+		c.HTML(http.StatusOK, "home.html", gin.H{"title": "εncooη"})
+	} else if utils.IsDatabaseEnabled(dbName) {
+		c.HTML(http.StatusOK, "index.html", gin.H{"appName": "εncooη", "dbName": dbName})
 	} else {
-		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
-	}
-}
-
-func getLoginHtml(c *gin.Context) {
-	db := c.Param("db")
-	if utils.IsDatabaseEnabled(db) {
-		c.HTML(http.StatusOK, "login.html", gin.H{"title": "εncooη", "db": db})
-	} else {
-		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"appName": "εncooη"})
 	}
 }
 
 func getUsersHtml(c *gin.Context) {
-	db := c.Param("db")
-	if utils.IsDatabaseEnabled(db) {
-		token, _ := generateJWT(db)
+	dbName := c.Param("dbName")
+	if utils.IsDatabaseEnabled(dbName) {
+		token, _ := generateJWT(dbName)
 		c.Header("Token", token)
-		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db})
+		c.HTML(http.StatusOK, "users.html", gin.H{"appName": "εncooη", "dbName": dbName})
 	} else {
-		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"appName": "εncooη"})
 	}
 }
 
 func getUserHtml(c *gin.Context) {
-	db := c.Param("db")
+	dbName := c.Param("dbName")
 	uuid := c.Param("uuid")
-	if utils.IsDatabaseEnabled(db) {
-		c.HTML(http.StatusOK, "users.html", gin.H{"title": "εncooη", "db": db, "uuid": uuid})
+	if utils.IsDatabaseEnabled(dbName) {
+		c.HTML(http.StatusOK, "users.html", gin.H{"appName": "εncooη", "dbName": dbName, "uuid": uuid})
 	} else {
-		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
+		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"appName": "εncooη"})
 	}
 }
 

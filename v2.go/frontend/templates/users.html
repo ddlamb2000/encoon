@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 	{{ template "head.html" . }}
-	<body>
+	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}" uuid="{{ .uuid }}">
 		{{ template "nav.html" . }}
-		<div id="root" db="{{ .db }}" uuid="{{ .uuid }}"></div>
+		<div id="root"></div>
 		{{ template "scripts.html" }}
-		<script type="text/babel" src="/javascript/users.js"></script>
+		<script type="text/babel" src="/javascript/users.jsx"></script>
 	</body>
 </html>
