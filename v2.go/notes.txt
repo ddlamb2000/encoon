@@ -35,3 +35,4 @@ PostgreSQL
 
 Authentication
     https://blog.logrocket.com/jwt-authentication-go/
+    https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/

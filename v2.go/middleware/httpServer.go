@@ -42,7 +42,7 @@ func setHtmlRoutes() {
 	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
-	router.GET("/", getHomeHtml)
+	router.GET("/", getIndexHtml)
 	router.GET("/:db/users", getUsersHtml)
 	router.GET("/:db/user/:uuid", getUserHtml)
 	router.GET("/:db/login", getLoginHtml)
@@ -66,13 +66,11 @@ func ShutDownHttpServer(ctx context.Context) {
 	utils.Log("Http server stopped.")
 }
 
-func getHomeHtml(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", gin.H{"title": "εncooη --- no database "})
-}
-
 func getIndexHtml(c *gin.Context) {
 	db := c.Param("db")
-	if utils.IsDatabaseEnabled(db) {
+	if db == "" {
+		c.HTML(http.StatusOK, "home.html", gin.H{"title": "εncooη --- no database "})
+	} else if utils.IsDatabaseEnabled(db) {
 		c.HTML(http.StatusOK, "index.html", gin.H{"title": "εncooη", "db": db})
 	} else {
 		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"title": "εncooη"})
