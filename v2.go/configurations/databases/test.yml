@@ -7,3 +7,4 @@ database:
     port: 5432
     name: "test"
     user: "david.lambert"
+    jwtsecret: "supersecretkeyfortesttenantnobodycanread"

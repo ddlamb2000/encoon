@@ -7,3 +7,4 @@ database:
     port: 5432
     name: "sandbox"
     user: "david.lambert"
+    jwtsecret: "supersecretkeyfortesttenantnobodycanread"

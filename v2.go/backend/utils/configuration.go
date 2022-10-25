@@ -20,10 +20,11 @@ type Config struct {
 
 type DatabaseConfig struct {
 	Database struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
-		Name string `yaml:"name"`
-		User string `yaml:"user"`
+		Host      string `yaml:"host"`
+		Port      int    `yaml:"port"`
+		Name      string `yaml:"name"`
+		User      string `yaml:"user"`
+		JwtSecret string `yaml:"jwtsecret"`
 	} `yaml:"database"`
 }
 
@@ -85,6 +86,10 @@ func loadDatabaseConfiguration(fileName string) {
 	}
 }
 
-func IsDatabaseEnabled(str string) bool {
-	return str != "" && DatabaseConfigurations[str] != nil
+func IsDatabaseEnabled(dbName string) bool {
+	return dbName != "" && DatabaseConfigurations[dbName] != nil
+}
+
+func GetJWTSecret(dbName string) []byte {
+	return []byte(DatabaseConfigurations[dbName].Database.JwtSecret)
 }
