@@ -77,7 +77,7 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		utils.Log("Got authorization: %v.", header)
+		utils.Log("Got authorization.")
 		var tokenString = header[7:]
 		utils.Log("Got token string: %v.", tokenString)
 
@@ -86,13 +86,12 @@ func authMiddleware() gin.HandlerFunc {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 			}
-			utils.Log("Token validated? %v.", token.Valid)
 			return []byte(jwtSecret), nil
 		})
 
 		utils.Log("Extracting claims.")
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			fmt.Println(claims["user"], claims["timestamp"])
+			utils.Log("User: %v, timestamp: %v, expiration: %v.", claims["user"], claims["timestamp"], claims["expiration"])
 		} else {
 			utils.LogError("Invalid request: %v.", err)
 			c.Abort()

@@ -1,4 +1,10 @@
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.setup();
+    this.setState();
+  }
+
   setup() {
     $.ajaxSetup({
       beforeSend: (r) => {
@@ -19,11 +25,6 @@ class App extends React.Component {
     } else {
       this.loggedIn = false;
     }
-  }
-
-  componentWillMount() {
-    this.setup();
-    this.setState();
   }
 
   render() {
