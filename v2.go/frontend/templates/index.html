@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	{{ template "head.html" . }}
-	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}">
+	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}" uuid="{{ .uuid }}">
 		{{ template "nav.html" . }}
-		<div id="root" db="{{ .db }}"></div>
+		<div id="application"></div>
 		{{ template "scripts.html" }}
 		<script type="text/babel" src="/javascript/index.jsx"></script>
 	</body>

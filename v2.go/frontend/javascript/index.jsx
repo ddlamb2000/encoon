@@ -1,8 +1,4 @@
-const AUTH_ID="admin"
-const AUTH_PASSWORD="14123123"
-
 class App extends React.Component {
-
   setup() {
     $.ajaxSetup({
       beforeSend: (r) => {
@@ -34,15 +30,16 @@ class App extends React.Component {
     if (this.loggedIn) {
       return <LoggedIn />;
     }
-    return <Home />;
+    return <NotLogged />;
   }
 }
 
-class Home extends React.Component {
+class NotLogged extends React.Component {
   constructor(props) {
     super(props);
     this.authenticate = this.authenticate.bind(this);
   }
+
   authenticate() {
     // this.WebAuth = new auth0.WebAuth({
     //   domain: AUTH0_DOMAIN,
@@ -55,14 +52,13 @@ class Home extends React.Component {
     // this.WebAuth.authorize();
 
     this.serverRequest();
-
   }
 
   serverRequest() {
     var id = document.getElementById("id").value;
     var password = document.getElementById("password").value;
 
-    fetch('/api/auth/', {
+    fetch(`/${dbName}/api/v1/authentication`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -125,11 +121,76 @@ class LoggedIn extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      jokes: []
+        error: null,
+        isLoaded: false,
+        items: [],
     };
+  }
 
-    this.serverRequest = this.serverRequest.bind(this);
-    this.logout = this.logout.bind(this);
+  render() {
+    const { items, isLoaded, error } = this.state;
+
+    if (error) {
+        return <div>Erreur : {error.message}</div>;
+    } else if (!isLoaded) {
+        return <div>Chargement…</div>;
+    } else {
+        if(uuid !== "") {
+            return (
+                <div>
+                    <h2>User</h2>
+                    <table className="table table-hover table-sm">
+                        <thead className="table-light">
+                        </thead>
+                        <tbody>
+                            <tr><td>Uuid</td><td>{items.uuid}</td></tr>
+                            <tr><td>Email</td><td>{items.email}</td></tr>
+                            <tr><td>First Name</td><td>{items.firstName}</td></tr>
+                            <tr><td>Last Name</td><td>{items.lastName}</td></tr>
+                        </tbody>
+                    </table>
+                    <span className="pull-right">
+                      <a onClick={this.logout}>Log out</a>
+                    </span>
+                </div>
+            );
+        }
+        else {
+            return (
+                <div>
+                    <h2>Users</h2>
+                    <table className="table table-hover table-sm">
+                        <thead className="table-light">
+                            <tr>
+                                <th scope="col">Email</th>
+                                <th scope="col">First Name</th>
+                                <th scope="col">Last Name</th>
+                                <th scope="col">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-battery-full" viewBox="0 0 16 16">
+                                        <path d="M2 6h10v4H2V6z"/>
+                                        <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h10zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z"/>
+                                    </svg>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {items.map(item => (
+                                <tr key={item.uuid}>
+                                    <td>{item.email}</td>
+                                    <td>{item.firstName}</td>
+                                    <td>{item.lastName}</td>
+                                    <th scope="row"><a href={`/${dbName}/user/${item.uuid}`}>{item.uuid}</a></th>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <span className="pull-right">
+                      <a onClick={this.logout}>Log out</a>
+                    </span>
+                </div>
+            );
+        }
+    }
   }
 
   logout() {
@@ -137,90 +198,62 @@ class LoggedIn extends React.Component {
     location.reload();
   }
 
-  serverRequest() {
-    $.get("http://localhost:3000/api/jokes", res => {
-      this.setState({
-        jokes: res
-      });
-    });
-  }
-
   componentDidMount() {
-    this.serverRequest();
-  }
-
-  render() {
-    return (
-      <div className="container">
-        <br />
-        <span className="pull-right">
-          <a onClick={this.logout}>Log out</a>
-        </span>
-        <h2>Jokeish</h2>
-        <p>Let's feed you with some funny Jokes!!!</p>
-        <div className="row">
-          <div className="container">
-            {this.state.jokes.map(function(joke, i) {
-              return <Joke key={i} joke={joke} />;
-            })}
-          </div>
-        </div>
-      </div>
-    );
-  }
-}
-
-class Joke extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      liked: "",
-      jokes: []
-    };
-    this.like = this.like.bind(this);
-    this.serverRequest = this.serverRequest.bind(this);
-  }
-
-  like() {
-    let joke = this.props.joke;
-    this.serverRequest(joke);
-  }
-  serverRequest(joke) {
-    $.post(
-      "http://localhost:3000/api/jokes/like/" + joke.id,
-      { like: 1 },
-      res => {
-        console.log("res... ", res);
-        this.setState({ liked: "Liked!", jokes: res });
-        this.props.jokes = res;
-      }
-    );
-  }
-
-  render() {
-    return (
-      <div className="col-xs-4">
-        <div className="panel panel-default">
-          <div className="panel-heading">
-            #{this.props.joke.id}{" "}
-            <span className="pull-right">{this.state.liked}</span>
-          </div>
-          <div className="panel-body joke-hld">{this.props.joke.joke}</div>
-          <div className="panel-footer">
-            {this.props.joke.likes} Likes &nbsp;
-            <a onClick={this.like} className="btn btn-default">
-              <span className="glyphicon glyphicon-thumbs-up" />
-            </a>
-          </div>
-        </div>
-      </div>
-    );
+    if(uuid !== "") {
+        fetch(`/${dbName}/api/v1/user/${uuid}`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+          }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.setState({
+                    isLoaded: true,
+                    items: result.user
+                });
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error
+                });
+            }
+        )
+    }
+    else {
+        fetch(`/${dbName}/api/v1/users`, {
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+          }
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.setState({
+                    isLoaded: true,
+                    items: result.users
+                });
+            },
+            (error) => {
+                this.setState({
+                    isLoaded: true,
+                    error
+                });
+            }
+        )
+    }
   }
 }
 
 const bodyRootElement = document.getElementById("bodyRoot");
 const dbName = bodyRootElement.getAttribute("dbName");
 const appName = bodyRootElement.getAttribute("appName");
-const rootElement = document.getElementById("root");
+const uuid = bodyRootElement.getAttribute("uuid");
+const rootElement = document.getElementById("application");
 const root = ReactDOM.createRoot(rootElement);
 root.render(<App />);
