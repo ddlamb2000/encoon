@@ -7,6 +7,7 @@ class LoggedIn extends React.Component {
       this.state = {
           error: null,
           isLoaded: false,
+          message: "",
           items: [],
       };
     }
@@ -15,7 +16,7 @@ class LoggedIn extends React.Component {
       const { items, isLoaded, error } = this.state;
   
       if (error) {
-          return <div>Erreur : {error.message}</div>;
+          return <div>Error: {error.message}</div>;
       } else if (!isLoaded) {
           return <div>Chargement…</div>;
       } else {
@@ -83,32 +84,10 @@ class LoggedIn extends React.Component {
     }
   
     componentDidMount() {
-      if(uuid !== "") {
-          fetch(`/${dbName}/api/v1/user/${uuid}`, {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem(`access_token_${dbName}`)
-            }
-          })
-          .then(res => res.json())
-          .then(
-              (result) => {
-                  this.setState({
-                      isLoaded: true,
-                      items: result.user
-                  });
-              },
-              (error) => {
-                  this.setState({
-                      isLoaded: true,
-                      error
-                  });
-              }
-          )
-      }
-      else {
-          fetch(`/${dbName}/api/v1/users`, {
+        let uri = ""
+        if(uuid !== "") uri = `/${dbName}/api/v1/user/${uuid}`
+        else uri = `/${dbName}/api/v1/users`
+        fetch(uri, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
@@ -126,10 +105,11 @@ class LoggedIn extends React.Component {
               (error) => {
                   this.setState({
                       isLoaded: true,
+                      message: result.message,
                       error
                   });
+                  alert(result)
               }
           )
-      }
     }
 }
