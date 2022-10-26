@@ -1,21 +1,7 @@
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.setup();
     this.setState();
-  }
-
-  setup() {
-    $.ajaxSetup({
-      beforeSend: (r) => {
-        if (localStorage.getItem("access_token")) {
-          r.setRequestHeader(
-            "Authorization",
-            "Bearer " + localStorage.getItem("access_token")
-          );
-        }
-      }
-    });
   }
 
   setState() {
@@ -42,20 +28,6 @@ class NotLogged extends React.Component {
   }
 
   authenticate() {
-    // this.WebAuth = new auth0.WebAuth({
-    //   domain: AUTH0_DOMAIN,
-    //   clientID: AUTH0_CLIENT_ID,
-    //   scope: "openid profile",
-    //   audience: AUTH0_API_AUDIENCE,
-    //   responseType: "token id_token",
-    //   redirectUri: AUTH0_CALLBACK_URL
-    // });
-    // this.WebAuth.authorize();
-
-    this.serverRequest();
-  }
-
-  serverRequest() {
     var id = document.getElementById("id").value;
     var password = document.getElementById("password").value;
 
@@ -71,10 +43,12 @@ class NotLogged extends React.Component {
       })
     })
     .then( (response) => {
+      if (response.status == 400) {
+        alert("Invalid ID or password.")
+        return null;
+      }
       if (response.status != 200) {
-        console.log('Looks like there was a problem. Status Code: ' +
-          response.status);
-        alert(response.status)
+        alert('Looks like there was a problem. Status Code: ' + response.status);
         return null;
       }
       return response.json() })

@@ -20,8 +20,8 @@ React and JSX
     In a larger project, you can use an integrated toolchain that includes JSX instead:
     https://reactjs.org/docs/create-a-new-react-app.html
 
-    You can also use React without JSX, in which case you can remove Babel:
-    https://reactjs.org/docs/react-without-jsx.html
+Babel
+    https://babeljs.io/
 
 Bootstrap
     https://getbootstrap.com/
@@ -36,3 +36,13 @@ PostgreSQL
 Authentication
     https://blog.logrocket.com/jwt-authentication-go/
     https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/
+
+SAML
+    https://medium.com/@arpitkh96/adding-saml-sso-in-your-golang-service-in-20-minutes-e35a30f52abd
+    https://pkg.go.dev/github.com/crewjam/saml
+
+Tabulator
+    https://tabulator.info/
+
+Rich text editors
+    https://github.com/ianstormtaylor/slate
