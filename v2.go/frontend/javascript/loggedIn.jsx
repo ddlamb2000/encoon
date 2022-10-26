@@ -16,7 +16,8 @@ class LoggedIn extends React.Component {
       const { items, isLoaded, error } = this.state;
   
       if(error) {
-          return <div>Error: {this.state.message}</div>;
+        alert(`Error for ${dbName}: ${this.state.message}`)
+        this.logout()
       } else if (!isLoaded) {
           return <div>Loading…</div>;
       } else {
@@ -44,6 +45,7 @@ class LoggedIn extends React.Component {
               return (
                   <div>
                       <h2>Users</h2>
+                      <div id="example-table"></div>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
                               <tr>

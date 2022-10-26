@@ -78,8 +78,12 @@ func authMiddleware() gin.HandlerFunc {
 		}
 
 		utils.Log("Got authorization.")
+		if len(header) < 10 {
+			utils.LogError("Incorrect header for request %v", c.Request)
+			return
+		}
 		var tokenString = header[7:]
-		utils.Log("Got token string: %v.", tokenString)
+		utils.Log("Got token string.")
 
 		jwtSecret := utils.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -91,13 +95,15 @@ func authMiddleware() gin.HandlerFunc {
 
 		utils.Log("Extracting claims.")
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			utils.Log("User: %v, timestamp: %v, expiration: %v.", claims["user"], claims["timestamp"], claims["expiration"])
+			user := claims["user"]
 			today := time.Now()
 			expiration := claims["expiration"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
+			utils.Log("User: %v, expiration: %v.", user, expirationDate)
 			if today.After(expirationDate) {
+				utils.Log("Token expired.")
 				c.Abort()
-				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Expired."})
+				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Token expired."})
 				return
 			}
 
