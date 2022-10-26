@@ -8,7 +8,7 @@ class App extends React.Component {
   }
 
   setState() {
-    let idToken = localStorage.getItem("access_token");
+    let idToken = localStorage.getItem(`access_token_${dbName}`);
     if (idToken) {
       this.loggedIn = true;
     } else {

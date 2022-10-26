@@ -78,7 +78,7 @@ class LoggedIn extends React.Component {
     }
   
     logout() {
-      localStorage.removeItem("access_token");
+      localStorage.removeItem(`access_token_${dbName}`);
       location.reload();
     }
   
@@ -88,7 +88,7 @@ class LoggedIn extends React.Component {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+              'Authorization': 'Bearer ' + localStorage.getItem(`access_token_${dbName}`)
             }
           })
           .then(res => res.json())
@@ -112,7 +112,7 @@ class LoggedIn extends React.Component {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem("access_token")
+              'Authorization': 'Bearer ' + localStorage.getItem(`access_token_${dbName}`)
             }
           })
           .then(res => res.json())

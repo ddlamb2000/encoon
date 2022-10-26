@@ -91,5 +91,5 @@ func IsDatabaseEnabled(dbName string) bool {
 }
 
 func GetJWTSecret(dbName string) []byte {
-	return []byte(DatabaseConfigurations[dbName].Database.JwtSecret)
+	return []byte(dbName + DatabaseConfigurations[dbName].Database.JwtSecret)
 }

@@ -34,7 +34,7 @@ class NotLogged extends React.Component {
         return response.json() })
       .then( (responseJson) => {
         if (responseJson != null) {
-          localStorage.setItem("access_token", responseJson.token);
+          localStorage.setItem(`access_token_${dbName}`, responseJson.token);
         }
         location.reload();
         return;
