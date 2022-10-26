@@ -92,6 +92,15 @@ func authMiddleware() gin.HandlerFunc {
 		utils.Log("Extracting claims.")
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			utils.Log("User: %v, timestamp: %v, expiration: %v.", claims["user"], claims["timestamp"], claims["expiration"])
+			today := time.Now()
+			expiration := claims["expiration"]
+			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
+			if today.After(expirationDate) {
+				c.Abort()
+				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Expired."})
+				return
+			}
+
 		} else {
 			utils.LogError("Invalid request: %v.", err)
 			c.Abort()

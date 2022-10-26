@@ -44,7 +44,7 @@ func setHtmlRoutes() {
 	router.GET("/", getIndexHtml)
 	router.GET("/:dbName", authMiddleware(), getIndexHtml)
 	router.GET("/:dbName/users", authMiddleware(), getIndexHtml)
-	router.GET("/:dbName/user/:uuid", authMiddleware(), getIndexHtml)
+	router.GET("/:dbName/users/:uuid", authMiddleware(), getIndexHtml)
 }
 
 func setApiRoutes() {
@@ -52,8 +52,8 @@ func setApiRoutes() {
 	{
 		v1.POST("/authentication", authentication)
 		v1.GET("/users", authMiddleware(), core.GetUsersApi)
+		v1.GET("/users/:uuid", authMiddleware(), core.GetUserByIDApi)
 		v1.POST("/users", authMiddleware(), core.PostUsersApi)
-		v1.GET("/user/:uuid", authMiddleware(), core.GetUserByIDApi)
 	}
 }
 

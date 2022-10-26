@@ -5,7 +5,7 @@ class LoggedIn extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
-          error: null,
+          error: false,
           isLoaded: false,
           message: "",
           items: [],
@@ -15,10 +15,10 @@ class LoggedIn extends React.Component {
     render() {
       const { items, isLoaded, error } = this.state;
   
-      if (error) {
-          return <div>Error: {error.message}</div>;
+      if(error) {
+          return <div>Error: {this.state.message}</div>;
       } else if (!isLoaded) {
-          return <div>Chargement…</div>;
+          return <div>Loading…</div>;
       } else {
           if(uuid !== "") {
               return (
@@ -64,7 +64,7 @@ class LoggedIn extends React.Component {
                                       <td>{item.email}</td>
                                       <td>{item.firstName}</td>
                                       <td>{item.lastName}</td>
-                                      <th scope="row"><a href={`/${dbName}/user/${item.uuid}`}>{item.uuid}</a></th>
+                                      <th scope="row"><a href={`/${dbName}/users/${item.uuid}`}>{item.uuid}</a></th>
                                   </tr>
                               ))}
                           </tbody>
@@ -84,9 +84,8 @@ class LoggedIn extends React.Component {
     }
   
     componentDidMount() {
-        let uri = ""
-        if(uuid !== "") uri = `/${dbName}/api/v1/user/${uuid}`
-        else uri = `/${dbName}/api/v1/users`
+        var uri = `/${dbName}/api/v1/users`
+        if(uuid !== "") uri = uri + `/${uuid}`
         fetch(uri, {
             headers: {
               'Accept': 'application/json',
@@ -99,16 +98,18 @@ class LoggedIn extends React.Component {
               (result) => {
                   this.setState({
                       isLoaded: true,
-                      items: result.users
+                      items: result.users,
+                      error: result.error,
+                      message: result.message
                   });
               },
               (error) => {
                   this.setState({
-                      isLoaded: true,
-                      message: result.message,
-                      error
+                      isLoaded: false,
+                      items: [],
+                      message: "Something happened.",
+                      error: true
                   });
-                  alert(result)
               }
           )
     }
