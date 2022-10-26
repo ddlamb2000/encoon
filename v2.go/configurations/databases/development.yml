@@ -8,3 +8,5 @@ database:
     name: "development"
     user: "david.lambert"
     jwtsecret: "supersecretkeyfordevelopmenttenantnobodycanread"
+    root: "root"
+    password: "hello?"

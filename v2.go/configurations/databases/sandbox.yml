@@ -8,3 +8,5 @@ database:
     name: "sandbox"
     user: "david.lambert"
     jwtsecret: "supersecretkeyforsandboxtenantnobodycanread"
+    root: "root"
+    password: "hello!"

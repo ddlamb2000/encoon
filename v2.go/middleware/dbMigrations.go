@@ -36,7 +36,9 @@ func migrateDb(ctx context.Context, db *sql.DB, dbName string) {
 		return
 	} else {
 		utils.Log("[%q] Latest migration: %v.", dbName, latestMigration)
-		migrageDbCommand(ctx, db, latestMigration, 2, "CREATE TABLE users (uuid text, version integer, enabled boolean, email text, firstName text, lastName text)", dbName)
+		migrageDbCommand(ctx, db, latestMigration, 2, "CREATE TABLE users (uuid text, version integer, enabled boolean, id text, firstName text, lastName text, password text)", dbName)
+		root, password := utils.GetRootAndPassowrd(dbName)
+		migrageDbCommand(ctx, db, latestMigration, 3, "INSERT INTO users (uuid, version, enabled, id, password) VALUES ('0', 1, true, '"+root+"', '"+password+"')", dbName)
 	}
 }
 
