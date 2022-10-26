@@ -89,10 +89,11 @@ func authMiddleware() gin.HandlerFunc {
 		utils.Log("Extracting claims.")
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			user := claims["user"]
+			userUuid := claims["userUuid"]
 			today := time.Now()
 			expiration := claims["expiration"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
-			utils.Log("User: %v, expiration: %v.", user, expirationDate)
+			utils.Log("User: %v, userUuid: %v, expiration: %v.", user, userUuid, expirationDate)
 			if today.After(expirationDate) {
 				utils.Log("Token expired.")
 				c.Abort()
