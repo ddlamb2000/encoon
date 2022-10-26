@@ -20,6 +20,8 @@ var (
 )
 
 func SetAndStartHttpServer() {
+	setHtmlTemplates()
+	setStaticFiles()
 	setHtmlRoutes()
 	setApiRoutes()
 	srv = &http.Server{
@@ -35,16 +37,22 @@ func SetAndStartHttpServer() {
 	}
 }
 
-func setHtmlRoutes() {
+func setHtmlTemplates() {
 	router.LoadHTMLGlob("frontend/templates/*.html")
+}
+
+func setStaticFiles() {
 	router.Static("/stylesheets", "./frontend/stylesheets")
 	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
+}
+
+func setHtmlRoutes() {
 	router.GET("/", getIndexHtml)
-	router.GET("/:dbName", authMiddleware(), getIndexHtml)
-	router.GET("/:dbName/users", authMiddleware(), getIndexHtml)
-	router.GET("/:dbName/users/:uuid", authMiddleware(), getIndexHtml)
+	router.GET("/:dbName", getIndexHtml)
+	router.GET("/:dbName/users", getIndexHtml)
+	router.GET("/:dbName/users/:uuid", getIndexHtml)
 }
 
 func setApiRoutes() {
