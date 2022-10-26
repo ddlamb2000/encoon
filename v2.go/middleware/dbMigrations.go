@@ -12,7 +12,7 @@ import (
 
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) {
 	var latestMigration int
-	if err := db.QueryRow("select 1 from migrations").Scan(&latestMigration); err != nil {
+	if err := db.QueryRow("SELECT 1 FROM migrations").Scan(&latestMigration); err != nil {
 		if err == sql.ErrNoRows {
 			utils.Log("[%q] Migration table exists.", dbName)
 		} else {
@@ -31,7 +31,7 @@ func migrateDb(ctx context.Context, db *sql.DB, dbName string) {
 		}
 	}
 
-	if err := db.QueryRow("select max(migration) from migrations").Scan(&latestMigration); err != nil {
+	if err := db.QueryRow("SELECT MAX(migration) FROM migrations").Scan(&latestMigration); err != nil {
 		utils.LogError("[%q] Can't access migrations table %v.", dbName, err)
 		return
 	} else {

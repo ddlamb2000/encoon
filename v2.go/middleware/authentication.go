@@ -13,17 +13,14 @@ import (
 	"github.com/golang-jwt/jwt"
 )
 
-type LOGIN struct {
-	ID       string `json:"id" binding:"required"`
-	PASSWORD string `json:"password" binding:"required"`
+type login struct {
+	Id       string `json:"id" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type JWTtoken struct {
-	TOKEN string `json:"token" binding:"required"`
+	Token string `json:"token" binding:"required"`
 }
-
-var authID = "david.lambert"
-var authPassword = "hello?"
 
 func authentication(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
@@ -34,21 +31,17 @@ func authentication(c *gin.Context) {
 		return
 	}
 
-	var login LOGIN
+	var login login
 	c.BindJSON(&login)
-
-	if authID != login.ID {
-		c.JSON(http.StatusBadRequest, "")
-		return
-	}
-	if authPassword != login.PASSWORD {
+	authorized, userUuid := isDbAuthorized(dbName, login.Id, login.Password)
+	if !authorized || userUuid == "" {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user":       login.ID,
-		"timestamp":  int32(time.Now().Unix()),
+		"user":       login.Id,
+		"userUuid":   userUuid,
 		"expiration": time.Now().Add(10 * time.Minute),
 	})
 	jwtSecret := utils.GetJWTSecret(dbName)
