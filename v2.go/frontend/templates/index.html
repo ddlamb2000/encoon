@@ -2,12 +2,12 @@
 <html lang="en">
 	{{ template "head.html" . }}
 	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}" uuid="{{ .uuid }}">
-		{{ template "nav.html" . }}
 		<div id="application"></div>
 		<div id="example-table"></div>
 		{{ template "scripts.html" }}
 		<script type="text/babel" src="/javascript/notLogged.jsx"></script>
 		<script type="text/babel" src="/javascript/loggedIn.jsx"></script>
+		<script type="text/babel" src="/javascript/navigation.jsx"></script>
 		<script type="text/babel" src="/javascript/index.jsx"></script>
 	</body>
 </html>

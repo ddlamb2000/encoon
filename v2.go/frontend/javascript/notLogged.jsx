@@ -8,8 +8,8 @@ class NotLogged extends React.Component {
     }
   
     authenticate() {
-      var id = document.getElementById("id").value;
-      var password = document.getElementById("password").value;
+      let id = document.getElementById("id").value;
+      let password = document.getElementById("password").value;
   
       fetch(`/${dbName}/api/v1/authentication`, {
         method: 'POST',
@@ -37,13 +37,13 @@ class NotLogged extends React.Component {
           localStorage.setItem(`access_token_${dbName}`, responseJson.token);
         }
         location.reload();
-        return;
       } )
     }
     
     render() {
       return (
         <div className="container">
+          <Navigation />
           <div className="row">
             <div className="col-xs-4 col-xs-offset-4 jumbotron text-center">
               <h1>{appName}</h1>

@@ -24,6 +24,7 @@ class LoggedIn extends React.Component {
           if(uuid !== "") {
               return (
                   <div>
+                      <Navigation />
                       <h2>User</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
@@ -35,15 +36,13 @@ class LoggedIn extends React.Component {
                               <tr><td>Last Name</td><td>{items.lastName}</td></tr>
                           </tbody>
                       </table>
-                      <span className="pull-right">
-                        <a onClick={this.logout}>Log out</a>
-                      </span>
                   </div>
               );
           }
           else {
                 return (
                   <div>
+                      <Navigation />
                       <h2>Users</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
@@ -70,18 +69,10 @@ class LoggedIn extends React.Component {
                               ))}
                           </tbody>
                       </table>
-                      <span className="pull-right">
-                        <a onClick={this.logout}>Log out</a>
-                      </span>
                   </div>
               );
           }
       }
-    }
-  
-    logout() {
-      localStorage.removeItem(`access_token_${dbName}`);
-      location.reload();
     }
   
     componentDidMount() {

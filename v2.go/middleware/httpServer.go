@@ -76,7 +76,7 @@ func ShutDownHttpServer(ctx context.Context) {
 
 func logger() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		utils.Log("Request: %q, headers: %v.", c.Request.RequestURI, c.Request.Header)
+		utils.Log("Request: %q.", c.Request.RequestURI)
 		t := time.Now()
 		c.Next()
 		status := c.Writer.Status()
