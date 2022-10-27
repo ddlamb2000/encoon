@@ -42,26 +42,6 @@ class LoggedIn extends React.Component {
               );
           }
           else {
-
-                var tableData = [
-                    {id:1, name:"Billy Bob", age:"12", gender:"male", height:1, col:"red", dob:"", cheese:1},
-                    {id:2, name:"Mary May", age:"1", gender:"female", height:2, col:"blue", dob:"14/05/1982", cheese:true},
-                ]
-                
-                var table = new Tabulator("#example-table", {
-                    data:tableData, //set initial table data
-                    columns:[
-                        {title:"Name", field:"name"},
-                        {title:"Age", field:"age"},
-                        {title:"Gender", field:"gender"},
-                        {title:"Height", field:"height"},
-                        {title:"Favourite Color", field:"col"},
-                        {title:"Date Of Birth", field:"dob"},
-                        {title:"Cheese Preference", field:"cheese"},
-                    ],
-                });
-
-
                 return (
                   <div>
                       <h2>Users</h2>
@@ -105,7 +85,7 @@ class LoggedIn extends React.Component {
     }
   
     componentDidMount() {
-        var uri = `/${dbName}/api/v1/users`
+        let uri = `/${dbName}/api/v1/users`
         if(uuid !== "") uri = uri + `/${uuid}`
         fetch(uri, {
             headers: {
