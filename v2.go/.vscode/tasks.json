@@ -6,7 +6,12 @@
         {
             "label": "Run web server",
             "type": "shell",
-            "command": "go run ."
+            "command": "go run .",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
         }
     ]
 }
