@@ -18,7 +18,7 @@ class Navigation extends React.Component {
               </div>
           </div>
           <div className="navbar-nav">
-            <a className="nav-link" href="" onClick={this.logout}>Log out</a>
+            <a className="nav-link" href="" onClick={this.logout}>Log&nbsp;out</a>
           </div>
       </nav>
     );
