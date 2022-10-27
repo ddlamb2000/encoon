@@ -20,6 +20,7 @@ var (
 )
 
 func SetAndStartHttpServer() {
+	router.Use(logger())
 	setHtmlTemplates()
 	setStaticFiles()
 	setHtmlRoutes()
@@ -71,6 +72,18 @@ func ShutDownHttpServer(ctx context.Context) {
 		return
 	}
 	utils.Log("Http server stopped.")
+}
+
+func logger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		utils.Log("Request: %q, headers: %v.", c.Request.RequestURI, c.Request.Header)
+		t := time.Now()
+		c.Next()
+		status := c.Writer.Status()
+		latency := time.Since(t)
+		utils.Log("Http status: %v, Latency :%v.", status, latency)
+
+	}
 }
 
 func getIndexHtml(c *gin.Context) {

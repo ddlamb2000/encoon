@@ -6,6 +6,7 @@ Go
 Gin
     https://gin-gonic.com/ 
     Templates: https://pkg.go.dev/text/template, https://gohugo.io/templates/
+    Custom middlewares: https://gin-gonic.com/docs/examples/custom-middleware/
 
 Minification of javascripts
     https://gist.github.com/gaearon/42a2ffa41b8319948f9be4076286e1f3
