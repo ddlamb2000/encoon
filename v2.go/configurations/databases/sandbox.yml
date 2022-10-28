@@ -7,6 +7,6 @@ database:
     port: 5432
     name: "sandbox"
     user: "david.lambert"
-    jwtsecret: "supersecretkeyforsandboxtenantnobodycanread"
+    jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
     root: "root"
-    password: "dGVzdA=="
+    password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"

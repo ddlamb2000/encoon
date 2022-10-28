@@ -7,6 +7,6 @@ database:
     port: 5432
     name: "development"
     user: "david.lambert"
-    jwtsecret: "supersecretkeyfordevelopmenttenantnobodycanread"
+    jwtsecret: "$2a$08$0BrcGloWldpYnhRxVT/XI.3wVJwvPRsv2dmMJJRnEg05758g4yWny"
     root: "root"
-    password: "dGVzdA=="
+    password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"

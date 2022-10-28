@@ -36,6 +36,13 @@ PostgreSQL
 
     https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
 
+    Passwords:
+        create an "encoded64 password"
+        run CREATE EXTENSION pgcrypto;
+        run
+            select crypt('encoded64 password', gen_salt('bf', 8));
+        on the database
+
 Authentication
     https://blog.logrocket.com/jwt-authentication-go/
     https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/

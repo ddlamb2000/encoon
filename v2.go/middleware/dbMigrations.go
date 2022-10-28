@@ -87,7 +87,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + root + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
-				"crypt('" + password + "', gen_salt('bf', 8)))",
+				"'" + password + "')",
 		})
 }
 
