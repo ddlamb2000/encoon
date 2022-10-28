@@ -9,16 +9,18 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-func isDbAuthorized(dbName string, id string, password string) (bool, string) {
+func isDbAuthorized(dbName string, id string, password string) (bool, string, string, string) {
 	utils.Log("[%q] Verify ID and password.", dbName)
 	db := dbs[dbName]
 	if db != nil {
 		var uuid string
+		var firstName string
+		var lastName string
 		if err := db.QueryRow(
-			"SELECT uuid FROM users WHERE id = $1 AND password = crypt($2, password)",
+			"SELECT uuid, firstName, lastName FROM users WHERE id = $1 AND password = crypt($2, password)",
 			id,
 			password).
-			Scan(&uuid); err != nil {
+			Scan(&uuid, &firstName, &lastName); err != nil {
 			if err == sql.ErrNoRows {
 				utils.Log("[%q] Invalid ID or password.", dbName)
 			} else {
@@ -27,7 +29,7 @@ func isDbAuthorized(dbName string, id string, password string) (bool, string) {
 		} else {
 			if uuid != "" {
 				utils.Log("[%q] ID and password verified.", dbName)
-				return true, uuid
+				return true, uuid, firstName, lastName
 			} else {
 				utils.Log("[%q] Invalid ID or password.", dbName)
 			}
@@ -36,5 +38,5 @@ func isDbAuthorized(dbName string, id string, password string) (bool, string) {
 	} else {
 		utils.Log("[%q] No database connection.", dbName)
 	}
-	return false, ""
+	return false, "", "", ""
 }

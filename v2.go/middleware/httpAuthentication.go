@@ -33,16 +33,18 @@ func authentication(c *gin.Context) {
 
 	var login login
 	c.BindJSON(&login)
-	authorized, userUuid := isDbAuthorized(dbName, login.Id, login.Password)
+	authorized, userUuid, firstName, lastName := isDbAuthorized(dbName, login.Id, login.Password)
 	if !authorized || userUuid == "" {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user":       login.Id,
-		"userUuid":   userUuid,
-		"expiration": time.Now().Add(10 * time.Minute),
+		"user":          login.Id,
+		"userUuid":      userUuid,
+		"userFirstName": firstName,
+		"userLastName":  lastName,
+		"expiration":    time.Now().Add(10 * time.Minute),
 	})
 	jwtSecret := utils.GetJWTSecret(dbName)
 	tokenString, err := token.SignedString([]byte(jwtSecret))

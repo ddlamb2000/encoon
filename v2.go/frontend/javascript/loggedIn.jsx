@@ -8,6 +8,8 @@ class LoggedIn extends React.Component {
           token: localStorage.getItem(`access_token_${dbName}`),
           user: "",
           userUuid: "",
+          userFirstName: "",
+          userLastName: "",
           error: false,
           disconnect: false,
           isLoaded: false,
@@ -17,6 +19,8 @@ class LoggedIn extends React.Component {
       const payload = this.parseJwt(this.state.token)
       this.state.user = payload.user
       this.state.userUuid = payload.userUuid
+      this.state.userFirstName = payload.userFirstName
+      this.state.userLastName = payload.userLastName
     }
   
     render() {
@@ -34,7 +38,7 @@ class LoggedIn extends React.Component {
           if(uuid !== "") {
               return (
                   <div>
-                      <Navigation user={this.state.user} />
+                      <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>User</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
@@ -52,7 +56,7 @@ class LoggedIn extends React.Component {
           else {
                 return (
                   <div>
-                      <Navigation user={this.state.user} />
+                      <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>Users</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
