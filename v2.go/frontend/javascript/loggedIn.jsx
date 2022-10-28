@@ -6,6 +6,7 @@ class LoggedIn extends React.Component {
       super(props);
       this.state = {
           error: false,
+          expired: false,
           isLoaded: false,
           message: "",
           items: [],
@@ -13,11 +14,14 @@ class LoggedIn extends React.Component {
     }
   
     render() {
-      const { items, isLoaded, error } = this.state;
+      const { items, isLoaded, error, expired } = this.state;
   
       if(error) {
-        alert(`Error for ${dbName}: ${this.state.message}`)
-        this.logout()
+        alert(`Error for ${dbName}: ${this.state.message}`);
+        if(expired) {
+            localStorage.removeItem(`access_token_${dbName}`);
+            location.reload();
+        }
       } else if (!isLoaded) {
           return <div>Loading…</div>;
       } else {
@@ -76,8 +80,7 @@ class LoggedIn extends React.Component {
     }
   
     componentDidMount() {
-        let uri = `/${dbName}/api/v1/users`
-        if(uuid !== "") uri = uri + `/${uuid}`
+        let uri = `/${dbName}/api/v1/users${uuid !== "" ? '/' + uuid : ''}`
         fetch(uri, {
             headers: {
               'Accept': 'application/json',
@@ -92,7 +95,8 @@ class LoggedIn extends React.Component {
                       isLoaded: true,
                       items: result.users,
                       error: result.error,
-                      message: result.message
+                      message: result.message,
+                      expired: result.expired
                   });
               },
               (error) => {

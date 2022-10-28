@@ -97,7 +97,11 @@ func authMiddleware() gin.HandlerFunc {
 			if today.After(expirationDate) {
 				utils.Log("Token expired.")
 				c.Abort()
-				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": true, "message": "Token expired."})
+				c.IndentedJSON(http.StatusUnauthorized,
+					gin.H{
+						"error":   true,
+						"message": "Token expired.",
+						"expired": true})
 				return
 			}
 
