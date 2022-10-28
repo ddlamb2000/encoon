@@ -34,6 +34,8 @@ PostgreSQL
     https://www.postgresql.org/ 
     https://postgresapp.com/
 
+    https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
+
 Authentication
     https://blog.logrocket.com/jwt-authentication-go/
     https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/

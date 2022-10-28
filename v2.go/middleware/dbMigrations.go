@@ -46,11 +46,13 @@ func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (in
 }
 
 func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int) {
-	root, password := utils.GetRootAndPassowrd(dbName)
+	root, password := utils.GetRootAndPassword(dbName)
 
 	migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
-			2: "CREATE TABLE users (" +
+			2: "CREATE EXTENSION pgcrypto",
+
+			3: "CREATE TABLE users (" +
 				"uuid uuid NOT NULL PRIMARY KEY, " +
 				"version integer, " +
 				"created timestamp with time zone, " +
@@ -63,7 +65,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"lastName text, " +
 				"password text)",
 
-			3: "INSERT INTO users " +
+			4: "INSERT INTO users " +
 				"(uuid, " +
 				"version, " +
 				"created, " +
@@ -85,7 +87,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + root + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
-				"'" + password + "')",
+				"crypt('" + password + "', gen_salt('bf', 8)))",
 		})
 }
 
@@ -105,7 +107,7 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 			if err != nil {
 				utils.LogError("[%q] Insert into migrations: %v", dbName, err)
 			} else {
-				utils.Log("[%q] Migration: %v.", dbName, migration)
+				utils.Log("[%q] Migration %v executed.", dbName, migration)
 			}
 		}
 	}

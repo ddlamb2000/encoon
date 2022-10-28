@@ -96,6 +96,6 @@ func GetJWTSecret(dbName string) []byte {
 	return []byte(dbName + DatabaseConfigurations[dbName].Database.JwtSecret)
 }
 
-func GetRootAndPassowrd(dbName string) (string, string) {
+func GetRootAndPassword(dbName string) (string, string) {
 	return DatabaseConfigurations[dbName].Database.Root, DatabaseConfigurations[dbName].Database.Password
 }

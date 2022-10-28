@@ -14,7 +14,11 @@ func isDbAuthorized(dbName string, id string, password string) (bool, string) {
 	db := dbs[dbName]
 	if db != nil {
 		var uuid string
-		if err := db.QueryRow("SELECT uuid FROM users WHERE id = $1 AND password = $2", id, password).Scan(&uuid); err != nil {
+		if err := db.QueryRow(
+			"SELECT uuid FROM users WHERE id = $1 AND password = crypt($2, password)",
+			id,
+			password).
+			Scan(&uuid); err != nil {
 			if err == sql.ErrNoRows {
 				utils.Log("[%q] Invalid ID or password.", dbName)
 			} else {
