@@ -51,10 +51,12 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 	migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
 			2: "CREATE TABLE users (" +
-				"uuid uuid, " +
+				"uuid uuid NOT NULL PRIMARY KEY, " +
 				"version integer, " +
 				"created timestamp with time zone, " +
+				"createdBy uuid, " +
 				"updated timestamp with time zone, " +
+				"updatedBy uuid, " +
 				"enabled boolean, " +
 				"id text, " +
 				"firstName text, " +
@@ -66,15 +68,19 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"version, " +
 				"created, " +
 				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
 				"enabled, " +
 				"id, " +
 				"firstName, " +
 				"lastName, " +
 				"password) " +
-				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d'," +
-				" 1, " +
+				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"1, " +
 				"'January 8 04:05:06 1999 PST', " +
 				"'January 8 04:05:06 1999 PST', " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
 				"true, " +
 				"'" + root + "', " +
 				"'" + root + "', " +
