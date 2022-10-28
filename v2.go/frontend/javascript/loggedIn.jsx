@@ -5,20 +5,26 @@ class LoggedIn extends React.Component {
     constructor(props) {
       super(props);
       this.state = {
+          token: localStorage.getItem(`access_token_${dbName}`),
+          user: "",
+          userUuid: "",
           error: false,
-          expired: false,
+          disconnect: false,
           isLoaded: false,
           message: "",
           items: [],
       };
+      const payload = this.parseJwt(this.state.token)
+      this.state.user = payload.user
+      this.state.userUuid = payload.userUuid
     }
   
     render() {
-      const { items, isLoaded, error, expired } = this.state;
+      const { items, isLoaded, error, disconnect } = this.state;
   
       if(error) {
         alert(`Error for ${dbName}: ${this.state.message}`);
-        if(expired) {
+        if(disconnect) {
             localStorage.removeItem(`access_token_${dbName}`);
             location.reload();
         }
@@ -28,7 +34,7 @@ class LoggedIn extends React.Component {
           if(uuid !== "") {
               return (
                   <div>
-                      <Navigation />
+                      <Navigation user={this.state.user} />
                       <h2>User</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
@@ -46,7 +52,7 @@ class LoggedIn extends React.Component {
           else {
                 return (
                   <div>
-                      <Navigation />
+                      <Navigation user={this.state.user} />
                       <h2>Users</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
@@ -79,13 +85,23 @@ class LoggedIn extends React.Component {
       }
     }
   
+    parseJwt(token) {
+        const base64Url = token.split('.')[1];
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+        const parsedJsonPayload = JSON.parse(jsonPayload)
+        return parsedJsonPayload
+    }
+
     componentDidMount() {
-        let uri = `/${dbName}/api/v1/users${uuid !== "" ? '/' + uuid : ''}`
+        const uri = `/${dbName}/api/v1/users${uuid !== "" ? '/' + uuid : ''}`
         fetch(uri, {
             headers: {
               'Accept': 'application/json',
               'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + localStorage.getItem(`access_token_${dbName}`)
+              'Authorization': 'Bearer ' + this.state.token
             }
           })
           .then(res => res.json())
@@ -96,7 +112,7 @@ class LoggedIn extends React.Component {
                       items: result.users,
                       error: result.error,
                       message: result.message,
-                      expired: result.expired
+                      disconnect: result.disconnect
                   });
               },
               (error) => {

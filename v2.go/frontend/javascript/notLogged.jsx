@@ -43,7 +43,6 @@ class NotLogged extends React.Component {
     render() {
       return (
         <div className="container">
-          <Navigation />
           <div className="row">
             <div className="col-xs-4 col-xs-offset-4 jumbotron text-center">
               <h1>{appName}</h1>

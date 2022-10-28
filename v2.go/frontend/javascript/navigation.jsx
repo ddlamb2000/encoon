@@ -20,6 +20,7 @@ class Navigation extends React.Component {
           <div className="navbar-nav">
             <a className="nav-link" href="" onClick={this.logout}>Log&nbsp;out</a>
           </div>
+          <div className="navbar-link">{this.props.user}</div>
       </nav>
     );
   }

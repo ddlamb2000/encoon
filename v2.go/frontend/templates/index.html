@@ -3,7 +3,6 @@
 	{{ template "head.html" . }}
 	<body id="bodyRoot" appName="{{ .appName }}" dbName="{{ .dbName }}" uuid="{{ .uuid }}">
 		<div id="application"></div>
-		<div id="example-table"></div>
 		{{ template "scripts.html" }}
 		<script type="text/babel" src="/javascript/notLogged.jsx"></script>
 		<script type="text/babel" src="/javascript/loggedIn.jsx"></script>
