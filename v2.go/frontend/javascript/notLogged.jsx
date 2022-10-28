@@ -10,17 +10,14 @@ class NotLogged extends React.Component {
     authenticate() {
       let id = document.getElementById("id").value;
       let password = document.getElementById("password").value;
-  
+
       fetch(`/${dbName}/api/v1/authentication`, {
         method: 'POST',
         headers: {
           'Accept': 'application/json',
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          id: id,
-          password: password,
-        })
+        body: JSON.stringify({id: id, password: btoa(password)})
       })
       .then( (response) => {
         if (response.status == 400) {
@@ -44,27 +41,27 @@ class NotLogged extends React.Component {
       return (
         <div className="container">
           <div className="row">
-            <div className="col-xs-4 col-xs-offset-4 jumbotron text-center">
-              <h1>{appName}</h1>
-              <h3>{dbName}</h3>
-              <br />
-              <p>Sign in to get access </p>
-              <br />
-              <div className="form-group has-feedback">
-                <input type="text" name="id" id="id" size="36" placeholder="ID"/>
-                <span className="glyphicon glyphicon-envelope form-control-feedback"></span>
+            <div className="col"></div>
+            <div className="col">
+              <br/>
+              <br/>
+              <br/>
+              <br/>
+              <center><h1>{appName}</h1></center>
+              <center><h4>{dbName}</h4></center>
+              <br/>
+              <div className="mb-3">
+                <label htmlFor="id" className="form-label">Identifier</label>
+                <input type="email" className="form-control" id="id" aria-describedby="emailHelp"/>
+                <div id="emailHelp" className="form-text">We'll never share your data with anyone else.</div>
               </div>
-              <br />
-              <div className="form-group has-feedback">
-                <input type="password" name="password" id="password" size="36" placeholder="Password"/>
-                <span className="glyphicon glyphicon-lock form-control-feedback"></span>
+              <div className="mb-3">
+                <label htmlFor="password" className="form-label">Password</label>
+                <input type="password" className="form-control" id="password"/>
               </div>
-              <br />
-              <a onClick={this.authenticate}
-                 className="btn btn-primary btn-lg btn-login btn-block">
-                Sign In
-              </a>
+              <button type="submit" className="btn btn-primary" onClick={this.authenticate}>Submit</button>
             </div>
+            <div className="col"></div>
           </div>
         </div>
       );

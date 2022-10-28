@@ -9,4 +9,4 @@ database:
     user: "david.lambert"
     jwtsecret: "supersecretkeyfordevelopmenttenantnobodycanread"
     root: "root"
-    password: "hello?"
+    password: "dGVzdA=="
