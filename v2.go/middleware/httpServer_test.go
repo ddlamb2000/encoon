@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 )
 
 func TestSetAndStartHttpServer(t *testing.T) {

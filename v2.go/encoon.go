@@ -12,9 +12,9 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"d.lambert.fr/encoon/backend/core"
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/middleware"
+	"d.lambert.fr/encoon/utils"
 )
 
 func main() {
@@ -33,7 +33,7 @@ func main() {
 	utils.LoadConfiguration("configurations/")
 	go middleware.ConnectDbServers(utils.DatabaseConfigurations)
 	go middleware.SetAndStartHttpServer()
-	go core.LoadData()
+	go backend.LoadData()
 
 	<-done
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)

@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"time"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 	"golang.org/x/exp/maps"
 )
 

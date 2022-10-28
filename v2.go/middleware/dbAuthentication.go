@@ -6,7 +6,7 @@ package middleware
 import (
 	"database/sql"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 )
 
 func isDbAuthorized(dbName string, id string, password string) (bool, string) {

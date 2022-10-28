@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package core
+package backend
 
 type entity struct {
 	Uuid    string `json:"uuid"`

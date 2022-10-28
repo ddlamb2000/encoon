@@ -7,7 +7,7 @@ import (
 	"context"
 	"database/sql"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 )
 
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) {

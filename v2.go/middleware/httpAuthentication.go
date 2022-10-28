@@ -8,7 +8,7 @@ import (
 	"net/http"
 	"time"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )

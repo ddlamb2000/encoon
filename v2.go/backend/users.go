@@ -1,12 +1,12 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package core
+package backend
 
 import (
 	"fmt"
 
-	"d.lambert.fr/encoon/backend/utils"
+	"d.lambert.fr/encoon/utils"
 )
 
 type user struct {
