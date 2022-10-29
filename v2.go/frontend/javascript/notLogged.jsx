@@ -47,12 +47,12 @@ class NotLogged extends React.Component {
             <div className="mb-3">
               <label htmlFor="id" className="form-label">Identifier</label>
               <input
-                type="email" 
+                type="text" 
                 className="form-control" 
                 id="id" 
                 ref={this.setIdRef}
-                aria-describedby="emailHelp"/>
-              <div id="emailHelp" className="form-text">We'll never share your data with anyone else.</div>
+                aria-describedby="idHelp"/>
+              <div id="idHelp" className="form-text">We'll never share your data with anyone else.</div>
             </div>
             <div className="mb-3">
               <label htmlFor="password" className="form-label">Password</label>

@@ -81,6 +81,36 @@ class LoggedIn extends React.Component {
                                       <th scope="row"><a href={`/${dbName}/users/${item.uuid}`}>{item.uuid}</a></th>
                                   </tr>
                               ))}
+                            <tr key="new line">
+                                <td>
+                                    <input>
+                                    </input>
+                                </td>
+                                <td>
+                                    <input>
+                                    </input>
+                                </td>
+                                <td>
+                                    <input>
+                                    </input>
+                                </td>
+                                <th scope="row">zzzzz</th>
+                            </tr>
+                            <tr key="new line 2">
+                                <td>
+                                    <input type="email">
+                                    </input>
+                                </td>
+                                <td>
+                                    <input>
+                                    </input>
+                                </td>
+                                <td>
+                                    <input>
+                                    </input>
+                                </td>
+                                <th scope="row">iiiiii</th>
+                            </tr>
                           </tbody>
                       </table>
                   </div>
