@@ -27,7 +27,7 @@ class LoggedIn extends React.Component {
       const { items, isLoaded, error, disconnect } = this.state;
   
       if(error) {
-        alert(`Error for ${dbName}: ${this.state.message}`);
+        alert(`${dbName}: ${this.state.message}`);
         if(disconnect) {
             localStorage.removeItem(`access_token_${dbName}`);
             location.reload();

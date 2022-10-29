@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package utils
 
 import "github.com/google/uuid"
 

@@ -3,6 +3,8 @@ Go
     https://go.dev/
     https://github.com/uber-go/guide/blob/master/style.md
 
+    Contexts: https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
+
 Gin
     https://gin-gonic.com/ 
     Templates: https://pkg.go.dev/text/template, https://gohugo.io/templates/

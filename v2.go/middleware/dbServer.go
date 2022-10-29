@@ -17,6 +17,14 @@ var (
 	dbs = make(map[string]*sql.DB)
 )
 
+func getDbByName(dbName string) *sql.DB {
+	return dbs[dbName]
+}
+
+func setDb(dbName string, db *sql.DB) {
+	dbs[dbName] = db
+}
+
 func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
 	for _, conf := range maps.Values(dbConfigurations) {
 		connectDbServer(conf)
@@ -37,15 +45,19 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) {
 	} else {
 		ctx, stop := context.WithCancel(context.Background())
 		defer stop()
-		if pinged := ping(ctx, db); pinged {
-			dbs[dbName] = db
+		if pinged := pingDb(ctx, db); pinged {
+			setDb(dbName, db)
 			utils.Log("Database %q connected.", dbName)
 			migrateDb(ctx, db, dbName)
 		}
 	}
 }
 
-func ping(ctx context.Context, db *sql.DB) bool {
+func pingDb(ctx context.Context, db *sql.DB) bool {
+	if db == nil {
+		utils.LogError("No database provided for ping.")
+		return false
+	}
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
@@ -63,10 +75,11 @@ func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
 
 func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) {
 	dbName := dbConfiguration.Database.Name
-	if dbs[dbName] != nil {
-		err := dbs[dbName].Close()
+	db := getDbByName(dbName)
+	if db != nil {
+		err := db.Close()
 		if err != nil {
-			utils.LogError("Unable to disconnect to database: %v.", err)
+			utils.LogError("Unable to disconnect database %q: %v.", dbName, err)
 		} else {
 			utils.Log("Database %q disconnected.", dbName)
 		}
