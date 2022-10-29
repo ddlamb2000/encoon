@@ -37,7 +37,7 @@ class LoggedIn extends React.Component {
       } else {
           if(uuid !== "") {
               return (
-                  <div>
+                  <div className="container">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>User</h2>
                       <table className="table table-hover table-sm">
@@ -55,7 +55,7 @@ class LoggedIn extends React.Component {
           }
           else {
                 return (
-                  <div>
+                  <div className="container">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>Users</h2>
                       <table className="table table-hover table-sm">
