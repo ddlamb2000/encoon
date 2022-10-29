@@ -30,7 +30,7 @@ func main() {
 		done <- true
 	}()
 
-	if !utils.LoadConfiguration("configurations/") {
+	if utils.LoadConfiguration("configurations/") == nil {
 		go middleware.ConnectDbServers(utils.DatabaseConfigurations)
 		go middleware.SetAndStartHttpServer()
 		go backend.LoadData()

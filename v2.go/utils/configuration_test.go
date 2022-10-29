@@ -11,46 +11,46 @@ import (
 func TestLoadMainConfiguration(t *testing.T) {
 	path := "../configurations/"
 	fileName := "configuration.yml"
-	if err := loadMainConfiguration(path, fileName); err {
-		t.Fatalf("Can't load configuration %q from path %q.", fileName, path)
+	if err := loadMainConfiguration(path, fileName); err != nil {
+		t.Fatalf("Can't load configuration %q from path %q: %v.", fileName, path, err)
 	}
 }
 
 func TestLoadMainConfiguration2(t *testing.T) {
 	path := "../configurations/"
 	fileName := "xxxx.yml"
-	if err := loadMainConfiguration(path, fileName); !err {
+	if err := loadMainConfiguration(path, fileName); err == nil {
 		t.Fatalf("Can load configuration %q from path %q.", fileName, path)
 	}
 }
 
 func TestLoadDatabaseConfiguration(t *testing.T) {
 	fileName := "../configurations/databases/test.yml"
-	if err := loadDatabaseConfiguration(fileName); err {
-		t.Fatalf("Can't load database configuration from file %q.", fileName)
+	if err := loadDatabaseConfiguration(fileName); err != nil {
+		t.Fatalf("Can't load database configuration from file %q: %v.", fileName, err)
 	}
 }
 
 func TestLoadDatabaseConfigurations(t *testing.T) {
 	dir := "../configurations/"
 	subDir := "databases/"
-	if err := loadDatabaseConfigurations(dir, subDir); err {
-		t.Fatalf("Can't load database configurations from directory %q and sub-directory %q.", dir, subDir)
+	if err := loadDatabaseConfigurations(dir, subDir); err != nil {
+		t.Fatalf("Can't load database configurations from directory %q and sub-directory %q: %v.", dir, subDir, err)
 	}
 }
 
 func TestLoadDatabaseConfigurations2(t *testing.T) {
 	dir := "../configurations/"
 	subDir := "xxxxxx/"
-	if err := loadDatabaseConfigurations(dir, subDir); !err {
+	if err := loadDatabaseConfigurations(dir, subDir); err == nil {
 		t.Fatalf("Expecting issue for loading database configurations from directory %q and sub-directory %q.", dir, subDir)
 	}
 }
 
 func TestLoadConfiguration(t *testing.T) {
 	dir := "../configurations/"
-	if err := LoadConfiguration(dir); err {
-		t.Fatalf("Can't load configurations from directory %q.", dir)
+	if err := LoadConfiguration(dir); err != nil {
+		t.Fatalf("Can't load configurations from directory %q: %v.", dir, err)
 	}
 
 	dbName := "test"

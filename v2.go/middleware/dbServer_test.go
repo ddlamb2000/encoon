@@ -8,11 +8,14 @@ import (
 	"testing"
 
 	"d.lambert.fr/encoon/utils"
+	_ "github.com/lib/pq"
 )
 
-func TestPing(t *testing.T) {
+func TestConnectDbServers(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
-	ConnectDbServers(utils.DatabaseConfigurations)
+	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Fatalf(`Can't connect to databases: %v.`, err)
+	}
 	dbName := "test"
 	db := getDbByName(dbName)
 	if db == nil {
@@ -20,8 +23,10 @@ func TestPing(t *testing.T) {
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
-	err := pingDb(ctx, db)
-	if !err {
-		t.Fatalf(`Database %q doesn't respond to ping.`, dbName)
+	if err := pingDb(ctx, db); err != nil {
+		t.Fatalf(`Database %q doesn't respond to ping: %v.`, dbName, err)
+	}
+	if err := DisconnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Fatalf(`Can't disconnect to databases: %v.`, err)
 	}
 }

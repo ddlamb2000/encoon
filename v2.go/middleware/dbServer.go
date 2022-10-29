@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/utils"
+	_ "github.com/lib/pq"
 	"golang.org/x/exp/maps"
 )
 
@@ -25,13 +26,16 @@ func setDb(dbName string, db *sql.DB) {
 	dbs[dbName] = db
 }
 
-func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
+func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) error {
 	for _, conf := range maps.Values(dbConfigurations) {
-		connectDbServer(conf)
+		if err := connectDbServer(conf); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func connectDbServer(dbConfiguration *utils.DatabaseConfig) {
+func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 	dbName := dbConfiguration.Database.Name
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=disable",
@@ -40,48 +44,54 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) {
 		dbConfiguration.Database.User,
 		dbConfiguration.Database.Name,
 	)
-	if db, err := sql.Open("postgres", psqlInfo); err != nil {
-		utils.LogError("Can't connect to database: %v", err)
-	} else {
-		ctx, stop := context.WithCancel(context.Background())
-		defer stop()
-		if pinged := pingDb(ctx, db); pinged {
-			setDb(dbName, db)
-			utils.Log("Database %q connected.", dbName)
-			migrateDb(ctx, db, dbName)
-		}
+	db, err := sql.Open("postgres", psqlInfo)
+	if err != nil {
+		utils.LogError("Can't connect to database with %q: %v", psqlInfo, err)
+		return err
 	}
+	ctx, stop := context.WithCancel(context.Background())
+	defer stop()
+	if err := pingDb(ctx, db); err != nil {
+		return err
+	}
+	setDb(dbName, db)
+	utils.Log("Database %q connected.", dbName)
+	migrateDb(ctx, db, dbName)
+	return nil
 }
 
-func pingDb(ctx context.Context, db *sql.DB) bool {
+func pingDb(ctx context.Context, db *sql.DB) error {
 	if db == nil {
-		utils.LogError("No database provided for ping.")
-		return false
+		return fmt.Errorf("No database provided for ping.")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
 		utils.LogError("Unable to connect to database: %v.", err)
-		return false
+		return err
 	}
-	return true
+	return nil
 }
 
-func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) {
+func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) error {
 	for _, conf := range maps.Values(dbConfigurations) {
-		disconnectDbServer(conf)
+		if err := disconnectDbServer(conf); err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) {
+func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 	dbName := dbConfiguration.Database.Name
 	db := getDbByName(dbName)
 	if db != nil {
 		err := db.Close()
 		if err != nil {
 			utils.LogError("Unable to disconnect database %q: %v.", dbName, err)
-		} else {
-			utils.Log("Database %q disconnected.", dbName)
+			return err
 		}
+		utils.Log("Database %q disconnected.", dbName)
 	}
+	return nil
 }

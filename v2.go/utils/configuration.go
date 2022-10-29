@@ -35,54 +35,54 @@ var (
 	DatabaseConfigurations = make(map[string]*DatabaseConfig)
 )
 
-func LoadConfiguration(directory string) bool {
-	if loadMainConfiguration(directory, "configuration.yml") {
-		return true
+func LoadConfiguration(directory string) error {
+	if err := loadMainConfiguration(directory, "configuration.yml"); err != nil {
+		return err
 	}
-	if loadDatabaseConfigurations(directory, "databases/") {
-		return true
+	if err := loadDatabaseConfigurations(directory, "databases/"); err != nil {
+		return err
 	}
-	return false
+	return nil
 }
 
-func loadMainConfiguration(directory string, fileName string) bool {
+func loadMainConfiguration(directory string, fileName string) error {
 	f, err := os.Open(directory + fileName)
 	if err != nil {
 		LogError("Error loading configuration from file %q: %v.", fileName, err)
-		return true
+		return err
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&Configuration)
 	if err != nil {
 		LogError("Error parsing configuration from file %q: %v.", fileName, err)
-		return true
+		return err
 	}
 	Log("Configuration loaded from file %q.", fileName)
-	return false
+	return nil
 }
 
-func loadDatabaseConfigurations(directory string, subDirectory string) bool {
+func loadDatabaseConfigurations(directory string, subDirectory string) error {
 	files, err := ioutil.ReadDir(directory + subDirectory)
 	if err != nil {
 		LogError("Load configuration: %v.", err)
-		return true
+		return err
 	}
 	for _, file := range files {
 		if !file.IsDir() && strings.HasSuffix(file.Name(), "yml") {
-			if loadDatabaseConfiguration(directory + subDirectory + file.Name()) {
-				return true
+			if err := loadDatabaseConfiguration(directory + subDirectory + file.Name()); err != nil {
+				return err
 			}
 		}
 	}
-	return false
+	return nil
 }
 
-func loadDatabaseConfiguration(fileName string) bool {
+func loadDatabaseConfiguration(fileName string) error {
 	f, err := os.Open(fileName)
 	if err != nil {
 		LogError("Error loading configuration from file %q: %v", fileName, err)
-		return true
+		return err
 	}
 	defer f.Close()
 	var databaseConfiguration DatabaseConfig
@@ -90,12 +90,12 @@ func loadDatabaseConfiguration(fileName string) bool {
 	err = decoder.Decode(&databaseConfiguration)
 	if err != nil {
 		LogError("Error parsing configuration from file %q:", fileName, err)
-		return true
+		return err
 	}
 	dbName := databaseConfiguration.Database.Name
 	Log("Load database %q configuration from file %q:", dbName, fileName)
 	DatabaseConfigurations[dbName] = &databaseConfiguration
-	return false
+	return nil
 }
 
 func IsDatabaseEnabled(dbName string) bool {
