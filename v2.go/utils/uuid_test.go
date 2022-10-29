@@ -19,6 +19,6 @@ func TestCleanupStrings(t *testing.T) {
 	then := CleanupStrings(given)
 	expected := `{ "message": "Not authorized."}`
 	if then != expected {
-		t.Fatalf("Got %q instead of %q.", then, expected)
+		t.Errorf("Got %q instead of %q.", then, expected)
 	}
 }

@@ -13,9 +13,9 @@ func TestGetNewToken(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
 	token, err := getNewToken("test", "root", "0", "root", "root")
 	if err != nil {
-		t.Fatalf("Token can't be created: %v.", err)
+		t.Errorf("Token can't be created: %v.", err)
 	}
 	if len(token) < 20 {
-		t.Fatalf("Token doesn't seem to be a token: %v.", token)
+		t.Errorf("Token doesn't seem to be a token: %v.", token)
 	}
 }
