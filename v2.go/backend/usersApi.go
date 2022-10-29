@@ -20,6 +20,11 @@ func GetUsersApi(c *gin.Context) {
 }
 
 func GetUserByIDApi(c *gin.Context) {
+	auth, exists := c.Get("authorized")
+	if !exists || auth == false {
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Not authorized."})
+		return
+	}
 	uuid := c.Param("uuid")
 	user, exists := GetUserByID(uuid)
 	if exists {
@@ -30,6 +35,11 @@ func GetUserByIDApi(c *gin.Context) {
 }
 
 func PostUsersApi(c *gin.Context) {
+	auth, exists := c.Get("authorized")
+	if !exists || auth == false {
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Not authorized."})
+		return
+	}
 	var newUser user
 	if err := c.BindJSON(&newUser); err != nil {
 		return

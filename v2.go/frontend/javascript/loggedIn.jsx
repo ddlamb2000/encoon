@@ -130,7 +130,7 @@ class LoggedIn extends React.Component {
     }
 
     componentDidMount() {
-        const uri = `/${dbName}/api/v1/users${uuid !== "" ? '/' + uuid : ''}`
+        const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
         fetch(uri, {
             headers: {
               'Accept': 'application/json',

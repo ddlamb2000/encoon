@@ -13,6 +13,7 @@ class Navigation extends React.Component {
               <div className="collapse navbar-collapse" id="navbarNavAltMarkup">
                   <div className="navbar-nav">
                       <a className="nav-link" href={`/${dbName}`}>{dbName}</a>
+                      <a className="nav-link" href={`/${dbName}/grids`}>Grids</a> 
                       <a className="nav-link" href={`/${dbName}/users`}>Users</a> 
                   </div>
               </div>

@@ -177,7 +177,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 func migrateCommandsDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int, commands map[int]string) {
 	keys := make([]int, 0)
 	i := 0
-	for k, _ := range commands {
+	for k := range commands {
 		keys = append(keys, k)
 		i++
 	}
