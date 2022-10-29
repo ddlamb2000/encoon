@@ -54,8 +54,6 @@ func setHtmlRoutes() {
 	router.GET("/:dbName", getIndexHtml)
 	router.GET("/:dbName/:gridUri", getIndexHtml)
 	router.GET("/:dbName/:gridUri/:uuid", getIndexHtml)
-	// router.GET("/:dbName/users", getIndexHtml)
-	// router.GET("/:dbName/users/:uuid", getIndexHtml)
 }
 
 func setApiRoutes() {
@@ -64,9 +62,6 @@ func setApiRoutes() {
 		v1.POST("/authentication", authentication)
 		v1.GET("/:gridUri", authMiddleware(), GetGridsApi)
 		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsApi)
-		// v1.GET("/users", authMiddleware(), GetUsersApi)
-		// v1.GET("/users/:uuid", authMiddleware(), GetUserByIDApi)
-		// v1.POST("/users", authMiddleware(), PostUsersApi)
 	}
 }
 

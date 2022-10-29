@@ -55,10 +55,10 @@ func GetGridsApi(c *gin.Context) {
 	var rows *sql.Rows
 	var err error
 	if uuid != "" {
-		rows, err = db.Query("SELECT uuid, uri, text01, text02, text03, text04 FROM rows WHERE uuid = $1 AND griduuid = $2", uuid, gridUuid)
+		rows, err = db.Query("SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE uuid = $1 AND griduuid = $2", uuid, gridUuid)
 
 	} else {
-		rows, err = db.Query("SELECT uuid, uri, text01, text02, text03, text04 FROM rows WHERE griduuid = $1", gridUuid)
+		rows, err = db.Query("SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE griduuid = $1", gridUuid)
 	}
 
 	if err != nil {
@@ -71,7 +71,7 @@ func GetGridsApi(c *gin.Context) {
 	var rowSet = make([]backend.Row, 0)
 	for rows.Next() {
 		var row backend.Row
-		err = rows.Scan(&row.Uuid, &row.Uri, &row.Text01, &row.Text02, &row.Text03, &row.Text04)
+		err = rows.Scan(&row.Uuid, &row.Version, &row.Uri, &row.Text01, &row.Text02, &row.Text03, &row.Text04)
 		if err != nil {
 			utils.Log("[%q] Unknown error when scanning rows: %v.", dbName, err)
 			c.IndentedJSON(http.StatusInternalServerError, "")

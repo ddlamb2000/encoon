@@ -10,13 +10,11 @@ import (
 	"strings"
 	"testing"
 
-	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/utils"
 )
 
-func TestApiUsers(t *testing.T) {
+func TestApis(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
-	backend.LoadData()
 	setApiRoutes()
 	t.Run("TestApiUsersNoHeader", func(t *testing.T) { RunTestApiUsersNoHeader(t) })
 	t.Run("TestApiUsersIncorrectToken", func(t *testing.T) { RunTestApiUsersIncorrectToken(t) })
@@ -79,6 +77,9 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 }
 
 func RunTestApiUsersPassing(t *testing.T) {
+	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
 	token, _ := getNewToken("test", "root", "0", "root", "root")
 	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -86,7 +87,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 
-	expected := utils.CleanupStrings(`"version": 1, "enabled": true, "email": "root@encoon.com", "firstName": "Root", "lastName": "Encoon"`)
+	expected := utils.CleanupStrings(`"text01": "root", "text02": "root"`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {

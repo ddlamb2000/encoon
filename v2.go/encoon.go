@@ -12,7 +12,6 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/middleware"
 	"d.lambert.fr/encoon/utils"
 )
@@ -33,14 +32,12 @@ func main() {
 	if utils.LoadConfiguration("configurations/") == nil {
 		go middleware.ConnectDbServers(utils.DatabaseConfigurations)
 		go middleware.SetAndStartHttpServer()
-		go backend.LoadData()
 
 		<-done
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()
 		middleware.ShutDownHttpServer(ctx)
 		middleware.DisconnectDbServers(utils.DatabaseConfigurations)
-		utils.Log("Stopped.")
 	}
 	utils.Log("Stopped.")
 }
