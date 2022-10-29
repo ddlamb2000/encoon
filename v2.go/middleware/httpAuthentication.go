@@ -39,15 +39,7 @@ func authentication(c *gin.Context) {
 		return
 	}
 
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user":          login.Id,
-		"userUuid":      userUuid,
-		"userFirstName": firstName,
-		"userLastName":  lastName,
-		"expiration":    time.Now().Add(10 * time.Minute),
-	})
-	jwtSecret := utils.GetJWTSecret(dbName)
-	tokenString, err := token.SignedString([]byte(jwtSecret))
+	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName)
 	if err != nil {
 		utils.LogError("Failed to generate signed string.")
 		c.JSON(http.StatusServiceUnavailable, "")
@@ -56,6 +48,18 @@ func authentication(c *gin.Context) {
 	utils.Log("Token generated: %v.", tokenString)
 	jwtToken := JWTtoken{tokenString}
 	c.JSON(http.StatusOK, jwtToken)
+}
+
+func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+		"user":          id,
+		"userUuid":      userUuid,
+		"userFirstName": firstName,
+		"userLastName":  lastName,
+		"expiration":    time.Now().Add(10 * time.Minute),
+	})
+	jwtSecret := utils.GetJWTSecret(dbName)
+	return token.SignedString([]byte(jwtSecret))
 }
 
 func authMiddleware() gin.HandlerFunc {
@@ -68,11 +72,13 @@ func authMiddleware() gin.HandlerFunc {
 
 		var header = c.Request.Header.Get("Authorization")
 		if header == "" {
+			c.Set("authorized", false)
 			utils.LogError("No authorization found in header for request %v", c.Request)
 			return
 		}
 
 		if len(header) < 10 {
+			c.Set("authorized", false)
 			utils.LogError("Incorrect header for request %v", c.Request)
 			return
 		}
@@ -85,6 +91,9 @@ func authMiddleware() gin.HandlerFunc {
 			}
 			return []byte(jwtSecret), nil
 		})
+		if token == nil {
+			return
+		}
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			user := claims["user"]
@@ -93,6 +102,7 @@ func authMiddleware() gin.HandlerFunc {
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
 
 			if today.After(expirationDate) {
+				c.Set("authorized", false)
 				utils.Log("[%v] Authorization expired.", user)
 				c.Abort()
 				c.IndentedJSON(http.StatusUnauthorized,
@@ -102,9 +112,11 @@ func authMiddleware() gin.HandlerFunc {
 						"disconnect": true})
 				return
 			}
+			c.Set("authorized", true)
 			utils.Log("[%v] %s.", user, c.Request.RequestURI)
 		} else {
 			utils.LogError("Invalid request: %v.", err)
+			c.Set("authorized", false)
 			c.Abort()
 			c.IndentedJSON(http.StatusUnauthorized,
 				gin.H{

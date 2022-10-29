@@ -19,7 +19,7 @@ var (
 	srv    *http.Server
 )
 
-func SetAndStartHttpServer() {
+func SetAndStartHttpServer() error {
 	router.Use(logger())
 	setHtmlTemplates()
 	setStaticFiles()
@@ -34,8 +34,9 @@ func SetAndStartHttpServer() {
 	utils.Log("Listening http.")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		utils.LogError("Error on http listening: %v.", err)
-		return
+		return err
 	}
+	return nil
 }
 
 func setHtmlTemplates() {

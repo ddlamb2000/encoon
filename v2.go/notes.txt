@@ -66,6 +66,6 @@ Test automation
     Nodes.js: https://nodejs.org/
     Cucumber: https://cucumber.io
 
-    https://github.com/cucumber/godog
+    Godog: https://github.com/cucumber/godog
 
-    https://martinfowler.com/articles/practical-test-pyramid.html 
+    Testing APIs with gin: https://circleci.com/blog/gin-gonic-testing/

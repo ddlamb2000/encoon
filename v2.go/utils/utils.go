@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,4 +24,8 @@ func InitWithLog() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	Log("Starting.")
+}
+
+func CleanupStrings(s string) string {
+	return strings.Join(strings.Fields(strings.Replace(s, "\n", "", -1)), " ")
 }

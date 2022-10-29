@@ -13,3 +13,12 @@ func TestGetNewUUID(t *testing.T) {
 		t.Fatal("No uuid generated.")
 	}
 }
+
+func TestCleanupStrings(t *testing.T) {
+	given := `{           "message":       "Not authorized."}`
+	then := CleanupStrings(given)
+	expected := `{ "message": "Not authorized."}`
+	if then != expected {
+		t.Fatalf("Got %q instead of %q.", then, expected)
+	}
+}
