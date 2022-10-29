@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package utils
 
 const (
 	UuidGrids   = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"

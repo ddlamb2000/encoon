@@ -34,20 +34,25 @@ class LoggedIn extends React.Component {
         }
       } else if (!isLoaded) {
           return <div>Loading…</div>;
+      } else if (items == undefined) {
+          return <div>No data</div>;
       } else {
           if(uuid !== "") {
+            const item = items[0]
               return (
                   <div className="container">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
-                      <h2>User</h2>
+                      <h2>{gridUri}</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
                           </thead>
                           <tbody>
-                              <tr><td>Uuid</td><td>{items.uuid}</td></tr>
-                              <tr><td>Email</td><td>{items.email}</td></tr>
-                              <tr><td>First Name</td><td>{items.firstName}</td></tr>
-                              <tr><td>Last Name</td><td>{items.lastName}</td></tr>
+                              <tr><td>Uuid</td><td>{item.uuid}</td></tr>
+                              <tr><td>Uri</td><td>{item.uri}</td></tr>
+                              <tr><td>Text01</td><td>{item.text01}</td></tr>
+                              <tr><td>Text02</td><td>{item.text02}</td></tr>
+                              <tr><td>Text03</td><td>{item.text03}</td></tr>
+                              <tr><td>Text04</td><td>{item.text04}</td></tr>
                           </tbody>
                       </table>
                   </div>
@@ -57,13 +62,15 @@ class LoggedIn extends React.Component {
                 return (
                   <div className="container">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
-                      <h2>Users</h2>
+                      <h2>{gridUri}</h2>
                       <table className="table table-hover table-sm">
                           <thead className="table-light">
                               <tr>
-                                  <th scope="col">Email</th>
-                                  <th scope="col">First Name</th>
-                                  <th scope="col">Last Name</th>
+                                  <th scope="col">Uri</th>
+                                  <th scope="col">Text01</th>
+                                  <th scope="col">Text02</th>
+                                  <th scope="col">Text03</th>
+                                  <th scope="col">Text04</th>
                                   <th scope="col">
                                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-battery-full" viewBox="0 0 16 16">
                                           <path d="M2 6h10v4H2V6z"/>
@@ -75,41 +82,30 @@ class LoggedIn extends React.Component {
                           <tbody>
                               {items.map(item => (
                                   <tr key={item.uuid}>
-                                      <td>{item.email}</td>
-                                      <td>{item.firstName}</td>
-                                      <td>{item.lastName}</td>
-                                      <th scope="row"><a href={`/${dbName}/users/${item.uuid}`}>{item.uuid}</a></th>
+                                      <td>{item.uri}</td>
+                                      <td>{item.text01}</td>
+                                      <td>{item.text02}</td>
+                                      <td>{item.text03}</td>
+                                      <td>{item.text04}</td>
+                                      <td scope="row"><a href={`/${dbName}/${gridUri}/${item.uuid}`}>{item.uuid}</a></td>
                                   </tr>
                               ))}
                             <tr key="new line">
-                                <td>
-                                    <input>
-                                    </input>
-                                </td>
-                                <td>
-                                    <input>
-                                    </input>
-                                </td>
-                                <td>
-                                    <input>
-                                    </input>
-                                </td>
-                                <th scope="row">zzzzz</th>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
                             </tr>
                             <tr key="new line 2">
-                                <td>
-                                    <input type="email">
-                                    </input>
-                                </td>
-                                <td>
-                                    <input>
-                                    </input>
-                                </td>
-                                <td>
-                                    <input>
-                                    </input>
-                                </td>
-                                <th scope="row">iiiiii</th>
+                            <td>
+                                <input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
+                                <td><input></input></td>
                             </tr>
                           </tbody>
                       </table>
@@ -143,7 +139,7 @@ class LoggedIn extends React.Component {
               (result) => {
                   this.setState({
                       isLoaded: true,
-                      items: result.users,
+                      items: result.items,
                       error: result.error,
                       message: result.message,
                       disconnect: result.disconnect
@@ -153,7 +149,7 @@ class LoggedIn extends React.Component {
                   this.setState({
                       isLoaded: false,
                       items: [],
-                      message: "Something happened.",
+                      message: `Something happened: ${error}.`,
                       error: true
                   });
               }

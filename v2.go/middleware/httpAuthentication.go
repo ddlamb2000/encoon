@@ -51,7 +51,7 @@ func authentication(c *gin.Context) {
 }
 
 func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string) (string, error) {
-	expiration := time.Now().Add(10 * time.Minute)
+	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user":          id,
 		"userUuid":      userUuid,

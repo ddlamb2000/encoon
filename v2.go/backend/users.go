@@ -10,7 +10,7 @@ import (
 )
 
 type user struct {
-	entity
+	Row
 
 	Email     string `json:"email"`
 	FirstName string `json:"firstName"`
@@ -29,26 +29,26 @@ func loadUsers() {
 	utils.Log("Loading users.")
 
 	(&user{
-		entity:    entity{Uuid: "c788a76d-4aa6-4073-8904-35a9b99a3289", Version: 1, Enabled: true},
+		Row:       Row{Uuid: "c788a76d-4aa6-4073-8904-35a9b99a3289", Version: 1, Enabled: true},
 		Email:     "root@encoon.com",
 		FirstName: "Root",
 		LastName:  "Encoon"}).add()
 
 	(&user{
-		entity:    entity{Uuid: "bced42a2-6ddd-4023-ad40-0d46962b7872", Version: 1, Enabled: true},
+		Row:       Row{Uuid: "bced42a2-6ddd-4023-ad40-0d46962b7872", Version: 1, Enabled: true},
 		Email:     "system@encoon.com",
 		FirstName: "System",
 		LastName:  "Encoon"}).add()
 
 	(&user{
-		entity: entity{Uuid: "67b560b9-63ff-4fed-9b64-26c7f86e540c"},
-		Email:  "none@encoon.com"}).add()
+		Row:   Row{Uuid: "67b560b9-63ff-4fed-9b64-26c7f86e540c"},
+		Email: "none@encoon.com"}).add()
 
 	utils.Log("Users loaded.")
 }
 
 func (v *user) add() {
-	users[v.entity.Uuid] = *v
+	users[v.Row.Uuid] = *v
 }
 
 func GetUserByID(uuid string) (user, bool) {

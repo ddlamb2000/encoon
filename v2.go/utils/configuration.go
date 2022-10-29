@@ -13,8 +13,9 @@ import (
 
 type Config struct {
 	HttpServer struct {
-		Host string `yaml:"host"`
-		Port int    `yaml:"port"`
+		Host          string `yaml:"host"`
+		Port          int    `yaml:"port"`
+		JwtExpiration int    `yaml:"jwtExpiration"`
 	} `yaml:"httpServer"`
 }
 

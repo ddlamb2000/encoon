@@ -5,3 +5,4 @@
 httpServer:
     host: "localhost"
     port: 8080
+    jwtExpiration: 20
