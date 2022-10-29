@@ -6,6 +6,7 @@ package middleware
 import (
 	"database/sql"
 
+	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -17,14 +18,15 @@ func isDbAuthorized(dbName string, id string, password string) (bool, string, st
 		var firstName string
 		var lastName string
 		if err := db.QueryRow(
-			"SELECT uuid, firstName, lastName FROM users WHERE id = $1 AND password = crypt($2, password)",
+			"SELECT uuid, text02, text03 FROM rows WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04)",
+			backend.UuidUsers,
 			id,
 			password).
 			Scan(&uuid, &firstName, &lastName); err != nil {
 			if err == sql.ErrNoRows {
-				utils.Log("[%q] Invalid ID or password.", dbName)
+				utils.Log("[%q] Invalid ID or password: %v.", dbName, err)
 			} else {
-				utils.Log("[%q] Unknown error.", dbName)
+				utils.Log("[%q] Unknown error: %v.", dbName, err)
 			}
 		} else {
 			if uuid != "" {
