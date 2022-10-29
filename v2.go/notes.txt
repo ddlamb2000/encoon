@@ -56,3 +56,14 @@ Tabulator
 
 Rich text editors
     https://github.com/ianstormtaylor/slate
+
+
+Test automation
+    Pactum: https://pactumjs.github.io
+    Mocha: https://mochajs.org
+    Nodes.js: https://nodejs.org/
+    Cucumber: https://cucumber.io
+
+    https://github.com/cucumber/godog
+
+    https://martinfowler.com/articles/practical-test-pyramid.html 
