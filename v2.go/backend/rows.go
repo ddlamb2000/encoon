@@ -3,8 +3,6 @@
 
 package backend
 
-import "fmt"
-
 type Row struct {
 	Uuid      string  `json:"uuid"`
 	Version   int8    `json:"version"`
@@ -23,8 +21,4 @@ type Row struct {
 	Text08    *string `json:"text08"`
 	Text09    *string `json:"text09"`
 	Text10    *string `json:"text10"`
-}
-
-func (r Row) String() string {
-	return fmt.Sprintf("%s %s", r.Uuid, r.Uri)
 }

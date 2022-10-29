@@ -1,13 +1,12 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package middleware
+package backend
 
 import (
 	"database/sql"
 	"net/http"
 
-	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -68,9 +67,9 @@ func GetGridsApi(c *gin.Context) {
 	}
 	defer rows.Close()
 
-	var rowSet = make([]backend.Row, 0)
+	var rowSet = make([]Row, 0)
 	for rows.Next() {
-		var row backend.Row
+		var row Row
 		err = rows.Scan(&row.Uuid, &row.Version, &row.Uri, &row.Text01, &row.Text02, &row.Text03, &row.Text04)
 		if err != nil {
 			utils.Log("[%q] Unknown error when scanning rows: %v.", dbName, err)
