@@ -18,7 +18,7 @@ func isDbAuthorized(dbName string, id string, password string) (bool, string, st
 		var firstName string
 		var lastName string
 		if err := db.QueryRow(
-			"SELECT uuid, text02, text03 FROM rows WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04)",
+			"SELECT uuid, text01, text02 FROM rows WHERE gridUuid = $1 AND uri = $2 AND text03 = crypt($3, text03)",
 			backend.UuidUsers,
 			id,
 			password).

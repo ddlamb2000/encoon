@@ -63,6 +63,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled boolean, " +
 				"gridUuid uuid, " +
 				"parentUuid uuid, " +
+				"uri text, " +
 				"text01 text, " +
 				"text02 text, " +
 				"text03 text, " +
@@ -78,13 +79,77 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			5: "CREATE INDEX gridParentUuid ON rows(parentUuid);",
 
-			6: "CREATE INDEX gridText01 ON rows(text01);",
+			6: "CREATE INDEX gridUri ON rows(uri);",
 
-			7: "CREATE INDEX gridText02 ON rows(text02);",
+			7: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"uri, " +
+				"text01) " +
+				"VALUES ('f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " + // Grid: Grids
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"true, " +
+				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
+				"'grids', " +
+				"'Grids')",
 
-			8: "CREATE INDEX gridText03 ON rows(text03);",
+			8: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"uri, " +
+				"text01) " +
+				"VALUES ('018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " + // Grid: Users
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"true, " +
+				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
+				"'users', " +
+				"'Users')",
 
-			9: "CREATE INDEX gridText04 ON rows(text04);",
+			9: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"uri, " + // id
+				"text01, " + // firstName
+				"text02, " + // lastName
+				"text03) " + // password
+				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d', " + // Users: root
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"true, " +
+				"'018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " +
+				"'" + root + "', " +
+				"'" + root + "', " +
+				"'" + root + "', " +
+				"'" + password + "')",
 
 			10: "INSERT INTO rows " +
 				"(uuid, " +
@@ -95,82 +160,18 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"text01) " +
-				"VALUES ('f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " + // Grid: Grids
-				"1, " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"true, " +
-				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'grids')",
-
-			11: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
-				"text01) " +
-				"VALUES ('018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " + // Grid: Users
-				"1, " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"true, " +
-				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'users')",
-
-			12: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
-				"text01, " + // id
-				"text02, " + // firstName
-				"text03, " + // lastName
-				"text04) " + // password
-				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d', " + // Users: root
-				"1, " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"true, " +
-				"'018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " +
-				"'" + root + "', " +
-				"'" + root + "', " +
-				"'" + root + "', " +
-				"'" + password + "')",
-
-			13: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
+				"uri, " +
 				"text01) " +
 				"VALUES ('533b6862-add3-4fef-8f93-20a17aaaaf5a', " + // Grid: Columns
 				"1, " +
-				"'January 8 04:05:06 1999 PST', " +
-				"'January 8 04:05:06 1999 PST', " +
+				"NOW(), " +
+				"NOW(), " +
 				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
 				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
 				"true, " +
 				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'columns')",
+				"'columns', " +
+				"'Columns')",
 		})
 }
 
