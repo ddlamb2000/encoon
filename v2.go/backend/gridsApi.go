@@ -6,12 +6,16 @@ package backend
 import (
 	"database/sql"
 	"net/http"
+	"time"
 
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func GetGridsApi(c *gin.Context) {
+
+	time.Sleep(1000 * time.Millisecond) ////// temporarisation that must be removed!
+
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
 		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Not authorized."})
