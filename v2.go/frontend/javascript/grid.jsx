@@ -1,17 +1,10 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-class LoggedIn extends React.Component {
+class Grid extends React.Component {
 	constructor(props) {
 		super(props)
-		const token = localStorage.getItem(`access_token_${dbName}`)
-		const payload = this.parseJwt(token)
 		this.state = {
-			token: token,
-			user: payload.user,
-			userUuid: payload.userUuid,
-			userFirstName: payload.userFirstName,
-			userLastName: payload.userLastName,
 			error: false,
 			disconnect: false,
 			isLoaded: false,
@@ -21,16 +14,6 @@ class LoggedIn extends React.Component {
 		}
 	}
   
-	parseJwt(token) {
-		const base64Url = token.split('.')[1]
-		const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
-		const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-			return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-		}).join(''))
-		const parsedJsonPayload = JSON.parse(jsonPayload)
-		return parsedJsonPayload
-	}
-
 	componentDidMount() {
 		this.setState({isLoading: true})
 		const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
@@ -38,7 +21,7 @@ class LoggedIn extends React.Component {
 			headers: {
 			'Accept': 'application/json',
 			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + this.state.token
+			'Authorization': 'Bearer ' + this.props.token
 			}
 		})
 		.then(res => res.json())
@@ -58,7 +41,7 @@ class LoggedIn extends React.Component {
 					isLoading: false,
 					isLoaded: false,
 					items: [],
-					message: `Something happened: ${error}.`,
+					message: `Something happened: ${result.message}.`,
 					error: true
 				})
 			}
@@ -66,9 +49,9 @@ class LoggedIn extends React.Component {
 	}
 
 	render() {
-		const { items, isLoading, isLoaded, error, disconnect } = this.state
+		const { items, isLoading, isLoaded, error, disconnect, message } = this.state
 		if(error) {
-			alert(`${dbName}: ${this.state.message}`)
+			alert(`${dbName}: ${message}`)
 			if(disconnect) {
 				localStorage.removeItem(`access_token_${dbName}`)
 				location.reload()
@@ -76,11 +59,10 @@ class LoggedIn extends React.Component {
 			return
 		}
 		return (
-			<div className="container-fluid">
-				<Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
+			<div>
 				<h3>{gridUri}</h3>
 				{isLoading && <div>Loading…</div>}
-				{isLoaded && items == undefined && <div>No data</div>}
+				{isLoaded && items == undefined && <div>No data {message != '' && '(' + message + ')'}</div>}
 				{isLoaded && items != undefined && uuid != "" && <span className="text-muted">{items[0].uuid}</span>}
 				{isLoaded && items != undefined && uuid == "" && <TableRows items={items} />}
 				{isLoaded && items != undefined && uuid != "" && <TableSingleRow item={items[0]} />}

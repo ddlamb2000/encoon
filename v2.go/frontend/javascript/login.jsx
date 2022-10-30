@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-class NotLogged extends React.Component {
+class Login extends React.Component {
 	constructor(props) {
 		super(props)
 		this.dbNameInput = null
