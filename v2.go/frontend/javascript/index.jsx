@@ -2,24 +2,17 @@
 // Copyright David Lambert 2022
 
 class App extends React.Component {
-  constructor(props) {
-    super(props)
-    this.setState()
-  }
+	constructor(props) {
+		super(props)
+		const idToken = localStorage.getItem(`access_token_${dbName}`)
+		if(idToken) this.loggedIn = true
+		else this.loggedIn = false
+	}
 
-  setState() {
-    let idToken = localStorage.getItem(`access_token_${dbName}`)
-    if (idToken) {
-      this.loggedIn = true
-    } else {
-      this.loggedIn = false
-    }
-  }
-
-  render() {
-    if (this.loggedIn) return <LoggedIn />
-    return <NotLogged />
-  }
+	render() {
+		if (this.loggedIn) return <LoggedIn />
+		return <NotLogged />
+	}
 }
 
 const bodyRootElement = document.getElementById("bodyRoot")
