@@ -13,6 +13,7 @@ class LoggedIn extends React.Component {
 			error: false,
 			disconnect: false,
 			isLoaded: false,
+			isLoading: false,
 			message: "",
 			items: [],
 		}
@@ -33,8 +34,17 @@ class LoggedIn extends React.Component {
 		return parsedJsonPayload
 	}
 
-	componentDidMount() {
-		const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
+	componentWillMount() {
+		this.setState({isLoading: true})
+
+		// temporisation - to be removed
+		var start = new Date().getTime();
+		var end = start;
+		while(end < start + 1000) {
+		  end = new Date().getTime();
+	   }
+
+	   const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
 		fetch(uri, {
 			headers: {
 			'Accept': 'application/json',
@@ -46,26 +56,28 @@ class LoggedIn extends React.Component {
 		.then(
 			(result) => {
 				this.setState({
-				isLoaded: true,
-				items: result.items,
-				error: result.error,
-				message: result.message,
-				disconnect: result.disconnect
+					isLoading: false,
+					isLoaded: true,
+					items: result.items,
+					error: result.error,
+					message: result.message,
+					disconnect: result.disconnect
 				})
 			},
 			(error) => {
 				this.setState({
-				isLoaded: false,
-				items: [],
-				message: `Something happened: ${error}.`,
-				error: true
+					isLoading: false,
+					isLoaded: false,
+					items: [],
+					message: `Something happened: ${error}.`,
+					error: true
 				})
 			}
 		)
 	}
 
 	render() {
-		const { items, isLoaded, error, disconnect } = this.state
+		const { items, isLoading, isLoaded, error, disconnect } = this.state
 
 		if(error) {
 			alert(`${dbName}: ${this.state.message}`)
@@ -78,63 +90,65 @@ class LoggedIn extends React.Component {
 
 		return (
 			<div className="container-fluid">
-			<Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
-			<h2>{gridUri}</h2>
-			{!isLoaded && 
-				<div>Loading…</div>
-			}
-			{isLoaded && items == undefined &&
-				<div>No data</div>
-			}
-			{isLoaded && items != undefined && uuid == "" &&
-				<table className="table table-hover table-sm">
-					<thead className="table-light">
-						<tr>
-							<th scope="col">Uri</th>
-							<th scope="col">Text01</th>
-							<th scope="col">Text02</th>
-							<th scope="col">Text03</th>
-							<th scope="col">Text04</th>
-							<th scope="col">
-								<img src="/icons/plus-circle.svg" role="img" alt="Plus circle"></img>
-							</th>
-						</tr>
-					</thead>
-					<tbody>
-						{items.map(item => (
-							<tr key={item.uuid}>
-								<td>{item.uri}</td>
-								<td>{item.text01}</td>
-								<td>{item.text02}</td>
-								<td>{item.text03}</td>
-								<td>{item.text04}</td>
-								<td scope="row"><a href={`/${dbName}/${gridUri}/${item.uuid}`}>{item.uuid}</a></td>
+				<Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
+				<h3>{gridUri}</h3>
+				{isLoading &&
+					<div>Loading…</div>
+				}
+				{isLoaded && items == undefined &&
+					<div>No data</div>
+				}
+				{isLoaded && items != undefined && uuid != "" &&
+					<span className="text-muted">{items[0].uuid}</span>
+				}
+				{isLoaded && items != undefined && uuid == "" &&
+					<table className="table table-hover table-sm">
+						<thead className="table-light">
+							<tr>
+								<th scope="col">Uri</th>
+								<th scope="col">Text01</th>
+								<th scope="col">Text02</th>
+								<th scope="col">Text03</th>
+								<th scope="col">Text04</th>
+								<th scope="col">
+									<img src="/icons/plus-circle.svg" role="img" alt="Plus circle"></img>
+								</th>
 							</tr>
-						))}
-						<tr key="new line">
-							<td><input></input></td>
-							<td><input></input></td>
-							<td><input></input></td>
-							<td><input></input></td>
-							<td><input></input></td>
-							<td><input></input></td>
-						</tr>
-					</tbody>
-				</table>
-			}
-			{isLoaded && items != undefined && uuid != "" &&
-				<table className="table table-hover table-sm">
-					<thead className="table-light"></thead>
-					<tbody>
-						<tr><td>Uuid</td><td>{items[0].uuid}</td></tr>
-						<tr><td>Uri</td><td>{items[0].uri}</td></tr>
-						<tr><td>Text01</td><td>{items[0].text01}</td></tr>
-						<tr><td>Text02</td><td>{items[0].text02}</td></tr>
-						<tr><td>Text03</td><td>{items[0].text03}</td></tr>
-						<tr><td>Text04</td><td>{items[0].text04}</td></tr>
-					</tbody>
-				</table>
-			}
+						</thead>
+						<tbody>
+							{items.map(item => (
+								<tr key={item.uuid}>
+									<td>{item.uri}</td>
+									<td>{item.text01}</td>
+									<td>{item.text02}</td>
+									<td>{item.text03}</td>
+									<td>{item.text04}</td>
+									<td scope="row"><a href={`/${dbName}/${gridUri}/${item.uuid}`}>{item.uuid}</a></td>
+								</tr>
+							))}
+							<tr key="new line">
+								<td><input></input></td>
+								<td><input></input></td>
+								<td><input></input></td>
+								<td><input></input></td>
+								<td><input></input></td>
+								<td><input></input></td>
+							</tr>
+						</tbody>
+					</table>
+				}
+				{isLoaded && items != undefined && uuid != "" &&
+					<table className="table table-hover table-sm">
+						<thead className="table-light"></thead>
+						<tbody>
+							<tr><td>Uri</td><td>{items[0].uri}</td></tr>
+							<tr><td>Text01</td><td>{items[0].text01}</td></tr>
+							<tr><td>Text02</td><td>{items[0].text02}</td></tr>
+							<tr><td>Text03</td><td>{items[0].text03}</td></tr>
+							<tr><td>Text04</td><td>{items[0].text04}</td></tr>
+						</tbody>
+					</table>
+				}
 			</div>
 		)
 	}
