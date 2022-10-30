@@ -4,12 +4,14 @@
 class LoggedIn extends React.Component {
 	constructor(props) {
 		super(props)
+		const token = localStorage.getItem(`access_token_${dbName}`)
+		const payload = this.parseJwt(token)
 		this.state = {
-			token: localStorage.getItem(`access_token_${dbName}`),
-			user: "",
-			userUuid: "",
-			userFirstName: "",
-			userLastName: "",
+			token: token,
+			user: payload.user,
+			userUuid: payload.userUuid,
+			userFirstName: payload.userFirstName,
+			userLastName: payload.userLastName,
 			error: false,
 			disconnect: false,
 			isLoaded: false,
@@ -17,11 +19,6 @@ class LoggedIn extends React.Component {
 			message: "",
 			items: [],
 		}
-		const payload = this.parseJwt(this.state.token)
-		this.state.user = payload.user
-		this.state.userUuid = payload.userUuid
-		this.state.userFirstName = payload.userFirstName
-		this.state.userLastName = payload.userLastName
 	}
   
 	parseJwt(token) {
@@ -36,15 +33,7 @@ class LoggedIn extends React.Component {
 
 	componentDidMount() {
 		this.setState({isLoading: true})
-
-		// temporisation - to be removed
-		var start = new Date().getTime();
-		var end = start;
-		while(end < start + 1000) {
-		  end = new Date().getTime();
-	   }
-
-	   const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
+		const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
 		fetch(uri, {
 			headers: {
 			'Accept': 'application/json',
@@ -53,7 +42,7 @@ class LoggedIn extends React.Component {
 			}
 		})
 		.then(res => res.json())
-		.then(
+		.then(	
 			(result) => {
 				this.setState({
 					isLoading: false,
