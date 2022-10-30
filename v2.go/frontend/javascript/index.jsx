@@ -4,7 +4,7 @@
 class App extends React.Component {
 	constructor(props) {
 		super(props)
-		this.token = localStorage.getItem(`access_token_${dbName}`)
+		this.token = localStorage.getItem(`access_token_${this.props.dbName}`)
 		if(this.token) {
 			const payload = this.parseJwt(this.token)
 			this.user = payload.user
@@ -17,11 +17,18 @@ class App extends React.Component {
 	}
 
 	render() {
-		if (!this.loggedIn) return <Login />
+		if (!this.loggedIn) return <Login appName={this.props.appName} dbName={this.props.dbName} />
 		return (
 			<div className="container-fluid">
-				<Navigation user={this.user} userFirstName={this.userFirstName} userLastName={this.userLastName} />
-				<Grid token={this.token} />
+				<Navigation appName={this.props.appName} 
+							dbName={this.props.dbName} 
+							user={this.user}
+							userFirstName={this.userFirstName}
+							userLastName={this.userLastName} />
+				<Grid token={this.token}
+						dbName={this.props.dbName}
+						gridUri={this.props.gridUri}
+						uuid={this.props.uuid} />
 			</div>
 		)		
 	}
@@ -37,11 +44,13 @@ class App extends React.Component {
 	}
 }
 
-const bodyRootElement = document.getElementById("bodyRoot")
-const dbName = bodyRootElement.getAttribute("dbName")
-const appName = bodyRootElement.getAttribute("appName")
-const uuid = bodyRootElement.getAttribute("uuid")
-const gridUri = bodyRootElement.getAttribute("gridUri")
 const rootElement = document.getElementById("application")
 const root = ReactDOM.createRoot(rootElement)
-root.render(<App />)
+root.render(
+	<App 
+		appName={rootElement.getAttribute("appName")}
+		dbName={rootElement.getAttribute("dbName")}
+		gridUri={rootElement.getAttribute("gridUri")}
+		uuid={rootElement.getAttribute("uuid")}
+	/>
+)

@@ -21,4 +21,6 @@ type Row struct {
 	Text08    *string `json:"text08"`
 	Text09    *string `json:"text09"`
 	Text10    *string `json:"text10"`
+
+	Path string `json:"path"`
 }

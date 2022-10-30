@@ -12,7 +12,7 @@ class Login extends React.Component {
 		this.setPasswordRef = element => { this.passwordInput = element }
 
 		this.authenticate = () => {
-			const updatedDbName = dbName != '' ? dbName : this.dbNameInput.value
+			const updatedDbName = this.props.dbName != '' ? this.props.dbName : this.dbNameInput.value
 			if(updatedDbName == '') {
 				alert("Database name is required.")
 				return null
@@ -40,7 +40,7 @@ class Login extends React.Component {
 					if (responseJson != null) {
 						localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
 					}
-					if(dbName == '') location.href = `/${updatedDbName}/`
+					if(this.props.dbName == '') location.href = `/${updatedDbName}/`
 					else location.reload()
 				} 
 			)  
@@ -55,13 +55,13 @@ class Login extends React.Component {
 					<div className="col">
 						<br/><br/><br/><br/><br/><br/><br/>
 						<center>
-							<h1>{appName}</h1>
+							<h1>{this.props.appName}</h1>
 							<small className="text-muted">Data structuration, presentation and navigation.</small>
 							<br/>
 							<br/>
-							{dbName != "" && <h3>{dbName}</h3>}
+							{this.props.dbName != "" && <h3>{this.props.dbName}</h3>}
 						</center>
-						{dbName == "" &&
+						{this.props.dbName == "" &&
 							<div className="mb-3">
 								<label htmlFor="dbName" className="form-label">Database</label>
 								<input type="text" 
@@ -96,7 +96,7 @@ class Login extends React.Component {
 							<button type="button" 
 								className="btn btn-outline-primary"
 								onClick={this.authenticate}>
-								Log in {dbName} <img src="/icons/box-arrow-in-right.svg" role="img" alt="Log in" />
+								Log in {this.props.dbName} <img src="/icons/box-arrow-in-right.svg" role="img" alt="Log in" />
 							</button>
 						</div>
 					</div>

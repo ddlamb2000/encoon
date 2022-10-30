@@ -5,6 +5,7 @@ package backend
 
 import (
 	"database/sql"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -80,6 +81,7 @@ func GetGridsApi(c *gin.Context) {
 			c.IndentedJSON(http.StatusInternalServerError, "")
 			return
 		}
+		row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
 		rowSet = append(rowSet, row)
 	}
 	err = rows.Err()
