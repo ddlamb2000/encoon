@@ -19,19 +19,19 @@ func GetGridsApi(c *gin.Context) {
 
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
-		c.IndentedJSON(http.StatusUnauthorized, gin.H{"message": "Not authorized."})
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
 		return
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
 	if dbName == "" || gridUri == "" {
-		c.IndentedJSON(http.StatusNotImplemented, gin.H{"message": "Missing parameter."})
+		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Missing parameter."})
 		return
 	}
 	db := getDbByName(dbName)
 	if db == nil {
-		c.IndentedJSON(http.StatusNotImplemented, gin.H{"message": "Database isn't available."})
+		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Database isn't available."})
 		return
 	}
 
@@ -43,11 +43,11 @@ func GetGridsApi(c *gin.Context) {
 		Scan(&gridUuid); err != nil {
 		if err == sql.ErrNoRows {
 			utils.Log("[%q] Grid not found: %v.", dbName, err)
-			c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Grid not found."})
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Grid not found."})
 			return
 		} else if gridUuid == "" {
 			utils.Log("[%q] Grid not found.", dbName)
-			c.IndentedJSON(http.StatusNotFound, gin.H{"message": "Grid not found."})
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Grid not found."})
 			return
 		} else {
 			utils.Log("[%q] Unknown error: %v.", dbName, err)

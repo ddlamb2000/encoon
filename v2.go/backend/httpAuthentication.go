@@ -110,8 +110,7 @@ func authMiddleware() gin.HandlerFunc {
 				c.Abort()
 				c.IndentedJSON(http.StatusUnauthorized,
 					gin.H{
-						"error":      true,
-						"message":    "Authorization expired.",
+						"error":      "Authorization expired.",
 						"disconnect": true})
 				return
 			}
@@ -123,8 +122,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Abort()
 			c.IndentedJSON(http.StatusUnauthorized,
 				gin.H{
-					"error":      true,
-					"message":    "Unauthorized.",
+					"error":      "Unauthorized.",
 					"disconnect": true})
 			return
 		}
