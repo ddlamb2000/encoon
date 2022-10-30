@@ -46,6 +46,7 @@ func setStaticFiles() {
 	router.Static("/stylesheets", "./frontend/stylesheets")
 	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
+	router.Static("/icons", "./frontend/bootstrap-icons/icons")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
 }
 
@@ -88,19 +89,13 @@ func getIndexHtml(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
-	if dbName == "" {
-		c.HTML(http.StatusOK, "home.html", gin.H{"appName": "εncooη"})
-	} else if utils.IsDatabaseEnabled(dbName) {
-		c.HTML(
-			http.StatusOK,
-			"index.html",
-			gin.H{
-				"appName": "εncooη",
-				"dbName":  dbName,
-				"gridUri": gridUri,
-				"uuid":    uuid,
-			})
-	} else {
-		c.HTML(http.StatusNotFound, "nofound.html", gin.H{"appName": "εncooη"})
-	}
+	c.HTML(
+		http.StatusOK,
+		"index.html",
+		gin.H{
+			"appName": "εncooη",
+			"dbName":  dbName,
+			"gridUri": gridUri,
+			"uuid":    uuid,
+		})
 }

@@ -4,20 +4,31 @@
 class NotLogged extends React.Component {
   constructor(props) {
     super(props)
+    this.dbNameInput = null
+    this.setDbNameRef = element => { this.dbNameInput = element }
     this.idInput = null
     this.setIdRef = element => { this.idInput = element }
     this.passwordInput = null
     this.setPasswordRef = element => { this.passwordInput = element }
 
     this.authenticate = () => {
-      fetch(`/${dbName}/api/v1/authentication`, {
+      const updatedDbName = dbName != '' ? dbName : this.dbNameInput.value
+      if(updatedDbName == '') {
+        alert("Database name is required.")
+        return null
+      }
+      if(this.idInput.value == '' || this.passwordInput.value == '') {
+        alert("Username and passphrase are both required.")
+        return null
+      }
+      fetch(`/${updatedDbName}/api/v1/authentication`, {
         method: 'POST',
         headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: this.idInput.value, password: btoa(this.passwordInput.value) })
       })
       .then( (response) => {
         if(response.status == 400) {
-          alert("Incorrect credentials.")
+          alert("Incorrect user credentials.")
           return null
         }
         if(response.status != 200) {
@@ -27,9 +38,10 @@ class NotLogged extends React.Component {
         return response.json() })
       .then( (responseJson) => {
         if (responseJson != null) {
-          localStorage.setItem(`access_token_${dbName}`, responseJson.token)
+          localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
         }
-        location.reload()
+        if(dbName == '') location.href = `/${updatedDbName}/`;
+        else location.reload()
       } )  
     }
   }
@@ -40,12 +52,26 @@ class NotLogged extends React.Component {
         <div className="row">
           <div className="col"></div>
           <div className="col">
-            <br/><br/><br/>
-            <center><h1>{appName}</h1></center>
-            <center><h4>{dbName}</h4></center>
-            <br/>
+            <br/><br/><br/><br/><br/><br/><br/>
+            <center>
+              <h1>{appName}</h1>
+              <small className="text-muted">Data structuration, presentation and navigation.</small>
+              <br/>
+              <br/>
+              {dbName != "" && <h3>{dbName}</h3>}
+            </center>
+            {dbName == "" &&
+              <div className="mb-3">
+                <label htmlFor="dbName" className="form-label">Database</label>
+                <input
+                  type="text" 
+                  className="form-control" 
+                  id="dbName" 
+                  ref={this.setDbNameRef}/>
+              </div>
+            }
             <div className="mb-3">
-              <label htmlFor="id" className="form-label">Identifier</label>
+              <label htmlFor="id" className="form-label">Username</label>
               <input
                 type="text" 
                 className="form-control" 
@@ -55,18 +81,27 @@ class NotLogged extends React.Component {
               <div id="idHelp" className="form-text">We'll never share your data with anyone else.</div>
             </div>
             <div className="mb-3">
-              <label htmlFor="password" className="form-label">Password</label>
+              <label htmlFor="password" className="form-label">Passphrase</label>
               <input 
                 type="password" 
                 className="form-control" 
                 id="password"
                 ref={this.setPasswordRef}/>
+              <div id="passwordHelp" className="form-text">
+                A passphrase is a sequence of words or other text used to control access 
+                to a computer system, program or data. 
+                It is similar to a password in usage, but a passphrase is generally longer 
+                for added security.
+              </div>
             </div>
-            <button
-              type="button" 
-              className="btn btn-primary" 
-              onClick={this.authenticate}>Log in
-            </button>
+            <div class="d-grid gap-2">
+              <button
+                type="button" 
+                className="btn btn-outline-primary"
+                onClick={this.authenticate}>
+                  Log in {dbName} <img src="/icons/box-arrow-in-right.svg" role="img" alt="Log in" />
+              </button>
+            </div>
           </div>
           <div className="col"></div>
         </div>

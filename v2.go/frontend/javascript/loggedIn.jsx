@@ -3,7 +3,7 @@
 
 class LoggedIn extends React.Component {
     constructor(props) {
-      super(props);
+      super(props)
       this.state = {
           token: localStorage.getItem(`access_token_${dbName}`),
           user: "",
@@ -15,7 +15,7 @@ class LoggedIn extends React.Component {
           isLoaded: false,
           message: "",
           items: [],
-      };
+      }
       const payload = this.parseJwt(this.state.token)
       this.state.user = payload.user
       this.state.userUuid = payload.userUuid
@@ -23,24 +23,65 @@ class LoggedIn extends React.Component {
       this.state.userLastName = payload.userLastName
     }
   
+    parseJwt(token) {
+        const base64Url = token.split('.')[1]
+        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/')
+        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+        }).join(''))
+        const parsedJsonPayload = JSON.parse(jsonPayload)
+        return parsedJsonPayload
+    }
+
+    componentDidMount() {
+        const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
+        fetch(uri, {
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + this.state.token
+            }
+          })
+          .then(res => res.json())
+          .then(
+              (result) => {
+                  this.setState({
+                      isLoaded: true,
+                      items: result.items,
+                      error: result.error,
+                      message: result.message,
+                      disconnect: result.disconnect
+                  })
+              },
+              (error) => {
+                  this.setState({
+                      isLoaded: false,
+                      items: [],
+                      message: `Something happened: ${error}.`,
+                      error: true
+                  })
+              }
+          )
+    }
+
     render() {
-      const { items, isLoaded, error, disconnect } = this.state;
+      const { items, isLoaded, error, disconnect } = this.state
   
       if(error) {
-        alert(`${dbName}: ${this.state.message}`);
+        alert(`${dbName}: ${this.state.message}`)
         if(disconnect) {
-            localStorage.removeItem(`access_token_${dbName}`);
-            location.reload();
+            localStorage.removeItem(`access_token_${dbName}`)
+            location.reload()
         }
       } else if (!isLoaded) {
-          return <div>Loading…</div>;
+          return <div>Loading…</div>
       } else if (items == undefined) {
-          return <div>No data</div>;
+          return <div>No data</div>
       } else {
           if(uuid !== "") {
             const item = items[0]
               return (
-                  <div className="container">
+                  <div className="container-fluid">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>{gridUri}</h2>
                       <table className="table table-hover table-sm">
@@ -56,11 +97,11 @@ class LoggedIn extends React.Component {
                           </tbody>
                       </table>
                   </div>
-              );
+              )
           }
           else {
                 return (
-                  <div className="container">
+                  <div className="container-fluid">
                       <Navigation user={this.state.user} userFirstName={this.state.userFirstName} userLastName={this.state.userLastName} />
                       <h2>{gridUri}</h2>
                       <table className="table table-hover table-sm">
@@ -72,10 +113,7 @@ class LoggedIn extends React.Component {
                                   <th scope="col">Text03</th>
                                   <th scope="col">Text04</th>
                                   <th scope="col">
-                                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-battery-full" viewBox="0 0 16 16">
-                                          <path d="M2 6h10v4H2V6z"/>
-                                          <path d="M2 4a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2H2zm10 1a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h10zm4 3a1.5 1.5 0 0 1-1.5 1.5v-3A1.5 1.5 0 0 1 16 8z"/>
-                                      </svg>
+                                    <img src="/icons/plus-circle.svg" role="img" alt="Plus circle"></img>
                                   </th>
                               </tr>
                           </thead>
@@ -110,49 +148,8 @@ class LoggedIn extends React.Component {
                           </tbody>
                       </table>
                   </div>
-              );
+              )
           }
       }
-    }
-  
-    parseJwt(token) {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        const jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
-        const parsedJsonPayload = JSON.parse(jsonPayload)
-        return parsedJsonPayload
-    }
-
-    componentDidMount() {
-        const uri = `/${dbName}/api/v1/${gridUri !== "" ? gridUri : 'users'}${uuid !== "" ? '/' + uuid : ''}`
-        fetch(uri, {
-            headers: {
-              'Accept': 'application/json',
-              'Content-Type': 'application/json',
-              'Authorization': 'Bearer ' + this.state.token
-            }
-          })
-          .then(res => res.json())
-          .then(
-              (result) => {
-                  this.setState({
-                      isLoaded: true,
-                      items: result.items,
-                      error: result.error,
-                      message: result.message,
-                      disconnect: result.disconnect
-                  });
-              },
-              (error) => {
-                  this.setState({
-                      isLoaded: false,
-                      items: [],
-                      message: `Something happened: ${error}.`,
-                      error: true
-                  });
-              }
-          )
-    }
+    }  
 }
