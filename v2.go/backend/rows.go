@@ -3,6 +3,8 @@
 
 package backend
 
+import "fmt"
+
 type Row struct {
 	Uuid      string  `json:"uuid"`
 	Version   int8    `json:"version"`
@@ -23,4 +25,8 @@ type Row struct {
 	Text10    *string `json:"text10"`
 
 	Path string `json:"path"`
+}
+
+func (row *Row) SetPath(dbName, gridUri string) {
+	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
 }
