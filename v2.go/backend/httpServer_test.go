@@ -28,7 +28,7 @@ func RunTestApiUsersNoHeader(t *testing.T) {
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 
-	expected := utils.CleanupStrings(`{ "message": "Not authorized."}`)
+	expected := utils.CleanupStrings(`{ "error": "No authorization found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -46,7 +46,7 @@ func RunTestApiUsersIncorrectToken(t *testing.T) {
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 
-	expected := utils.CleanupStrings(`{ "message": "Not authorized."}`)
+	expected := utils.CleanupStrings(`{ "error": "Not authorized."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -65,7 +65,7 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 
-	expected := utils.CleanupStrings(`{ "disconnect": true, "error": true, "message": "Unauthorized."}`)
+	expected := utils.CleanupStrings(`{ "error": "Unauthorized (invalid request: illegal base64 data at input byte 28)."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
