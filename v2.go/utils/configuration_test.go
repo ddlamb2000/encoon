@@ -24,9 +24,24 @@ func TestLoadMainConfiguration2(t *testing.T) {
 	}
 }
 
+func TestLoadMainConfiguration3(t *testing.T) {
+	path := "../utils/"
+	fileName := "configuration.go"
+	if err := loadMainConfiguration(path, fileName); err == nil {
+		t.Errorf("Can load configuration %q from path %q.", fileName, path)
+	}
+}
+
 func TestLoadDatabaseConfiguration(t *testing.T) {
 	fileName := "../configurations/databases/test.yml"
 	if err := loadDatabaseConfiguration(fileName); err != nil {
+		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
+	}
+}
+
+func TestLoadDatabaseConfiguration2(t *testing.T) {
+	fileName := "../utils/configuration.go"
+	if err := loadDatabaseConfiguration(fileName); err == nil {
 		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
 	}
 }
@@ -45,6 +60,14 @@ func TestLoadDatabaseConfigurations2(t *testing.T) {
 	if err := loadDatabaseConfigurations(dir, subDir); err == nil {
 		t.Errorf("Expecting issue for loading database configurations from directory %q and sub-directory %q.", dir, subDir)
 	}
+}
+
+func TestGetRootAndPassword(t *testing.T) {
+	root, password := GetRootAndPassword("xxx")
+	if root != "" || password != "" {
+		t.Errorf("Root or password isn't correct for database %q: %q and %q.", "xxx", root, password)
+	}
+
 }
 
 func TestLoadConfiguration(t *testing.T) {
@@ -77,4 +100,11 @@ func TestLoadConfiguration(t *testing.T) {
 		t.Errorf("Root or password isn't correct for database %q: %q and %q.", dbName, root, password)
 	}
 
+}
+
+func TestLoadConfiguration2(t *testing.T) {
+	dir := "../utils/"
+	if err := LoadConfiguration(dir); err == nil {
+		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
+	}
 }

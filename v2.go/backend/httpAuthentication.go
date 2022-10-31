@@ -39,7 +39,8 @@ func authentication(c *gin.Context) {
 		return
 	}
 
-	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName)
+	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.JSON(http.StatusServiceUnavailable, "Failed to generate signed string.")
 		return
@@ -48,8 +49,7 @@ func authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string) (string, error) {
-	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user":          id,
 		"userUuid":      userUuid,

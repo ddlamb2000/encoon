@@ -5,13 +5,15 @@ package backend
 
 import (
 	"testing"
+	"time"
 
 	"d.lambert.fr/encoon/utils"
 )
 
 func TestGetNewToken(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
-	token, err := getNewToken("test", "root", "0", "root", "root")
+	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	token, err := getNewToken("test", "root", "0", "root", "root", expiration)
 	if err != nil {
 		t.Errorf("Token can't be created: %v.", err)
 	}
