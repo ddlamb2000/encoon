@@ -9,45 +9,58 @@ class Grid extends React.Component {
 			disconnect: false,
 			isLoaded: false,
 			isLoading: false,
-			message: "",
 			items: [],
+			count: 0,
 		}
 	}
   
 	componentDidMount() {
+		if(this.props.gridUri == undefined) {
+			this.setState({error: "Missing parameter gridUri"})
+			return
+		}
+		if(this.props.uuid == undefined) {
+			this.setState({error: "Missing parameter uuid"})
+			return
+		}
+
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid !== "" ? '/' + this.props.uuid : ''}`
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
+		console.log(`Trigger ${uri}`)
 		fetch(uri, {
 			headers: {
-			'Accept': 'application/json',
-			'Content-Type': 'application/json',
-			'Authorization': 'Bearer ' + this.props.token
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + this.props.token
 			}
 		})
-		.then(res => res.json())
-		.then(	
-			(result) => {
-				this.setState({
-					isLoading: false,
-					isLoaded: true,
-					items: result.items,
-					error: result.error,
-					disconnect: result.disconnect
-				})
-			},
-			(error) => {
-				this.setState({
-					isLoading: false,
-					isLoaded: false,
-					items: [],
-					error: error.message
-				})
+		.then(response => {
+			const contentType = response.headers.get("content-type");
+			if(contentType && contentType.indexOf("application/json") !== -1) {
+				return response.json().then(	
+					(result) => this.setState({
+							isLoading: false,
+							isLoaded: true,
+							items: result.items,
+							count: result.count,
+							error: result.error,
+							disconnect: result.disconnect
+					}),
+					(error) => this.setState({
+							isLoading: false,
+							isLoaded: false,
+							items: [],
+							error: error.message
+					})
+				)
+			} else {
+				alert("ooops")
 			}
-		)
+		})
 	}
 
 	render() {
-		const { items, isLoading, isLoaded, error, disconnect, message } = this.state
+		const { isLoading, isLoaded, error, disconnect, items, count } = this.state
 		if(error && disconnect) {
 			alert(error)
 			localStorage.removeItem(`access_token_${this.props.dbName}`)
@@ -58,23 +71,17 @@ class Grid extends React.Component {
 			<div>
 				<h3>{this.props.gridUri}{isLoading && <Spinner />}</h3>
 				{error && !isLoading && !isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
-				{isLoaded && !items && <div>No data {error != '' && ': ' + error}</div>}
-				{isLoaded && items && this.props.uuid == "" && <TableRows items={items} />}
-				{isLoaded && items && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
+				{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
+				{isLoaded && items && count > 0 && this.props.uuid == "" && <TableRows items={items} />}
+				{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
 			</div>
 		)
 	}
 }
 
-class Spinner extends React.Component {
-	render() {
-		return (
-			<span className="spinner-grow spinner-grow-sm ms-1" role="status">
-				<span className="visually-hidden">Loading...</span>
-			</span>
-		)
-	}
-}
+// Grid.defaultProps = {
+// 	uuid: ''
+// }
 
 class TableRows extends React.Component {
 	render() {

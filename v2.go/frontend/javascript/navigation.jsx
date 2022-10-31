@@ -7,16 +7,20 @@ class Navigation extends React.Component {
 			<nav className="navbar navbar-expand-lg bg-light">
 				<div className="container-fluid">
 					<a className="navbar-brand">{this.props.appName}</a>
-					<div className="navbar-text">{this.props.dbName}</div>
 					<div className="collapse navbar-collapse" id="navbarNavAltMarkup">
 						<div className="navbar-nav">
-							<a className="nav-link" href={`/${this.props.dbName}/grids`}>
+							<a className="nav-link" href={`/${this.props.dbName}`}>
 								<button type="button" className="btn btn-outline-primary btn-sm">
+								{this.props.dbName} <img src="/icons/house.svg" role="img" alt={this.props.dbName} />
+								</button>
+							</a> 
+							<a className="nav-link" href={`/${this.props.dbName}/grids`}>
+								<button type="button" className="btn btn-outline-secondary btn-sm">
 									Grids <img src="/icons/grid-3x3-gap.svg" role="img" alt="Grid" />
 								</button>
 							</a> 
 							<a className="nav-link" href={`/${this.props.dbName}/users`}>
-								<button type="button" className="btn btn-outline-primary btn-sm">
+								<button type="button" className="btn btn-outline-secondary btn-sm">
 									Users <img src="/icons/people.svg" role="img" alt="People" />
 								</button>
 							</a> 

@@ -73,6 +73,7 @@ func GetGridsApi(c *gin.Context) {
 	defer rows.Close()
 
 	var rowSet = make([]Row, 0)
+	var rowSetCount = 0
 	for rows.Next() {
 		var row Row
 		err = rows.Scan(&row.Uuid, &row.Version, &row.Uri, &row.Text01, &row.Text02, &row.Text03, &row.Text04)
@@ -83,6 +84,7 @@ func GetGridsApi(c *gin.Context) {
 		}
 		row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
 		rowSet = append(rowSet, row)
+		rowSetCount += 1
 	}
 	err = rows.Err()
 	if err != nil {
@@ -97,5 +99,6 @@ func GetGridsApi(c *gin.Context) {
 			"gridUuid": gridUuid,
 			"uuid":     uuid,
 			"items":    rowSet,
+			"count":    rowSetCount,
 		})
 }

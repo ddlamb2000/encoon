@@ -17,8 +17,8 @@ class App extends React.Component {
 	}
 
 	render() {
-		if (!this.loggedIn) return <Login appName={this.props.appName} dbName={this.props.dbName} />
-		return (
+		if(!this.loggedIn) return <Login appName={this.props.appName} dbName={this.props.dbName} />
+		if(this.props.gridUri != "") return (
 			<div className="container-fluid">
 				<Navigation appName={this.props.appName} 
 							dbName={this.props.dbName} 
@@ -29,6 +29,26 @@ class App extends React.Component {
 						dbName={this.props.dbName}
 						gridUri={this.props.gridUri}
 						uuid={this.props.uuid} />
+			</div>			
+		)
+		return (
+			<div className="container-fluid">
+				<Navigation appName={this.props.appName} 
+							dbName={this.props.dbName} 
+							user={this.user}
+							userFirstName={this.userFirstName}
+							userLastName={this.userLastName} />
+				<Grid token={this.token}
+						dbName={this.props.dbName}
+						gridUri="users"
+						uuid="" />
+				<Grid token={this.token}
+						dbName={this.props.dbName}
+						gridUri="grids" />
+				<Grid token={this.token}
+						dbName={this.props.dbName}
+						uuid=""
+						gridUri="columns" />
 			</div>
 		)		
 	}
