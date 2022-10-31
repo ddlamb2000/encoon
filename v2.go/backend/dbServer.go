@@ -62,7 +62,7 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 
 func pingDb(ctx context.Context, db *sql.DB) error {
 	if db == nil {
-		return fmt.Errorf("No database provided for ping.")
+		return fmt.Errorf("NO DATABASE PROVIDED FOR PING")
 	}
 	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
 	defer cancel()

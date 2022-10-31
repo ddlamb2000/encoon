@@ -30,12 +30,12 @@ func GetGridsApi(c *gin.Context) {
 
 func getGridsApiAuthorized(c *gin.Context, dbName string, db *sql.DB, gridUri string, uuid string, grid Grid) {
 	rows, err := getRowsForGridsApi(db, grid.Uuid, uuid)
-	defer rows.Close()
 	if err != nil {
 		c.Abort()
 		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err})
 		return
 	}
+	defer rows.Close()
 	rowSet, rowSetCount, err := getRowsetForGridsApi(dbName, gridUri, rows)
 	if err != nil {
 		c.Abort()
@@ -77,11 +77,11 @@ func getGridForGridsApi(db *sql.DB, gridUri string) (*Grid, error) {
 		gridUri).
 		Scan(&grid.Uuid, &grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
-			return grid, errors.New("Grid not found.")
+			return grid, errors.New("GRID NOT FOUND")
 		} else if grid.Uuid == "" {
-			return grid, errors.New("Grid identifier not found.")
+			return grid, fmt.Errorf("GRID IDENTIFIER NOT FOUND")
 		} else {
-			return grid, errors.New(fmt.Sprintf("Unknown error when retrieving grid definition: %v.", err))
+			return grid, fmt.Errorf("UNKNOWN ERROR WHEN RETRIEVING GRID DEFINITION: %v", err)
 		}
 	}
 	return grid, nil
@@ -113,7 +113,7 @@ func getRowsQueryParametersForGridsApi(gridUuid string, uuid string) []any {
 func getRowsForGridsApi(db *sql.DB, gridUuid string, uuid string) (*sql.Rows, error) {
 	rows, err := db.Query(getRowsQueryForGridsApi(uuid), getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
 	if err != nil {
-		return nil, errors.New(fmt.Sprintf("Error when querying rows: %v.", err))
+		return nil, fmt.Errorf("ERROR WHEN QUERYING ROWS: %v", err)
 	}
 	return rows, nil
 }
@@ -137,14 +137,14 @@ func getRowsetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row,
 	for rows.Next() {
 		var row = new(Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(row)...); err != nil {
-			return nil, 0, errors.New(fmt.Sprintf("Unknown error when scanning rows: %v.", err))
+			return nil, 0, fmt.Errorf("UNKNOWN ERROR WHEN SCANNING ROWS: %v", err)
 		}
 		row.SetPath(dbName, gridUri)
 		rowSet = append(rowSet, *row)
 		rowSetCount += 1
 	}
 	if err := rows.Err(); err != nil {
-		return nil, 0, errors.New(fmt.Sprintf("Error when scanning rows: %v.", err))
+		return nil, 0, fmt.Errorf("ERROR WHEN SCANNNIG ROWS: %v", err)
 	}
 	return rowSet, rowSetCount, nil
 }
