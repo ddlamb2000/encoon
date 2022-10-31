@@ -11,7 +11,25 @@ class App extends React.Component {
 			this.userUuid = payload.userUuid
 			this.userFirstName = payload.userFirstName
 			this.userLastName = payload.userLastName
-			this.loggedIn = true
+			if(payload.expires == "") {
+				console.log("No token expiration date.")
+				this.loggedIn = false
+			}
+			else {
+				const expires = new Date(Date.parse(payload.expires))
+				if (expires == "Invalid Date") {
+					console.log("Invalid token expiration date.")
+					this.loggedIn = false
+				}
+				else {
+					const now = new Date()
+					if(now > expires) {
+						console.log("Token expired.")
+						this.loggedIn = false
+					}
+					else if(now < expires) this.loggedIn = true
+				}
+			}
 		}
 		else this.loggedIn = false
 	}

@@ -6,7 +6,6 @@ class Grid extends React.Component {
 		super(props)
 		this.state = {
 			error: false,
-			disconnect: false,
 			isLoaded: false,
 			isLoading: false,
 			items: [],
@@ -17,7 +16,6 @@ class Grid extends React.Component {
 	componentDidMount() {
 		this.setState({isLoading: true})
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
-		console.log(`Trigger ${uri}`)
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',
@@ -35,8 +33,7 @@ class Grid extends React.Component {
 							isLoaded: true,
 							items: result.items,
 							count: result.count,
-							error: result.error,
-							disconnect: result.disconnect
+							error: result.error
 						})
 					},
 					(error) => {
@@ -60,15 +57,9 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, disconnect, items, count } = this.state
-		if(error && disconnect) {
-			alert(error)
-			localStorage.removeItem(`access_token_${this.props.dbName}`)
-			location.reload()
-			return
-		}
+		const { isLoading, isLoaded, error, items, count } = this.state
 		return (
-			<div className="card mt-1 mb-1">
+			<div className="card mt-2 mb-2">
 				<div className="card-body">
 					<h4 className="card-title">{this.props.gridUri}{isLoading && <Spinner />}</h4>
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}

@@ -68,20 +68,23 @@ func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbName := c.Param("dbName")
 		if dbName == "" {
-			utils.LogError("No database name for request %v", c.Request)
+			c.Abort()
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No database."})
 			return
 		}
 
 		var header = c.Request.Header.Get("Authorization")
 		if header == "" {
 			c.Set("authorized", false)
-			utils.LogError("No authorization found in header for request %v", c.Request)
+			c.Abort()
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No authorization found."})
 			return
 		}
 
 		if len(header) < 10 {
 			c.Set("authorized", false)
-			utils.LogError("Incorrect header for request %v", c.Request)
+			c.Abort()
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Incorrect header."})
 			return
 		}
 		var tokenString = header[7:]
@@ -107,10 +110,7 @@ func authMiddleware() gin.HandlerFunc {
 				c.Set("authorized", false)
 				utils.Log("[%v] Authorization expired (%v).", user, expirationDate)
 				c.Abort()
-				c.IndentedJSON(http.StatusUnauthorized,
-					gin.H{
-						"error":      "Authorization expired.",
-						"disconnect": true})
+				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Authorization expired.", "expired": true})
 				return
 			}
 			c.Set("authorized", true)
@@ -119,9 +119,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("authorized", false)
 			c.Abort()
 			c.IndentedJSON(http.StatusUnauthorized,
-				gin.H{
-					"error":      "Unauthorized.",
-					"disconnect": true})
+				gin.H{"error": fmt.Sprintf("Unauthorized (invalid request: %v).", err)})
 			return
 		}
 	}

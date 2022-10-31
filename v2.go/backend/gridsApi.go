@@ -15,7 +15,7 @@ import (
 
 func GetGridsApi(c *gin.Context) {
 
-	time.Sleep(1000 * time.Millisecond) ////// temporarisation that must be removed!
+	time.Sleep(500 * time.Millisecond) ////// temporarisation that must be removed!
 
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {

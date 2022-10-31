@@ -104,9 +104,15 @@ func IsDatabaseEnabled(dbName string) bool {
 }
 
 func GetJWTSecret(dbName string) []byte {
+	if !IsDatabaseEnabled(dbName) {
+		return nil
+	}
 	return []byte(dbName + DatabaseConfigurations[dbName].Database.JwtSecret)
 }
 
 func GetRootAndPassword(dbName string) (string, string) {
+	if !IsDatabaseEnabled(dbName) {
+		return "", ""
+	}
 	return DatabaseConfigurations[dbName].Database.Root, DatabaseConfigurations[dbName].Database.Password
 }
