@@ -21,7 +21,7 @@ func GetGridsApi(c *gin.Context) {
 		grid, err := getGridForGridsApi(db, gridUri)
 		if err != nil {
 			c.Abort()
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": err})
+			c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 			return
 		}
 		getGridsApiAuthorized(c, dbName, db, gridUri, uuid, *grid)
@@ -32,14 +32,14 @@ func getGridsApiAuthorized(c *gin.Context, dbName string, db *sql.DB, gridUri st
 	rows, err := getRowsForGridsApi(db, grid.Uuid, uuid)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	defer rows.Close()
 	rowSet, rowSetCount, err := getRowsetForGridsApi(dbName, gridUri, rows)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err})
+		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "items": rowSet, "count": rowSetCount})
@@ -77,11 +77,11 @@ func getGridForGridsApi(db *sql.DB, gridUri string) (*Grid, error) {
 		gridUri).
 		Scan(&grid.Uuid, &grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
-			return grid, errors.New("GRID NOT FOUND")
+			return nil, errors.New("GRID NOT FOUND")
 		} else if grid.Uuid == "" {
-			return grid, errors.New("GRID IDENTIFIER NOT FOUND")
+			return nil, errors.New("GRID IDENTIFIER NOT FOUND")
 		} else {
-			return grid, fmt.Errorf("UNKNOWN ERROR WHEN RETRIEVING GRID DEFINITION: %v", err)
+			return nil, fmt.Errorf("UNKNOWN ERROR WHEN RETRIEVING GRID DEFINITION: %v", err)
 		}
 	}
 	return grid, nil

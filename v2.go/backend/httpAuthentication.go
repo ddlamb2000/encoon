@@ -35,7 +35,7 @@ func authentication(c *gin.Context) {
 	c.BindJSON(&login)
 	userUuid, firstName, lastName, err := isDbAuthorized(dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err})
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
 
