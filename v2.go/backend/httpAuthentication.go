@@ -85,7 +85,6 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 		var tokenString = header[7:]
-		utils.Log("tokenString: %v.", tokenString)
 
 		jwtSecret := utils.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -115,7 +114,6 @@ func authMiddleware() gin.HandlerFunc {
 				return
 			}
 			c.Set("authorized", true)
-			utils.Log("[%v] %s.", user, c.Request.RequestURI)
 		} else {
 			utils.LogError("Invalid request: %v.", err)
 			c.Set("authorized", false)

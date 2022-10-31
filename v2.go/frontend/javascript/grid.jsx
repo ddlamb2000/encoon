@@ -15,15 +15,6 @@ class Grid extends React.Component {
 	}
   
 	componentDidMount() {
-		if(this.props.gridUri == undefined) {
-			this.setState({error: "Missing parameter gridUri"})
-			return
-		}
-		if(this.props.uuid == undefined) {
-			this.setState({error: "Missing parameter uuid"})
-			return
-		}
-
 		this.setState({isLoading: true})
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
 		console.log(`Trigger ${uri}`)
@@ -38,23 +29,32 @@ class Grid extends React.Component {
 			const contentType = response.headers.get("content-type");
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
-					(result) => this.setState({
+					(result) => {
+						this.setState({
 							isLoading: false,
 							isLoaded: true,
 							items: result.items,
 							count: result.count,
 							error: result.error,
 							disconnect: result.disconnect
-					}),
-					(error) => this.setState({
+						})
+					},
+					(error) => {
+						this.setState({
 							isLoading: false,
 							isLoaded: false,
 							items: [],
 							error: error.message
-					})
+						})
+					}
 				)
 			} else {
-				alert("ooops")
+				this.setState({
+					isLoading: false,
+					isLoaded: false,
+					items: [],
+					error: `[${response.status}] Internal server issue.`
+				})
 			}
 		})
 	}
@@ -68,20 +68,26 @@ class Grid extends React.Component {
 			return
 		}
 		return (
-			<div>
-				<h3>{this.props.gridUri}{isLoading && <Spinner />}</h3>
-				{error && !isLoading && !isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
-				{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
-				{isLoaded && items && count > 0 && this.props.uuid == "" && <TableRows items={items} />}
-				{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
+			<div className="card mt-1 mb-1">
+				<div className="card-body">
+					<h4 className="card-title">{this.props.gridUri}{isLoading && <Spinner />}</h4>
+					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
+					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
+					{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
+					{isLoaded && items && count > 0 && this.props.uuid == "" && <TableRows items={items} />}
+					{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
+					{isLoaded && items && this.props.uuid == "" && count == 1 && <p><small className="text-muted">{count} row</small></p>}
+					{isLoaded && items && this.props.uuid == "" && count > 1 && <p><small className="text-muted">{count} rows</small></p>}
+				</div>
 			</div>
 		)
 	}
 }
 
-// Grid.defaultProps = {
-// 	uuid: ''
-// }
+Grid.defaultProps = {
+	gridUri: '',
+	uuid: ''
+}
 
 class TableRows extends React.Component {
 	render() {
@@ -126,7 +132,7 @@ class TableSingleRow extends React.Component {
 	render() {
 		return (
 			<div>
-				<span className="text-muted">{this.props.item.uuid}</span>
+				<h6 className="card-subtitle mb-2 text-muted">{this.props.item.uuid}</h6>
 				<table className="table table-hover table-sm">
 					<thead className="table-light"></thead>
 					<tbody>

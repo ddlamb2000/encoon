@@ -25,10 +25,7 @@ class App extends React.Component {
 							user={this.user}
 							userFirstName={this.userFirstName}
 							userLastName={this.userLastName} />
-				<Grid token={this.token}
-						dbName={this.props.dbName}
-						gridUri={this.props.gridUri}
-						uuid={this.props.uuid} />
+				<Grid token={this.token} dbName={this.props.dbName} gridUri={this.props.gridUri} uuid={this.props.uuid} />
 			</div>			
 		)
 		return (
@@ -38,17 +35,12 @@ class App extends React.Component {
 							user={this.user}
 							userFirstName={this.userFirstName}
 							userLastName={this.userLastName} />
-				<Grid token={this.token}
-						dbName={this.props.dbName}
-						gridUri="users"
-						uuid="" />
-				<Grid token={this.token}
-						dbName={this.props.dbName}
-						gridUri="grids" />
-				<Grid token={this.token}
-						dbName={this.props.dbName}
-						uuid=""
-						gridUri="columns" />
+				<Grid token={this.token} dbName={this.props.dbName} gridUri="users" />
+				<Grid token={this.token} dbName={this.props.dbName} gridUri="grids" />
+				<Grid token={this.token} dbName={this.props.dbName} gridUri="columns" />
+				<Grid token={this.token} dbName={this.props.dbName} />
+				<Grid token={this.token} />
+				<Grid />
 			</div>
 		)		
 	}

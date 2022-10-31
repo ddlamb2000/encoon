@@ -19,7 +19,6 @@ var (
 )
 
 func SetAndStartHttpServer() error {
-	router.Use(logger())
 	setHtmlTemplates()
 	setStaticFiles()
 	setHtmlRoutes()
@@ -61,6 +60,7 @@ func setApiRoutes() {
 	v1 := router.Group("/:dbName/api/v1")
 	{
 		v1.POST("/authentication", authentication)
+		v1.GET("/", authMiddleware(), GetGridsApi)
 		v1.GET("/:gridUri", authMiddleware(), GetGridsApi)
 		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsApi)
 	}
@@ -72,17 +72,6 @@ func ShutDownHttpServer(ctx context.Context) {
 		return
 	}
 	utils.Log("Http server stopped.")
-}
-
-func logger() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		t := time.Now()
-		c.Next()
-		status := c.Writer.Status()
-		latency := time.Since(t)
-		utils.Log("Http status: %v, Latency :%v.", status, latency)
-
-	}
 }
 
 func getIndexHtml(c *gin.Context) {
