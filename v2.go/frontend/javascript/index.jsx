@@ -37,28 +37,51 @@ class App extends React.Component {
 	render() {
 		if(!this.loggedIn) return <Login appName={this.props.appName} dbName={this.props.dbName} />
 		if(this.props.gridUri != "") return (
-			<div className="container-fluid">
-				<Navigation appName={this.props.appName} 
+			<div>
+				<Header appName={this.props.appName} 
 							dbName={this.props.dbName} 
 							user={this.user}
 							userFirstName={this.userFirstName}
 							userLastName={this.userLastName} />
-				<Grid token={this.token} dbName={this.props.dbName} gridUri={this.props.gridUri} uuid={this.props.uuid} />
-			</div>			
+				<div className="container-fluid">
+					<div className="row">
+						<Navigation appName={this.props.appName} 
+									dbName={this.props.dbName} 
+									user={this.user}
+									userFirstName={this.userFirstName}
+									userLastName={this.userLastName} />
+						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+							<Grid token={this.token} dbName={this.props.dbName} gridUri={this.props.gridUri} uuid={this.props.uuid} />
+						</main>
+					</div>
+				</div>
+			</div>
 		)
 		return (
-			<div className="container-fluid">
-				<Navigation appName={this.props.appName} 
+			<div>
+				<Header appName={this.props.appName} 
 							dbName={this.props.dbName} 
 							user={this.user}
 							userFirstName={this.userFirstName}
 							userLastName={this.userLastName} />
-				<Grid token={this.token} dbName={this.props.dbName} gridUri="users" />
-				<Grid token={this.token} dbName={this.props.dbName} gridUri="grids" />
-				<Grid token={this.token} dbName={this.props.dbName} gridUri="columns" />
-				<Grid token={this.token} dbName={this.props.dbName} />
-				<Grid token={this.token} />
-				<Grid />
+				<div className="container-fluid">
+					<div className="row">
+						<Navigation appName={this.props.appName} 
+									dbName={this.props.dbName} 
+									user={this.user}
+									userFirstName={this.userFirstName}
+									userLastName={this.userLastName} />
+
+						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="users" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="grids" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="columns" />
+							<Grid token={this.token} dbName={this.props.dbName} />
+							<Grid token={this.token} />
+							<Grid />
+						</main>
+					</div>
+				</div>
 			</div>
 		)		
 	}
