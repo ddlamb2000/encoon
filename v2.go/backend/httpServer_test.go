@@ -26,11 +26,18 @@ func TestHttpServer(t *testing.T) {
 	t.Run("ApiUsersNotFound2", func(t *testing.T) { RunTestApiUsersNotFound2(t) })
 }
 
+func assertHttpCode(t *testing.T, w *httptest.ResponseRecorder, expectedCode int) {
+	if w.Code != expectedCode {
+		t.Errorf(`Response code %v instead of %v.`, w.Code, expectedCode)
+	}
+}
+
 func RunTest404Html(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/xxx/yyy", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusNotFound)
 
 	expected := utils.CleanupStrings(`404 page not found`)
 	response := utils.CleanupStrings(string(responseData))
@@ -48,6 +55,7 @@ func RunTestApiUsersNoHeader(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusUnauthorized)
 
 	expected := utils.CleanupStrings(`{ "error": "No authorization found."}`)
 	response := utils.CleanupStrings(string(responseData))
@@ -66,6 +74,7 @@ func RunTestApiUsersIncorrectToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusUnauthorized)
 
 	expected := utils.CleanupStrings(`{ "error": "Not authorized."}`)
 	response := utils.CleanupStrings(string(responseData))
@@ -85,6 +94,7 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusUnauthorized)
 
 	expected := utils.CleanupStrings(`{ "error": "Unauthorized (invalid request: illegal base64 data at input byte 28)."}`)
 	response := utils.CleanupStrings(string(responseData))
@@ -105,6 +115,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusOK)
 
 	expected := utils.CleanupStrings(`"text01": "root", "text02": "root"`)
 	response := utils.CleanupStrings(string(responseData))
@@ -125,6 +136,7 @@ func RunTestApiUsersNotFound(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusNotFound)
 
 	expected := utils.CleanupStrings(`404 page not found`)
 	response := utils.CleanupStrings(string(responseData))
@@ -145,6 +157,7 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusNotFound)
 
 	expected := utils.CleanupStrings(`{ "error": "GRID NOT FOUND"}`)
 	response := utils.CleanupStrings(string(responseData))
