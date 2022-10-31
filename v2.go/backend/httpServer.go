@@ -38,7 +38,7 @@ func SetAndStartHttpServer() error {
 }
 
 func setHtmlTemplates() {
-	router.LoadHTMLGlob("frontend/templates/*.html")
+	router.LoadHTMLGlob("frontend/templates/index.html")
 }
 
 func setStaticFiles() {
@@ -75,16 +75,14 @@ func ShutDownHttpServer(ctx context.Context) {
 }
 
 func getIndexHtml(c *gin.Context) {
-	dbName := c.Param("dbName")
-	gridUri := c.Param("gridUri")
-	uuid := c.Param("uuid")
 	c.HTML(
 		http.StatusOK,
 		"index.html",
 		gin.H{
-			"appName": "εncooη",
-			"dbName":  dbName,
-			"gridUri": gridUri,
-			"uuid":    uuid,
+			"appName": utils.Configuration.AppName,
+			"appTag":  utils.Configuration.AppTag,
+			"dbName":  c.Param("dbName"),
+			"gridUri": c.Param("gridUri"),
+			"uuid":    c.Param("uuid"),
 		})
 }

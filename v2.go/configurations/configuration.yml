@@ -6,3 +6,6 @@ httpServer:
     host: "localhost"
     port: 8080
     jwtExpiration: 120
+
+appName: "εncooη"
+appTag: "Data structuration, presentation and navigation."

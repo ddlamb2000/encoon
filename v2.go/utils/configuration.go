@@ -17,6 +17,9 @@ type Config struct {
 		Port          int    `yaml:"port"`
 		JwtExpiration int    `yaml:"jwtExpiration"`
 	} `yaml:"httpServer"`
+
+	AppName string `yaml:"appName"`
+	AppTag  string `yaml:"appTag"`
 }
 
 type DatabaseConfig struct {

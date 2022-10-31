@@ -56,7 +56,7 @@ class Login extends React.Component {
 						<br/><br/><br/><br/><br/><br/><br/>
 						<center>
 							<h1>{this.props.appName}</h1>
-							<small className="text-muted">Data structuration, presentation and navigation.</small>
+							<small className="text-muted">{this.props.appTag}</small>
 							<br/>
 							<br/>
 							{this.props.dbName != "" && <h3>{this.props.dbName}</h3>}

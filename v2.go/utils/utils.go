@@ -13,11 +13,11 @@ import (
 )
 
 func Log(format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, "[εncooη] "+format+"\n", a...)
+	fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] "+format+"\n", a...)
 }
 
 func LogError(format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, "[εncooη] [ERROR] "+format+"\n", a...)
+	fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] [ERROR] "+format+"\n", a...)
 }
 
 func InitWithLog() {

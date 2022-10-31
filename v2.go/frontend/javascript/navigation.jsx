@@ -9,7 +9,7 @@ class Navigation extends React.Component {
 					<ul className="nav flex-column">
 						<li className="nav-item">
 							<a className="nav-link active" aria-current="page" href={`/${this.props.dbName}`}>
-							{this.props.dbName} <img src="/icons/house.svg" role="img" alt={this.props.dbName} />
+								Dashbord <img src="/icons/house.svg" role="img" alt={this.props.dbName} />
 							</a>
 						</li>
 						<li className="nav-item">

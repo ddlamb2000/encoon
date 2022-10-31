@@ -35,7 +35,7 @@ class App extends React.Component {
 	}
 
 	render() {
-		if(!this.loggedIn) return <Login appName={this.props.appName} dbName={this.props.dbName} />
+		if(!this.loggedIn) return <Login appName={this.props.appName} appTag={this.props.appTag} dbName={this.props.dbName} />
 		if(this.props.gridUri != "") return (
 			<div>
 				<Header appName={this.props.appName} 
@@ -46,6 +46,7 @@ class App extends React.Component {
 				<div className="container-fluid">
 					<div className="row">
 						<Navigation appName={this.props.appName} 
+									appTag={this.props.appTag}
 									dbName={this.props.dbName} 
 									user={this.user}
 									userFirstName={this.userFirstName}
@@ -60,13 +61,15 @@ class App extends React.Component {
 		return (
 			<div>
 				<Header appName={this.props.appName} 
-							dbName={this.props.dbName} 
-							user={this.user}
-							userFirstName={this.userFirstName}
-							userLastName={this.userLastName} />
+						appTag={this.props.appTag}
+						dbName={this.props.dbName} 
+						user={this.user}
+						userFirstName={this.userFirstName}
+						userLastName={this.userLastName} />
 				<div className="container-fluid">
 					<div className="row">
 						<Navigation appName={this.props.appName} 
+									appTag={this.props.appTag}
 									dbName={this.props.dbName} 
 									user={this.user}
 									userFirstName={this.userFirstName}
@@ -102,6 +105,7 @@ const root = ReactDOM.createRoot(rootElement)
 root.render(
 	<App 
 		appName={rootElement.getAttribute("appName")}
+		appTag={rootElement.getAttribute("appTag")}
 		dbName={rootElement.getAttribute("dbName")}
 		gridUri={rootElement.getAttribute("gridUri")}
 		uuid={rootElement.getAttribute("uuid")}
