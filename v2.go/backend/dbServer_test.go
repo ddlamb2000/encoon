@@ -30,3 +30,11 @@ func TestConnectDbServers(t *testing.T) {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
+
+func TestConnectDbServer(t *testing.T) {
+	var conf utils.DatabaseConfig
+	conf.Database.Host = "xxx"
+	if err := connectDbServer(&conf); err == nil {
+		t.Errorf(`Can connect to database?: %v.`, err)
+	}
+}

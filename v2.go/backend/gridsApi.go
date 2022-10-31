@@ -79,7 +79,7 @@ func getGridForGridsApi(db *sql.DB, gridUri string) (*Grid, error) {
 		if err == sql.ErrNoRows {
 			return grid, errors.New("GRID NOT FOUND")
 		} else if grid.Uuid == "" {
-			return grid, fmt.Errorf("GRID IDENTIFIER NOT FOUND")
+			return grid, errors.New("GRID IDENTIFIER NOT FOUND")
 		} else {
 			return grid, fmt.Errorf("UNKNOWN ERROR WHEN RETRIEVING GRID DEFINITION: %v", err)
 		}

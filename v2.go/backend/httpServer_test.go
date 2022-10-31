@@ -13,16 +13,35 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-func TestApis(t *testing.T) {
+func TestHttpServer(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
+	ConnectDbServers(utils.DatabaseConfigurations)
 	setApiRoutes()
-	t.Run("TestApiUsersNoHeader", func(t *testing.T) { TestApiUsersNoHeader(t) })
-	t.Run("TestApiUsersIncorrectToken", func(t *testing.T) { TestApiUsersIncorrectToken(t) })
-	t.Run("TestApiUsersMissingBearer", func(t *testing.T) { TestApiUsersMissingBearer(t) })
-	t.Run("TestApiUsersPassing", func(t *testing.T) { TestApiUsersPassing(t) })
+	t.Run("Test404Html", func(t *testing.T) { RunTest404Html(t) })
+	t.Run("TestApiUsersNoHeader", func(t *testing.T) { RunTestApiUsersNoHeader(t) })
+	t.Run("TestApiUsersIncorrectToken", func(t *testing.T) { RunTestApiUsersIncorrectToken(t) })
+	t.Run("TestApiUsersMissingBearer", func(t *testing.T) { RunTestApiUsersMissingBearer(t) })
+	t.Run("TestApiUsersPassing", func(t *testing.T) { RunTestApiUsersPassing(t) })
 }
 
-func TestApiUsersNoHeader(t *testing.T) {
+func RunTest404Html(t *testing.T) {
+	req, _ := http.NewRequest("GET", "/xxx/yyy", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+
+	expected := utils.CleanupStrings(`404 page not found`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if response != expected {
+		t.Errorf(`Response %v incorrect.`, response)
+	}
+}
+
+func RunTestApiUsersNoHeader(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -39,7 +58,7 @@ func TestApiUsersNoHeader(t *testing.T) {
 	}
 }
 
-func TestApiUsersIncorrectToken(t *testing.T) {
+func RunTestApiUsersIncorrectToken(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
 	req.Header.Add("Authorization", "xxxxxxxxxxx")
 	w := httptest.NewRecorder()
@@ -57,7 +76,7 @@ func TestApiUsersIncorrectToken(t *testing.T) {
 	}
 }
 
-func TestApiUsersMissingBearer(t *testing.T) {
+func RunTestApiUsersMissingBearer(t *testing.T) {
 	token, _ := getNewToken("test", "root", "0", "root", "root")
 	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
 	req.Header.Add("Authorization", token)
@@ -76,7 +95,7 @@ func TestApiUsersMissingBearer(t *testing.T) {
 	}
 }
 
-func TestApiUsersPassing(t *testing.T) {
+func RunTestApiUsersPassing(t *testing.T) {
 	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
