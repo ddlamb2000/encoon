@@ -8,14 +8,12 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
-	"time"
 
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func GetGridsApi(c *gin.Context) {
-	time.Sleep(500 * time.Millisecond) ////// temporarisation that must be removed!
 	dbName, gridUri, uuid, db := getDbForGridsApi(c)
 	if db != nil {
 		grid, err := getGridForGridsApi(db, gridUri)

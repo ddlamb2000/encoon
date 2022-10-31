@@ -41,13 +41,11 @@ func authentication(c *gin.Context) {
 
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName)
 	if err != nil {
-		utils.LogError("Failed to generate signed string.")
-		c.JSON(http.StatusServiceUnavailable, "")
+		c.JSON(http.StatusServiceUnavailable, "Failed to generate signed string.")
+		return
 	}
 
-	utils.Log("Token generated: %v.", tokenString)
-	jwtToken := JWTtoken{tokenString}
-	c.JSON(http.StatusOK, jwtToken)
+	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
 func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string) (string, error) {

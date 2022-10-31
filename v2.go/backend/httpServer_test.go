@@ -17,6 +17,9 @@ func TestHttpServer(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	setApiRoutes()
+	t.Run("AuthInvalid1", func(t *testing.T) { RunTestAuthInvalid1(t) })
+	t.Run("AuthInvalid2", func(t *testing.T) { RunTestAuthInvalid2(t) })
+	t.Run("AuthValid", func(t *testing.T) { RunTestAuthValid(t) })
 	t.Run("404Html", func(t *testing.T) { RunTest404Html(t) })
 	t.Run("ApiUsersNoHeader", func(t *testing.T) { RunTestApiUsersNoHeader(t) })
 	t.Run("ApiUsersIncorrectToken", func(t *testing.T) { RunTestApiUsersIncorrectToken(t) })
@@ -29,6 +32,60 @@ func TestHttpServer(t *testing.T) {
 func assertHttpCode(t *testing.T, w *httptest.ResponseRecorder, expectedCode int) {
 	if w.Code != expectedCode {
 		t.Errorf(`Response code %v instead of %v.`, w.Code, expectedCode)
+	}
+}
+
+func RunTestAuthInvalid1(t *testing.T) {
+	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", nil)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusBadRequest)
+
+	expected := utils.CleanupStrings(`{"error":"[\"test\"] Invalid ID or password: sql: no rows in result set"}`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if response != expected {
+		t.Errorf(`Response %v incorrect.`, response)
+	}
+}
+
+func RunTestAuthInvalid2(t *testing.T) {
+	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "======"}`))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusBadRequest)
+
+	expected := utils.CleanupStrings(`{"error":"[\"test\"] Invalid ID or password: sql: no rows in result set"}`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if response != expected {
+		t.Errorf(`Response %v incorrect.`, response)
+	}
+}
+
+func RunTestAuthValid(t *testing.T) {
+	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusOK)
+
+	expected := utils.CleanupStrings(`{"token":`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if !strings.Contains(response, expected) {
+		t.Errorf(`Response %v incorrect.`, response)
 	}
 }
 
