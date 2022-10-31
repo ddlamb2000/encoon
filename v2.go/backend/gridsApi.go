@@ -14,9 +14,7 @@ import (
 )
 
 func GetGridsApi(c *gin.Context) {
-
 	time.Sleep(500 * time.Millisecond) ////// temporarisation that must be removed!
-
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
 		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
@@ -24,7 +22,6 @@ func GetGridsApi(c *gin.Context) {
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
-	uuid := c.Param("uuid")
 	if dbName == "" || gridUri == "" {
 		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Missing parameter."})
 		return
@@ -34,40 +31,49 @@ func GetGridsApi(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Database isn't available."})
 		return
 	}
+	getGridsApiAuthorized(c, dbName, db, gridUri)
+}
 
-	var gridUuid string
-	if err := db.QueryRow(
-		"SELECT uuid FROM rows WHERE gridUuid = $1 AND uri = $2",
+func getGridsApiAuthorized(c *gin.Context, dbName string, db *sql.DB, gridUri string) {
+	uuid := c.Param("uuid")
+	var err error
+	var grid Grid
+	if err = db.QueryRow(
+		"SELECT uuid, text01 FROM rows WHERE gridUuid = $1 AND uri = $2",
 		utils.UuidGrids,
 		gridUri).
-		Scan(&gridUuid); err != nil {
+		Scan(&grid.Uuid, &grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
-			utils.Log("[%q] Grid not found: %v.", dbName, err)
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Grid not found."})
+			c.IndentedJSON(http.StatusNotFound,
+				gin.H{"error": "Grid not found."})
 			return
-		} else if gridUuid == "" {
-			utils.Log("[%q] Grid not found.", dbName)
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": "Grid not found."})
+		} else if grid.Uuid == "" {
+			c.IndentedJSON(http.StatusNotFound,
+				gin.H{"error": "Grid identifier not found."})
 			return
 		} else {
-			utils.Log("[%q] Unknown error: %v.", dbName, err)
-			c.IndentedJSON(http.StatusInternalServerError, "")
+			c.IndentedJSON(http.StatusInternalServerError,
+				gin.H{"error": fmt.Sprintf("Unknown error when retrieving grid definition: %v.", err)})
 			return
 		}
 	}
 
 	var rows *sql.Rows
-	var err error
 	if uuid != "" {
-		rows, err = db.Query("SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE uuid = $1 AND griduuid = $2", uuid, gridUuid)
+		rows, err = db.Query(
+			"SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE uuid = $1 AND griduuid = $2",
+			uuid,
+			grid.Uuid)
 
 	} else {
-		rows, err = db.Query("SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE griduuid = $1", gridUuid)
+		rows, err = db.Query(
+			"SELECT uuid, version, uri, text01, text02, text03, text04 FROM rows WHERE griduuid = $1",
+			grid.Uuid)
 	}
 
 	if err != nil {
-		utils.Log("[%q] Error when querying rows: %v.", dbName, err)
-		c.IndentedJSON(http.StatusInternalServerError, "")
+		c.IndentedJSON(http.StatusInternalServerError,
+			gin.H{"error": fmt.Sprintf("Error when querying rows: %v.", err)})
 		return
 	}
 	defer rows.Close()
@@ -78,8 +84,8 @@ func GetGridsApi(c *gin.Context) {
 		var row Row
 		err = rows.Scan(&row.Uuid, &row.Version, &row.Uri, &row.Text01, &row.Text02, &row.Text03, &row.Text04)
 		if err != nil {
-			utils.Log("[%q] Unknown error when scanning rows: %v.", dbName, err)
-			c.IndentedJSON(http.StatusInternalServerError, "")
+			c.IndentedJSON(http.StatusInternalServerError,
+				gin.H{"error": fmt.Sprintf("Unknown error when scanning rows: %v.", err)})
 			return
 		}
 		row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
@@ -88,17 +94,16 @@ func GetGridsApi(c *gin.Context) {
 	}
 	err = rows.Err()
 	if err != nil {
-		utils.Log("[%q] Error when scanning rows: %v.", dbName, err)
-		c.IndentedJSON(http.StatusInternalServerError, "")
+		c.IndentedJSON(http.StatusInternalServerError,
+			gin.H{"error": fmt.Sprintf("Error when scanning rows: %v.", err)})
 		return
 	}
 
 	c.IndentedJSON(http.StatusOK,
 		gin.H{
-			"gridUri":  gridUri,
-			"gridUuid": gridUuid,
-			"uuid":     uuid,
-			"items":    rowSet,
-			"count":    rowSetCount,
+			"uuid":  uuid,
+			"grid":  grid,
+			"items": rowSet,
+			"count": rowSetCount,
 		})
 }

@@ -8,6 +8,7 @@ class Grid extends React.Component {
 			error: false,
 			isLoaded: false,
 			isLoading: false,
+			grid: [],
 			items: [],
 			count: 0,
 		}
@@ -31,6 +32,7 @@ class Grid extends React.Component {
 						this.setState({
 							isLoading: false,
 							isLoaded: true,
+							grid: result.grid,
 							items: result.items,
 							count: result.count,
 							error: result.error
@@ -57,18 +59,19 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, items, count } = this.state
+		const { isLoading, isLoaded, error, items, count, grid } = this.state
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
-					<h4 className="card-title">{this.props.gridUri}{isLoading && <Spinner />}</h4>
+					{isLoading && <Spinner />}
+					{grid && <h4 className="card-title">{grid.text01}</h4>}
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
 					{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
 					{isLoaded && items && count > 0 && this.props.uuid == "" && <TableRows items={items} />}
 					{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
-					{isLoaded && items && this.props.uuid == "" && count == 1 && <p><small className="text-muted">{count} row</small></p>}
-					{isLoaded && items && this.props.uuid == "" && count > 1 && <p><small className="text-muted">{count} rows</small></p>}
+					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted">{count} row</small>}
+					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted">{count} rows</small>}
 				</div>
 			</div>
 		)
