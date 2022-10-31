@@ -4,7 +4,9 @@
 package backend
 
 import (
+	"fmt"
 	"reflect"
+	"strings"
 	"testing"
 
 	"d.lambert.fr/encoon/utils"
@@ -69,6 +71,20 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	_, err := getRowsForGridsApi(db, utils.UuidUsers, "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
+	}
+}
+
+func TestGetRowsForGridsApi2(t *testing.T) {
+	utils.LoadConfiguration("../configurations/")
+	ConnectDbServers(utils.DatabaseConfigurations)
+	dbName := "test"
+	db := getDbByName(dbName)
+	_, err := getRowsForGridsApi(db, "xxx", "")
+	if err == nil {
+		t.Errorf(`Expected error.`)
+	}
+	if !strings.Contains(fmt.Sprintf("%v", err), "Error when querying rows") {
+		t.Errorf(`Wrong error: %v.`, err)
 	}
 }
 
