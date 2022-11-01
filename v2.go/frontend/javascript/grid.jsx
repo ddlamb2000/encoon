@@ -82,12 +82,14 @@ class Grid extends React.Component {
 					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted px-2">{count} row</small>}
 					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted px-2">{count} rows</small>}
 
-					<button
-						type="button"
-						className="btn btn-light btn-sm px-2"
-						onClick={() => this.addItem()}>
-						Add <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
-					</button>
+					{isLoaded && items &&
+						<button
+							type="button"
+							className="btn btn-light btn-sm px-2"
+							onClick={() => this.addItem()}>
+							Add <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
+						</button>
+					}
 
 					{isLoaded && items && this.props.uuid == "" && countSelected > 0 &&
 						<small className="text-muted px-2">{countSelected} selected</small>
