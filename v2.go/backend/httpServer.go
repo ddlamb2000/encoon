@@ -60,9 +60,9 @@ func setApiRoutes() {
 	v1 := router.Group("/:dbName/api/v1")
 	{
 		v1.POST("/authentication", authentication)
-		v1.GET("/", authMiddleware(), GetGridsApi)
-		v1.GET("/:gridUri", authMiddleware(), GetGridsApi)
-		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsApi)
+		v1.GET("/", authMiddleware(), GetGridsRowsApi)
+		v1.GET("/:gridUri", authMiddleware(), GetGridsRowsApi)
+		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsRowsApi)
 	}
 }
 

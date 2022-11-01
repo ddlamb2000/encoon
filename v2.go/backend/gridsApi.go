@@ -4,76 +4,80 @@
 package backend
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
-func GetGridsApi(c *gin.Context) {
-	dbName, gridUri, uuid, db := getDbForGridsApi(c)
-	if db != nil {
-		grid, err := getGridForGridsApi(db, gridUri)
-		if err != nil {
-			c.Abort()
-			c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
-			return
-		}
-		getGridsApiAuthorized(c, dbName, db, gridUri, uuid, *grid)
-	}
-}
-
-func getGridsApiAuthorized(c *gin.Context, dbName string, db *sql.DB, gridUri string, uuid string, grid Grid) {
-	rows, err := getRowsForGridsApi(db, grid.Uuid, uuid)
-	if err != nil {
-		c.Abort()
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	defer rows.Close()
-	rowSet, rowSetCount, err := getRowsetForGridsApi(dbName, gridUri, rows)
-	if err != nil {
-		c.Abort()
-		c.IndentedJSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
-		return
-	}
-	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "items": rowSet, "count": rowSetCount})
-}
-
-func getDbForGridsApi(c *gin.Context) (string, string, string, *sql.DB) {
+func GetGridsRowsApi(c *gin.Context) {
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
 		c.Abort()
 		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
-		return "", "", "", nil
+		return
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
-	if dbName == "" || gridUri == "" {
+	grid, rowSet, rowSetCount, err := getGridsRows(dbName, gridUri, uuid)
+	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Missing parameter."})
-		return "", "", "", nil
+		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	}
+	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "items": rowSet, "count": rowSetCount})
+}
+
+func getGridsRows(dbName string, gridUri string, uuid string) (*Grid, []Row, int, error) {
+	ctx, cancel := context.WithTimeout(
+		context.Background(),
+		time.Duration(utils.Configuration.DbTimeOut)*time.Second)
+	defer cancel()
+
+	db, err := getDbForGridsApi(dbName, gridUri)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	grid, err := getGridForGridsApi(ctx, db, gridUri)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	rows, err := getRowsForGridsApi(ctx, db, grid.Uuid, uuid)
+	if err != nil {
+		return nil, nil, 0, err
+	}
+	defer rows.Close()
+	rowSet, rowSetCount, err := getRowsetForGridsApi(dbName, gridUri, rows)
+
+	return grid, rowSet, rowSetCount, err
+}
+
+func getDbForGridsApi(dbName string, gridUri string) (*sql.DB, error) {
+	if dbName == "" || gridUri == "" {
+		return nil, fmt.Errorf("MISSING PARAMETER")
 	}
 	db := getDbByName(dbName)
 	if db == nil {
-		c.Abort()
-		c.IndentedJSON(http.StatusNotImplemented, gin.H{"error": "Database isn't available."})
-		return "", "", "", nil
+		return nil, fmt.Errorf("DATABASE NOT AVAILABLE")
 	}
-	return dbName, gridUri, uuid, db
+	return db, nil
 }
 
-func getGridForGridsApi(db *sql.DB, gridUri string) (*Grid, error) {
+func getGridForGridsApi(ctx context.Context, db *sql.DB, gridUri string) (*Grid, error) {
 	grid := new(Grid)
-	if err := db.QueryRow(
+	if err := db.QueryRowContext(
+		ctx,
 		"SELECT uuid, text01 FROM rows WHERE gridUuid = $1 AND uri = $2",
 		utils.UuidGrids,
 		gridUri).
-		Scan(&grid.Uuid, &grid.Text01); err != nil {
+		Scan(
+			&grid.Uuid,
+			&grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, errors.New("GRID NOT FOUND")
 		} else if grid.Uuid == "" {
@@ -86,17 +90,17 @@ func getGridForGridsApi(db *sql.DB, gridUri string) (*Grid, error) {
 }
 
 func getRowsQueryForGridsApi(uuid string) string {
-	selectStr := "SELECT uuid, version, uri, text01, text02, text03, text04"
-	fromStr := "FROM rows"
+	selectStr := " SELECT uuid, version, uri, text01, text02, text03, text04 "
+	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	return selectStr + " " + fromStr + " " + whereStr
+	return selectStr + fromStr + whereStr
 }
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
 	if uuid == "" {
-		return "WHERE griduuid = $1"
+		return " WHERE griduuid = $1 "
 	}
-	return "WHERE uuid = $2 AND griduuid = $1"
+	return " WHERE uuid = $2 AND griduuid = $1 "
 }
 
 func getRowsQueryParametersForGridsApi(gridUuid string, uuid string) []any {
@@ -108,8 +112,10 @@ func getRowsQueryParametersForGridsApi(gridUuid string, uuid string) []any {
 	return parameters
 }
 
-func getRowsForGridsApi(db *sql.DB, gridUuid string, uuid string) (*sql.Rows, error) {
-	rows, err := db.Query(getRowsQueryForGridsApi(uuid), getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
+func getRowsForGridsApi(ctx context.Context, db *sql.DB, gridUuid string, uuid string) (*sql.Rows, error) {
+	rows, err := db.QueryContext(ctx,
+		getRowsQueryForGridsApi(uuid),
+		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
 	if err != nil {
 		return nil, fmt.Errorf("ERROR WHEN QUERYING ROWS: %v", err)
 	}

@@ -4,10 +4,12 @@
 package backend
 
 import (
+	"context"
 	"fmt"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
 
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
@@ -17,8 +19,8 @@ func TestGetRowsWhereQueryForGridsApi(t *testing.T) {
 	var tests = []struct {
 		testName, uuid, expect string
 	}{
-		{"withUuid", "1234", "WHERE uuid = $2 AND griduuid = $1"},
-		{"withoutUuid", "", "WHERE griduuid = $1"},
+		{"withUuid", "1234", " WHERE uuid = $2 AND griduuid = $1 "},
+		{"withoutUuid", "", " WHERE griduuid = $1 "},
 	}
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
@@ -49,12 +51,14 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 }
 
 func TestGetGridForGridsApi(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	db := getDbByName(dbName)
 	gridUri := "users"
-	grid, err := getGridForGridsApi(db, gridUri)
+	grid, err := getGridForGridsApi(ctx, db, gridUri)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -64,22 +68,26 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(db, utils.UuidUsers, "")
+	_, err := getRowsForGridsApi(ctx, db, utils.UuidUsers, "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
 }
 
 func TestGetRowsForGridsApi2(t *testing.T) {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(db, "xxx", "")
+	_, err := getRowsForGridsApi(ctx, db, "xxx", "")
 	if err == nil {
 		t.Errorf(`Expected error.`)
 	}
