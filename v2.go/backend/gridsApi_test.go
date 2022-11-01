@@ -91,7 +91,7 @@ func TestGetRowsForGridsApi2(t *testing.T) {
 	if err == nil {
 		t.Errorf(`Expected error.`)
 	}
-	if !strings.Contains(fmt.Sprintf("%v", err), "ERROR WHEN QUERYING ROWS") {
+	if !strings.Contains(fmt.Sprintf("%v", err), "Error when querying rows:") {
 		t.Errorf(`Wrong error: %v.`, err)
 	}
 }

@@ -29,6 +29,7 @@ class Grid extends React.Component {
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
+						console.log(result)
 						this.setState({
 							isLoading: false,
 							isLoaded: true,

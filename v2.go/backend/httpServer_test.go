@@ -178,13 +178,13 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{ "error": "Unauthorized (invalid request: illegal base64 data at input byte 28)."}`)
+	expected := utils.CleanupStrings(`Invalid request`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
 		t.Errorf(`Response %v for %v: %v.`, response, w, err)
 	}
-	if response != expected {
+	if !strings.Contains(response, expected) {
 		t.Errorf(`Response %v incorrect.`, response)
 	}
 }
@@ -266,7 +266,7 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusNotFound)
 
-	expected := utils.CleanupStrings(`{ "error": "GRID NOT FOUND"}`)
+	expected := utils.CleanupStrings(`{ "error": "Grid not found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {

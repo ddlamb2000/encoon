@@ -90,7 +90,7 @@ func authMiddleware() gin.HandlerFunc {
 		jwtSecret := utils.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, fmt.Errorf("UNEXPECTEC SIGNING METHOD: %v", token.Header["alg"])
+				return nil, utils.LogAndReturnError("Unexpected signing method: %v.", token.Header["alg"])
 			}
 			return []byte(jwtSecret), nil
 		})
@@ -117,7 +117,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("authorized", false)
 			c.Abort()
 			c.IndentedJSON(http.StatusUnauthorized,
-				gin.H{"error": fmt.Sprintf("Unauthorized (invalid request: %v).", err)})
+				gin.H{"error": fmt.Sprintf("Invalid request or unauthorized database access: %v.", err)})
 			return
 		}
 	}

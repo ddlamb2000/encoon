@@ -4,6 +4,7 @@
 package utils
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -18,6 +19,12 @@ func Log(format string, a ...any) {
 
 func LogError(format string, a ...any) {
 	fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] [ERROR] "+format+"\n", a...)
+}
+
+func LogAndReturnError(format string, a ...any) error {
+	m := fmt.Sprintf(format, a...)
+	LogError(m)
+	return errors.New(m)
 }
 
 func InitWithLog() {

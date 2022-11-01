@@ -6,8 +6,6 @@ package backend
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"fmt"
 	"net/http"
 	"time"
 
@@ -29,6 +27,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	if err != nil {
 		c.Abort()
 		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
 	}
 	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "items": rowSet, "count": rowSetCount})
 }
@@ -58,12 +57,12 @@ func getGridsRows(dbName string, gridUri string, uuid string) (*Grid, []Row, int
 }
 
 func getDbForGridsApi(dbName string, gridUri string) (*sql.DB, error) {
-	if dbName == "" || gridUri == "" {
-		return nil, fmt.Errorf("MISSING PARAMETER")
+	if dbName == "" {
+		return nil, utils.LogAndReturnError("Missing parameter.")
 	}
 	db := getDbByName(dbName)
 	if db == nil {
-		return nil, fmt.Errorf("DATABASE NOT AVAILABLE")
+		return nil, utils.LogAndReturnError("Database not available.")
 	}
 	return db, nil
 }
@@ -79,11 +78,9 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, gridUri string) (*Grid,
 			&grid.Uuid,
 			&grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, errors.New("GRID NOT FOUND")
-		} else if grid.Uuid == "" {
-			return nil, errors.New("GRID IDENTIFIER NOT FOUND")
+			return nil, utils.LogAndReturnError("Grid not found.")
 		} else {
-			return nil, fmt.Errorf("UNKNOWN ERROR WHEN RETRIEVING GRID DEFINITION: %v", err)
+			return nil, utils.LogAndReturnError("Error when retrieving grid definition: %v.", err)
 		}
 	}
 	return grid, nil
@@ -117,7 +114,7 @@ func getRowsForGridsApi(ctx context.Context, db *sql.DB, gridUuid string, uuid s
 		getRowsQueryForGridsApi(uuid),
 		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
 	if err != nil {
-		return nil, fmt.Errorf("ERROR WHEN QUERYING ROWS: %v", err)
+		return nil, utils.LogAndReturnError("Error when querying rows: %v.", err)
 	}
 	return rows, nil
 }
@@ -132,7 +129,6 @@ func getRowsQueryOutputForGridsApi(row *Row) []any {
 	output = append(output, &row.Text03)
 	output = append(output, &row.Text04)
 	return output
-
 }
 
 func getRowsetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row, int, error) {
@@ -141,14 +137,14 @@ func getRowsetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row,
 	for rows.Next() {
 		var row = new(Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(row)...); err != nil {
-			return nil, 0, fmt.Errorf("UNKNOWN ERROR WHEN SCANNING ROWS: %v", err)
+			return nil, 0, utils.LogAndReturnError("Error when scanning rows: %v.", err)
 		}
 		row.SetPath(dbName, gridUri)
 		rowSet = append(rowSet, *row)
 		rowSetCount += 1
 	}
 	if err := rows.Err(); err != nil {
-		return nil, 0, fmt.Errorf("ERROR WHEN SCANNNIG ROWS: %v", err)
+		return nil, 0, utils.LogAndReturnError("Error when scanning rows: %v.", err)
 	}
 	return rowSet, rowSetCount, nil
 }
