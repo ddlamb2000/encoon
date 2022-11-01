@@ -11,6 +11,8 @@ class Grid extends React.Component {
 			grid: [],
 			items: [],
 			count: 0,
+			itemsSelected: [],
+			countSelected: 0,
 		}
 	}
   
@@ -29,7 +31,6 @@ class Grid extends React.Component {
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
-						console.log(result)
 						this.setState({
 							isLoading: false,
 							isLoaded: true,
@@ -60,7 +61,7 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, items, count, grid } = this.state
+		const { isLoading, isLoaded, error, grid, items, count, itemsSelected, countSelected } = this.state
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
@@ -69,41 +70,81 @@ class Grid extends React.Component {
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
 					{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
-					{isLoaded && items && count > 0 && this.props.uuid == "" && <TableRows items={items} />}
+
+					{isLoaded && items && count > 0 && this.props.uuid == "" &&
+						 <TableRows items={items}
+						 			itemsSelected={itemsSelected}
+						 			onRowItemClick={item => this.toggleSelection(item)}/>
+					}
+
 					{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
-					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted">{count} row</small>}
-					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted">{count} rows</small>}
+
+					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted px-2">{count} row</small>}
+					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted px-2">{count} rows</small>}
 
 					<button
 						type="button"
-						className="btn btn-light btn-sm"
-						onClick={() => this.addRow()}>
-						Add row <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
+						className="btn btn-light btn-sm px-2"
+						onClick={() => this.addItem()}>
+						Add <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
 					</button>
 
-					<button
-						type="button"
-						className="btn btn-light btn-sm"
-						onClick={() => this.addRow()}>
-						Delete row <img src="/icons/dash-circle.svg" role="img" alt="Delete row"></img>
-					</button>
+					{isLoaded && items && this.props.uuid == "" && countSelected > 0 &&
+						<small className="text-muted px-2">{countSelected} selected</small>
+					}
+					{isLoaded && items && this.props.uuid == "" && countSelected > 0 &&
+						<button
+							type="button"
+							className="btn btn-light btn-sm px-2"
+							onClick={() => this.deleteItems()}>
+							Delete <img src="/icons/dash-circle.svg" role="img" alt="Delete row"></img>
+						</button>
+					}
 
 				</div>
 			</div>
 		)
 	}
 
-	addRow() {
-		const newItem = {
-			uri: "????",
-			uuid: `NEW-${this.state.count+1}`,
-			editable: true,
-			selected: true,
-			added: true
+	toggleSelection(item) {
+		if(!this.isItemSelected(item)) {
+			this.setState(state => ({
+				itemsSelected: state.itemsSelected.concat(item.uuid),
+				countSelected: state.countSelected + 1
+			}))
 		}
+		else {
+			this.setState(state => ({
+				itemsSelected: state.itemsSelected.filter(uuid => uuid != item.uuid),
+				countSelected: state.countSelected - 1
+			}))
+		}
+	}
+
+	isItemSelected(item) {
+		return this.state.itemsSelected.some(uuid => uuid == item.uuid)
+	}
+
+	addItem() {
 		this.setState(state => ({
-			items: state.items.concat(newItem),
+			items: state.items.concat({
+				uri: "????",
+				uuid: `NEW-${this.state.count+1}`,
+				editable: true,
+				added: true
+			}),
 			count: state.count + 1
+		}))
+	}
+
+	deleteItems() {
+		this.setState(state => ({
+			items: state.items.filter(item => !this.isItemSelected(item)),
+			itemsSelected: [],
+		}))
+		this.setState(state => ({
+			count: state.items.length,
+			countSelected: 0
 		}))
 	}
 }
@@ -119,7 +160,7 @@ class TableRows extends React.Component {
 			<table className="table table-hover table-sm">
 				<thead className="table-light">
 					<tr>
-						<th scope="col"></th>
+						<th scope="col"><span>&nbsp;</span></th>
 						<th scope="col">Uri</th>
 						<th scope="col">Text01</th>
 						<th scope="col">Text02</th>
@@ -129,36 +170,30 @@ class TableRows extends React.Component {
 					</tr>
 				</thead>
 				<tbody>
-					{this.props.items.map(item => <TableRowItemSingleLine key={item.uuid} item={item} />)}
+					{this.props.items.map(
+						item => <TableRowItemSingleLine key={item.uuid} 
+														item={item}
+														itemSelected={this.isItemSelected(item)}
+														onRowItemClick={item => this.props.onRowItemClick(item)} />
+					)}
 				</tbody>
 			</table>
 		)
 	}
+
+	isItemSelected(item) {
+		return this.props.itemsSelected.some(uuid => uuid == item.uuid)
+	}
 }
 
 class TableRowItemSingleLine extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			selected: this.props.item.selected,
-			editable: this.props.item.editable,
-			added: this.props.item.added,
-		}
-	}
-
-	toggleSelection() {
-		this.setState(state => ({
-			selected: !state.selected
-		}))
-	}
-
 	render() {
-		const variant = (this.state.selected ? "table-warning" : "")
+		const variant = (this.props.itemSelected ? "table-warning" : "")
 		return (
-			<tr className={variant} onClick={() => this.toggleSelection()}>
+			<tr className={variant} onClick={() => this.props.onRowItemClick(this.props.item)}>
 				<td>
-					{this.state.added && <span>*</span>}
-					{!this.state.added && <span>&nbsp;</span>}
+					{this.props.item.added && <span>*</span>}
+					{!this.props.item.added && <span>&nbsp;</span>}
 				</td>
 				{this.props.item.editable && <td><input></input></td>}
 				{!this.props.item.editable && <td>{this.props.item.uri}</td>}
