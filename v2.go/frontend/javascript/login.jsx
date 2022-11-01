@@ -10,41 +10,41 @@ class Login extends React.Component {
 		this.setIdRef = element => { this.idInput = element }
 		this.passwordInput = null
 		this.setPasswordRef = element => { this.passwordInput = element }
+	}
 
-		this.authenticate = () => {
-			const updatedDbName = this.props.dbName != '' ? this.props.dbName : this.dbNameInput.value
-			if(updatedDbName == '') {
-				alert("Database name is required.")
-				return null
-			}
-			if(this.idInput.value == '' || this.passwordInput.value == '') {
-				alert("Username and passphrase are both required.")
-				return null
-			}
-			fetch(`/${updatedDbName}/api/v1/authentication`, {
-				method: 'POST',
-				headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-				body: JSON.stringify({ id: this.idInput.value, password: btoa(this.passwordInput.value) })
-			})
-			.then( (response) => {
-				if(response.status == 400) {
-					alert("Incorrect user credentials.")
-					return null
-				}
-				if(response.status != 200) {
-					alert(`Problem ${response.status} is reported.`)
-					return null
-				}
-				return response.json() })
-				.then( (responseJson) => {
-					if (responseJson != null) {
-						localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
-					}
-					if(this.props.dbName == '') location.href = `/${updatedDbName}/`
-					else location.reload()
-				} 
-			)  
+	authenticate() {
+		const updatedDbName = this.props.dbName != '' ? this.props.dbName : this.dbNameInput.value
+		if(updatedDbName == '') {
+			alert("Database name is required.")
+			return null
 		}
+		if(this.idInput.value == '' || this.passwordInput.value == '') {
+			alert("Username and passphrase are both required.")
+			return null
+		}
+		fetch(`/${updatedDbName}/api/v1/authentication`, {
+			method: 'POST',
+			headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+			body: JSON.stringify({ id: this.idInput.value, password: btoa(this.passwordInput.value) })
+		})
+		.then( (response) => {
+			if(response.status == 400) {
+				alert("Incorrect user credentials.")
+				return null
+			}
+			if(response.status != 200) {
+				alert(`Problem ${response.status} is reported.`)
+				return null
+			}
+			return response.json() })
+			.then( (responseJson) => {
+				if (responseJson != null) {
+					localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
+				}
+				if(this.props.dbName == '') location.href = `/${updatedDbName}/`
+				else location.reload()
+			} 
+		)  
 	}
 
 	render() {
@@ -95,7 +95,7 @@ class Login extends React.Component {
 						<div className="d-grid gap-2">
 							<button type="button" 
 								className="btn btn-outline-primary"
-								onClick={this.authenticate}>
+								onClick={() => this.authenticate()}>
 								Log in {this.props.dbName} <img src="/icons/box-arrow-in-right.svg" role="img" alt="Log in" />
 							</button>
 						</div>

@@ -73,9 +73,38 @@ class Grid extends React.Component {
 					{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
 					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted">{count} row</small>}
 					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted">{count} rows</small>}
+
+					<button
+						type="button"
+						className="btn btn-light btn-sm"
+						onClick={() => this.addRow()}>
+						Add row <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
+					</button>
+
+					<button
+						type="button"
+						className="btn btn-light btn-sm"
+						onClick={() => this.addRow()}>
+						Delete row <img src="/icons/dash-circle.svg" role="img" alt="Delete row"></img>
+					</button>
+
 				</div>
 			</div>
 		)
+	}
+
+	addRow() {
+		const newItem = {
+			uri: "????",
+			uuid: `NEW-${this.state.count+1}`,
+			editable: true,
+			selected: true,
+			added: true
+		}
+		this.setState(state => ({
+			items: state.items.concat(newItem),
+			count: state.count + 1
+		}))
 	}
 }
 
@@ -90,14 +119,13 @@ class TableRows extends React.Component {
 			<table className="table table-hover table-sm">
 				<thead className="table-light">
 					<tr>
+						<th scope="col"></th>
 						<th scope="col">Uri</th>
 						<th scope="col">Text01</th>
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>
 						<th scope="col">Text04</th>
-						<th scope="col">
-							<img src="/icons/plus-circle.svg" role="img" alt="Plus circle"></img>
-						</th>
+						<th scope="col">Uuid</th>
 					</tr>
 				</thead>
 				<tbody>
@@ -109,10 +137,31 @@ class TableRows extends React.Component {
 }
 
 class TableRowItemSingleLine extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			selected: this.props.item.selected,
+			editable: this.props.item.editable,
+			added: this.props.item.added,
+		}
+	}
+
+	toggleSelection() {
+		this.setState(state => ({
+			selected: !state.selected
+		}))
+	}
+
 	render() {
+		const variant = (this.state.selected ? "table-warning" : "")
 		return (
-			<tr>
-				<td>{this.props.item.uri}</td>
+			<tr className={variant} onClick={() => this.toggleSelection()}>
+				<td>
+					{this.state.added && <span>*</span>}
+					{!this.state.added && <span>&nbsp;</span>}
+				</td>
+				{this.props.item.editable && <td><input></input></td>}
+				{!this.props.item.editable && <td>{this.props.item.uri}</td>}
 				<td>{this.props.item.text01}</td>
 				<td>{this.props.item.text02}</td>
 				<td>{this.props.item.text03}</td>
