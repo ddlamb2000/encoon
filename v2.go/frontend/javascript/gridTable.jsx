@@ -21,6 +21,8 @@ class GridTable extends React.Component {
 						row => <GridRow key={row.uuid} 
                                                 row={row}
                                                 rowSelected={this.isRowSelected(row)}
+												rowEdited={this.isRowEdited(row)}
+												rowAdded={this.isRowAdded(row)}
                                                 onRowClick={row => this.props.onRowClick(row)} />
 					)}
 				</tbody>
@@ -29,6 +31,14 @@ class GridTable extends React.Component {
 	}
 
 	isRowSelected(row) {
-		return this.props.rowsSelected.some(uuid => uuid == row.uuid)
+		return this.props.rowsSelected.includes(row.uuid)
+	}
+
+	isRowEdited(row) {
+		return this.props.rowsEdited.includes(row.uuid)
+	}
+
+	isRowAdded(row) {
+		return this.props.rowsAdded.includes(row.uuid)
 	}
 }

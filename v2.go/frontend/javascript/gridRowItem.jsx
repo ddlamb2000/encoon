@@ -3,15 +3,17 @@
 
 class GridRow extends React.Component {
 	render() {
-		const variant = (this.props.rowSelected ? "table-warning" : "")
+		const variant = this.props.rowAdded ?
+							"table-warning" :
+							(this.props.rowSelected ? "table-secondary" : "")
 		return (
 			<tr className={variant} onClick={() => this.props.onRowClick(this.props.row)}>
 				<td>
-					{this.props.row.added && <span>*</span>}
-					{!this.props.row.added && <span>&nbsp;</span>}
+					{this.props.rowAdded && <span>*</span>}
+					{!this.props.rowAdded && <span>&nbsp;</span>}
 				</td>
-				{this.props.row.editable && <td><input></input></td>}
-				{!this.props.row.editable && <td>{this.props.row.uri}</td>}
+				{this.props.rowEdited && <td><input></input></td>}
+				{!this.props.rowEdited && <td>{this.props.row.uri}</td>}
 				<td>{this.props.row.text01}</td>
 				<td>{this.props.row.text02}</td>
 				<td>{this.props.row.text03}</td>

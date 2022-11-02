@@ -10,7 +10,9 @@ class Grid extends React.Component {
 			isLoading: false,
 			grid: [],
 			rows: [],
-			rowsSelected: []
+			rowsSelected: [],
+			rowsEdited: [],
+			rowsAdded: []
 		}
 	}
   
@@ -58,9 +60,12 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, rows, rowsSelected } = this.state
+		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded } = this.state
 		const countRows = rows ? rows.length : 0
 		const countRowsSelected = rowsSelected.length
+		const countRowsAdded = rowsAdded.length
+		const rowsSelectedAndEdited = rowsSelected.filter(uuid => !rowsEdited.includes(uuid))
+		const countRowsSelectedAndEdited = rowsSelectedAndEdited.length
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
@@ -80,6 +85,8 @@ class Grid extends React.Component {
 					{isLoaded && rows && countRows > 0 && this.props.uuid == "" &&
 						 <GridTable rows={rows}
 						 			rowsSelected={rowsSelected}
+									rowsEdited={rowsEdited}
+									rowsAdded={rowsAdded}
 						 			onRowClick={row => this.toggleSelection(row)}/>
 					}
 
@@ -101,15 +108,15 @@ class Grid extends React.Component {
 							Delete selected <i className="bi bi-dash-circle"></i>
 						</button>
 					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelectedAndEdited > 0 &&
 						<button
 							type="button"
 							className="btn btn-outline-secondary btn-sm mx-1"
-							onClick={() => this.deleteRows()}>
+							onClick={() => this.setRowsEdited()}>
 							Edit selected <i className="bi bi-pencil"></i>
 						</button>
 					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && countRowsAdded > 0 &&
 						<button
 							type="button"
 							className="btn btn-outline-primary btn-sm mx-1"
@@ -125,29 +132,38 @@ class Grid extends React.Component {
 	toggleSelection(row) {
 		if(!this.isRowSelected(row)) {
 			this.setState(state => ({
-				rowsSelected: state.rowsSelected.concat(row.uuid)
+				rowsSelected: state.rowsSelected.concat(row.uuid),
 			}))
 		}
 		else {
 			this.setState(state => ({
-				rowsSelected: state.rowsSelected.filter(uuid => uuid != row.uuid)
+				rowsSelected: state.rowsSelected.filter(uuid => uuid != row.uuid),
 			}))
 		}
 	}
 
 	isRowSelected(row) {
-		return this.state.rowsSelected.some(uuid => uuid == row.uuid)
+		return this.state.rowsSelected.includes(row.uuid)
+	}
+
+	isRowEdited(row) {
+		return this.state.rowsEdited.includes(row.uuid)
+	}
+
+	isRowAdded(row) {
+		return this.state.rowsAdded.includes(row.uuid)
 	}
 
 	addRow() {
+		const newRow = {
+			uri: "new row",
+			uuid: `${this.state.rows.length+1}`
+		}
 		this.setState(state => ({
-			rows: state.rows.concat({
-				uri: "????",
-				uuid: `${this.state.rows.length+1}`,
-				editable: true,
-				added: true
-			}),
-			count: state.count + 1
+			rows: state.rows.concat(newRow),
+			rowsEdited: state.rowsEdited.concat(newRow.uuid),
+			rowsSelected: state.rowsSelected.concat(newRow.uuid),
+			rowsAdded: state.rowsAdded.concat(newRow.uuid),
 		}))
 	}
 
@@ -155,6 +171,12 @@ class Grid extends React.Component {
 		this.setState(state => ({
 			rows: state.rows.filter(row => !this.isRowSelected(row)),
 			rowsSelected: []
+		}))
+	}
+
+	setRowsEdited() {
+		this.setState(state => ({
+			rowsEdited: state.rowsEdited.concat(state.rowsSelected),
 		}))
 	}
 }
