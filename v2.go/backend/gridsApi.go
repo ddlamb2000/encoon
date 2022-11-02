@@ -29,7 +29,7 @@ func GetGridsRowsApi(c *gin.Context) {
 		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "items": rowSet, "count": rowSetCount})
+	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
 func getGridsRows(dbName string, gridUri string, uuid string) (*Grid, []Row, int, error) {

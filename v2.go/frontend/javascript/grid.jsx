@@ -9,10 +9,8 @@ class Grid extends React.Component {
 			isLoaded: false,
 			isLoading: false,
 			grid: [],
-			items: [],
-			count: 0,
-			itemsSelected: [],
-			countSelected: 0,
+			rows: [],
+			rowsSelected: []
 		}
 	}
   
@@ -35,8 +33,7 @@ class Grid extends React.Component {
 							isLoading: false,
 							isLoaded: true,
 							grid: result.grid,
-							items: result.items,
-							count: result.count,
+							rows: result.rows,
 							error: result.error
 						})
 					},
@@ -44,7 +41,7 @@ class Grid extends React.Component {
 						this.setState({
 							isLoading: false,
 							isLoaded: false,
-							items: [],
+							rows: [],
 							error: error.message
 						})
 					}
@@ -53,7 +50,7 @@ class Grid extends React.Component {
 				this.setState({
 					isLoading: false,
 					isLoaded: false,
-					items: [],
+					rows: [],
 					error: `[${response.status}] Internal server issue.`
 				})
 			}
@@ -61,7 +58,9 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, items, count, itemsSelected, countSelected } = this.state
+		const { isLoading, isLoaded, error, grid, rows, rowsSelected } = this.state
+		const countRows = rows ? rows.length : 0
+		const countRowsSelected = rowsSelected.length
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
@@ -69,36 +68,36 @@ class Grid extends React.Component {
 					{grid && <h4 className="card-title">{grid.text01}</h4>}
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
-					{isLoaded && items && count == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
+					{isLoaded && rows && countRows == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
 
-					{isLoaded && items && count > 0 && this.props.uuid == "" &&
-						 <TableRows items={items}
-						 			itemsSelected={itemsSelected}
-						 			onRowItemClick={item => this.toggleSelection(item)}/>
+					{isLoaded && rows && countRows > 0 && this.props.uuid == "" &&
+						 <GridTable rows={rows}
+						 			rowsSelected={rowsSelected}
+						 			onRowClick={row => this.toggleSelection(row)}/>
 					}
 
-					{isLoaded && items && count > 0 && this.props.uuid != "" && <TableSingleRow item={items[0]} />}
+					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
 
-					{isLoaded && items && this.props.uuid == "" && count == 1 && <small className="text-muted px-2">{count} row</small>}
-					{isLoaded && items && this.props.uuid == "" && count > 1 && <small className="text-muted px-2">{count} rows</small>}
+					{isLoaded && rows && this.props.uuid == "" && countRows == 1 && <small className="text-muted px-2">{countRows} row</small>}
+					{isLoaded && rows && this.props.uuid == "" && countRows > 1 && <small className="text-muted px-2">{countRows} rows</small>}
 
-					{isLoaded && items &&
+					{isLoaded && rows &&
 						<button
 							type="button"
 							className="btn btn-light btn-sm px-2"
-							onClick={() => this.addItem()}>
+							onClick={() => this.addRow()}>
 							Add <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
 						</button>
 					}
 
-					{isLoaded && items && this.props.uuid == "" && countSelected > 0 &&
-						<small className="text-muted px-2">{countSelected} selected</small>
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+						<small className="text-muted px-2">{countRowsSelected} selected</small>
 					}
-					{isLoaded && items && this.props.uuid == "" && countSelected > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
 						<button
 							type="button"
 							className="btn btn-light btn-sm px-2"
-							onClick={() => this.deleteItems()}>
+							onClick={() => this.deleterows()}>
 							Delete <img src="/icons/dash-circle.svg" role="img" alt="Delete row"></img>
 						</button>
 					}
@@ -108,30 +107,28 @@ class Grid extends React.Component {
 		)
 	}
 
-	toggleSelection(item) {
-		if(!this.isItemSelected(item)) {
+	toggleSelection(row) {
+		if(!this.isrowSelected(row)) {
 			this.setState(state => ({
-				itemsSelected: state.itemsSelected.concat(item.uuid),
-				countSelected: state.countSelected + 1
+				rowsSelected: state.rowsSelected.concat(row.uuid)
 			}))
 		}
 		else {
 			this.setState(state => ({
-				itemsSelected: state.itemsSelected.filter(uuid => uuid != item.uuid),
-				countSelected: state.countSelected - 1
+				rowsSelected: state.rowsSelected.filter(uuid => uuid != row.uuid)
 			}))
 		}
 	}
 
-	isItemSelected(item) {
-		return this.state.itemsSelected.some(uuid => uuid == item.uuid)
+	isRowSelected(row) {
+		return this.state.rowsSelected.some(uuid => uuid == row.uuid)
 	}
 
-	addItem() {
+	addRow() {
 		this.setState(state => ({
-			items: state.items.concat({
+			rows: state.rows.concat({
 				uri: "????",
-				uuid: `NEW-${this.state.count+1}`,
+				uuid: `${this.state.rows.length+1}`,
 				editable: true,
 				added: true
 			}),
@@ -139,14 +136,10 @@ class Grid extends React.Component {
 		}))
 	}
 
-	deleteItems() {
+	deleteRows() {
 		this.setState(state => ({
-			items: state.items.filter(item => !this.isItemSelected(item)),
-			itemsSelected: [],
-		}))
-		this.setState(state => ({
-			count: state.items.length,
-			countSelected: 0
+			rows: state.rows.filter(row => !this.isRowSelected(row)),
+			rowsSelected: []
 		}))
 	}
 }
@@ -154,77 +147,4 @@ class Grid extends React.Component {
 Grid.defaultProps = {
 	gridUri: '',
 	uuid: ''
-}
-
-class TableRows extends React.Component {
-	render() {
-		return (
-			<table className="table table-hover table-sm">
-				<thead className="table-light">
-					<tr>
-						<th scope="col"><span>&nbsp;</span></th>
-						<th scope="col">Uri</th>
-						<th scope="col">Text01</th>
-						<th scope="col">Text02</th>
-						<th scope="col">Text03</th>
-						<th scope="col">Text04</th>
-						<th scope="col">Uuid</th>
-					</tr>
-				</thead>
-				<tbody>
-					{this.props.items.map(
-						item => <TableRowItemSingleLine key={item.uuid} 
-														item={item}
-														itemSelected={this.isItemSelected(item)}
-														onRowItemClick={item => this.props.onRowItemClick(item)} />
-					)}
-				</tbody>
-			</table>
-		)
-	}
-
-	isItemSelected(item) {
-		return this.props.itemsSelected.some(uuid => uuid == item.uuid)
-	}
-}
-
-class TableRowItemSingleLine extends React.Component {
-	render() {
-		const variant = (this.props.itemSelected ? "table-warning" : "")
-		return (
-			<tr className={variant} onClick={() => this.props.onRowItemClick(this.props.item)}>
-				<td>
-					{this.props.item.added && <span>*</span>}
-					{!this.props.item.added && <span>&nbsp;</span>}
-				</td>
-				{this.props.item.editable && <td><input></input></td>}
-				{!this.props.item.editable && <td>{this.props.item.uri}</td>}
-				<td>{this.props.item.text01}</td>
-				<td>{this.props.item.text02}</td>
-				<td>{this.props.item.text03}</td>
-				<td>{this.props.item.text04}</td>
-				<td scope="row"><a href={this.props.item.path}>{this.props.item.uuid}</a></td>
-			</tr>
-		)
-	}
-}
-
-class TableSingleRow extends React.Component {
-	render() {
-		return (
-			<div>
-				<h6 className="card-subtitle mb-2 text-muted">{this.props.item.uuid}</h6>
-				<table className="table table-hover table-sm">
-					<thead className="table-light"></thead>
-					<tbody>
-						<tr><td>Uri</td><td>{this.props.item.uri}</td></tr>
-						<tr><td>Text01</td><td>{this.props.item.text01}</td></tr>
-						<tr><td>Text02</td><td>{this.props.item.text02}</td></tr>
-						<tr><td>Text03</td><td>{this.props.item.text03}</td></tr>
-						<tr><td>Text04</td><td>{this.props.item.text04}</td></tr>
-					</tbody>
-				</table>
-			</div>
-		)
-	}
 }
