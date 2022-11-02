@@ -9,19 +9,19 @@ class Navigation extends React.Component {
 					<ul className="nav flex-column">
 						<li className="nav-item">
 							<a className="nav-link active" aria-current="page" href={`/${this.props.dbName}`}>
-								Dashboard
+								Dashboard <i className="bi bi-box"></i>
 							</a>
 						</li>
 					</ul>
 					<ul className="nav flex-column mb-2">
 						<li className="nav-item">
 							<a className="nav-link" href={`/${this.props.dbName}/grids`}>
-								Grids
+								Grids <i className="bi bi-grid-3x3"></i>
 							</a>
 						</li>
 						<li className="nav-item">
 							<a className="nav-link" href={`/${this.props.dbName}/users`}>
-								Users
+								Users <i className="bi bi-person"></i>
 							</a>
 						</li>
 					</ul>

@@ -72,10 +72,10 @@ class Grid extends React.Component {
 						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
 							<small className="text-muted px-2">({countRowsSelected} selected)</small>
 						}
+						{isLoaded && rows && countRows == 0 && <small className="text-muted px-2">No data</small>}
 					</h6>
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
-					{isLoaded && rows && countRows == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
 
 					{isLoaded && rows && countRows > 0 && this.props.uuid == "" &&
 						 <GridTable rows={rows}
@@ -85,34 +85,38 @@ class Grid extends React.Component {
 
 					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
 
-					<div className="btn-group btn-group-sm" role="group" aria-label="Grid actions">
-						{isLoaded && rows &&
-							<button
-								type="button"
-								className="btn btn-light btn-sm px-2"
-								onClick={() => this.addRow()}>
-								Add <i className="bi bi-plus-circle"></i>
-							</button>
-						}
-
-						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
-							<button
-								type="button"
-								className="btn btn-light btn-sm px-2"
-								onClick={() => this.deleterows()}>
-								Delete <i className="bi bi-dash-circle"></i>
-							</button>
-						}
-
-						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
-							<button
-								type="button"
-								className="btn btn-primary btn-sm px-2"
-								onClick={() => this.deleterows()}>
-								Save changes <i className="bi bi-save"></i>
-							</button>
-						}
-					</div>
+					{isLoaded && rows &&
+						<button
+							type="button"
+							className="btn btn-outline-success btn-sm mx-1"
+							onClick={() => this.addRow()}>
+							Add row <i className="bi bi-plus-circle"></i>
+						</button>
+					}
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+						<button
+							type="button"
+							className="btn btn-outline-danger btn-sm mx-1"
+							onClick={() => this.deleteRows()}>
+							Delete selected <i className="bi bi-dash-circle"></i>
+						</button>
+					}
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+						<button
+							type="button"
+							className="btn btn-outline-secondary btn-sm mx-1"
+							onClick={() => this.deleteRows()}>
+							Edit selected <i className="bi bi-pencil"></i>
+						</button>
+					}
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+						<button
+							type="button"
+							className="btn btn-outline-primary btn-sm mx-1"
+							onClick={() => this.deleteRows()}>
+							Save changes <i className="bi bi-save"></i>
+						</button>
+					}
 				</div>
 			</div>
 		)
