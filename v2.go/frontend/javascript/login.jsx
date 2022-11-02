@@ -96,7 +96,7 @@ class Login extends React.Component {
 							<button type="button" 
 								className="btn btn-outline-primary"
 								onClick={() => this.authenticate()}>
-								Log in {this.props.dbName} <img src="/icons/box-arrow-in-right.svg" role="img" alt="Log in" />
+								Log in {this.props.dbName} <i className="bi bi-box-arrow-in-right"></i>
 							</button>
 						</div>
 					</div>

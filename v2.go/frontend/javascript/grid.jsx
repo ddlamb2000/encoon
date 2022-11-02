@@ -66,6 +66,13 @@ class Grid extends React.Component {
 				<div className="card-body">
 					{isLoading && <Spinner />}
 					{grid && <h4 className="card-title">{grid.text01}</h4>}
+					<h6 className="card-subtitle mb-2 text-muted">
+						{isLoaded && rows && this.props.uuid == "" && countRows == 1 && <small className="text-muted px-2">{countRows} row</small>}
+						{isLoaded && rows && this.props.uuid == "" && countRows > 1 && <small className="text-muted px-2">{countRows} rows</small>}
+						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+							<small className="text-muted px-2">({countRowsSelected} selected)</small>
+						}
+					</h6>
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
 					{isLoaded && rows && countRows == 0 && <div className="alert alert-secondary" role="alert">No data</div>}
@@ -78,37 +85,41 @@ class Grid extends React.Component {
 
 					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
 
-					{isLoaded && rows && this.props.uuid == "" && countRows == 1 && <small className="text-muted px-2">{countRows} row</small>}
-					{isLoaded && rows && this.props.uuid == "" && countRows > 1 && <small className="text-muted px-2">{countRows} rows</small>}
+					<div className="btn-group btn-group-sm" role="group" aria-label="Grid actions">
+						{isLoaded && rows &&
+							<button
+								type="button"
+								className="btn btn-light btn-sm px-2"
+								onClick={() => this.addRow()}>
+								Add <i className="bi bi-plus-circle"></i>
+							</button>
+						}
 
-					{isLoaded && rows &&
-						<button
-							type="button"
-							className="btn btn-light btn-sm px-2"
-							onClick={() => this.addRow()}>
-							Add <img src="/icons/plus-circle.svg" role="img" alt="Add row"></img>
-						</button>
-					}
+						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+							<button
+								type="button"
+								className="btn btn-light btn-sm px-2"
+								onClick={() => this.deleterows()}>
+								Delete <i className="bi bi-dash-circle"></i>
+							</button>
+						}
 
-					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
-						<small className="text-muted px-2">{countRowsSelected} selected</small>
-					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
-						<button
-							type="button"
-							className="btn btn-light btn-sm px-2"
-							onClick={() => this.deleterows()}>
-							Delete <img src="/icons/dash-circle.svg" role="img" alt="Delete row"></img>
-						</button>
-					}
-
+						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
+							<button
+								type="button"
+								className="btn btn-primary btn-sm px-2"
+								onClick={() => this.deleterows()}>
+								Save changes <i className="bi bi-save"></i>
+							</button>
+						}
+					</div>
 				</div>
 			</div>
 		)
 	}
 
 	toggleSelection(row) {
-		if(!this.isrowSelected(row)) {
+		if(!this.isRowSelected(row)) {
 			this.setState(state => ({
 				rowsSelected: state.rowsSelected.concat(row.uuid)
 			}))

@@ -27,7 +27,7 @@ class Header extends React.Component {
                                             location.reload()
                                         }
                                     }>
-                                Log out <img src="/icons/box-arrow-right.svg" role="img" alt="Log out" />
+                                Log out <i className="bi bi-box-arrow-right"></i>
                             </button>
                         </a>
                     </div>
