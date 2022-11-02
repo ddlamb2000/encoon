@@ -18,12 +18,13 @@ class GridTable extends React.Component {
 				</thead>
 				<tbody>
 					{this.props.rows.map(
-						row => <GridRow key={row.uuid} 
-                                                row={row}
-                                                rowSelected={this.isRowSelected(row)}
-												rowEdited={this.isRowEdited(row)}
-												rowAdded={this.isRowAdded(row)}
-                                                onRowClick={row => this.props.onRowClick(row)} />
+						row => <GridRow key={row.uuid}
+										row={row}
+										rowSelected={this.isRowSelected(row)}
+										rowEdited={this.isRowEdited(row)}
+										rowAdded={this.isRowAdded(row)}
+										onRowClick={row => this.props.onRowClick(row)}
+										inputRef={this.props.inputRef} />
 					)}
 				</tbody>
 			</table>

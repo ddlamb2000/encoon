@@ -14,6 +14,22 @@ class Grid extends React.Component {
 			rowsEdited: [],
 			rowsAdded: []
 		}
+		this.gridInput = new Map()
+		this.setGridRowRef = element => { 
+			const uuid = element.getAttribute("uuid")
+			const col = element.getAttribute("col")
+			if(uuid != "" && col != "") {
+				const gridInputMap = this.gridInput.get(uuid)
+				if(gridInputMap) {
+					gridInputMap.set(col, element)	
+				}
+				else {
+					const gridRowInputMap = new Map()
+					gridRowInputMap.set(col, element)
+					this.gridInput.set(uuid, gridRowInputMap)
+				}
+			}
+		}
 	}
   
 	componentDidMount() {
@@ -88,7 +104,8 @@ class Grid extends React.Component {
 						 			rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
 									rowsAdded={rowsAdded}
-						 			onRowClick={row => this.toggleSelection(row)}/>
+						 			onRowClick={row => this.toggleSelection(row)}
+									inputRef={this.setGridRowRef} />
 					}
 
 					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
@@ -121,7 +138,7 @@ class Grid extends React.Component {
 						<button
 							type="button"
 							className="btn btn-outline-primary btn-sm mx-1"
-							onClick={() => this.deleteRows()}>
+							onClick={() => this.saveData()}>
 							Save changes <i className="bi bi-save"></i>
 						</button>
 					}
@@ -131,15 +148,17 @@ class Grid extends React.Component {
 	}
 
 	toggleSelection(row) {
-		if(!this.isRowSelected(row)) {
-			this.setState(state => ({
-				rowsSelected: state.rowsSelected.concat(row.uuid),
-			}))
-		}
-		else {
-			this.setState(state => ({
-				rowsSelected: state.rowsSelected.filter(uuid => uuid != row.uuid),
-			}))
+		if(!this.isRowEdited(row)) {
+			if(!this.isRowSelected(row)) {
+				this.setState(state => ({
+					rowsSelected: state.rowsSelected.concat(row.uuid),
+				}))
+			}
+			else {
+				this.setState(state => ({
+					rowsSelected: state.rowsSelected.filter(uuid => uuid != row.uuid),
+				}))
+			}
 		}
 	}
 
@@ -179,6 +198,35 @@ class Grid extends React.Component {
 		this.setState(state => ({
 			rowsEdited: state.rowsEdited.concat(state.rowsSelected),
 		}))
+	}
+
+	getInputValues(rows) {
+		return rows.map(uuid => {
+			const inputElement = this.gridInput.get(uuid)
+			const e0 = Array.from(inputElement, ([name, value]) => ({ name, value }))
+			const e1 = Object.keys(e0).map(key => 
+				({
+					col: e0[key].name,
+					value: inputElement.get(e0[key].name).value
+				}))
+			const e2 = e1.reduce(
+				(hash, {col, value}) => {
+					hash[col] = value
+					return hash
+				},
+				{uuid: uuid}
+			)
+			return e2
+		})
+
+	}
+
+	saveData() {
+		const rowsAdded = this.getInputValues(this.state.rowsAdded)
+		const rowsEdited = this.getInputValues(this.state.rowsEdited)
+		console.log("rowsAdded=", rowsAdded, "rowsEdited=", rowsEdited)
+		const body = JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
+		console.log("body=", body)
 	}
 }
 
