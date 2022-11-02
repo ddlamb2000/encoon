@@ -15,18 +15,20 @@ class Grid extends React.Component {
 			rowsAdded: []
 		}
 		this.gridInput = new Map()
-		this.setGridRowRef = element => { 
-			const uuid = element.getAttribute("uuid")
-			const col = element.getAttribute("col")
-			if(uuid != "" && col != "") {
-				const gridInputMap = this.gridInput.get(uuid)
-				if(gridInputMap) {
-					gridInputMap.set(col, element)	
-				}
-				else {
-					const gridRowInputMap = new Map()
-					gridRowInputMap.set(col, element)
-					this.gridInput.set(uuid, gridRowInputMap)
+		this.setGridRowRef = element => {
+			if(element != undefined) {
+				const uuid = element.getAttribute("uuid")
+				const col = element.getAttribute("col")
+				if(uuid != "" && col != "") {
+					const gridInputMap = this.gridInput.get(uuid)
+					if(gridInputMap) {
+						gridInputMap.set(col, element)	
+					}
+					else {
+						const gridRowInputMap = new Map()
+						gridRowInputMap.set(col, element)
+						this.gridInput.set(uuid, gridRowInputMap)
+					}
 				}
 			}
 		}
@@ -81,8 +83,8 @@ class Grid extends React.Component {
 		const countRowsSelected = rowsSelected.length
 		const countRowsAdded = rowsAdded.length
 		const countRowsEdited = rowsEdited.length
-		const rowsSelectedAndEdited = rowsSelected.filter(uuid => !rowsEdited.includes(uuid))
-		const countRowsSelectedAndEdited = rowsSelectedAndEdited.length
+		const rowsSelectedAndNotEdited = rowsSelected.filter(uuid => !rowsEdited.includes(uuid))
+		const countRowsSelectedAndNotEdited = rowsSelectedAndNotEdited.length
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
@@ -126,7 +128,7 @@ class Grid extends React.Component {
 							Delete selected <i className="bi bi-dash-circle"></i>
 						</button>
 					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsSelectedAndEdited > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && countRowsSelectedAndNotEdited > 0 &&
 						<button
 							type="button"
 							className="btn btn-outline-secondary btn-sm mx-1"
@@ -218,15 +220,24 @@ class Grid extends React.Component {
 			)
 			return e2
 		})
-
 	}
 
 	saveData() {
+		const rowsEditedAndNotAdded = this.state.rowsEdited.filter(uuid => !this.state.rowsAdded.includes(uuid))
 		const rowsAdded = this.getInputValues(this.state.rowsAdded)
-		const rowsEdited = this.getInputValues(this.state.rowsEdited)
-		console.log("rowsAdded=", rowsAdded, "rowsEdited=", rowsEdited)
-		const body = JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
-		console.log("body=", body)
+		const rowsEdited = this.getInputValues(rowsEditedAndNotAdded)
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
+		fetch(uri, {
+			method: 'POST',
+			headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+			body: JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
+		})
+
+		this.setState({
+			rowsEdited: [],
+			rowsSelected: [],
+			rowsAdded: [],
+		})
 	}
 }
 
