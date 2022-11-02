@@ -64,6 +64,7 @@ class Grid extends React.Component {
 		const countRows = rows ? rows.length : 0
 		const countRowsSelected = rowsSelected.length
 		const countRowsAdded = rowsAdded.length
+		const countRowsEdited = rowsEdited.length
 		const rowsSelectedAndEdited = rowsSelected.filter(uuid => !rowsEdited.includes(uuid))
 		const countRowsSelectedAndEdited = rowsSelectedAndEdited.length
 		return (
@@ -116,7 +117,7 @@ class Grid extends React.Component {
 							Edit selected <i className="bi bi-pencil"></i>
 						</button>
 					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsAdded > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && (countRowsAdded > 0 || countRowsEdited > 0) &&
 						<button
 							type="button"
 							className="btn btn-outline-primary btn-sm mx-1"
