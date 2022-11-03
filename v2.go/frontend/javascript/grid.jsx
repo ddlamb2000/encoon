@@ -177,10 +177,7 @@ class Grid extends React.Component {
 	}
 
 	addRow() {
-		const newRow = {
-			uri: "new row",
-			uuid: `${this.state.rows.length+1}`
-		}
+		const newRow = { uuid: `${this.props.gridUri}-${this.state.rows.length+1}` }
 		this.setState(state => ({
 			rows: state.rows.concat(newRow),
 			rowsEdited: state.rowsEdited.concat(newRow.uuid),

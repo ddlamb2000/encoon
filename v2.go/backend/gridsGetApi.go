@@ -15,11 +15,7 @@ import (
 
 func GetGridsRowsApi(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
-
-	auth, exists := c.Get("authorized")
-	if !exists || auth == false {
-		c.Abort()
-		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
+	if !isAuthorized(c) {
 		return
 	}
 	dbName := c.Param("dbName")
@@ -34,10 +30,28 @@ func GetGridsRowsApi(c *gin.Context) {
 	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
+func isAuthorized(c *gin.Context) bool {
+	auth, exists := c.Get("authorized")
+	if !exists || auth == false {
+		c.Abort()
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
+		return false
+	}
+	return true
+}
+
+func getUserUui(c *gin.Context) string {
+	userUuid := c.GetString("userUuid")
+	if userUuid == "" {
+		c.Abort()
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Not authorized."})
+		return ""
+	}
+	return userUuid
+}
+
 func getGridsRows(dbName string, gridUri string, uuid string) (*Grid, []Row, int, error) {
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		time.Duration(utils.Configuration.DbTimeOut)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(utils.Configuration.DbTimeOut)*time.Second)
 	defer cancel()
 
 	db, err := getDbForGridsApi(dbName, gridUri)

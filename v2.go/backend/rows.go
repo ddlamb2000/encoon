@@ -27,6 +27,10 @@ type Row struct {
 	Path string `json:"path"`
 }
 
+func (row *Row) String() string {
+	return fmt.Sprintf("%s", row.Uuid)
+}
+
 func (row *Row) SetPath(dbName, gridUri string) {
 	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
 }

@@ -100,6 +100,7 @@ func authMiddleware() gin.HandlerFunc {
 
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			user := claims["user"]
+			userUuid := claims["userUuid"]
 			today := time.Now()
 			expiration := claims["expires"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
@@ -112,6 +113,8 @@ func authMiddleware() gin.HandlerFunc {
 				return
 			}
 			c.Set("authorized", true)
+			c.Set("user", user)
+			c.Set("userUuid", userUuid)
 		} else {
 			utils.LogError("Invalid request: %v.", err)
 			c.Set("authorized", false)
