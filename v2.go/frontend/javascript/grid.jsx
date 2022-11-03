@@ -229,7 +229,11 @@ class Grid extends React.Component {
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
 		fetch(uri, {
 			method: 'POST',
-			headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + this.props.token
+			},
 			body: JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
 		})
 

@@ -63,6 +63,7 @@ func setApiRoutes() {
 		v1.GET("/", authMiddleware(), GetGridsRowsApi)
 		v1.GET("/:gridUri", authMiddleware(), GetGridsRowsApi)
 		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsRowsApi)
+		v1.POST("/:gridUri", authMiddleware(), PostGridsRowsApi)
 	}
 }
 

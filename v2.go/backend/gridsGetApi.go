@@ -14,6 +14,8 @@ import (
 )
 
 func GetGridsRowsApi(c *gin.Context) {
+	c.Header("Content-Type", "application/json")
+
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
 		c.Abort()
