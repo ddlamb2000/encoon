@@ -110,7 +110,8 @@ func getRowsQueryForGridsApi(uuid string) string {
 	selectStr := " SELECT uuid, version, uri, text01, text02, text03, text04 "
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	return selectStr + fromStr + whereStr
+	orderByStr := " ORDER BY uri, text01, text02, text03, text04 "
+	return selectStr + fromStr + whereStr + orderByStr
 }
 
 func getRowsWhereQueryForGridsApi(uuid string) string {

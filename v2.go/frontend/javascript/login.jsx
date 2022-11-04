@@ -36,15 +36,15 @@ class Login extends React.Component {
 				alert(`Problem ${response.status} is reported.`)
 				return null
 			}
-			return response.json() })
-			.then( (responseJson) => {
-				if (responseJson != null) {
-					localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
-				}
-				if(this.props.dbName == '') location.href = `/${updatedDbName}/`
-				else location.reload()
-			} 
-		)  
+			return response.json() 
+		})
+		.then( (responseJson) => {
+			if (responseJson != null) {
+				localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
+			}
+			if(this.props.dbName == '') location.href = `/${updatedDbName}/`
+			else location.reload()
+		})
 	}
 
 	render() {

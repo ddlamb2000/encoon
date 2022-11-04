@@ -233,11 +233,36 @@ class Grid extends React.Component {
 			},
 			body: JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
 		})
-
-		this.setState({
-			rowsEdited: [],
-			rowsSelected: [],
-			rowsAdded: [],
+		.then(response => {
+			const contentType = response.headers.get("content-type");
+			if(contentType && contentType.indexOf("application/json") !== -1) {
+				return response.json().then(	
+					(result) => {
+						if(response.status == 200) {
+							this.setState({
+								rowsEdited: [],
+								rowsSelected: [],
+								rowsAdded: [],
+							})
+						}
+						else {
+							alert(result.error)
+							this.setState({
+								error: result.error
+							})
+						}
+					},
+					(error) => {
+						this.setState({
+							error: error.message
+						})
+					}
+				)
+			} else {
+				this.setState({
+					error: `[${response.status}] Internal server issue.`
+				})
+			}
 		})
 	}
 }
