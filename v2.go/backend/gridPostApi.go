@@ -19,7 +19,6 @@ type gridPost struct {
 }
 
 func PostGridsRowsApi(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
 	userUuid, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()

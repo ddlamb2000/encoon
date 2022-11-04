@@ -23,8 +23,6 @@ type JWTtoken struct {
 }
 
 func authentication(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
-
 	dbName := c.Param("dbName")
 	if dbName == "" {
 		c.JSON(http.StatusBadRequest, "")

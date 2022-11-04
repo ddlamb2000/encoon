@@ -14,7 +14,6 @@ import (
 )
 
 func GetGridsRowsApi(c *gin.Context) {
-	c.Header("Content-Type", "application/json")
 	_, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
@@ -88,7 +87,7 @@ func getGridForGridsApi(ctx context.Context,
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
 		Scan(&grid.Uuid, &grid.Text01); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, utils.LogAndReturnError("[%s] [%s] Grid %s not found.", dbName, user, gridUri)
+			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)
 		} else {
 			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid definition %q: %v.", dbName, user, gridUri, err)
 		}
