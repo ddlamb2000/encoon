@@ -266,7 +266,7 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusNotFound)
 
-	expected := utils.CleanupStrings(`{ "error": "[test] [root] Grid us not found."}`)
+	expected := utils.CleanupStrings(`{ "error": "[test] [root] Grid \"us\" not found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
