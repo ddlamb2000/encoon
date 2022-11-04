@@ -67,7 +67,7 @@ func getGridsRows(dbName string, gridUri string, uuid string) (*Grid, []Row, int
 		return nil, nil, 0, err
 	}
 	defer rows.Close()
-	rowSet, rowSetCount, err := getRowsetForGridsApi(dbName, gridUri, rows)
+	rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, gridUri, rows)
 
 	return grid, rowSet, rowSetCount, err
 }
@@ -102,6 +102,16 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, gridUri string) (*Grid,
 	return grid, nil
 }
 
+func getRowsForGridsApi(ctx context.Context, db *sql.DB, gridUuid string, uuid string) (*sql.Rows, error) {
+	rows, err := db.QueryContext(ctx,
+		getRowsQueryForGridsApi(uuid),
+		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
+	if err != nil {
+		return nil, utils.LogAndReturnError("Error when querying rows: %v.", err)
+	}
+	return rows, nil
+}
+
 func getRowsQueryForGridsApi(uuid string) string {
 	selectStr := " SELECT uuid, version, uri, text01, text02, text03, text04 "
 	fromStr := " FROM rows "
@@ -125,29 +135,7 @@ func getRowsQueryParametersForGridsApi(gridUuid string, uuid string) []any {
 	return parameters
 }
 
-func getRowsForGridsApi(ctx context.Context, db *sql.DB, gridUuid string, uuid string) (*sql.Rows, error) {
-	rows, err := db.QueryContext(ctx,
-		getRowsQueryForGridsApi(uuid),
-		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
-	if err != nil {
-		return nil, utils.LogAndReturnError("Error when querying rows: %v.", err)
-	}
-	return rows, nil
-}
-
-func getRowsQueryOutputForGridsApi(row *Row) []any {
-	output := make([]any, 0)
-	output = append(output, &row.Uuid)
-	output = append(output, &row.Version)
-	output = append(output, &row.Uri)
-	output = append(output, &row.Text01)
-	output = append(output, &row.Text02)
-	output = append(output, &row.Text03)
-	output = append(output, &row.Text04)
-	return output
-}
-
-func getRowsetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row, int, error) {
+func getRowSetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row, int, error) {
 	var rowSet = make([]Row, 0)
 	var rowSetCount = 0
 	for rows.Next() {
@@ -163,4 +151,16 @@ func getRowsetForGridsApi(dbName string, gridUri string, rows *sql.Rows) ([]Row,
 		return nil, 0, utils.LogAndReturnError("Error when scanning rows: %v.", err)
 	}
 	return rowSet, rowSetCount, nil
+}
+
+func getRowsQueryOutputForGridsApi(row *Row) []any {
+	output := make([]any, 0)
+	output = append(output, &row.Uuid)
+	output = append(output, &row.Version)
+	output = append(output, &row.Uri)
+	output = append(output, &row.Text01)
+	output = append(output, &row.Text02)
+	output = append(output, &row.Text03)
+	output = append(output, &row.Text04)
+	return output
 }
