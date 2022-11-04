@@ -20,18 +20,17 @@ type gridPost struct {
 
 func PostGridsRowsApi(c *gin.Context) {
 	c.Header("Content-Type", "application/json")
-	if !isAuthorized(c) {
-		return
-	}
-	userUuid := getUserUui(c)
-	if userUuid == "" {
-		return
+	userUuid, user, err := getUserUui(c)
+	if err != nil {
+		c.Abort()
+		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
+	logUri(c, dbName, user)
 	var payload gridPost
 	c.BindJSON(&payload)
-	err := postGridsRows(dbName, userUuid, gridUri, payload.RowsAdded, payload.RowsEdited)
+	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited)
 	if err != nil {
 		c.Abort()
 		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -40,27 +39,27 @@ func PostGridsRowsApi(c *gin.Context) {
 	c.JSON(http.StatusOK, "")
 }
 
-func postGridsRows(dbName string, userUuid string, gridUri string, rowsAdded []Row, rowsEdited []Row) error {
+func postGridsRows(dbName string, userUuid string, user string, gridUri string, rowsAdded []Row, rowsEdited []Row) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(utils.Configuration.DbTimeOut)*time.Second)
 	defer cancel()
 
-	db, err := getDbForGridsApi(dbName, gridUri)
+	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
 		return err
 	}
-	grid, err := getGridForGridsApi(ctx, db, gridUri)
+	grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 	if err != nil {
 		return err
 	}
 
 	for _, row := range rowsAdded {
-		err := postInsertGridRow(ctx, dbName, db, userUuid, grid.Uuid, row)
+		err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
 			return err
 		}
 	}
 	for _, row := range rowsEdited {
-		err := postUpdateGridRow(ctx, dbName, db, userUuid, grid.Uuid, row)
+		err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
 			return err
 		}
@@ -68,14 +67,15 @@ func postGridsRows(dbName string, userUuid string, gridUri string, rowsAdded []R
 	return nil
 }
 
-func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid string, gridUuid string, row Row) error {
+func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string, gridUri string, gridUuid string, row Row) error {
 	row.Uuid = utils.GetNewUUID()
 	insertStatement := getInsertStatementForGridsApi()
 	insertValues := getInsertValuesForGridsApi(userUuid, gridUuid, row)
 	_, err := db.ExecContext(ctx, insertStatement, insertValues...)
 	if err != nil {
-		utils.LogError("[%q] Insert row error on %q: %v", dbName, insertStatement, err)
+		return utils.LogAndReturnError("[%s] [%s] Insert row error on %q: %v.", dbName, user, insertStatement, err)
 	}
+	utils.Log("[%s] [%s] Row [%s] inserted into %q.", dbName, user, row, gridUri)
 	return err
 }
 
@@ -122,13 +122,14 @@ func getInsertValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	return values
 }
 
-func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid string, gridUuid string, row Row) error {
+func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string, gridUri string, gridUuid string, row Row) error {
 	updateStatement := getUpdateStatementForGridsApi()
 	updateValues := getUpdateValuesForGridsApi(userUuid, gridUuid, row)
 	_, err := db.ExecContext(ctx, updateStatement, updateValues...)
 	if err != nil {
-		utils.LogError("[%q] Update row error on %q: %v", dbName, updateStatement, err)
+		return utils.LogAndReturnError("[%s] [%s] Update row error on %q: %v.", dbName, user, updateStatement, err)
 	}
+	utils.Log("[%s] [%s] Row [%s] updated in %q.", dbName, user, row, gridUri)
 	return err
 }
 

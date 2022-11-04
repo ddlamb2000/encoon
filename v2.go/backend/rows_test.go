@@ -15,3 +15,14 @@ func TestSetPath(t *testing.T) {
 		t.Errorf(`Got %v instead of %v.`, row.Path, expect)
 	}
 }
+
+func TestRowAsString(t *testing.T) {
+	row := Row{
+		Uuid: "12345",
+	}
+	got := row.String()
+	expect := "12345"
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}

@@ -55,7 +55,7 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 		return err
 	}
 	setDb(dbName, db)
-	utils.Log("Database %q connected.", dbName)
+	utils.Log("[%s] Database connected.", dbName)
 	migrateDb(ctx, db, dbName)
 	return nil
 }
@@ -88,7 +88,7 @@ func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 			utils.LogError("Unable to disconnect database %q: %v.", dbName, err)
 			return err
 		}
-		utils.Log("Database %q disconnected.", dbName)
+		utils.Log("[%s] Database disconnected.", dbName)
 	}
 	return nil
 }

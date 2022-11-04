@@ -47,14 +47,14 @@ func RunTestAuthInvalid1(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusBadRequest)
 
-	expected := utils.CleanupStrings(`{"error":"[\"test\"] Invalid ID or password: sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password: sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
 		t.Errorf(`Response %v for %v: %v.`, response, w, err)
 	}
 	if response != expected {
-		t.Errorf(`Response %v incorrect.`, response)
+		t.Errorf(`Response %v incorrect instead of %v.`, response, expected)
 	}
 }
 
@@ -65,14 +65,14 @@ func RunTestAuthInvalid2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusBadRequest)
 
-	expected := utils.CleanupStrings(`{"error":"[\"test\"] Invalid ID or password: sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password: sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
 		t.Errorf(`Response %v for %v: %v.`, response, w, err)
 	}
 	if response != expected {
-		t.Errorf(`Response %v incorrect.`, response)
+		t.Errorf(`Response %v incorrect instead of %v.`, response, expected)
 	}
 }
 
@@ -138,14 +138,14 @@ func RunTestApiUsersIncorrectToken(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{ "error": "Not authorized."}`)
+	expected := utils.CleanupStrings(`Not authorized for /test/api/v1/users`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
 		t.Errorf(`Response %v for %v: %v.`, response, w, err)
 	}
-	if response != expected {
-		t.Errorf(`Response %v incorrect.`, response)
+	if !strings.Contains(response, expected) {
+		t.Errorf(`Response %v incorrect instead of %v.`, response, expected)
 	}
 }
 
@@ -266,13 +266,13 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusNotFound)
 
-	expected := utils.CleanupStrings(`{ "error": "Grid not found."}`)
+	expected := utils.CleanupStrings(`{ "error": "[test] [root] Grid us not found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
 		t.Errorf(`Response %v for %v: %v.`, response, w, err)
 	}
 	if !strings.Contains(response, expected) {
-		t.Errorf(`Response %v incorrect.`, response)
+		t.Errorf(`Response %v incorrect instead of %v.`, response, expected)
 	}
 }

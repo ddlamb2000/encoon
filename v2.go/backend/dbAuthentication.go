@@ -32,10 +32,10 @@ func isDbAuthorized(dbName string, id string, password string) (string, string, 
 				&uuid,
 				&firstName,
 				&lastName); err != nil {
-			return "", "", "", utils.LogAndReturnError("[%q] Invalid ID or password: %v", dbName, err)
+			return "", "", "", utils.LogAndReturnError("[%s] Invalid ID or password: %v", dbName, err)
 		}
-		utils.Log("[%q] ID and password verified.", dbName)
+		utils.Log("[%s] ID and password verified.", dbName)
 		return uuid, firstName, lastName, nil
 	}
-	return "", "", "", utils.LogAndReturnError("[%q] No database connection", dbName)
+	return "", "", "", utils.LogAndReturnError("[%s] No database connection", dbName)
 }

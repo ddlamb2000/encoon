@@ -46,6 +46,7 @@ func authentication(c *gin.Context) {
 		return
 	}
 
+	logUri(c, dbName, login.Id)
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
@@ -67,7 +68,7 @@ func authMiddleware() gin.HandlerFunc {
 		dbName := c.Param("dbName")
 		if dbName == "" {
 			c.Abort()
-			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No database."})
+			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No database parameter."})
 			return
 		}
 

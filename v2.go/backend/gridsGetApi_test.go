@@ -58,7 +58,8 @@ func TestGetGridForGridsApi(t *testing.T) {
 	dbName := "test"
 	db := getDbByName(dbName)
 	gridUri := "users"
-	grid, err := getGridForGridsApi(ctx, db, gridUri)
+	user := "root"
+	grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -73,8 +74,9 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
+	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(ctx, db, utils.UuidUsers, "")
+	_, err := getRowsForGridsApi(ctx, db, dbName, user, utils.UuidUsers, "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -86,8 +88,9 @@ func TestGetRowsForGridsApi2(t *testing.T) {
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
+	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(ctx, db, "xxx", "")
+	_, err := getRowsForGridsApi(ctx, db, dbName, user, "xxx", "")
 	if err == nil {
 		t.Errorf(`Expected error.`)
 	}
@@ -110,5 +113,24 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetDbForGridsApi(t *testing.T) {
+	utils.LoadConfiguration("../configurations/")
+	ConnectDbServers(utils.DatabaseConfigurations)
+	_, err := getDbForGridsApi("test", "root")
+	if err != nil {
+		t.Errorf(`Got error %v.`, err)
+	}
+	expected := "[aaa] [root] Database not available."
+	_, err = getDbForGridsApi("aaa", "root")
+	if err.Error() != expected {
+		t.Errorf(`Got error %v instead of %v.`, err, expected)
+	}
+	_, err = getDbForGridsApi("", "root")
+	expected = "[root] Missing database name parameter."
+	if err.Error() != expected {
+		t.Errorf(`Got error %v instead of %v.`, err, expected)
 	}
 }

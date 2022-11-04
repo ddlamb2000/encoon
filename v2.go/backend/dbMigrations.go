@@ -21,26 +21,26 @@ func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (in
 	var latestMigration int
 	if err := db.QueryRow("SELECT 1 FROM migrations").Scan(&latestMigration); err != nil {
 		if err == sql.ErrNoRows {
-			utils.Log("[%q] Migration table exists.", dbName)
+			utils.Log("[%s] Migration table exists.", dbName)
 		} else {
-			utils.Log("[%q] Migrations table doesn't exist: %v.", dbName, err)
+			utils.Log("[%s] Migrations table doesn't exist: %v.", dbName, err)
 			command := "CREATE TABLE migrations (migration integer, command text)"
 			_, err := db.Exec(command)
 			if err != nil {
-				utils.LogError("[%q] Create table migrations: %v", dbName, err)
+				utils.LogError("[%s] Create table migrations: %v", dbName, err)
 				return latestMigration, true
 			}
-			utils.Log("[%q] Migration table created.", dbName)
+			utils.Log("[%s] Migration table created.", dbName)
 			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", 1, command)
 			if err != nil {
-				utils.LogError("[%q] Insert into migrations: %v", dbName, err)
+				utils.LogError("[%s] Insert into migrations: %v", dbName, err)
 				return latestMigration, true
 			}
 		}
 	}
 
 	if err := db.QueryRow("SELECT MAX(migration) FROM migrations").Scan(&latestMigration); err != nil {
-		utils.LogError("[%q] Can't access migrations table %v.", dbName, err)
+		utils.LogError("[%s] Can't access migrations table %v.", dbName, err)
 		return latestMigration, true
 	}
 	return latestMigration, false
@@ -192,13 +192,13 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 	if migration > latestMigration {
 		_, err := db.Exec(command)
 		if err != nil {
-			utils.LogError("[%q] %d %q: %v", dbName, migration, command, err)
+			utils.LogError("[%s] %d %q: %v", dbName, migration, command, err)
 		} else {
 			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", migration, command)
 			if err != nil {
-				utils.LogError("[%q] Insert into migrations: %v", dbName, err)
+				utils.LogError("[%s] Insert into migrations: %v", dbName, err)
 			} else {
-				utils.Log("[%q] Migration %v executed.", dbName, migration)
+				utils.Log("[%s] Migration %v executed.", dbName, migration)
 			}
 		}
 	}

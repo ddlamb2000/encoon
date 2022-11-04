@@ -87,3 +87,7 @@ func getIndexHtml(c *gin.Context) {
 			"uuid":    c.Param("uuid"),
 		})
 }
+
+func logUri(c *gin.Context, dbName, user string) {
+	utils.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
+}
