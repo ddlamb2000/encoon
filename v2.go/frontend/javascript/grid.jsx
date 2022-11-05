@@ -188,7 +188,6 @@ class Grid extends React.Component {
 		this.setState(state => ({
 			rows: state.rows.concat(newRow),
 			rowsEdited: state.rowsEdited.concat(newRow.uuid),
-			rowsSelected: state.rowsSelected.concat(newRow.uuid),
 			rowsAdded: state.rowsAdded.concat(newRow.uuid),
 		}))
 	}

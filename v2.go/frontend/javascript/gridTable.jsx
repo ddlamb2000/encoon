@@ -4,10 +4,10 @@
 class GridTable extends React.Component {
 	render() {
 		return (
-			<table className="table table-hover table-sm">
+			<table className="table table-hover table-sm table-responsive">
 				<thead>
 					<tr>
-						<th scope="col"><span>&nbsp;</span></th>
+						<th scope="col" className="vw-10"></th>
 						<th scope="col">Uri</th>
 						<th scope="col">Text01</th>
 						<th scope="col">Text02</th>
