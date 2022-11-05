@@ -5,7 +5,7 @@ class GridTable extends React.Component {
 	render() {
 		return (
 			<table className="table table-hover table-sm">
-				<thead className="table-light">
+				<thead>
 					<tr>
 						<th scope="col"><span>&nbsp;</span></th>
 						<th scope="col">Uri</th>
@@ -13,10 +13,9 @@ class GridTable extends React.Component {
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>
 						<th scope="col">Text04</th>
-						<th scope="col">Uuid</th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody className="table-group-divider">
 					{this.props.rows.map(
 						row => <GridRow key={row.uuid}
 										row={row}

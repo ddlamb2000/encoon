@@ -89,7 +89,14 @@ class Grid extends React.Component {
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
 					{isLoading && <Spinner />}
-					{grid && <h4 className="card-title">{grid.text01}</h4>}
+					{grid && 
+						<h4 className="card-title">
+							{grid.text01}
+							<small className="text-muted">
+								<a href={grid.path}><i className="bi bi-box-arrow-up-right ms-2"></i></a>
+							</small>
+						</h4>
+					}
 					<h6 className="card-subtitle mb-2 text-muted">
 						{isLoaded && rows && this.props.uuid == "" && countRows == 1 && <small className="text-muted px-2">{countRows} row</small>}
 						{isLoaded && rows && this.props.uuid == "" && countRows > 1 && <small className="text-muted px-2">{countRows} rows</small>}
