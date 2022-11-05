@@ -15,26 +15,16 @@ func isDbAuthorized(dbName string, id string, password string) (string, string, 
 		context.Background(),
 		time.Duration(utils.Configuration.DbTimeOut)*time.Second)
 	defer cancel()
-	db := getDbByName(dbName)
-	if db != nil {
+	if db := getDbByName(dbName); db != nil {
 		var uuid, firstName, lastName string
-		selectSql := " SELECT uuid, text01, text02 "
-		fromSql := " FROM rows "
+		selectSql := " SELECT uuid, text01, text02 FROM rows "
 		whereSql := " WHERE gridUuid = $1 AND uri = $2 AND text03 = crypt($3, text03) "
 		if err := db.
-			QueryRowContext(
-				ctx,
-				selectSql+fromSql+whereSql,
-				utils.UuidUsers,
-				id,
-				password).
-			Scan(
-				&uuid,
-				&firstName,
-				&lastName); err != nil {
-			return "", "", "", utils.LogAndReturnError("[%s] Invalid ID or password: %v", dbName, err)
+			QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, id, password).
+			Scan(&uuid, &firstName, &lastName); err != nil {
+			return "", "", "", utils.LogAndReturnError("[%s] Invalid ID or password for %q: %v", dbName, id, err)
 		}
-		utils.Log("[%s] ID and password verified.", dbName)
+		utils.Log("[%s] ID and password verified for %q.", dbName, id)
 		return uuid, firstName, lastName, nil
 	}
 	return "", "", "", utils.LogAndReturnError("[%s] No database connection", dbName)

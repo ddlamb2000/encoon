@@ -25,14 +25,12 @@ func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (in
 		} else {
 			utils.Log("[%s] Migrations table doesn't exist: %v.", dbName, err)
 			command := "CREATE TABLE migrations (migration integer, command text)"
-			_, err := db.Exec(command)
-			if err != nil {
+			if _, err := db.Exec(command); err != nil {
 				utils.LogError("[%s] Create table migrations: %v", dbName, err)
 				return latestMigration, true
 			}
 			utils.Log("[%s] Migration table created.", dbName)
-			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", 1, command)
-			if err != nil {
+			if _, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", 1, command); err != nil {
 				utils.LogError("[%s] Insert into migrations: %v", dbName, err)
 				return latestMigration, true
 			}
@@ -177,10 +175,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 func migrateCommandsDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int, commands map[int]string) {
 	keys := make([]int, 0)
-	i := 0
 	for k := range commands {
 		keys = append(keys, k)
-		i++
 	}
 	sort.Ints(keys)
 	for _, step := range keys {

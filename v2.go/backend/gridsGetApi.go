@@ -18,6 +18,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	if err != nil {
 		c.Abort()
 		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
