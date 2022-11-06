@@ -14,8 +14,9 @@ import (
 )
 
 type gridPost struct {
-	RowsAdded  []Row `json:"rowsAdded"`
-	RowsEdited []Row `json:"rowsEdited"`
+	RowsAdded   []Row `json:"rowsAdded"`
+	RowsEdited  []Row `json:"rowsEdited"`
+	RowsDeleted []Row `json:"rowsDeleted"`
 }
 
 func PostGridsRowsApi(c *gin.Context) {
@@ -29,7 +30,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	logUri(c, dbName, user)
 	var payload gridPost
 	c.BindJSON(&payload)
-	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited)
+	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
 	if err != nil {
 		c.Abort()
 		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
@@ -38,7 +39,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	c.JSON(http.StatusOK, "")
 }
 
-func postGridsRows(dbName string, userUuid string, user string, gridUri string, rowsAdded []Row, rowsEdited []Row) error {
+func postGridsRows(dbName string, userUuid string, user string, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(utils.Configuration.DbTimeOut)*time.Second)
 	defer cancel()
 
@@ -50,7 +51,9 @@ func postGridsRows(dbName string, userUuid string, user string, gridUri string, 
 	if err != nil {
 		return err
 	}
-
+	if err := beginTransaction(ctx, dbName, db, userUuid, user); err != nil {
+		return err
+	}
 	for _, row := range rowsAdded {
 		err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
@@ -62,6 +65,15 @@ func postGridsRows(dbName string, userUuid string, user string, gridUri string, 
 		if err != nil {
 			return err
 		}
+	}
+	for _, row := range rowsDeleted {
+		err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+		if err != nil {
+			return err
+		}
+	}
+	if err := commitTransaction(ctx, dbName, db, userUuid, user); err != nil {
+		return err
 	}
 	return nil
 }
@@ -157,4 +169,18 @@ func getUpdateValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	values = append(values, row.Text03)
 	values = append(values, row.Text04)
 	return values
+}
+
+func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string, gridUri string, gridUuid string, row Row) error {
+	_, err := db.ExecContext(
+		ctx,
+		" DELETE FROM rows WHERE uuid = $1 and gridUuid = $2 ",
+		row.Uuid,
+		gridUuid,
+	)
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Delete row error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] Row [%s] deleted in %q.", dbName, user, row, gridUri)
+	return err
 }

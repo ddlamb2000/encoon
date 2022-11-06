@@ -28,7 +28,7 @@ type Row struct {
 }
 
 func (row Row) String() string {
-	return fmt.Sprintf("%s", row.Uuid)
+	return row.Uuid
 }
 
 func (row *Row) SetPath(dbName, gridUri string) {

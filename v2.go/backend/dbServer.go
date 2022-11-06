@@ -92,3 +92,21 @@ func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 	}
 	return nil
 }
+
+func beginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
+	_, err := db.ExecContext(ctx, " BEGIN ")
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] Begin transaction.", dbName, user)
+	return err
+}
+
+func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
+	_, err := db.ExecContext(ctx, " COMMIT ")
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] Commit transaction.", dbName, user)
+	return err
+}

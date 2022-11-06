@@ -12,7 +12,8 @@ class Grid extends React.Component {
 			rows: [],
 			rowsSelected: [],
 			rowsEdited: [],
-			rowsAdded: []
+			rowsAdded: [],
+			rowsDeleted: []
 		}
 		this.gridInput = new Map()
 		this.setGridRowRef = element => {
@@ -78,22 +79,29 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded } = this.state
+		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted } = this.state
 		const countRows = rows ? rows.length : 0
-		const countRowsSelected = rowsSelected.length
+		const countRowsAdded = rowsAdded.length
 		const countRowsEdited = rowsEdited.length
+		const countRowsDeleted = rowsDeleted.length
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
 					{isLoading && <Spinner />}
 					{grid && <h4 className="card-title">{grid.text01}</h4>}
 					<h6 className="card-subtitle mb-2 text-muted">
-						{isLoaded && rows && this.props.uuid == "" && countRows == 1 && <small className="text-muted px-2">{countRows} row</small>}
-						{isLoaded && rows && this.props.uuid == "" && countRows > 1 && <small className="text-muted px-2">{countRows} rows</small>}
-						{isLoaded && rows && this.props.uuid == "" && countRowsSelected > 0 &&
-							<small className="text-muted px-2">({countRowsSelected} selected)</small>
+						{isLoaded && rows && countRows == 0 && <small className="text-muted px-1">No data</small>}
+						{isLoaded && rows && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
+						{isLoaded && rows && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
+						{isLoaded && rows && countRowsAdded > 0 &&
+							<small className="text-muted px-1">({countRowsAdded} added)</small>
 						}
-						{isLoaded && rows && countRows == 0 && <small className="text-muted px-2">No data</small>}
+						{isLoaded && rows && countRowsEdited > 0 &&
+							<small className="text-muted px-1">({countRowsEdited} edited)</small>
+						}
+						{isLoaded && rows && countRowsDeleted > 0 &&
+							<small className="text-muted px-1">({countRowsDeleted} deleted)</small>
+						}
 						{grid &&<a href={grid.path}><i className="bi bi-box-arrow-up-right ms-2"></i></a>}
 					</h6>
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
@@ -109,9 +117,7 @@ class Grid extends React.Component {
 						 			onDeleteRowClick={uuid => this.deleteRow(uuid)}
 									inputRef={this.setGridRowRef} />
 					}
-
 					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
-
 					{isLoaded && rows &&
 						<button
 							type="button"
@@ -120,7 +126,7 @@ class Grid extends React.Component {
 							Add row <i className="bi bi-plus-circle"></i>
 						</button>
 					}
-					{isLoaded && rows && this.props.uuid == "" && countRowsEdited > 0 &&
+					{isLoaded && rows && this.props.uuid == "" && countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
 						<button
 							type="button"
 							className="btn btn-outline-primary btn-sm mx-1"
@@ -135,48 +141,42 @@ class Grid extends React.Component {
 
 	selectRow(selectUuid) {
 		this.setState(state => ({
-			rowsSelected: state.rowsSelected.filter(uuid => uuid == selectUuid).concat(selectUuid)
+			rowsSelected: [selectUuid]
 		}))
 	}
 
 	editRow(editUuid) {
-		this.setState(state => ({
-			rowsEdited: state.rowsEdited.filter(uuid => uuid != editUuid).concat(editUuid)
-		}))
+		if(!this.state.rowsAdded.includes(editUuid)) {
+			this.setState(state => ({
+				rowsEdited: state.rowsEdited.filter(uuid => uuid != editUuid).concat(editUuid)
+			}))
+		}
 	}
 
 	addRow() {
 		const newRow = { uuid: `${this.props.gridUri}-${this.state.rows.length+1}` }
 		this.setState(state => ({
 			rows: state.rows.concat(newRow),
-			rowsAdded: state.rowsAdded.concat(newRow.uuid),
-			rowsEdited: state.rowsEdited.concat(newRow.uuid)
+			rowsAdded: state.rowsAdded.concat(newRow.uuid)
 		}))
 	}
 
 	deleteRow(deleteUuid) {
+		if(this.state.rowsAdded.includes(deleteUuid)) {
+			this.setState(state => ({
+				rowsAdded: state.rowsAdded.filter(uuid => uuid != deleteUuid),
+			}))
+		} else {
+			this.setState(state => ({
+				rowsDeleted: state.rowsDeleted.concat(deleteUuid),
+			}))
+		}
 		this.setState(state => ({
+			rowsSelected: [],
+			rowsEdited: state.rowsEdited.filter(uuid => uuid != deleteUuid),
 			rows: state.rows.filter(row => row.uuid != deleteUuid)
 		}))
-	}
-
-	setRowsEdited() {
-		this.setState(state => ({
-			rowsEdited: state.rowsEdited.concat(state.rowsSelected),
-		}))
-	}
-
-	isRowSelected(row) {
-		return this.state.rowsSelected.includes(row.uuid)
-	}
-
-	isRowEdited(row) {
-		return this.state.rowsEdited.includes(row.uuid)
-	}
-
-	isRowAdded(row) {
-		return this.state.rowsAdded.includes(row.uuid)
-	}
+}
 
 	getInputValues(rows) {
 		return rows.map(uuid => {
@@ -199,9 +199,6 @@ class Grid extends React.Component {
 	}
 
 	saveData() {
-		const rowsEditedAndNotAdded = this.state.rowsEdited.filter(uuid => !this.state.rowsAdded.includes(uuid))
-		const rowsAdded = this.getInputValues(this.state.rowsAdded)
-		const rowsEdited = this.getInputValues(rowsEditedAndNotAdded)
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
 		fetch(uri, {
 			method: 'POST',
@@ -210,7 +207,11 @@ class Grid extends React.Component {
 				'Content-Type': 'application/json',
 				'Authorization': 'Bearer ' + this.props.token
 			},
-			body: JSON.stringify({ rowsAdded: rowsAdded, rowsEdited: rowsEdited })
+			body: JSON.stringify({
+				rowsAdded: this.getInputValues(this.state.rowsAdded),
+				rowsEdited: this.getInputValues(this.state.rowsEdited),
+				rowsDeleted: this.getInputValues(this.state.rowsDeleted)
+			})
 		})
 		.then(response => {
 			const contentType = response.headers.get("content-type");
@@ -222,6 +223,7 @@ class Grid extends React.Component {
 								rowsEdited: [],
 								rowsSelected: [],
 								rowsAdded: [],
+								rowsDeleted: []
 							})
 						}
 						else {
