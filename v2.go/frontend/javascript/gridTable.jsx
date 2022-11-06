@@ -8,7 +8,6 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						<th scope="col">Uri</th>
 						<th scope="col">Text01</th>
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>
@@ -37,7 +36,6 @@ class GridRow extends React.Component {
 	render() {
 		const variant = this.props.rowEdited ? "table-warning" : ""
 		const columns = []
-		columns.push({col: "uri", value: this.props.row.uri})
 		columns.push({col: "text01", value: this.props.row.text01})
 		columns.push({col: "text02", value: this.props.row.text02})
 		columns.push({col: "text03", value: this.props.row.text03})

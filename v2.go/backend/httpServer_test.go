@@ -47,7 +47,7 @@ func RunTestAuthInvalid1(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusBadRequest)
 
-	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password: sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password for \"\": sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -65,7 +65,7 @@ func RunTestAuthInvalid2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusBadRequest)
 
-	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password: sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password for \"root\": sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {

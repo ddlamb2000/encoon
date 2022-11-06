@@ -9,7 +9,6 @@ class GridView extends React.Component {
 				<table className="table table-hover table-sm">
 					<thead className="table-light"></thead>
 					<tbody>
-						<tr><td>Uri</td><td>{this.props.row.uri}</td></tr>
 						<tr><td>Text01</td><td>{this.props.row.text01}</td></tr>
 						<tr><td>Text02</td><td>{this.props.row.text02}</td></tr>
 						<tr><td>Text03</td><td>{this.props.row.text03}</td></tr>

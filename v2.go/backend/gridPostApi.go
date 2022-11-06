@@ -102,7 +102,6 @@ func getInsertStatementForGridsApi() string {
 		"updatedBy, " +
 		"enabled, " +
 		"gridUuid, " +
-		"uri, " +
 		"text01, " +
 		"text02, " +
 		"text03, " +
@@ -128,7 +127,6 @@ func getInsertValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	values = append(values, gridUuid)
-	values = append(values, row.Uri)
 	values = append(values, row.Text01)
 	values = append(values, row.Text02)
 	values = append(values, row.Text03)
@@ -152,11 +150,10 @@ func getUpdateStatementForGridsApi() string {
 		"version = version + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3, " +
-		"uri = $4, " +
-		"text01 = $5, " +
-		"text02 = $6, " +
-		"text03 = $7, " +
-		"text04 = $8 "
+		"text01 = $4, " +
+		"text02 = $5, " +
+		"text03 = $6, " +
+		"text04 = $7 "
 	whereStr := " WHERE uuid = $1 and gridUuid = $2 "
 	return updateStr + whereStr
 }
@@ -166,7 +163,6 @@ func getUpdateValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	values = append(values, row.Uuid)
 	values = append(values, gridUuid)
 	values = append(values, userUuid)
-	values = append(values, row.Uri)
 	values = append(values, row.Text01)
 	values = append(values, row.Text02)
 	values = append(values, row.Text03)

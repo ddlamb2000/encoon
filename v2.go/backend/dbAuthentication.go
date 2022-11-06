@@ -18,7 +18,7 @@ func isDbAuthorized(dbName string, id string, password string) (string, string, 
 	if db := getDbByName(dbName); db != nil {
 		var uuid, firstName, lastName string
 		selectSql := " SELECT uuid, text01, text02 FROM rows "
-		whereSql := " WHERE gridUuid = $1 AND uri = $2 AND text03 = crypt($3, text03) "
+		whereSql := " WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04) "
 		if err := db.
 			QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, id, password).
 			Scan(&uuid, &firstName, &lastName); err != nil {

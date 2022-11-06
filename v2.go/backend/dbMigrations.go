@@ -61,7 +61,6 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled boolean, " +
 				"gridUuid uuid, " +
 				"parentUuid uuid, " +
-				"uri text, " +
 				"text01 text, " +
 				"text02 text, " +
 				"text03 text, " +
@@ -77,7 +76,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			5: "CREATE INDEX gridParentUuid ON rows(parentUuid);",
 
-			6: "CREATE INDEX gridUri ON rows(uri);",
+			6: "CREATE INDEX gridText01 ON rows(text01);",
 
 			7: "INSERT INTO rows " +
 				"(uuid, " +
@@ -88,8 +87,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"uri, " +
-				"text01) " +
+				"text01, " +
+				"text02) " +
 				"VALUES ('f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " + // Grid: Grids
 				"1, " +
 				"NOW(), " +
@@ -110,8 +109,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"uri, " +
-				"text01) " +
+				"text01, " +
+				"text02) " +
 				"VALUES ('018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " + // Grid: Users
 				"1, " +
 				"NOW(), " +
@@ -132,10 +131,10 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"uri, " + // id
-				"text01, " + // firstName
-				"text02, " + // lastName
-				"text03) " + // password
+				"text01, " + // id
+				"text02, " + // firstName
+				"text03, " + // lastName
+				"text04) " + // password
 				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d', " + // Users: root
 				"1, " +
 				"NOW(), " +
@@ -158,8 +157,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"uri, " +
-				"text01) " +
+				"text01, " +
+				"text02) " +
 				"VALUES ('533b6862-add3-4fef-8f93-20a17aaaaf5a', " + // Grid: Columns
 				"1, " +
 				"NOW(), " +

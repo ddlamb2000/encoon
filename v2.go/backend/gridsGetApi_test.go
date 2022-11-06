@@ -105,7 +105,6 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	expect := []any{
 		&row.Uuid,
 		&row.Version,
-		&row.Uri,
 		&row.Text01,
 		&row.Text02,
 		&row.Text03,

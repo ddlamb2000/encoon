@@ -9,7 +9,6 @@ type Row struct {
 	Uuid      string  `json:"uuid"`
 	Version   int8    `json:"version"`
 	Enabled   bool    `json:"enabled"`
-	Uri       *string `json:"uri"`
 	GridUuid  *string `json:"gridUuid"`
 	CreateBy  *string `json:"createdBy"`
 	UpdatedBy *string `json:"updatedBy"`

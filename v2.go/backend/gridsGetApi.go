@@ -84,7 +84,7 @@ func getGridForGridsApi(ctx context.Context,
 	dbName string,
 	user string,
 	gridUri string) (*Grid, error) {
-	selectGridStatement := "SELECT uuid, text01 FROM rows WHERE gridUuid = $1 AND uri = $2"
+	selectGridStatement := "SELECT uuid, text01 FROM rows WHERE gridUuid = $1 AND text01 = $2"
 	grid := new(Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
 		Scan(&grid.Uuid, &grid.Text01); err != nil {
@@ -109,10 +109,10 @@ func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName string, user str
 }
 
 func getRowsQueryForGridsApi(uuid string) string {
-	selectStr := " SELECT uuid, version, uri, text01, text02, text03, text04 "
+	selectStr := " SELECT uuid, version, text01, text02, text03, text04 "
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	orderByStr := " ORDER BY uri, text01, text02, text03, text04 "
+	orderByStr := " ORDER BY text01, text02, text03, text04 "
 	return selectStr + fromStr + whereStr + orderByStr
 }
 
@@ -155,7 +155,6 @@ func getRowsQueryOutputForGridsApi(row *Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
 	output = append(output, &row.Version)
-	output = append(output, &row.Uri)
 	output = append(output, &row.Text01)
 	output = append(output, &row.Text02)
 	output = append(output, &row.Text03)
