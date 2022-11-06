@@ -57,18 +57,21 @@ func postGridsRows(dbName string, userUuid string, user string, gridUri string, 
 	for _, row := range rowsAdded {
 		err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
+			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
 			return err
 		}
 	}
 	for _, row := range rowsEdited {
 		err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
+			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
 			return err
 		}
 	}
 	for _, row := range rowsDeleted {
 		err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
 		if err != nil {
+			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
 			return err
 		}
 	}
