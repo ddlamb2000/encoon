@@ -39,10 +39,11 @@ class App extends React.Component {
 		if(this.props.gridUri != "") return (
 			<div>
 				<Header appName={this.props.appName} 
-							dbName={this.props.dbName} 
-							user={this.user}
-							userFirstName={this.userFirstName}
-							userLastName={this.userLastName} />
+						appTag={this.props.appTag}
+						dbName={this.props.dbName} 
+						user={this.user}
+						userFirstName={this.userFirstName}
+						userLastName={this.userLastName} />
 				<div className="container-fluid">
 					<div className="row">
 						<Navigation appName={this.props.appName} 
