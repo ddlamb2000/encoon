@@ -12,6 +12,11 @@ class GridTable extends React.Component {
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>
 						<th scope="col">Text04</th>
+						<th scope="col">Int01</th>
+						<th scope="col">Int02</th>
+						<th scope="col">Int03</th>
+						<th scope="col">Int04</th>
+						<th scope="col">Version</th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -40,6 +45,11 @@ class GridRow extends React.Component {
 		columns.push({col: "text02", value: this.props.row.text02})
 		columns.push({col: "text03", value: this.props.row.text03})
 		columns.push({col: "text04", value: this.props.row.text04})
+		columns.push({col: "int01", value: this.props.row.int01})
+		columns.push({col: "int02", value: this.props.row.int02})
+		columns.push({col: "int03", value: this.props.row.int03})
+		columns.push({col: "int04", value: this.props.row.int04})
+		columns.push({col: "versionint01", value: this.props.row.version})
 		return (
 			<tr className={variant}
 				onClick={() => this.props.onRowClick(this.props.row.uuid)}>

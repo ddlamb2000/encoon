@@ -11,49 +11,51 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-func migrateDb(ctx context.Context, db *sql.DB, dbName string) {
-	if latestMigration, error := migrateInitializationDb(ctx, db, dbName); !error && latestMigration > 0 {
-		migrateDataModelDb(ctx, db, dbName, latestMigration)
+func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
+	latestMigration, _ := migrateInitializationDb(ctx, db, dbName)
+	err := migrateDataModelDb(ctx, db, dbName, latestMigration)
+	if err != nil {
+		return err
 	}
+	return nil
 }
 
-func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (int, bool) {
-	var latestMigration int
-	if err := db.QueryRow("SELECT 1 FROM migrations").Scan(&latestMigration); err != nil {
-		if err == sql.ErrNoRows {
-			utils.Log("[%s] Migration table exists.", dbName)
-		} else {
-			utils.Log("[%s] Migrations table doesn't exist: %v.", dbName, err)
-			command := "CREATE TABLE migrations (migration integer, command text)"
-			if _, err := db.Exec(command); err != nil {
-				utils.LogError("[%s] Create table migrations: %v", dbName, err)
-				return latestMigration, true
-			}
-			utils.Log("[%s] Migration table created.", dbName)
-			if _, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", 1, command); err != nil {
-				utils.LogError("[%s] Insert into migrations: %v", dbName, err)
-				return latestMigration, true
-			}
+func recreateDb(ctx context.Context, db *sql.DB, dbName string) error {
+	if dbName != "test" {
+		return utils.LogAndReturnError("[%s] Only test database can be recreated.", dbName)
+	}
+	var rowsCount int
+	if err := db.QueryRow("SELECT COUNT(uuid) FROM rows").Scan(&rowsCount); err == nil && rowsCount >= 0 {
+		utils.Log("[%s] Found %d rows in table.", dbName, rowsCount)
+		command := "DROP TABLE rows"
+		if _, err := db.Exec(command); err != nil {
+			return utils.LogAndReturnError("[%s] Can't delete database rows: %v", dbName, err)
 		}
+		command = "DROP EXTENSION pgcrypto"
+		if _, err := db.Exec(command); err != nil {
+			return utils.LogAndReturnError("[%s] Can't drop extension: %v", dbName, err)
+		}
+		utils.Log("[%s] Table rows removed.", dbName)
 	}
-
-	if err := db.QueryRow("SELECT MAX(migration) FROM migrations").Scan(&latestMigration); err != nil {
-		utils.LogError("[%s] Can't access migrations table %v.", dbName, err)
-		return latestMigration, true
-	}
-	return latestMigration, false
+	return migrateDb(ctx, db, dbName)
 }
 
-func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int) {
+func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (int, error) {
+	var latestMigration int = 0
+	if err := db.QueryRow("SELECT MAX(int01) FROM rows WHERE gridUuid = $1", utils.UuidMigrations).Scan(&latestMigration); err != nil {
+		utils.Log("[%s] No latest migration found: %v.", dbName, err)
+		return 0, nil
+	}
+	utils.Log("[%s] Latest migration: %d.", dbName, latestMigration)
+	return latestMigration, nil
+}
+
+func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int) error {
 	root, password := utils.GetRootAndPassword(dbName)
-
-	migrateCommandsDb(ctx, db, dbName, latestMigration,
+	err := migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
-			2: "CREATE EXTENSION pgcrypto",
-
-			3: "CREATE TABLE rows (" +
+			1: "CREATE TABLE rows (" +
 				"uuid uuid NOT NULL PRIMARY KEY, " +
-				"version integer, " +
 				"created timestamp with time zone, " +
 				"createdBy uuid, " +
 				"updated timestamp with time zone, " +
@@ -61,16 +63,10 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled boolean, " +
 				"gridUuid uuid, " +
 				"parentUuid uuid, " +
-				"text01 text, " +
-				"text02 text, " +
-				"text03 text, " +
-				"text04 text, " +
-				"text05 text, " +
-				"text06 text, " +
-				"text07 text, " +
-				"text08 text, " +
-				"text09 text, " +
-				"text10 text)",
+				getRowsColumnDefinitions() +
+				"version integer)",
+
+			2: "CREATE EXTENSION pgcrypto",
 
 			4: "CREATE INDEX gridUuid ON rows(gridUuid);",
 
@@ -89,15 +85,15 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " + // Grid: Grids
+				"VALUES ('" + utils.UuidGrids + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
 				"true, " +
-				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'grids', " +
+				"'" + utils.UuidGrids + "', " +
+				"'_grids', " +
 				"'Grids')",
 
 			8: "INSERT INTO rows " +
@@ -111,15 +107,15 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " + // Grid: Users
+				"VALUES ('" + utils.UuidUsers + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
 				"true, " +
-				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'users', " +
+				"'" + utils.UuidGrids + "', " +
+				"'_users', " +
 				"'Users')",
 
 			9: "INSERT INTO rows " +
@@ -131,18 +127,18 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy, " +
 				"enabled, " +
 				"gridUuid, " +
-				"text01, " + // id
-				"text02, " + // firstName
-				"text03, " + // lastName
-				"text04) " + // password
-				"VALUES ('3a33485c-7683-4482-aa5d-0aa51e58d79d', " + // Users: root
+				"text01, " +
+				"text02, " +
+				"text03, " +
+				"text04) " +
+				"VALUES ('" + utils.UuidRootUser + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
 				"true, " +
-				"'018803e1-b4bf-42fa-b58f-ac5faaeeb0c2', " +
+				"'" + utils.UuidUsers + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
@@ -159,42 +155,139 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('533b6862-add3-4fef-8f93-20a17aaaaf5a', " + // Grid: Columns
+				"VALUES ('" + utils.UuidColumns + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
-				"'3a33485c-7683-4482-aa5d-0aa51e58d79d', " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
 				"true, " +
-				"'f35ef7de-66e7-4e51-9a09-6ff8667da8f7', " +
-				"'columns', " +
+				"'" + utils.UuidGrids + "', " +
+				"'_columns', " +
 				"'Columns')",
+
+			11: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text01, " +
+				"text02) " +
+				"VALUES ('" + utils.UuidMigrations + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
+				"true, " +
+				"'" + utils.UuidGrids + "', " +
+				"'_migrations', " +
+				"'Migrations')",
+
+			12: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text01, " +
+				"text02) " +
+				"VALUES ('" + utils.UuidTransactions + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
+				"true, " +
+				"'" + utils.UuidGrids + "', " +
+				"'_transactions', " +
+				"'Transactions')",
+
+			13: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text01, " +
+				"text02) " +
+				"VALUES ('" + utils.UuidColumnTypes + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
+				"true, " +
+				"'" + utils.UuidGrids + "', " +
+				"'_columntypes', " +
+				"'Column types')",
 		})
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func migrateCommandsDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int, commands map[int]string) {
+func migrateCommandsDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int, commands map[int]string) error {
 	keys := make([]int, 0)
 	for k := range commands {
 		keys = append(keys, k)
 	}
 	sort.Ints(keys)
 	for _, step := range keys {
-		migrateDbCommand(ctx, db, latestMigration, step, commands[step], dbName)
+		err := migrateDbCommand(ctx, db, latestMigration, step, commands[step], dbName)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
-func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migration int, command string, dbName string) {
+func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migration int, command string, dbName string) error {
 	if migration > latestMigration {
 		_, err := db.Exec(command)
 		if err != nil {
-			utils.LogError("[%s] %d %q: %v", dbName, migration, command, err)
+			return utils.LogAndReturnError("[%s] %d %q: %v", dbName, migration, command, err)
 		} else {
-			_, err = db.Exec("INSERT INTO migrations (migration, command) VALUES ($1, $2)", migration, command)
+			insertMigrationStatement := "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"int01, " +
+				"text01) " +
+				"VALUES ($1, " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + utils.UuidRootUser + "', " +
+				"'" + utils.UuidRootUser + "', " +
+				"true, " +
+				"'" + utils.UuidMigrations + "', " +
+				"$2, " +
+				"$3)"
+			newUuid := utils.GetNewUUID()
+			_, err = db.Exec(insertMigrationStatement, newUuid, migration, command)
 			if err != nil {
-				utils.LogError("[%s] Insert into migrations: %v", dbName, err)
+				return utils.LogAndReturnError("[%s] Can't insert into migrations: %v", dbName, err)
 			} else {
 				utils.Log("[%s] Migration %v executed.", dbName, migration)
 			}
 		}
 	}
+	return nil
 }

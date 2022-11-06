@@ -57,7 +57,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	db := getDbByName(dbName)
-	gridUri := "users"
+	gridUri := "_users"
 	user := "root"
 	grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 	if err != nil {
@@ -109,6 +109,11 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 		&row.Text02,
 		&row.Text03,
 		&row.Text04,
+		&row.Int01,
+		&row.Int02,
+		&row.Int03,
+		&row.Int04,
+		&row.Version,
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)

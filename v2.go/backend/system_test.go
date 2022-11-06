@@ -4,6 +4,7 @@
 package backend
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -15,11 +16,12 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func TestHttpServer(t *testing.T) {
+func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	setApiRoutes()
+	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("AuthInvalid1", func(t *testing.T) { RunTestAuthInvalid1(t) })
 	t.Run("AuthInvalid2", func(t *testing.T) { RunTestAuthInvalid2(t) })
 	t.Run("AuthValid", func(t *testing.T) { RunTestAuthValid(t) })
@@ -32,11 +34,52 @@ func TestHttpServer(t *testing.T) {
 	t.Run("ApiUsersPassing", func(t *testing.T) { RunTestApiUsersPassing(t) })
 	t.Run("ApiUsersNotFound", func(t *testing.T) { RunTestApiUsersNotFound(t) })
 	t.Run("ApiUsersNotFound2", func(t *testing.T) { RunTestApiUsersNotFound2(t) })
+	t.Run("DisconnectDbServers", func(t *testing.T) { RunTestDisconnectDbServers(t) })
 }
 
 func assertHttpCode(t *testing.T, w *httptest.ResponseRecorder, expectedCode int) {
 	if w.Code != expectedCode {
 		t.Errorf(`Response code %v instead of %v.`, w.Code, expectedCode)
+	}
+}
+
+func RunTestRecreateDb(t *testing.T) {
+	utils.LoadConfiguration("../configurations/")
+	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
+	dbName := "test"
+	db := getDbByName(dbName)
+	if db == nil {
+		t.Errorf(`Database %q not found.`, dbName)
+	}
+	ctx, stop := context.WithCancel(context.Background())
+	defer stop()
+	if err := pingDb(ctx, db); err != nil {
+		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
+	}
+	if err := recreateDb(ctx, db, dbName); err != nil {
+		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
+	}
+}
+
+func RunTestDisconnectDbServers(t *testing.T) {
+	utils.LoadConfiguration("../configurations/")
+	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
+	dbName := "test"
+	db := getDbByName(dbName)
+	if db == nil {
+		t.Errorf(`Database %q not found.`, dbName)
+	}
+	ctx, stop := context.WithCancel(context.Background())
+	defer stop()
+	if err := pingDb(ctx, db); err != nil {
+		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
+	}
+	if err := DisconnectDbServers(utils.DatabaseConfigurations); err != nil {
+		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
 
@@ -113,7 +156,7 @@ func RunTest404Html(t *testing.T) {
 }
 
 func RunTestApiUsersNoHeader(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
@@ -131,14 +174,14 @@ func RunTestApiUsersNoHeader(t *testing.T) {
 }
 
 func RunTestApiUsersIncorrectToken(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "xxxxxxxxxxx")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`Not authorized for /test/api/v1/users`)
+	expected := utils.CleanupStrings(`Not authorized for /test/api/v1/_users`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -150,7 +193,7 @@ func RunTestApiUsersIncorrectToken(t *testing.T) {
 }
 
 func RunTestApiUsersIncorrectToken2(t *testing.T) {
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "xxxxxxx")
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -171,7 +214,7 @@ func RunTestApiUsersIncorrectToken2(t *testing.T) {
 func RunTestApiUsersMissingBearer(t *testing.T) {
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", token)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -193,7 +236,7 @@ func RunTestApiUsersExpired(t *testing.T) {
 	ConnectDbServers(utils.DatabaseConfigurations)
 	expiration := time.Now().Add(-time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -215,7 +258,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 	ConnectDbServers(utils.DatabaseConfigurations)
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-	req, _ := http.NewRequest("GET", "/test/api/v1/users", nil)
+	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)

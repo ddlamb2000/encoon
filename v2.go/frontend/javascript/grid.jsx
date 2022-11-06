@@ -88,7 +88,7 @@ class Grid extends React.Component {
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
 					{isLoading && <Spinner />}
-					{grid && <h4 className="card-title">{grid.text01}</h4>}
+					{grid && <h4 className="card-title">{grid.text02}</h4>}
 					<h6 className="card-subtitle mb-2 text-muted">
 						{isLoaded && rows && countRows == 0 && <small className="text-muted px-1">No data</small>}
 						{isLoaded && rows && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}

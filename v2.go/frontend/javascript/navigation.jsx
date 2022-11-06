@@ -15,13 +15,23 @@ class Navigation extends React.Component {
 					</ul>
 					<ul className="nav flex-column mb-2">
 						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/grids`}>
+							<a className="nav-link" href={`/${this.props.dbName}/_grids`}>
 								Grids <i className="bi bi-grid-3x3"></i>
 							</a>
 						</li>
 						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/users`}>
+							<a className="nav-link" href={`/${this.props.dbName}/_users`}>
 								Users <i className="bi bi-person"></i>
+							</a>
+						</li>
+						<li className="nav-item">
+							<a className="nav-link" href={`/${this.props.dbName}/_migrations`}>
+								Migrations <i className="bi bi-journal-text"></i>
+							</a>
+						</li>
+						<li className="nav-item">
+							<a className="nav-link" href={`/${this.props.dbName}/_transactions`}>
+								Transactions <i className="bi bi-journal-text"></i>
 							</a>
 						</li>
 					</ul>

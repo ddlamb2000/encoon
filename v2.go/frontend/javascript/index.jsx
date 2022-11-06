@@ -76,9 +76,9 @@ class App extends React.Component {
 									userLastName={this.userLastName} />
 
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="users" />
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="grids" />
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="columns" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="_users" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="_grids" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUri="_columns" />
 							<Grid token={this.token} dbName={this.props.dbName} />
 							<Grid token={this.token} />
 							<Grid />

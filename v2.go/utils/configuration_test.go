@@ -37,10 +37,7 @@ func TestLoadDatabaseConfiguration(t *testing.T) {
 	if err := loadDatabaseConfiguration(fileName); err != nil {
 		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
 	}
-}
-
-func TestLoadDatabaseConfiguration2(t *testing.T) {
-	fileName := "../utils/configuration.go"
+	fileName = "../utils/configuration.go"
 	if err := loadDatabaseConfiguration(fileName); err == nil {
 		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
 	}

@@ -84,10 +84,10 @@ func getGridForGridsApi(ctx context.Context,
 	dbName string,
 	user string,
 	gridUri string) (*Grid, error) {
-	selectGridStatement := "SELECT uuid, text01 FROM rows WHERE gridUuid = $1 AND text01 = $2"
+	selectGridStatement := "SELECT uuid, text01, text02 FROM rows WHERE gridUuid = $1 AND text01 = $2"
 	grid := new(Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
-		Scan(&grid.Uuid, &grid.Text01); err != nil {
+		Scan(&grid.Uuid, &grid.Text01, &grid.Text02); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)
 		} else {
@@ -109,7 +109,7 @@ func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName string, user str
 }
 
 func getRowsQueryForGridsApi(uuid string) string {
-	selectStr := " SELECT uuid, version, text01, text02, text03, text04 "
+	selectStr := " SELECT uuid, version, text01, text02, text03, text04, int01, int02, int03, int04, version "
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
 	orderByStr := " ORDER BY text01, text02, text03, text04 "
@@ -159,5 +159,10 @@ func getRowsQueryOutputForGridsApi(row *Row) []any {
 	output = append(output, &row.Text02)
 	output = append(output, &row.Text03)
 	output = append(output, &row.Text04)
+	output = append(output, &row.Int01)
+	output = append(output, &row.Int02)
+	output = append(output, &row.Int03)
+	output = append(output, &row.Int04)
+	output = append(output, &row.Version)
 	return output
 }

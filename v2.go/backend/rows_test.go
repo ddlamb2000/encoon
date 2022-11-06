@@ -3,7 +3,10 @@
 
 package backend
 
-import "testing"
+import (
+	"strings"
+	"testing"
+)
 
 func TestSetPath(t *testing.T) {
 	row := Row{
@@ -24,5 +27,17 @@ func TestRowAsString(t *testing.T) {
 	expect := "12345"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetRowsColumnDefinitions(t *testing.T) {
+	got := getRowsColumnDefinitions()
+	expected := "text01 text, text02 text, text03 text"
+	if !strings.Contains(got, expected) {
+		t.Errorf(`Got %v instead of %v.`, got, expected)
+	}
+	expected2 := "int01 integer, int02 integer, int03 integer"
+	if !strings.Contains(got, expected2) {
+		t.Errorf(`Got %v instead of %v.`, got, expected2)
 	}
 }
