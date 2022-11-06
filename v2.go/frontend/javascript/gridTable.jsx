@@ -22,7 +22,9 @@ class GridTable extends React.Component {
 										rowSelected={this.isRowSelected(row)}
 										rowEdited={this.isRowEdited(row)}
 										rowAdded={this.isRowAdded(row)}
-										onRowClick={row => this.props.onRowClick(row)}
+										onRowClick={uuid => this.props.onRowClick(uuid)}
+										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
+										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
 										inputRef={this.props.inputRef} />
 					)}
 				</tbody>
