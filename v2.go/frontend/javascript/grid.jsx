@@ -5,7 +5,7 @@ class Grid extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {
-			error: false,
+			error: "",
 			isLoaded: false,
 			isLoading: false,
 			grid: [],
@@ -161,7 +161,7 @@ class Grid extends React.Component {
 			}
 		})
 		.then(response => {
-			const contentType = response.headers.get("content-type");
+			const contentType = response.headers.get("content-type")
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
@@ -210,7 +210,7 @@ class Grid extends React.Component {
 			})
 		})
 		.then(response => {
-			const contentType = response.headers.get("content-type");
+			const contentType = response.headers.get("content-type")
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {

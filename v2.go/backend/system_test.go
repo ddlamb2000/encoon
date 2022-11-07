@@ -88,9 +88,9 @@ func RunTestAuthInvalid1(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
-	assertHttpCode(t, w, http.StatusBadRequest)
+	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password for \"\": sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"\": sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -106,9 +106,9 @@ func RunTestAuthInvalid2(t *testing.T) {
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
-	assertHttpCode(t, w, http.StatusBadRequest)
+	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{"error":"[test] Invalid ID or password for \"root\": sql: no rows in result set"}`)
+	expected := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"root\": sql: no rows in result set"}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {

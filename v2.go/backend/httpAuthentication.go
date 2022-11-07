@@ -25,7 +25,7 @@ type JWTtoken struct {
 func authentication(c *gin.Context) {
 	dbName := c.Param("dbName")
 	if dbName == "" {
-		c.JSON(http.StatusBadRequest, "")
+		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
 		return
 	}
 	testSleep(dbName)
@@ -34,14 +34,14 @@ func authentication(c *gin.Context) {
 	c.ShouldBindJSON(&login)
 	userUuid, firstName, lastName, err := isDbAuthorized(dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
-		c.JSON(http.StatusServiceUnavailable, "Failed to generate signed string.")
+		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
 
@@ -57,7 +57,7 @@ func getNewToken(dbName string, id string, userUuid string, firstName string, la
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	utils.Log("Token generated for %v, expiration: %v", id, expiration)
+	utils.Log("[%s]Token generated for %v, expiration: %v", dbName, id, expiration)
 	jwtSecret := utils.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }

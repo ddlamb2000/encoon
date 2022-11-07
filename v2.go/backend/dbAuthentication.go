@@ -22,7 +22,7 @@ func isDbAuthorized(dbName string, id string, password string) (string, string, 
 		if err := db.
 			QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, id, password).
 			Scan(&uuid, &firstName, &lastName); err != nil {
-			return "", "", "", utils.LogAndReturnError("[%s] Invalid ID or password for %q: %v", dbName, id, err)
+			return "", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v", dbName, id, err)
 		}
 		utils.Log("[%s] ID and password verified for %q.", dbName, id)
 		return uuid, firstName, lastName, nil
