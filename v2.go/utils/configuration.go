@@ -25,13 +25,14 @@ type Config struct {
 
 type DatabaseConfig struct {
 	Database struct {
-		Host      string `yaml:"host"`
-		Port      int    `yaml:"port"`
-		Name      string `yaml:"name"`
-		User      string `yaml:"user"`
-		JwtSecret string `yaml:"jwtsecret"`
-		Root      string `yaml:"root"`
-		Password  string `yaml:"password"`
+		Host          string `yaml:"host"`
+		Port          int    `yaml:"port"`
+		Name          string `yaml:"name"`
+		User          string `yaml:"user"`
+		JwtSecret     string `yaml:"jwtsecret"`
+		Root          string `yaml:"root"`
+		Password      string `yaml:"password"`
+		TestSleepTime int    `yaml:"testSleepTime"`
 	} `yaml:"database"`
 }
 

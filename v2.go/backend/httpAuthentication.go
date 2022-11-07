@@ -28,9 +28,10 @@ func authentication(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
+	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
 
 	var login login
-	c.BindJSON(&login)
+	c.ShouldBindJSON(&login)
 	userUuid, firstName, lastName, err := isDbAuthorized(dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -66,7 +67,7 @@ func authMiddleware() gin.HandlerFunc {
 		dbName := c.Param("dbName")
 		if dbName == "" {
 			c.Abort()
-			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No database parameter."})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "No database parameter."})
 			return
 		}
 
@@ -74,14 +75,14 @@ func authMiddleware() gin.HandlerFunc {
 		if header == "" {
 			c.Set("authorized", false)
 			c.Abort()
-			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "No authorization found."})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "No authorization found."})
 			return
 		}
 
 		if len(header) < 10 {
 			c.Set("authorized", false)
 			c.Abort()
-			c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Incorrect header."})
+			c.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect header."})
 			return
 		}
 		var tokenString = header[7:]
@@ -108,7 +109,7 @@ func authMiddleware() gin.HandlerFunc {
 				c.Set("authorized", false)
 				utils.Log("[%v] Authorization expired (%v).", user, expirationDate)
 				c.Abort()
-				c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": "Authorization expired.", "expired": true})
+				c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization expired.", "expired": true})
 				return
 			}
 			c.Set("authorized", true)
@@ -118,7 +119,7 @@ func authMiddleware() gin.HandlerFunc {
 			utils.LogError("Invalid request: %v.", err)
 			c.Set("authorized", false)
 			c.Abort()
-			c.IndentedJSON(http.StatusUnauthorized,
+			c.JSON(http.StatusUnauthorized,
 				gin.H{"error": fmt.Sprintf("Invalid request or unauthorized database access: %v.", err)})
 			return
 		}

@@ -25,16 +25,16 @@ type Row struct {
 	Text08    *string `json:"text08"`
 	Text09    *string `json:"text09"`
 	Text10    *string `json:"text10"`
-	Int01     *string `json:"int01"`
-	Int02     *string `json:"int02"`
-	Int03     *string `json:"int03"`
-	Int04     *string `json:"int04"`
-	Int05     *string `json:"int05"`
-	Int06     *string `json:"int06"`
-	Int07     *string `json:"int07"`
-	Int08     *string `json:"int08"`
-	Int09     *string `json:"int09"`
-	Int10     *string `json:"int10"`
+	Int01     *int64  `json:"int01"`
+	Int02     *int64  `json:"int02"`
+	Int03     *int64  `json:"int03"`
+	Int04     *int64  `json:"int04"`
+	Int05     *int64  `json:"int05"`
+	Int06     *int64  `json:"int06"`
+	Int07     *int64  `json:"int07"`
+	Int08     *int64  `json:"int08"`
+	Int09     *int64  `json:"int09"`
+	Int10     *int64  `json:"int10"`
 
 	Path string `json:"path"`
 }

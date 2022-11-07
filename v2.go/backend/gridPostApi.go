@@ -23,20 +23,27 @@ func PostGridsRowsApi(c *gin.Context) {
 	userUuid, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	logUri(c, dbName, user)
+	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
 	var payload gridPost
-	c.BindJSON(&payload)
+	c.ShouldBindJSON(&payload)
 	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, "")
+	grid, rowSet, rowSetCount, err := getGridsRows(dbName, gridUri, "", user)
+	if err != nil {
+		c.Abort()
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
 func postGridsRows(dbName string, userUuid string, user string, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) error {
@@ -105,7 +112,11 @@ func getInsertStatementForGridsApi() string {
 		"text01, " +
 		"text02, " +
 		"text03, " +
-		"text04) "
+		"text04, " +
+		"int01, " +
+		"int02, " +
+		"int03, " +
+		"int04) "
 	valueStr := " VALUES ($1, " +
 		"1, " +
 		"NOW(), " +
@@ -118,7 +129,10 @@ func getInsertStatementForGridsApi() string {
 		"$5, " +
 		"$6, " +
 		"$7, " +
-		"$8)"
+		"$8, " +
+		"$9, " +
+		"$10, " +
+		"$11)"
 	return insertStr + valueStr
 }
 
@@ -131,6 +145,10 @@ func getInsertValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	values = append(values, row.Text02)
 	values = append(values, row.Text03)
 	values = append(values, row.Text04)
+	values = append(values, row.Int01)
+	values = append(values, row.Int02)
+	values = append(values, row.Int03)
+	values = append(values, row.Int04)
 	return values
 }
 
@@ -153,7 +171,11 @@ func getUpdateStatementForGridsApi() string {
 		"text01 = $4, " +
 		"text02 = $5, " +
 		"text03 = $6, " +
-		"text04 = $7 "
+		"text04 = $7, " +
+		"int01 = $8, " +
+		"int02 = $9, " +
+		"int03 = $10, " +
+		"int04 = $11 "
 	whereStr := " WHERE uuid = $1 and gridUuid = $2 "
 	return updateStr + whereStr
 }
@@ -167,6 +189,10 @@ func getUpdateValuesForGridsApi(userUuid string, gridUuid string, row Row) []any
 	values = append(values, row.Text02)
 	values = append(values, row.Text03)
 	values = append(values, row.Text04)
+	values = append(values, row.Int01)
+	values = append(values, row.Int02)
+	values = append(values, row.Int03)
+	values = append(values, row.Int04)
 	return values
 }
 

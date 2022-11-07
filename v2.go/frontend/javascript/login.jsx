@@ -27,7 +27,7 @@ class Login extends React.Component {
 			headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
 			body: JSON.stringify({ id: this.idInput.value, password: btoa(this.passwordInput.value) })
 		})
-		.then( (response) => {
+		.then(response => {
 			if(response.status == 400) {
 				alert("Incorrect user credentials.")
 				return null
@@ -38,7 +38,7 @@ class Login extends React.Component {
 			}
 			return response.json() 
 		})
-		.then( (responseJson) => {
+		.then(responseJson => {
 			if (responseJson != null) {
 				localStorage.setItem(`access_token_${updatedDbName}`, responseJson.token)
 			}

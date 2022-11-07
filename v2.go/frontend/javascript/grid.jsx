@@ -34,48 +34,9 @@ class Grid extends React.Component {
 			}
 		}
 	}
-  
+
 	componentDidMount() {
-		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
-		fetch(uri, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + this.props.token
-			}
-		})
-		.then(response => {
-			const contentType = response.headers.get("content-type");
-			if(contentType && contentType.indexOf("application/json") !== -1) {
-				return response.json().then(	
-					(result) => {
-						this.setState({
-							isLoading: false,
-							isLoaded: true,
-							grid: result.grid,
-							rows: result.rows,
-							error: result.error
-						})
-					},
-					(error) => {
-						this.setState({
-							isLoading: false,
-							isLoaded: false,
-							rows: [],
-							error: error.message
-						})
-					}
-				)
-			} else {
-				this.setState({
-					isLoading: false,
-					isLoaded: false,
-					rows: [],
-					error: `[${response.status}] Internal server issue.`
-				})
-			}
-		})
+		this.loadData()
 	}
 
 	render() {
@@ -87,26 +48,18 @@ class Grid extends React.Component {
 		return (
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
-					{isLoading && <Spinner />}
 					{grid && <h4 className="card-title">{grid.text02}</h4>}
 					<h6 className="card-subtitle mb-2 text-muted">
 						{isLoaded && rows && countRows == 0 && <small className="text-muted px-1">No data</small>}
 						{isLoaded && rows && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
 						{isLoaded && rows && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
-						{isLoaded && rows && countRowsAdded > 0 &&
-							<small className="text-muted px-1">({countRowsAdded} added)</small>
-						}
-						{isLoaded && rows && countRowsEdited > 0 &&
-							<small className="text-muted px-1">({countRowsEdited} edited)</small>
-						}
-						{isLoaded && rows && countRowsDeleted > 0 &&
-							<small className="text-muted px-1">({countRowsDeleted} deleted)</small>
-						}
-						{grid &&<a href={grid.path}><i className="bi bi-box-arrow-up-right ms-2"></i></a>}
+						{isLoaded && rows && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
+						{isLoaded && rows && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
+						{isLoaded && rows && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
+						{isLoaded && rows && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right ms-2"></i></a>}
 					</h6>
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
-
 					{isLoaded && rows && countRows > 0 && this.props.uuid == "" &&
 						 <GridTable rows={rows}
 						 			rowsSelected={rowsSelected}
@@ -134,6 +87,7 @@ class Grid extends React.Component {
 							Save changes <i className="bi bi-save"></i>
 						</button>
 					}
+					{isLoading && <Spinner />}
 				</div>
 			</div>
 		)
@@ -180,25 +134,68 @@ class Grid extends React.Component {
 
 	getInputValues(rows) {
 		return rows.map(uuid => {
-			const inputElement = this.gridInput.get(uuid)
-			const e0 = Array.from(inputElement, ([name, value]) => ({ name, value }))
-			const e1 = Object.keys(e0).map(key => 
-				({
-					col: e0[key].name,
-					value: inputElement.get(e0[key].name).value
+			const e1 = this.gridInput.get(uuid)
+			const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
+			const e3 = Object.keys(e2).map(key => ({
+					col: e2[key].name,
+					value: e1.get(e2[key].name).value
 				}))
-			const e2 = e1.reduce(
+			const e4 = e3.reduce(
 				(hash, {col, value}) => {
 					hash[col] = value
 					return hash
 				},
 				{uuid: uuid}
 			)
-			return e2
+			return e4
+		})
+	}
+
+	loadData() {
+		this.setState({isLoading: true})
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
+		fetch(uri, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + this.props.token
+			}
+		})
+		.then(response => {
+			const contentType = response.headers.get("content-type");
+			if(contentType && contentType.indexOf("application/json") !== -1) {
+				return response.json().then(	
+					(result) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: true,
+							grid: result.grid,
+							rows: result.rows,
+							error: result.error
+						})
+					},
+					(error) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: false,
+							rows: [],
+							error: error.message
+						})
+					}
+				)
+			} else {
+				this.setState({
+					isLoading: false,
+					isLoaded: false,
+					rows: [],
+					error: `[${response.status}] Internal server issue.`
+				})
+			}
 		})
 	}
 
 	saveData() {
+		this.setState({isLoading: true})
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
 		fetch(uri, {
 			method: 'POST',
@@ -218,29 +215,32 @@ class Grid extends React.Component {
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
-						if(response.status == 200) {
-							this.setState({
-								rowsEdited: [],
-								rowsSelected: [],
-								rowsAdded: [],
-								rowsDeleted: []
-							})
-						}
-						else {
-							alert(result.error)
-							this.setState({
-								error: result.error
-							})
-						}
+						this.setState({
+							isLoading: false,
+							isLoaded: true,
+							grid: result.grid,
+							rows: result.rows,
+							error: result.error,
+							rowsEdited: [],
+							rowsSelected: [],
+							rowsAdded: [],
+							rowsDeleted: []
+						})
 					},
 					(error) => {
 						this.setState({
+							isLoading: false,
+							isLoaded: false,
+							rows: [],
 							error: error.message
 						})
 					}
 				)
 			} else {
 				this.setState({
+					isLoading: false,
+					isLoaded: false,
+					rows: [],
 					error: `[${response.status}] Internal server issue.`
 				})
 			}

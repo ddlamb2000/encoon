@@ -17,21 +17,21 @@ func GetGridsRowsApi(c *gin.Context) {
 	_, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
 	logUri(c, dbName, user)
+	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
 	grid, rowSet, rowSetCount, err := getGridsRows(dbName, gridUri, uuid, user)
 	if err != nil {
 		c.Abort()
-		c.IndentedJSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		return
 	}
-	grid.SetPath(dbName, gridUri)
-	c.IndentedJSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
+	c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
 func getUserUui(c *gin.Context) (string, string, error) {
@@ -84,18 +84,47 @@ func getGridForGridsApi(ctx context.Context,
 	dbName string,
 	user string,
 	gridUri string) (*Grid, error) {
-	selectGridStatement := "SELECT uuid, text01, text02 FROM rows WHERE gridUuid = $1 AND text01 = $2"
+	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text01 = $2"
 	grid := new(Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
-		Scan(&grid.Uuid, &grid.Text01, &grid.Text02); err != nil {
+		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)
 		} else {
 			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid definition %q: %v.", dbName, user, gridUri, err)
 		}
 	}
+	grid.SetPath(dbName, gridUri)
 	utils.Log("[%s] [%s] Got grid %q: [%s].", dbName, user, gridUri, grid)
 	return grid, nil
+}
+
+func getGridQueryColumnsForGridsApi() string {
+	return " SELECT uuid, " +
+		"version, " +
+		"text01, " +
+		"text02, " +
+		"text03, " +
+		"text04, " +
+		"enabled, " +
+		"createdBy, " +
+		"updatedBy, " +
+		"version "
+}
+
+func getGridQueryOutputForGridsApi(grid *Grid) []any {
+	output := make([]any, 0)
+	output = append(output, &grid.Uuid)
+	output = append(output, &grid.Version)
+	output = append(output, &grid.Text01)
+	output = append(output, &grid.Text02)
+	output = append(output, &grid.Text03)
+	output = append(output, &grid.Text04)
+	output = append(output, &grid.Enabled)
+	output = append(output, &grid.CreateBy)
+	output = append(output, &grid.UpdatedBy)
+	output = append(output, &grid.Version)
+	return output
 }
 
 func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName string, user string, gridUuid string, uuid string) (*sql.Rows, error) {
@@ -109,11 +138,28 @@ func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName string, user str
 }
 
 func getRowsQueryForGridsApi(uuid string) string {
-	selectStr := " SELECT uuid, version, text01, text02, text03, text04, int01, int02, int03, int04, version "
+	selectStr := getRowsQueryColumnsForGridsApi()
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
 	orderByStr := " ORDER BY text01, text02, text03, text04 "
 	return selectStr + fromStr + whereStr + orderByStr
+}
+
+func getRowsQueryColumnsForGridsApi() string {
+	return " SELECT uuid, " +
+		"version, " +
+		"text01, " +
+		"text02, " +
+		"text03, " +
+		"text04, " +
+		"int01, " +
+		"int02, " +
+		"int03, " +
+		"int04, " +
+		"enabled, " +
+		"createdBy, " +
+		"updatedBy, " +
+		"version "
 }
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
@@ -163,6 +209,9 @@ func getRowsQueryOutputForGridsApi(row *Row) []any {
 	output = append(output, &row.Int02)
 	output = append(output, &row.Int03)
 	output = append(output, &row.Int04)
+	output = append(output, &row.Enabled)
+	output = append(output, &row.CreateBy)
+	output = append(output, &row.UpdatedBy)
 	output = append(output, &row.Version)
 	return output
 }
