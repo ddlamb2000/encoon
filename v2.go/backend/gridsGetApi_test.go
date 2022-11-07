@@ -104,7 +104,6 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	got := getRowsQueryOutputForGridsApi(&row)
 	expect := []any{
 		&row.Uuid,
-		&row.Version,
 		&row.Text01,
 		&row.Text02,
 		&row.Text03,
@@ -113,6 +112,9 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 		&row.Int02,
 		&row.Int03,
 		&row.Int04,
+		&row.Enabled,
+		&row.CreateBy,
+		&row.UpdatedBy,
 		&row.Version,
 	}
 	if !reflect.DeepEqual(got, expect) {

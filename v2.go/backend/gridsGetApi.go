@@ -101,7 +101,6 @@ func getGridForGridsApi(ctx context.Context,
 
 func getGridQueryColumnsForGridsApi() string {
 	return " SELECT uuid, " +
-		"version, " +
 		"text01, " +
 		"text02, " +
 		"text03, " +
@@ -115,7 +114,6 @@ func getGridQueryColumnsForGridsApi() string {
 func getGridQueryOutputForGridsApi(grid *Grid) []any {
 	output := make([]any, 0)
 	output = append(output, &grid.Uuid)
-	output = append(output, &grid.Version)
 	output = append(output, &grid.Text01)
 	output = append(output, &grid.Text02)
 	output = append(output, &grid.Text03)
@@ -147,7 +145,6 @@ func getRowsQueryForGridsApi(uuid string) string {
 
 func getRowsQueryColumnsForGridsApi() string {
 	return " SELECT uuid, " +
-		"version, " +
 		"text01, " +
 		"text02, " +
 		"text03, " +
@@ -200,7 +197,6 @@ func getRowSetForGridsApi(dbName string, user string, gridUri string, rows *sql.
 func getRowsQueryOutputForGridsApi(row *Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
-	output = append(output, &row.Version)
 	output = append(output, &row.Text01)
 	output = append(output, &row.Text02)
 	output = append(output, &row.Text03)

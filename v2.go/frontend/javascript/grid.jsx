@@ -49,17 +49,7 @@ class Grid extends React.Component {
 			<div className="card mt-2 mb-2">
 				<div className="card-body">
 					{grid && <h4 className="card-title">{grid.text02}</h4>}
-					<h6 className="card-subtitle mb-2 text-muted">
-						{isLoaded && rows && countRows == 0 && <small className="text-muted px-1">No data</small>}
-						{isLoaded && rows && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
-						{isLoaded && rows && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
-						{isLoaded && rows && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
-						{isLoaded && rows && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
-						{isLoaded && rows && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
-						{isLoaded && rows && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right ms-2"></i></a>}
-					</h6>
-					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
-					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
+					{isLoaded && rows && grid && grid.text03 && <div className="card-subtitle mb-2 text-muted">{grid.text03}</div>}
 					{isLoaded && rows && countRows > 0 && this.props.uuid == "" &&
 						 <GridTable rows={rows}
 						 			rowsSelected={rowsSelected}
@@ -71,6 +61,10 @@ class Grid extends React.Component {
 									inputRef={this.setGridRowRef} />
 					}
 					{isLoaded && rows && countRows > 0 && this.props.uuid != "" && <GridView row={rows[0]} />}
+					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
+					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
+					{isLoaded && rows && countRows == 0 && <small className="text-muted px-1">No data</small>}
+					{isLoaded && rows && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right mx-1"></i></a>}
 					{isLoaded && rows &&
 						<button
 							type="button"
@@ -87,6 +81,11 @@ class Grid extends React.Component {
 							Save changes <i className="bi bi-save"></i>
 						</button>
 					}
+					{isLoaded && rows && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
+					{isLoaded && rows && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
+					{isLoaded && rows && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
+					{isLoaded && rows && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
+					{isLoaded && rows && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
 					{isLoading && <Spinner />}
 				</div>
 			</div>

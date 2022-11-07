@@ -84,7 +84,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled, " +
 				"gridUuid, " +
 				"text01, " +
-				"text02) " +
+				"text02, " +
+				"text03) " +
 				"VALUES ('" + utils.UuidGrids + "', " +
 				"1, " +
 				"NOW(), " +
@@ -94,7 +95,8 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"true, " +
 				"'" + utils.UuidGrids + "', " +
 				"'_grids', " +
-				"'Grids')",
+				"'Grids', " +
+				"'Data organized in rows and columns')",
 
 			8: "INSERT INTO rows " +
 				"(uuid, " +

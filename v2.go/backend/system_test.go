@@ -162,7 +162,7 @@ func RunTestApiUsersNoHeader(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{ "error": "No authorization found."}`)
+	expected := utils.CleanupStrings(`{"error":"No authorization found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -200,7 +200,7 @@ func RunTestApiUsersIncorrectToken2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{ "error": "Incorrect header."}`)
+	expected := utils.CleanupStrings(`{"error":"Incorrect header."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -243,7 +243,7 @@ func RunTestApiUsersExpired(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusUnauthorized)
 
-	expected := utils.CleanupStrings(`{ "error": "Authorization expired.", "expired": true}`)
+	expected := utils.CleanupStrings(`{"error":"Authorization expired.","expired":true}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -265,7 +265,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusOK)
 
-	expected := utils.CleanupStrings(`"text01": "root", "text02": "root"`)
+	expected := utils.CleanupStrings(`"text01":"root","text02":"root"`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -309,7 +309,7 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	assertHttpCode(t, w, http.StatusNotFound)
 
-	expected := utils.CleanupStrings(`{ "error": "[test] [root] Grid \"us\" not found."}`)
+	expected := utils.CleanupStrings(`{"error":"[test] [root] Grid \"us\" not found."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
