@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math/rand"
 	"time"
 
 	"d.lambert.fr/encoon/utils"
@@ -118,4 +119,11 @@ func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUui
 	}
 	utils.Log("[%s] [%s] Rollback transaction.", dbName, user)
 	return err
+}
+
+func testSleep(dbName string) {
+	if utils.DatabaseConfigurations[dbName] != nil {
+		sleepTime := time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime * rand.Intn(100) / 100)
+		time.Sleep(sleepTime * time.Millisecond)
+	}
 }

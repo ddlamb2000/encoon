@@ -24,7 +24,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
 	logUri(c, dbName, user)
-	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
+	testSleep(dbName)
 	grid, rowSet, rowSetCount, err := getGridsRows(dbName, gridUri, uuid, user)
 	if err != nil {
 		c.Abort()

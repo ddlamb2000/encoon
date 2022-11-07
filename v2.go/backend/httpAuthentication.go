@@ -28,7 +28,7 @@ func authentication(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, "")
 		return
 	}
-	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
+	testSleep(dbName)
 
 	var login login
 	c.ShouldBindJSON(&login)

@@ -28,7 +28,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	logUri(c, dbName, user)
-	time.Sleep(time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime) * time.Millisecond)
+	testSleep(dbName)
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
 	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
