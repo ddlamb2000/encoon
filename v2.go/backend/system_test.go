@@ -4,6 +4,7 @@
 package backend
 
 import (
+	"bytes"
 	"context"
 	"io"
 	"net/http"
@@ -35,6 +36,7 @@ func TestSystem(t *testing.T) {
 	t.Run("ApiUsersNotFound", func(t *testing.T) { RunTestApiUsersNotFound(t) })
 	t.Run("ApiUsersNotFound2", func(t *testing.T) { RunTestApiUsersNotFound2(t) })
 	t.Run("DisconnectDbServers", func(t *testing.T) { RunTestDisconnectDbServers(t) })
+	t.Run("CreateNewUser", func(t *testing.T) { RunTestApiCreateNewUser(t) })
 }
 
 func assertHttpCode(t *testing.T, w *httptest.ResponseRecorder, expectedCode int) {
@@ -257,7 +259,7 @@ func RunTestApiUsersExpired(t *testing.T) {
 func RunTestApiUsersPassing(t *testing.T) {
 	ConnectDbServers(utils.DatabaseConfigurations)
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
-	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
+	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
@@ -301,7 +303,7 @@ func RunTestApiUsersNotFound(t *testing.T) {
 func RunTestApiUsersNotFound2(t *testing.T) {
 	ConnectDbServers(utils.DatabaseConfigurations)
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
-	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
+	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
@@ -317,5 +319,34 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	}
 	if !strings.Contains(response, expected) {
 		t.Errorf(`Response %v incorrect instead of %v.`, response, expected)
+	}
+}
+
+func RunTestApiCreateNewUser(t *testing.T) {
+	ConnectDbServers(utils.DatabaseConfigurations)
+	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
+
+	postStr := `{"rowsAdded":`
+	postStr += `[`
+	postStr += `{"text01":"aaaa","text02":"bbbb"}`
+	postStr += `]`
+	postStr += `}`
+
+	req, _ := http.NewRequest("POST", "/test/api/v1/_users", bytes.NewBuffer([]byte(postStr)))
+	req.Header.Add("Authorization", "Bearer "+token)
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	assertHttpCode(t, w, http.StatusOK)
+
+	expected := utils.CleanupStrings(`"text01":"aaaa","text02":"bbbb"`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if !strings.Contains(response, expected) {
+		t.Errorf(`Response %v incorrect.`, response)
 	}
 }

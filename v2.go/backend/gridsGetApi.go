@@ -40,7 +40,7 @@ func getUserUui(c *gin.Context) (string, string, error) {
 		return "", "", utils.LogAndReturnError("Not authorized for %v.", c.Request.URL)
 	}
 	userUuid, user := c.GetString("userUuid"), c.GetString("user")
-	if userUuid == "" || user == "" {
+	if len(userUuid) < 10 || user == "" {
 		return "", "", utils.LogAndReturnError("User not authorized for %v.", c.Request.URL)
 	}
 	return userUuid, user, nil
@@ -190,7 +190,7 @@ func getRowSetForGridsApi(dbName string, user string, gridUri string, rows *sql.
 	if err := rows.Err(); err != nil {
 		return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, gridUri, err)
 	}
-	utils.Log("[%s] [%s] Got rows from %q.", dbName, user, gridUri)
+	utils.Log("[%s] [%s] Got %d rows from %q.", dbName, user, rowSetCount, gridUri)
 	return rowSet, rowSetCount, nil
 }
 

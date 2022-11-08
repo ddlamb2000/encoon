@@ -57,7 +57,7 @@ func getNewToken(dbName string, id string, userUuid string, firstName string, la
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	utils.Log("[%s]Token generated for %v, expiration: %v", dbName, id, expiration)
+	utils.Log("[%s] Token generated for %v, expiration: %v", dbName, id, expiration)
 	jwtSecret := utils.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
