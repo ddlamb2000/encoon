@@ -18,21 +18,17 @@ import (
 
 func main() {
 	utils.InitWithLog()
-
 	quit := make(chan os.Signal)
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	done := make(chan bool, 1)
-
 	go func() {
 		<-quit
 		utils.Log("Stopping.")
 		done <- true
 	}()
-
 	if utils.LoadConfiguration("configurations/") == nil {
 		go backend.ConnectDbServers(utils.DatabaseConfigurations)
 		go backend.SetAndStartHttpServer()
-
 		<-done
 		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 		defer cancel()

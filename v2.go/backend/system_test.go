@@ -42,6 +42,15 @@ func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte
 	return responseData, err, w.Code
 }
 
+func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, error, int) {
+	req, _ := http.NewRequest("GET", uri, nil)
+	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	return responseData, err, w.Code
+}
+
 func httpCodeEqual(t *testing.T, code int, expectedCode int) {
 	if code != expectedCode {
 		t.Errorf(`Response code %v instead of %v.`, code, expectedCode)

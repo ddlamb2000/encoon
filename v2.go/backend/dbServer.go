@@ -95,7 +95,7 @@ func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 }
 
 func beginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
-	_, err := db.ExecContext(ctx, " BEGIN ")
+	_, err := db.ExecContext(ctx, "BEGIN")
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
 	}
@@ -104,7 +104,7 @@ func beginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid s
 }
 
 func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
-	_, err := db.ExecContext(ctx, " COMMIT ")
+	_, err := db.ExecContext(ctx, "COMMIT")
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
 	}
@@ -113,7 +113,7 @@ func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid 
 }
 
 func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
-	_, err := db.ExecContext(ctx, " ROLLBACK ")
+	_, err := db.ExecContext(ctx, "ROLLBACK")
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
 	}

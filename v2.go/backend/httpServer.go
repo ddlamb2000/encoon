@@ -76,16 +76,13 @@ func ShutDownHttpServer(ctx context.Context) {
 }
 
 func getIndexHtml(c *gin.Context) {
-	c.HTML(
-		http.StatusOK,
-		"index.html",
-		gin.H{
-			"appName": utils.Configuration.AppName,
-			"appTag":  utils.Configuration.AppTag,
-			"dbName":  c.Param("dbName"),
-			"gridUri": c.Param("gridUri"),
-			"uuid":    c.Param("uuid"),
-		})
+	c.HTML(http.StatusOK, "index.html", gin.H{
+		"appName": utils.Configuration.AppName,
+		"appTag":  utils.Configuration.AppTag,
+		"dbName":  c.Param("dbName"),
+		"gridUri": c.Param("gridUri"),
+		"uuid":    c.Param("uuid"),
+	})
 }
 
 func logUri(c *gin.Context, dbName, user string) {
