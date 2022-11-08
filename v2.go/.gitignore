@@ -6,3 +6,5 @@
 *.autosave
 tmp/
 logs/*.log
+logs/*.out
+encoon
