@@ -4,9 +4,14 @@
 package backend
 
 import (
+	"bytes"
 	"context"
+	"io"
+	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+	"time"
 
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
@@ -22,9 +27,53 @@ func TestSystem(t *testing.T) {
 	t.Run("DisconnectDb", func(t *testing.T) { RunTestDisconnectDbServers(t) })
 }
 
-func assertHttpCode(t *testing.T, w *httptest.ResponseRecorder, expectedCode int) {
-	if w.Code != expectedCode {
-		t.Errorf(`Response code %v instead of %v.`, w.Code, expectedCode)
+func getTokenForUser(dbName, userName, userUuid string) string {
+	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
+	return token
+}
+
+func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte, error, int) {
+	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer([]byte(body)))
+	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	return responseData, err, w.Code
+}
+
+func httpCodeEqual(t *testing.T, code int, expectedCode int) {
+	if code != expectedCode {
+		t.Errorf(`Response code %v instead of %v.`, code, expectedCode)
+	}
+}
+
+func byteEqualString(t *testing.T, got []byte, expected string) {
+	gotString := string(got)
+	if gotString != expected {
+		t.Errorf(`Got %v instead of %v.`, gotString, expected)
+	}
+}
+
+func errorIsNil(t *testing.T, err error) {
+	if err != nil {
+		t.Errorf(`Error: %v.`, err)
+	}
+}
+
+func jsonStringContains(t *testing.T, got []byte, expect string) {
+	gotString := utils.CleanupStrings(string(got))
+	expectString := utils.CleanupStrings(expect)
+	if !strings.Contains(gotString, expectString) {
+		t.Errorf(`Response %v doesn't include %v.`, gotString, expectString)
+	}
+}
+
+func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
+	gotJson := utils.CleanupStrings(string(got))
+	expectJson := utils.CleanupStrings(expect)
+	if strings.Contains(gotJson, expectJson) {
+		t.Errorf(`Response %v includes %v.`, gotJson, expectJson)
 	}
 }
 
