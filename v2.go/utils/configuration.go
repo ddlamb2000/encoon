@@ -42,10 +42,14 @@ var (
 )
 
 func LoadConfiguration(directory string) error {
-	if err := loadMainConfiguration(directory, "configuration.yml"); err != nil {
+	return loadConfiguration(directory, "configuration.yml", "databases/")
+}
+
+func loadConfiguration(directory, fileName, dbSubDirectory string) error {
+	if err := loadMainConfiguration(directory, fileName); err != nil {
 		return err
 	}
-	if err := loadDatabaseConfigurations(directory, "databases/"); err != nil {
+	if err := loadDatabaseConfigurations(directory, dbSubDirectory); err != nil {
 		return err
 	}
 	return nil

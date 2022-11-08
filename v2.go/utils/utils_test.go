@@ -32,3 +32,11 @@ func TestCleanupStrings(t *testing.T) {
 		})
 	}
 }
+
+func TestLogAndReturnError(t *testing.T) {
+	got := LogAndReturnError("Test: %v", "test")
+	expected := "Test: test"
+	if got.Error() != expected {
+		t.Errorf("Got %q instead of %q.", got, expected)
+	}
+}

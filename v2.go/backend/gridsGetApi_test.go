@@ -140,3 +140,30 @@ func TestGetDbForGridsApi(t *testing.T) {
 		t.Errorf(`Got error %v instead of %v.`, err, expected)
 	}
 }
+
+func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
+	got := getGridQueryColumnsForGridsApi()
+	expected := "SELECT uuid, text01, text02, text03, text04, enabled, createdBy, updatedBy, version"
+	if got != expected {
+		t.Errorf(`Got %v instead of %v.`, got, expected)
+	}
+}
+
+func TestGetGridQueryOutputForGridsApi(t *testing.T) {
+	var grid Grid
+	got := getGridQueryOutputForGridsApi(&grid)
+	expected := []any{
+		&grid.Uuid,
+		&grid.Text01,
+		&grid.Text02,
+		&grid.Text03,
+		&grid.Text04,
+		&grid.Enabled,
+		&grid.CreateBy,
+		&grid.UpdatedBy,
+		&grid.Version,
+	}
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf(`Got %v instead of %v.`, got, expected)
+	}
+}

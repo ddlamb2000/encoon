@@ -100,7 +100,7 @@ func getGridForGridsApi(ctx context.Context,
 }
 
 func getGridQueryColumnsForGridsApi() string {
-	return " SELECT uuid, " +
+	return "SELECT uuid, " +
 		"text01, " +
 		"text02, " +
 		"text03, " +
@@ -108,7 +108,7 @@ func getGridQueryColumnsForGridsApi() string {
 		"enabled, " +
 		"createdBy, " +
 		"updatedBy, " +
-		"version "
+		"version"
 }
 
 func getGridQueryOutputForGridsApi(grid *Grid) []any {

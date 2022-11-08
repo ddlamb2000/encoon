@@ -32,6 +32,15 @@ func TestLoadMainConfiguration3(t *testing.T) {
 	}
 }
 
+func TestLoadMainConfiguration4(t *testing.T) {
+	path := "../configurations/"
+	fileName := "configuration.yml"
+	subPath := "db/"
+	if err := loadConfiguration(path, fileName, subPath); err == nil {
+		t.Errorf("Can load configuration %q from path %q: %v.", fileName, path, err)
+	}
+}
+
 func TestLoadDatabaseConfiguration(t *testing.T) {
 	fileName := "../configurations/databases/test.yml"
 	if err := loadDatabaseConfiguration(fileName); err != nil {
@@ -96,12 +105,18 @@ func TestLoadConfiguration(t *testing.T) {
 	if root != "root" || password != expectedPassword {
 		t.Errorf("Root or password isn't correct for database %q: %q and %q.", dbName, root, password)
 	}
-
 }
 
 func TestLoadConfiguration2(t *testing.T) {
 	dir := "../utils/"
 	if err := LoadConfiguration(dir); err == nil {
 		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
+	}
+}
+
+func TestLoadConfiguration3(t *testing.T) {
+	secret := GetJWTSecret("xxx")
+	if secret != nil {
+		t.Errorf("Invalid Jwt secret: %q.", secret)
 	}
 }

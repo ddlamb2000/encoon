@@ -101,7 +101,7 @@ func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid 
 }
 
 func getInsertStatementForGridsApi() string {
-	insertStr := " INSERT INTO rows (uuid, " +
+	insertStr := "INSERT INTO rows (uuid, " +
 		"version, " +
 		"created, " +
 		"updated, " +
@@ -164,7 +164,7 @@ func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid 
 }
 
 func getUpdateStatementForGridsApi() string {
-	updateStr := " UPDATE rows SET " +
+	updateStr := "UPDATE rows SET " +
 		"version = version + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3, " +
@@ -175,8 +175,8 @@ func getUpdateStatementForGridsApi() string {
 		"int01 = $8, " +
 		"int02 = $9, " +
 		"int03 = $10, " +
-		"int04 = $11 "
-	whereStr := " WHERE uuid = $1 and gridUuid = $2 "
+		"int04 = $11"
+	whereStr := " WHERE uuid = $1 and gridUuid = $2"
 	return updateStr + whereStr
 }
 
