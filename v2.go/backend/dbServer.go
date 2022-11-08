@@ -127,3 +127,9 @@ func testSleep(dbName string) {
 		time.Sleep(sleepTime * time.Millisecond)
 	}
 }
+
+func forceTestSleepTime(dbName string, time int) {
+	if utils.DatabaseConfigurations[dbName] != nil {
+		utils.DatabaseConfigurations[dbName].Database.TestSleepTime = time
+	}
+}

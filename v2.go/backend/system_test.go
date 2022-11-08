@@ -34,6 +34,7 @@ func RunTestConnectDbServers(t *testing.T) {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
+	forceTestSleepTime(dbName, 0)
 	db := getDbByName(dbName)
 	if db == nil {
 		t.Errorf(`Database %q not found.`, dbName)
