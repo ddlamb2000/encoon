@@ -7,7 +7,7 @@ class GridTable extends React.Component {
 			<table className="table table-hover table-sm table-responsive">
 				<thead>
 					<tr>
-						<th scope="col" style={{width: "24px"}}><i className="bi bi-gear"></i></th>
+						<th scope="col" style={{width: "24px"}}></th>
 						<th scope="col">Text01</th>
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>

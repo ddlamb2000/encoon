@@ -13,6 +13,13 @@ class GridView extends React.Component {
 						<tr><td>Text02</td><td>{this.props.row.text02}</td></tr>
 						<tr><td>Text03</td><td>{this.props.row.text03}</td></tr>
 						<tr><td>Text04</td><td>{this.props.row.text04}</td></tr>
+						<tr><td>Int01</td><td>{this.props.row.int01}</td></tr>
+						<tr><td>Int02</td><td>{this.props.row.int02}</td></tr>
+						<tr><td>Int03</td><td>{this.props.row.int03}</td></tr>
+						<tr><td>Int04</td><td>{this.props.row.int04}</td></tr>
+						<tr><td>Version</td><td>{this.props.row.version}</td></tr>
+						<tr><td>Created by</td><td>{this.props.row.createdBy}</td></tr>
+						<tr><td>Updated by</td><td>{this.props.row.updatedBy}</td></tr>
 					</tbody>
 				</table>
 			</div>

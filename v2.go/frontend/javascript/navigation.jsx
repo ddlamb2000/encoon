@@ -2,41 +2,87 @@
 // Copyright David Lambert 2022
 
 class Navigation extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			error: "",
+			isLoaded: false,
+			isLoading: false,
+			rows: []
+		}
+	}
+
+	componentDidMount() {
+		this.loadData()
+	}
+
 	render() {
+		const { isLoading, isLoaded, error, rows } = this.state
 		return (
 			<nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 				<div className="position-sticky pt-3 sidebar-sticky">
 					<ul className="nav flex-column">
 						<li className="nav-item">
-							<a className="nav-link active" aria-current="page" href={`/${this.props.dbName}`}>
+							<a className="nav-link active border-bottom" aria-current="page" href={`/${this.props.dbName}`}>
 								Dashboard <i className="bi bi-box"></i>
 							</a>
 						</li>
 					</ul>
+					{isLoading && <Spinner />}
+					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
 					<ul className="nav flex-column mb-2">
-						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/_grids`}>
-								Grids <i className="bi bi-grid-3x3"></i>
-							</a>
-						</li>
-						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/_users`}>
-								Users <i className="bi bi-person"></i>
-							</a>
-						</li>
-						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/_migrations`}>
-								Migrations <i className="bi bi-journal-text"></i>
-							</a>
-						</li>
-						<li className="nav-item">
-							<a className="nav-link" href={`/${this.props.dbName}/_transactions`}>
-								Transactions <i className="bi bi-journal-text"></i>
-							</a>
-						</li>
+						{isLoaded && rows && rows.map(row => 
+							<li className="nav-item" key={row.uuid}>
+								<a className="nav-link" href={`/${this.props.dbName}/${row.text01}`}>
+									{row.text02} {row.text04 && <i className={`bi bi-${row.text04}`}></i>}
+								</a>
+							</li>
+						)}
 					</ul>
 				</div>
 			</nav>
 		)
+	}
+
+	loadData() {
+		this.setState({isLoading: true})
+		const uri = `/${this.props.dbName}/api/v1/_grids`
+		fetch(uri, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + this.props.token
+			}
+		})
+		.then(response => {
+			const contentType = response.headers.get("content-type")
+			if(contentType && contentType.indexOf("application/json") !== -1) {
+				return response.json().then(	
+					(result) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: true,
+							rows: result.rows,
+							error: result.error
+						})
+					},
+					(error) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: false,
+							rows: [],
+							error: error.message
+						})
+					}
+				)
+			} else {
+				this.setState({
+					isLoading: false,
+					isLoaded: false,
+					rows: [],
+					error: `[${response.status}] Internal server issue.`
+				})
+			}
+		})
 	}
 }

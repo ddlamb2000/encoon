@@ -51,7 +51,8 @@ class App extends React.Component {
 									dbName={this.props.dbName} 
 									user={this.user}
 									userFirstName={this.userFirstName}
-									userLastName={this.userLastName} />
+									userLastName={this.userLastName}
+									token={this.token} />
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 							<Grid token={this.token} dbName={this.props.dbName} gridUri={this.props.gridUri} uuid={this.props.uuid} />
 						</main>
@@ -74,8 +75,8 @@ class App extends React.Component {
 									dbName={this.props.dbName} 
 									user={this.user}
 									userFirstName={this.userFirstName}
-									userLastName={this.userLastName} />
-
+									userLastName={this.userLastName}
+									token={this.token} />
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 							<Grid token={this.token} dbName={this.props.dbName} gridUri="_users" />
 							<Grid token={this.token} dbName={this.props.dbName} gridUri="_grids" />
