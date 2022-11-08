@@ -88,7 +88,7 @@ func TestLoadConfiguration(t *testing.T) {
 	}
 
 	secret := GetJWTSecret(dbName)
-	expected := []byte{
+	expect := []byte{
 		116, 101, 115, 116, 36, 50, 97, 36, 48, 56, 36,
 		100, 99, 110, 50, 50, 118, 82, 70, 73, 90, 109,
 		121, 119, 118, 100, 89, 66, 70, 118, 53, 121, 79,
@@ -96,13 +96,13 @@ func TestLoadConfiguration(t *testing.T) {
 		57, 83, 49, 100, 84, 99, 120, 115, 112, 86, 108,
 		122, 97, 101, 108, 109, 90, 85, 80, 97,
 	}
-	if !reflect.DeepEqual(secret, expected) {
-		t.Errorf("Jwt secret is wrong: %v instead of %v.", secret, expected)
+	if !reflect.DeepEqual(secret, expect) {
+		t.Errorf("Jwt secret is wrong: %v instead of %v.", secret, expect)
 	}
 
 	root, password := GetRootAndPassword(dbName)
-	expectedPassword := "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-	if root != "root" || password != expectedPassword {
+	expectPassword := "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+	if root != "root" || password != expectPassword {
 		t.Errorf("Root or password isn't correct for database %q: %q and %q.", dbName, root, password)
 	}
 }

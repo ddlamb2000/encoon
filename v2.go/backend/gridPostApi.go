@@ -47,7 +47,7 @@ func PostGridsRowsApi(c *gin.Context) {
 }
 
 func postGridsRows(dbName string, userUuid string, user string, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) error {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(utils.Configuration.DbTimeOut)*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(utils.Configuration.TimeOutThreshold)*time.Millisecond)
 	defer cancel()
 
 	db, err := getDbForGridsApi(dbName, user)

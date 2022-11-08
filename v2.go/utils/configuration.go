@@ -18,9 +18,9 @@ type Config struct {
 		JwtExpiration int    `yaml:"jwtExpiration"`
 	} `yaml:"httpServer"`
 
-	AppName   string `yaml:"appName"`
-	AppTag    string `yaml:"appTag"`
-	DbTimeOut int    `yaml:"dbTimeOut"`
+	AppName          string `yaml:"appName"`
+	AppTag           string `yaml:"appTag"`
+	TimeOutThreshold int    `yaml:"timeOutThreshold"`
 }
 
 type DatabaseConfig struct {

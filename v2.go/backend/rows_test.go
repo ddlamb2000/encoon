@@ -32,12 +32,12 @@ func TestRowAsString(t *testing.T) {
 
 func TestGetRowsColumnDefinitions(t *testing.T) {
 	got := getRowsColumnDefinitions()
-	expected := "text01 text, text02 text, text03 text"
-	if !strings.Contains(got, expected) {
-		t.Errorf(`Got %v instead of %v.`, got, expected)
+	expect := "text01 text, text02 text, text03 text"
+	if !strings.Contains(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
-	expected2 := "int01 integer, int02 integer, int03 integer"
-	if !strings.Contains(got, expected2) {
-		t.Errorf(`Got %v instead of %v.`, got, expected2)
+	expect2 := "int01 integer, int02 integer, int03 integer"
+	if !strings.Contains(got, expect2) {
+		t.Errorf(`Got %v instead of %v.`, got, expect2)
 	}
 }

@@ -13,7 +13,7 @@ import (
 func isDbAuthorized(dbName string, id string, password string) (string, string, string, error) {
 	ctx, cancel := context.WithTimeout(
 		context.Background(),
-		time.Duration(utils.Configuration.DbTimeOut)*time.Second)
+		time.Duration(utils.Configuration.TimeOutThreshold)*time.Millisecond)
 	defer cancel()
 	if db := getDbByName(dbName); db != nil {
 		var uuid, firstName, lastName string

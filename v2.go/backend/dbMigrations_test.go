@@ -24,8 +24,8 @@ func TestRecreateDb(t *testing.T) {
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
 	err := recreateDb(ctx, db, "xxx")
-	expected := "[xxx] Only test database can be recreated."
-	if err.Error() != expected {
-		t.Errorf(`Expected %v and found %v.`, expected, err)
+	expect := "[xxx] Only test database can be recreated."
+	if err.Error() != expect {
+		t.Errorf(`expect %v and found %v.`, expect, err)
 	}
 }

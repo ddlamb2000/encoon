@@ -92,7 +92,7 @@ func TestGetRowsForGridsApi2(t *testing.T) {
 	db := getDbByName(dbName)
 	_, err := getRowsForGridsApi(ctx, db, dbName, user, "xxx", "")
 	if err == nil {
-		t.Errorf(`Expected error.`)
+		t.Errorf(`expect error.`)
 	}
 	if !strings.Contains(fmt.Sprintf("%v", err), "Error when querying rows:") {
 		t.Errorf(`Wrong error: %v.`, err)
@@ -129,30 +129,30 @@ func TestGetDbForGridsApi(t *testing.T) {
 	if err != nil {
 		t.Errorf(`Got error %v.`, err)
 	}
-	expected := "[aaa] [root] Database not available."
+	expect := "[aaa] [root] Database not available."
 	_, err = getDbForGridsApi("aaa", "root")
-	if err.Error() != expected {
-		t.Errorf(`Got error %v instead of %v.`, err, expected)
+	if err.Error() != expect {
+		t.Errorf(`Got error %v instead of %v.`, err, expect)
 	}
 	_, err = getDbForGridsApi("", "root")
-	expected = "[root] Missing database name parameter."
-	if err.Error() != expected {
-		t.Errorf(`Got error %v instead of %v.`, err, expected)
+	expect = "[root] Missing database name parameter."
+	if err.Error() != expect {
+		t.Errorf(`Got error %v instead of %v.`, err, expect)
 	}
 }
 
 func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
 	got := getGridQueryColumnsForGridsApi()
-	expected := "SELECT uuid, text01, text02, text03, text04, enabled, createdBy, updatedBy, version"
-	if got != expected {
-		t.Errorf(`Got %v instead of %v.`, got, expected)
+	expect := "SELECT uuid, text01, text02, text03, text04, enabled, createdBy, updatedBy, version"
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }
 
 func TestGetGridQueryOutputForGridsApi(t *testing.T) {
 	var grid Grid
 	got := getGridQueryOutputForGridsApi(&grid)
-	expected := []any{
+	expect := []any{
 		&grid.Uuid,
 		&grid.Text01,
 		&grid.Text02,
@@ -163,7 +163,7 @@ func TestGetGridQueryOutputForGridsApi(t *testing.T) {
 		&grid.UpdatedBy,
 		&grid.Version,
 	}
-	if !reflect.DeepEqual(got, expected) {
-		t.Errorf(`Got %v instead of %v.`, got, expected)
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }

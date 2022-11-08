@@ -23,6 +23,7 @@ func TestSystem(t *testing.T) {
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
+	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
 	t.Run("DisconnectDb", func(t *testing.T) { RunTestDisconnectDbServers(t) })
 }
@@ -51,16 +52,16 @@ func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, error
 	return responseData, err, w.Code
 }
 
-func httpCodeEqual(t *testing.T, code int, expectedCode int) {
-	if code != expectedCode {
-		t.Errorf(`Response code %v instead of %v.`, code, expectedCode)
+func httpCodeEqual(t *testing.T, code int, expectCode int) {
+	if code != expectCode {
+		t.Errorf(`Response code %v instead of %v.`, code, expectCode)
 	}
 }
 
-func byteEqualString(t *testing.T, got []byte, expected string) {
+func byteEqualString(t *testing.T, got []byte, expect string) {
 	gotString := string(got)
-	if gotString != expected {
-		t.Errorf(`Got %v instead of %v.`, gotString, expected)
+	if gotString != expect {
+		t.Errorf(`Got %v instead of %v.`, gotString, expect)
 	}
 }
 

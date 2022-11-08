@@ -133,3 +133,7 @@ func forceTestSleepTime(dbName string, time int) {
 		utils.DatabaseConfigurations[dbName].Database.TestSleepTime = time
 	}
 }
+
+func forcetimeOutThreshold(time int) {
+	utils.Configuration.TimeOutThreshold = time
+}

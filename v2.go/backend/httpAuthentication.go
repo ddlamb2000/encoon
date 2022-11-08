@@ -90,7 +90,7 @@ func authMiddleware() gin.HandlerFunc {
 		jwtSecret := utils.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, utils.LogAndReturnError("Unexpected signing method: %v.", token.Header["alg"])
+				return nil, utils.LogAndReturnError("Unexpect signing method: %v.", token.Header["alg"])
 			}
 			return []byte(jwtSecret), nil
 		})

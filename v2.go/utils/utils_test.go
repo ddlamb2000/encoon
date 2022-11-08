@@ -14,9 +14,9 @@ func TestInitWithLog(t *testing.T) {
 
 func TestCleanupStrings(t *testing.T) {
 	var tests = []struct {
-		id       int
-		given    string
-		expected string
+		id     int
+		given  string
+		expect string
 	}{
 		{1, `{           "message":       "Not authorized."}`, `{ "message": "Not authorized."}`},
 		{2, `{"message": "Not authorized."}`, `{"message": "Not authorized."}`},
@@ -26,8 +26,8 @@ func TestCleanupStrings(t *testing.T) {
 		testname := fmt.Sprintf("%d", tt.id)
 		t.Run(testname, func(t *testing.T) {
 			then := CleanupStrings(tt.given)
-			if then != tt.expected {
-				t.Errorf("Got %q instead of %q.", then, tt.expected)
+			if then != tt.expect {
+				t.Errorf("Got %q instead of %q.", then, tt.expect)
 			}
 		})
 	}
@@ -35,8 +35,8 @@ func TestCleanupStrings(t *testing.T) {
 
 func TestLogAndReturnError(t *testing.T) {
 	got := LogAndReturnError("Test: %v", "test")
-	expected := "Test: test"
-	if got.Error() != expected {
-		t.Errorf("Got %q instead of %q.", got, expected)
+	expect := "Test: test"
+	if got.Error() != expect {
+		t.Errorf("Got %q instead of %q.", got, expect)
 	}
 }
