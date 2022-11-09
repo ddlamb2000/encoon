@@ -4,11 +4,13 @@
 package utils
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -35,4 +37,13 @@ func InitWithLog() {
 
 func CleanupStrings(s string) string {
 	return strings.Join(strings.Fields(strings.Replace(s, "\n", "", -1)), " ")
+}
+
+func GetContextWithTimeOut() (context.Context, context.CancelFunc) {
+	threshold := Configuration.TimeOutThreshold
+	if threshold == 0 {
+		threshold = 10
+	}
+	ctx, ctxFunc := context.WithTimeout(context.Background(), time.Duration(threshold)*time.Millisecond)
+	return ctx, ctxFunc
 }

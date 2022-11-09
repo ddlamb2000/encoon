@@ -9,7 +9,6 @@ import (
 	"reflect"
 	"strings"
 	"testing"
-	"time"
 
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
@@ -51,15 +50,13 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 }
 
 func TestGetGridForGridsApi(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	db := getDbByName(dbName)
 	gridUri := "_users"
 	user := "root"
-	grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
+	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -69,28 +66,24 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(ctx, db, dbName, user, utils.UuidUsers, "")
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
 }
 
 func TestGetRowsForGridsApi2(t *testing.T) {
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
 	utils.LoadConfiguration("../configurations/")
 	ConnectDbServers(utils.DatabaseConfigurations)
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(ctx, db, dbName, user, "xxx", "")
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "")
 	if err == nil {
 		t.Errorf(`expect error.`)
 	}

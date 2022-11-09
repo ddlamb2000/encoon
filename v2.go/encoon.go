@@ -4,11 +4,9 @@
 package main
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	_ "github.com/lib/pq"
 
@@ -30,7 +28,7 @@ func main() {
 		go backend.ConnectDbServers(utils.DatabaseConfigurations)
 		go backend.SetAndStartHttpServer()
 		<-done
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+		ctx, cancel := utils.GetContextWithTimeOut()
 		defer cancel()
 		backend.ShutDownHttpServer(ctx)
 		backend.DisconnectDbServers(utils.DatabaseConfigurations)

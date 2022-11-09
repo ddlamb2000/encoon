@@ -62,7 +62,7 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 }
 
 func pingDb(ctx context.Context, db *sql.DB) error {
-	ctx, cancel := context.WithTimeout(ctx, 1*time.Second)
+	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	if err := db.PingContext(ctx); err != nil {
 		utils.LogError("Unable to connect to database: %v.", err)
@@ -121,11 +121,21 @@ func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUui
 	return err
 }
 
-func testSleep(dbName string) {
-	if utils.DatabaseConfigurations[dbName] != nil {
-		sleepTime := time.Duration(utils.DatabaseConfigurations[dbName].Database.TestSleepTime * rand.Intn(100) / 100)
-		time.Sleep(sleepTime * time.Millisecond)
+func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
+	sleepTime := utils.DatabaseConfigurations[dbName].Database.TestSleepTime
+	if sleepTime > 0 {
+		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
+		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
+		utils.Log("************************************************************** BEFORE SLEEP It's now %v.", time.Now())
+		utils.Log("SLEEP: %s", st)
+		_, err := db.QueryContext(ctx, st)
+		utils.Log("Err: %v.", err)
+		utils.Log("AFTER SLEEP It's now %v.", time.Now())
+		if err != nil {
+			return err
+		}
 	}
+	return nil
 }
 
 func forceTestSleepTime(dbName string, time int) {
@@ -134,6 +144,6 @@ func forceTestSleepTime(dbName string, time int) {
 	}
 }
 
-func forcetimeOutThreshold(time int) {
+func forceTimeOutThreshold(time int) {
 	utils.Configuration.TimeOutThreshold = time
 }

@@ -44,7 +44,10 @@ func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte
 }
 
 func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, error, int) {
-	req, _ := http.NewRequest("GET", uri, nil)
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		return nil, err, 0
+	}
 	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
 	w := httptest.NewRecorder()
 	router.ServeHTTP(w, req)
@@ -117,16 +120,6 @@ func RunTestRecreateDb(t *testing.T) {
 }
 
 func RunTestDisconnectDbServers(t *testing.T) {
-	dbName := "test"
-	db := getDbByName(dbName)
-	if db == nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
-	if err := pingDb(ctx, db); err != nil {
-		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
-	}
 	if err := DisconnectDbServers(utils.DatabaseConfigurations); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}

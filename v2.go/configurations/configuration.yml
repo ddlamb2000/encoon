@@ -9,4 +9,4 @@ httpServer:
 
 appName: "εncooη"
 appTag: "Data structuration, presentation and navigation."
-timeOutThreshold: 2000
+timeOutThreshold: 500

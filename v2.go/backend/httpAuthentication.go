@@ -28,7 +28,6 @@ func authentication(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
 		return
 	}
-	testSleep(dbName)
 
 	var login login
 	c.ShouldBindJSON(&login)

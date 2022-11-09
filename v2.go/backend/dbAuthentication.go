@@ -4,16 +4,11 @@
 package backend
 
 import (
-	"context"
-	"time"
-
 	"d.lambert.fr/encoon/utils"
 )
 
 func isDbAuthorized(dbName string, id string, password string) (string, string, string, error) {
-	ctx, cancel := context.WithTimeout(
-		context.Background(),
-		time.Duration(utils.Configuration.TimeOutThreshold)*time.Millisecond)
+	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	if db := getDbByName(dbName); db != nil {
 		var uuid, firstName, lastName string
@@ -22,6 +17,9 @@ func isDbAuthorized(dbName string, id string, password string) (string, string, 
 		if err := db.
 			QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, id, password).
 			Scan(&uuid, &firstName, &lastName); err != nil {
+			return "", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v", dbName, id, err)
+		}
+		if err := testSleep(ctx, dbName, db); err != nil {
 			return "", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v", dbName, id, err)
 		}
 		utils.Log("[%s] ID and password verified for %q.", dbName, id)
