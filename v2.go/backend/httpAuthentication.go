@@ -28,22 +28,25 @@ func authentication(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
 		return
 	}
-
 	var login login
 	c.ShouldBindJSON(&login)
-	userUuid, firstName, lastName, err := isDbAuthorized(dbName, login.Id, login.Password)
+	userUuid, firstName, lastName, timeOut, err := isDbAuthorized(dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		c.Abort()
+		if timeOut {
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		}
 		return
 	}
-
 	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
+		c.Abort()
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
 		return
 	}
-
 	logUri(c, dbName, login.Id)
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }

@@ -126,4 +126,30 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"text01":"test01","text02":"test02","text03":"test03","text04":"test04"`)
 	})
+
+	t.Run("CreateNewRowInSingleGridWithTimeOut", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text01":"test05","text02":"test06","text03":"test07","text04":"test08"}` +
+			`]` +
+			`}`
+		forceTestSleepTime("test", 500)
+		forceTimeOutThreshold(200)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
+		forceTestSleepTime("test", 0)
+		forceTimeOutThreshold(200)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusRequestTimeout)
+		jsonStringContains(t, responseData, `{"error":"[test] [root] Post request has been cancelled: context deadline exceeded."}`)
+	})
+
+	t.Run("VerifyNoNewRowInSingleGrid", func(t *testing.T) {
+		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01")
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":1`)
+		jsonStringContains(t, responseData, `"text01":"test01","text02":"test02","text03":"test03","text04":"test04"`)
+		jsonStringDoesntContain(t, responseData, `"text01":"test05"`)
+	})
+
 }

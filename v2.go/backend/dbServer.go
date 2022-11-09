@@ -62,9 +62,7 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 }
 
 func pingDb(ctx context.Context, db *sql.DB) error {
-	ctx, cancel := utils.GetContextWithTimeOut()
-	defer cancel()
-	if err := db.PingContext(ctx); err != nil {
+	if err := db.PingContext(context.Background()); err != nil {
 		utils.LogError("Unable to connect to database: %v.", err)
 		return err
 	}
@@ -112,12 +110,12 @@ func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid 
 	return err
 }
 
-func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid string, user string) error {
-	_, err := db.ExecContext(ctx, "ROLLBACK")
+func rollbackTransaction(dbName string, db *sql.DB, userUuid string, user string) error {
+	_, err := db.Exec("ROLLBACK")
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
 	}
-	utils.Log("[%s] [%s] Rollback transaction.", dbName, user)
+	utils.Log("[%s] [%s] ROLLBACK transaction.", dbName, user)
 	return err
 }
 
@@ -126,11 +124,9 @@ func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
 	if sleepTime > 0 {
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
 		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
-		utils.Log("************************************************************** BEFORE SLEEP It's now %v.", time.Now())
-		utils.Log("SLEEP: %s", st)
+		utils.Log("*** BEFORE SLEEP It's now %v.", time.Now())
 		_, err := db.QueryContext(ctx, st)
-		utils.Log("Err: %v.", err)
-		utils.Log("AFTER SLEEP It's now %v.", time.Now())
+		utils.Log("*** AFTER SLEEP It's now %v.", time.Now())
 		if err != nil {
 			return err
 		}

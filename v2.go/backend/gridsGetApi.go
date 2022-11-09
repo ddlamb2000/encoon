@@ -7,7 +7,6 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
-	"time"
 
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
@@ -50,7 +49,7 @@ func getUserUui(c *gin.Context) (string, string, error) {
 	return userUuid, user, nil
 }
 
-type apiResponse struct {
+type apiGetResponse struct {
 	grid     *Grid
 	rows     []Row
 	rowCount int
@@ -58,43 +57,39 @@ type apiResponse struct {
 }
 
 func getGridsRows(dbName, gridUri, uuid, user string) (*Grid, []Row, int, bool, error) {
-	ctxChan := make(chan apiResponse, 1)
+	db, err := getDbForGridsApi(dbName, user)
+	if err != nil {
+		return nil, nil, 0, false, err
+	}
+	ctxChan := make(chan apiGetResponse, 1)
 	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	go func() {
-		db, err := getDbForGridsApi(dbName, user)
-		if err != nil {
-			ctxChan <- apiResponse{nil, nil, 0, err}
-			return
-		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 		if err != nil {
-			ctxChan <- apiResponse{nil, nil, 0, err}
+			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
 		rows, err := getRowsForGridsApi(ctx, db, dbName, user, grid.Uuid, uuid)
 		if err != nil {
-			ctxChan <- apiResponse{nil, nil, 0, err}
+			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
 		defer rows.Close()
 		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, rows)
 		if uuid != "" && rowSetCount == 0 {
-			ctxChan <- apiResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] Data not found.", user)}
+			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
 		}
-		utils.Log("It's now %v.", time.Now())
 		if err := testSleep(ctx, dbName, db); err != nil {
-			ctxChan <- apiResponse{nil, nil, 0, utils.LogAndReturnError("[%s] Data not found: %v.", user, err)}
+			ctxChan <- apiGetResponse{nil, nil, 0, utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 			return
 		}
-		utils.Log("It's now %v.", time.Now())
-		ctxChan <- apiResponse{grid, rowSet, rowSetCount, err}
+		ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, err}
 	}()
 	select {
 	case <-ctx.Done():
-		utils.Log("Context cancelled: %v\n", ctx.Err())
-		return nil, nil, 0, true, utils.LogAndReturnError("[%s] Request has been cancelled: %v.", user, ctx.Err())
+		return nil, nil, 0, true, utils.LogAndReturnError("[%s] [%s] Get request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}

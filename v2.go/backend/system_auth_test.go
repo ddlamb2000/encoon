@@ -18,6 +18,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("AuthInvalid1", func(t *testing.T) { RunTestAuthInvalid1(t) })
 	t.Run("AuthInvalid2", func(t *testing.T) { RunTestAuthInvalid2(t) })
 	t.Run("AuthValid", func(t *testing.T) { RunTestAuthValid(t) })
+	t.Run("ApiUsersWithTimeOut", func(t *testing.T) { RunTestAuthWithTimeOut(t) })
 	t.Run("404Html", func(t *testing.T) { RunTest404Html(t) })
 	t.Run("ApiUsersNoHeader", func(t *testing.T) { RunTestApiUsersNoHeader(t) })
 	t.Run("ApiUsersIncorrectToken", func(t *testing.T) { RunTestApiUsersIncorrectToken(t) })
@@ -36,7 +37,7 @@ func RunTestAuthInvalid1(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-	expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"\": sql: no rows in result set"}`)
+	expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"\": sql: no rows in result set."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -54,7 +55,7 @@ func RunTestAuthInvalid2(t *testing.T) {
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-	expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"root\": sql: no rows in result set"}`)
+	expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"root\": sql: no rows in result set."}`)
 	response := utils.CleanupStrings(string(responseData))
 
 	if err != nil {
@@ -263,5 +264,28 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	}
 	if !strings.Contains(response, expect) {
 		t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
+	}
+}
+
+func RunTestAuthWithTimeOut(t *testing.T) {
+	forceTestSleepTime("test", 500)
+	forceTimeOutThreshold(200)
+	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
+	w := httptest.NewRecorder()
+	router.ServeHTTP(w, req)
+	responseData, err := io.ReadAll(w.Body)
+	forceTestSleepTime("test", 0)
+	forceTimeOutThreshold(200)
+
+	httpCodeEqual(t, w.Code, http.StatusRequestTimeout)
+
+	expect := utils.CleanupStrings(`{"error":"[test] [root] Authentication request has been cancelled: context deadline exceeded."}`)
+	response := utils.CleanupStrings(string(responseData))
+
+	if err != nil {
+		t.Errorf(`Response %v for %v: %v.`, response, w, err)
+	}
+	if !strings.Contains(response, expect) {
+		t.Errorf(`Response %v incorrect.`, response)
 	}
 }

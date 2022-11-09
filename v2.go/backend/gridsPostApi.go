@@ -29,10 +29,14 @@ func PostGridsRowsApi(c *gin.Context) {
 	logUri(c, dbName, user)
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	err = postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
+	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
 	if err != nil {
 		c.Abort()
-		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		if timeOut {
+			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
+		} else {
+			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+		}
 		return
 	}
 	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, "", user)
@@ -48,53 +52,70 @@ func PostGridsRowsApi(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
-func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) error {
-	ctx, cancel := utils.GetContextWithTimeOut()
-	defer cancel()
+type apiPostResponse struct {
+	err error
+}
 
-	utils.Log("TimeOutThreshold=%v", utils.Configuration.TimeOutThreshold)
-	utils.Log("TestSleepTime=%v", utils.DatabaseConfigurations[dbName].Database.TestSleepTime)
-
+func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) (bool, error) {
 	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
-		return err
+		return false, err
 	}
-	grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
-	if err != nil {
-		return err
-	}
-	if err := beginTransaction(ctx, dbName, db, userUuid, user); err != nil {
-		return err
-	}
-	for _, row := range rowsAdded {
-		err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+	ctxChan := make(chan apiPostResponse, 1)
+	ctx, cancel := utils.GetContextWithTimeOut()
+	defer cancel()
+	go func() {
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 		if err != nil {
-			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
-			return err
+			ctxChan <- apiPostResponse{err}
+			return
 		}
-	}
-	for _, row := range rowsEdited {
-		err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
-		if err != nil {
-			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
-			return err
+		if err := beginTransaction(ctx, dbName, db, userUuid, user); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
 		}
-	}
-	for _, row := range rowsDeleted {
-		err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
-		if err != nil {
-			_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
-			return err
+		for _, row := range rowsAdded {
+			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			if err != nil {
+				_ = rollbackTransaction(dbName, db, userUuid, user)
+				ctxChan <- apiPostResponse{err}
+				return
+			}
 		}
+		for _, row := range rowsEdited {
+			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			if err != nil {
+				_ = rollbackTransaction(dbName, db, userUuid, user)
+				ctxChan <- apiPostResponse{err}
+				return
+			}
+		}
+		for _, row := range rowsDeleted {
+			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			if err != nil {
+				_ = rollbackTransaction(dbName, db, userUuid, user)
+				ctxChan <- apiPostResponse{err}
+				return
+			}
+		}
+		if err := testSleep(ctx, dbName, db); err != nil {
+			_ = rollbackTransaction(dbName, db, userUuid, user)
+			ctxChan <- apiPostResponse{err}
+			return
+		}
+		if err := commitTransaction(ctx, dbName, db, userUuid, user); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
+		}
+		ctxChan <- apiPostResponse{nil}
+	}()
+	select {
+	case <-ctx.Done():
+		_ = rollbackTransaction(dbName, db, userUuid, user)
+		return true, utils.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
+	case response := <-ctxChan:
+		return false, response.err
 	}
-	if err := testSleep(ctx, dbName, db); err != nil {
-		_ = rollbackTransaction(ctx, dbName, db, userUuid, user)
-		return err
-	}
-	if err := commitTransaction(ctx, dbName, db, userUuid, user); err != nil {
-		return err
-	}
-	return nil
 }
 
 func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row) error {

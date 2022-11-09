@@ -4,9 +4,11 @@
 package main
 
 import (
+	"context"
 	"os"
 	"os/signal"
 	"syscall"
+	"time"
 
 	_ "github.com/lib/pq"
 
@@ -16,11 +18,11 @@ import (
 
 func main() {
 	utils.InitWithLog()
-	quit := make(chan os.Signal)
-	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
+	quitChan := make(chan os.Signal)
+	signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 	done := make(chan bool, 1)
 	go func() {
-		<-quit
+		<-quitChan
 		utils.Log("Stopping.")
 		done <- true
 	}()
@@ -28,10 +30,14 @@ func main() {
 		go backend.ConnectDbServers(utils.DatabaseConfigurations)
 		go backend.SetAndStartHttpServer()
 		<-done
-		ctx, cancel := utils.GetContextWithTimeOut()
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 		backend.ShutDownHttpServer(ctx)
 		backend.DisconnectDbServers(utils.DatabaseConfigurations)
+		select {
+		case <-ctx.Done():
+			utils.Log("Timeout of 5 seconds.")
+		}
 	}
 	utils.Log("Stopped.")
 }
