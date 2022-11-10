@@ -8,10 +8,6 @@ import (
 	"testing"
 )
 
-func TestInitWithLog(t *testing.T) {
-	InitWithLog()
-}
-
 func TestCleanupStrings(t *testing.T) {
 	var tests = []struct {
 		id     int

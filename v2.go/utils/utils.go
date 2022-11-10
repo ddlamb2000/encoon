@@ -7,8 +7,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
-	"os"
 	"strings"
 	"time"
 
@@ -27,12 +25,6 @@ func LogAndReturnError(format string, a ...any) error {
 	m := fmt.Sprintf(format, a...)
 	LogError(m)
 	return errors.New(m)
-}
-
-func InitWithLog() {
-	f, _ := os.Create("logs/encoon.log")
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	Log("Starting.")
 }
 
 func CleanupStrings(s string) string {

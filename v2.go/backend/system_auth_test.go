@@ -33,7 +33,7 @@ func RunSystemTestAuth(t *testing.T) {
 func RunTestAuthInvalid1(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", nil)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -51,7 +51,7 @@ func RunTestAuthInvalid1(t *testing.T) {
 func RunTestAuthInvalid2(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "======"}`))
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -69,7 +69,7 @@ func RunTestAuthInvalid2(t *testing.T) {
 func RunTestAuthValid(t *testing.T) {
 	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusOK)
 
@@ -87,7 +87,7 @@ func RunTestAuthValid(t *testing.T) {
 func RunTest404Html(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/xxx/yyy", nil)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusNotFound)
 
@@ -105,7 +105,7 @@ func RunTest404Html(t *testing.T) {
 func RunTestApiUsersNoHeader(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -124,7 +124,7 @@ func RunTestApiUsersIncorrectToken(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "xxxxxxxxxxx")
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -143,7 +143,7 @@ func RunTestApiUsersIncorrectToken2(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "xxxxxxx")
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -164,7 +164,7 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", token)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -186,7 +186,7 @@ func RunTestApiUsersExpired(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
@@ -208,7 +208,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusOK)
 
@@ -230,7 +230,7 @@ func RunTestApiUsersNotFound(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusNotFound)
 
@@ -252,7 +252,7 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 	req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	httpCodeEqual(t, w.Code, http.StatusNotFound)
 
@@ -272,7 +272,7 @@ func RunTestAuthWithTimeOut(t *testing.T) {
 	forceTimeOutThreshold(200)
 	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	forceTestSleepTime("test", 0)
 	forceTimeOutThreshold(200)

@@ -13,7 +13,6 @@ import (
 )
 
 func GetGridsRowsApi(c *gin.Context) {
-	utils.Log("GetGridsRowsApi()")
 	_, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()

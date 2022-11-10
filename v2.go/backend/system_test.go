@@ -17,9 +17,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+var (
+	testRouter = gin.Default()
+)
+
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
-	setApiRoutes()
+	SetApiRoutes(testRouter)
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -38,7 +42,7 @@ func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte
 	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer([]byte(body)))
 	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	return responseData, err, w.Code
 }
@@ -50,7 +54,7 @@ func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, error
 	}
 	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
 	w := httptest.NewRecorder()
-	router.ServeHTTP(w, req)
+	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
 	return responseData, err, w.Code
 }
