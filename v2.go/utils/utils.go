@@ -17,6 +17,12 @@ func Log(format string, a ...any) {
 	fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] "+format+"\n", a...)
 }
 
+func Trace(trace, format string, a ...any) {
+	if trace != "" {
+		fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] [TRACE] "+format+"\n", a...)
+	}
+}
+
 func LogError(format string, a ...any) {
 	fmt.Fprintf(gin.DefaultWriter, "["+Configuration.AppName+"] [ERROR] "+format+"\n", a...)
 }

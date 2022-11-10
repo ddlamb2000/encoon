@@ -24,6 +24,8 @@ var (
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
+	forceTestSleepTime("test", 0)
+	forceTimeOutThreshold(200)
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -65,10 +67,28 @@ func httpCodeEqual(t *testing.T, code int, expectCode int) {
 	}
 }
 
+func stringEqual(t *testing.T, got, expect string) {
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func stringNotEqual(t *testing.T, got, expect string) {
+	if got == expect {
+		t.Errorf(`Got %v.`, got)
+	}
+}
+
 func byteEqualString(t *testing.T, got []byte, expect string) {
 	gotString := string(got)
 	if gotString != expect {
 		t.Errorf(`Got %v instead of %v.`, gotString, expect)
+	}
+}
+
+func intEqual(t *testing.T, got, expect int) {
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }
 

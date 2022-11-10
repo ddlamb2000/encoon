@@ -56,7 +56,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	db := getDbByName(dbName)
 	gridUri := "_users"
 	user := "root"
-	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri)
+	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri, "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -71,7 +71,7 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "")
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -83,7 +83,7 @@ func TestGetRowsForGridsApi2(t *testing.T) {
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "")
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "", "")
 	if err == nil {
 		t.Errorf(`expect error.`)
 	}

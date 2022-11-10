@@ -19,6 +19,7 @@ type gridPost struct {
 }
 
 func PostGridsRowsApi(c *gin.Context) {
+	utils.Trace(c.Query("trace"), "PostGridsRowsApi()")
 	userUuid, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
@@ -29,26 +30,32 @@ func PostGridsRowsApi(c *gin.Context) {
 	logUri(c, dbName, user)
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted)
+	utils.Trace(c.Query("trace"), "PostGridsRowsApi() - payload=%v", payload)
+	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
+			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
+			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Error")
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, "", user)
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, "", user, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
+			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
+			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Error")
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}
 		return
 	}
+	utils.Trace(c.Query("trace"), "PostGridsRowsApi() - OK")
 	c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
@@ -56,7 +63,8 @@ type apiPostResponse struct {
 	err error
 }
 
-func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row) (bool, error) {
+func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row, trace string) (bool, error) {
+	utils.Trace(trace, "postGridsRows()")
 	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
 		return false, err
@@ -65,45 +73,48 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	go func() {
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
 		if err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := beginTransaction(ctx, dbName, db, userUuid, user); err != nil {
+		if err := beginTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
+		utils.Trace(trace, "postGridsRows() - rowsAdded=%v", rowsAdded)
 		for _, row := range rowsAdded {
-			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user)
+				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
+		utils.Trace(trace, "postGridsRows() - rowsEdited=%v", rowsEdited)
 		for _, row := range rowsEdited {
-			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user)
+				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
+		utils.Trace(trace, "postGridsRows() - rowsDeleted=%v", rowsDeleted)
 		for _, row := range rowsDeleted {
-			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row)
+			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user)
+				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
 		if err := testSleep(ctx, dbName, db); err != nil {
-			_ = rollbackTransaction(dbName, db, userUuid, user)
+			_ = rollbackTransaction(dbName, db, userUuid, user, trace)
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := commitTransaction(ctx, dbName, db, userUuid, user); err != nil {
+		if err := commitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
@@ -111,14 +122,17 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 	}()
 	select {
 	case <-ctx.Done():
-		_ = rollbackTransaction(dbName, db, userUuid, user)
+		utils.Trace(trace, "postGridsRows() - Cancelled")
+		_ = rollbackTransaction(dbName, db, userUuid, user, trace)
 		return true, utils.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
+		utils.Trace(trace, "postGridsRows() - OK")
 		return false, response.err
 	}
 }
 
-func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row) error {
+func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+	utils.Trace(trace, "postInsertGridRow()")
 	row.Uuid = utils.GetNewUUID()
 	insertStatement := getInsertStatementForGridsApi()
 	insertValues := getInsertValuesForGridsApi(userUuid, gridUuid, row)
@@ -182,7 +196,8 @@ func getInsertValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
 	return values
 }
 
-func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row) error {
+func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+	utils.Trace(trace, "postUpdateGridRow()")
 	updateStatement := getUpdateStatementForGridsApi()
 	updateValues := getUpdateValuesForGridsApi(userUuid, gridUuid, row)
 	_, err := db.ExecContext(ctx, updateStatement, updateValues...)
@@ -226,7 +241,8 @@ func getUpdateValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
 	return values
 }
 
-func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row) error {
+func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+	utils.Trace(trace, "postDeleteGridRow()")
 	_, err := db.ExecContext(ctx, "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2", row.Uuid, gridUuid)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Delete row error: %v.", dbName, user, err)

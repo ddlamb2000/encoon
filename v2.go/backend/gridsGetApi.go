@@ -13,6 +13,7 @@ import (
 )
 
 func GetGridsRowsApi(c *gin.Context) {
+	utils.Trace(c.Query("trace"), "GetGridsRowsApi()")
 	_, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
@@ -23,7 +24,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
 	logUri(c, dbName, user)
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, uuid, user)
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, uuid, user, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -33,6 +34,7 @@ func GetGridsRowsApi(c *gin.Context) {
 		}
 		return
 	}
+	utils.Trace(c.Query("trace"), "GetGridsRowsApi() - OK")
 	c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
@@ -55,7 +57,8 @@ type apiGetResponse struct {
 	err      error
 }
 
-func getGridsRows(dbName, gridUri, uuid, user string) (*Grid, []Row, int, bool, error) {
+func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int, bool, error) {
+	utils.Trace(trace, "getGridsRows()")
 	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
 		return nil, nil, 0, false, err
@@ -64,18 +67,18 @@ func getGridsRows(dbName, gridUri, uuid, user string) (*Grid, []Row, int, bool, 
 	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	go func() {
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
 		if err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
-		rows, err := getRowsForGridsApi(ctx, db, dbName, user, grid.Uuid, uuid)
+		rows, err := getRowsForGridsApi(ctx, db, dbName, user, grid.Uuid, uuid, trace)
 		if err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
 		defer rows.Close()
-		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, rows)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, rows, trace)
 		if uuid != "" && rowSetCount == 0 {
 			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
@@ -88,8 +91,10 @@ func getGridsRows(dbName, gridUri, uuid, user string) (*Grid, []Row, int, bool, 
 	}()
 	select {
 	case <-ctx.Done():
+		utils.Trace(trace, "getGridsRows() - Cancelled")
 		return nil, nil, 0, true, utils.LogAndReturnError("[%s] [%s] Get request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
+		utils.Trace(trace, "getGridsRows() - OK")
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}
 }
@@ -105,7 +110,7 @@ func getDbForGridsApi(dbName, user string) (*sql.DB, error) {
 	return db, nil
 }
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri string) (*Grid, error) {
+func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*Grid, error) {
 	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text01 = $2"
 	grid := new(Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
@@ -147,7 +152,7 @@ func getGridQueryOutputForGridsApi(grid *Grid) []any {
 	return output
 }
 
-func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid, uuid string) (*sql.Rows, error) {
+func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid, uuid, trace string) (*sql.Rows, error) {
 	rows, err := db.QueryContext(ctx,
 		getRowsQueryForGridsApi(uuid),
 		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
@@ -166,7 +171,7 @@ func getRowsQueryForGridsApi(uuid string) string {
 }
 
 func getRowsQueryColumnsForGridsApi() string {
-	return " SELECT uuid, " +
+	return "SELECT uuid, " +
 		"text01, " +
 		"text02, " +
 		"text03, " +
@@ -197,7 +202,7 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows) ([]Row, int, error) {
+func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace string) ([]Row, int, error) {
 	var rowSet = make([]Row, 0)
 	var rowSetCount = 0
 	for rows.Next() {
