@@ -119,6 +119,15 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"text01":"test01","text02":"test02","text03":"test03","text04":"test04"`)
 	})
 
+	t.Run("CreateRowIncorrectPayload", func(t *testing.T) {
+		postStr := `{"xxxxx"}`
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":1`)
+		jsonStringContains(t, responseData, `"text01":"test01","text02":"test02","text03":"test03","text04":"test04"`)
+	})
+
 	t.Run("VerifyNewRowInSingleGrid", func(t *testing.T) {
 		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01")
 		errorIsNil(t, err)
@@ -197,6 +206,75 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringContains(t, responseData, `"text01":"test-01","text02":"test-02","text03":"test-03","text04":"test-04"`)
 		jsonStringContains(t, responseData, `"text01":"test-09","text02":"test-10","text03":"test-11","text04":"test-12"`)
+	})
+
+	t.Run("CreateDeleteRowsInSingleGrid", func(t *testing.T) {
+		db := getDbByName("test")
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", uuidGrid, "test-13").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text01":"test-21","text02":"test-22","text03":"test-23","text04":"test-24"},` +
+			`{"text01":"test-25","text02":"test-26","text03":"test-27","text04":"test-28"}` +
+			`],` +
+			`"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + uuidRow + `"}` +
+			`]` +
+			`}`
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":6`)
+		jsonStringContains(t, responseData, `"text01":"test-21","text02":"test-22","text03":"test-23","text04":"test-24"`)
+		jsonStringContains(t, responseData, `"text01":"test-25","text02":"test-26","text03":"test-27","text04":"test-28"`)
+		jsonStringDoesntContain(t, responseData, `"text01":"test-13"`)
+	})
+
+	t.Run("UpdateIncorrectRowInSingleGrid", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"xxxx","text01":"test-01","text02":"test-02","text03":"test-03","text04":"test-04"}` +
+			`]` +
+			`}`
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `"error":"[test] [root] Update row error`)
+	})
+
+	t.Run("DeleteIncorrectRowInSingleGrid", func(t *testing.T) {
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"xxxx"}` +
+			`]` +
+			`}`
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `"error":"[test] [root] Delete row error`)
+	})
+
+	t.Run("DeleteRowInSingleGrid", func(t *testing.T) {
+		db := getDbByName("test")
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", uuidGrid, "test-09").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + uuidRow + `"}` +
+			`]` +
+			`}`
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":5`)
+		jsonStringDoesntContain(t, responseData, `"text01":"test-09"`)
 	})
 
 }
