@@ -195,7 +195,7 @@ class Grid extends React.Component {
 
 	saveData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}?trace=true`
 		fetch(uri, {
 			method: 'POST',
 			headers: {
