@@ -142,11 +142,9 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text01":"test05","text02":"test06","text03":"test07","text04":"test08"}` +
 			`]` +
 			`}`
-		forceTestSleepTime("test", 500)
-		forceTimeOutThreshold(200)
+		forceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
-		forceTestSleepTime("test", 0)
-		forceTimeOutThreshold(200)
+		forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
 		jsonStringContains(t, responseData, `{"error":"[test] [root] Post request has been cancelled: context deadline exceeded."}`)
@@ -283,11 +281,9 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text01":"test-29","text02":"test-30","text03":"test-31","text04":"test-32"}` +
 			`]` +
 			`}`
-		forceTestSleepTime("test", 10)
-		forceTimeOutThreshold(500)
+		forceTestSleepTimeAndTimeOutThreshold("test", 10, 500)
 		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
-		forceTestSleepTime("test", 0)
-		forceTimeOutThreshold(200)
+		forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":6`)

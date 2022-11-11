@@ -32,42 +32,6 @@ func TestLoadMainConfiguration3(t *testing.T) {
 	}
 }
 
-func TestLoadMainConfiguration4(t *testing.T) {
-	path := "../configurations/"
-	fileName := "configuration.yml"
-	subPath := "db/"
-	if err := loadConfiguration(path, fileName, subPath); err == nil {
-		t.Errorf("Can load configuration %q from path %q: %v.", fileName, path, err)
-	}
-}
-
-func TestLoadDatabaseConfiguration(t *testing.T) {
-	fileName := "../configurations/databases/test.yml"
-	if err := loadDatabaseConfiguration(fileName); err != nil {
-		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
-	}
-	fileName = "../utils/configuration.go"
-	if err := loadDatabaseConfiguration(fileName); err == nil {
-		t.Errorf("Can't load database configuration from file %q: %v.", fileName, err)
-	}
-}
-
-func TestLoadDatabaseConfigurations(t *testing.T) {
-	dir := "../configurations/"
-	subDir := "databases/"
-	if err := loadDatabaseConfigurations(dir, subDir); err != nil {
-		t.Errorf("Can't load database configurations from directory %q and sub-directory %q: %v.", dir, subDir, err)
-	}
-}
-
-func TestLoadDatabaseConfigurations2(t *testing.T) {
-	dir := "../configurations/"
-	subDir := "xxxxxx/"
-	if err := loadDatabaseConfigurations(dir, subDir); err == nil {
-		t.Errorf("Expecting issue for loading database configurations from directory %q and sub-directory %q.", dir, subDir)
-	}
-}
-
 func TestGetRootAndPassword(t *testing.T) {
 	root, password := GetRootAndPassword("xxx")
 	if root != "" || password != "" {
@@ -78,7 +42,8 @@ func TestGetRootAndPassword(t *testing.T) {
 
 func TestLoadConfiguration(t *testing.T) {
 	dir := "../configurations/"
-	if err := LoadConfiguration(dir); err != nil {
+	fileName := "configuration.yml"
+	if err := LoadConfiguration(dir, fileName); err != nil {
 		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
 	}
 
@@ -109,7 +74,8 @@ func TestLoadConfiguration(t *testing.T) {
 
 func TestLoadConfiguration2(t *testing.T) {
 	dir := "../utils/"
-	if err := LoadConfiguration(dir); err == nil {
+	fileName := "configuration.yml"
+	if err := LoadConfiguration(dir, fileName); err == nil {
 		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
 	}
 }

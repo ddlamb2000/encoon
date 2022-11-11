@@ -4,56 +4,56 @@
 package utils
 
 import (
-	"io/ioutil"
 	"os"
-	"strings"
 
 	"gopkg.in/yaml.v2"
 )
 
-type Config struct {
+type Configuration struct {
+	AppName string `yaml:"appName"`
+	AppTag  string `yaml:"appTag"`
+
 	HttpServer struct {
 		Host          string `yaml:"host"`
 		Port          int    `yaml:"port"`
 		JwtExpiration int    `yaml:"jwtExpiration"`
 	} `yaml:"httpServer"`
 
-	AppName          string `yaml:"appName"`
-	AppTag           string `yaml:"appTag"`
+	Databases []*Database `yaml:"database"`
+}
+
+type Database struct {
+	Host             string `yaml:"host"`
+	Port             int    `yaml:"port"`
+	Name             string `yaml:"name"`
+	User             string `yaml:"user"`
+	JwtSecret        string `yaml:"jwtsecret"`
+	Root             string `yaml:"root"`
+	Password         string `yaml:"password"`
+	TestSleepTime    int    `yaml:"testSleepTime"`
 	TimeOutThreshold int    `yaml:"timeOutThreshold"`
 }
 
-type DatabaseConfig struct {
-	Database struct {
-		Host          string `yaml:"host"`
-		Port          int    `yaml:"port"`
-		Name          string `yaml:"name"`
-		User          string `yaml:"user"`
-		JwtSecret     string `yaml:"jwtsecret"`
-		Root          string `yaml:"root"`
-		Password      string `yaml:"password"`
-		TestSleepTime int    `yaml:"testSleepTime"`
-	} `yaml:"database"`
-}
+var appConfiguration Configuration
 
-var (
-	Configuration          Config
-	DatabaseConfigurations = make(map[string]*DatabaseConfig)
-)
-
-func LoadConfiguration(directory string) error {
-	return loadConfiguration(directory, "configuration.yml", "databases/")
-}
-
-func loadConfiguration(directory, fileName, dbSubDirectory string) error {
-	if err := loadMainConfiguration(directory, fileName); err != nil {
+func LoadConfiguration(directory, fileName string) error {
+	f, err := os.Open(directory + fileName)
+	if err != nil {
+		LogError("Error loading configuration from file %q: %v.", fileName, err)
 		return err
 	}
-	if err := loadDatabaseConfigurations(directory, dbSubDirectory); err != nil {
+	defer f.Close()
+	decoder := yaml.NewDecoder(f)
+	err = decoder.Decode(&appConfiguration)
+	if err != nil {
+		LogError("Error parsing configuration from file %q: %v.", fileName, err)
 		return err
 	}
+	Log("Configuration loaded from file %q.", fileName)
 	return nil
 }
+
+func GetConfiguration() Configuration { return appConfiguration }
 
 func loadMainConfiguration(directory string, fileName string) error {
 	f, err := os.Open(directory + fileName)
@@ -63,7 +63,7 @@ func loadMainConfiguration(directory string, fileName string) error {
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&Configuration)
+	err = decoder.Decode(&appConfiguration)
 	if err != nil {
 		LogError("Error parsing configuration from file %q: %v.", fileName, err)
 		return err
@@ -72,56 +72,30 @@ func loadMainConfiguration(directory string, fileName string) error {
 	return nil
 }
 
-func loadDatabaseConfigurations(directory string, subDirectory string) error {
-	files, err := ioutil.ReadDir(directory + subDirectory)
-	if err != nil {
-		LogError("Load configuration: %v.", err)
-		return err
-	}
-	for _, file := range files {
-		if !file.IsDir() && strings.HasSuffix(file.Name(), "yml") {
-			if err := loadDatabaseConfiguration(directory + subDirectory + file.Name()); err != nil {
-				return err
-			}
+func IsDatabaseEnabled(dbName string) bool {
+	return dbName != "" && GetDatabaseConfiguration(dbName) != nil
+}
+
+func GetDatabaseConfiguration(dbName string) *Database {
+	for _, dbConfig := range appConfiguration.Databases {
+		if dbConfig.Name == dbName {
+			return dbConfig
 		}
 	}
 	return nil
-}
-
-func loadDatabaseConfiguration(fileName string) error {
-	f, err := os.Open(fileName)
-	if err != nil {
-		LogError("Error loading configuration from file %q: %v", fileName, err)
-		return err
-	}
-	defer f.Close()
-	var databaseConfiguration DatabaseConfig
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&databaseConfiguration)
-	if err != nil {
-		LogError("Error parsing configuration from file %q:", fileName, err)
-		return err
-	}
-	dbName := databaseConfiguration.Database.Name
-	Log("Load database %q configuration from file %q:", dbName, fileName)
-	DatabaseConfigurations[dbName] = &databaseConfiguration
-	return nil
-}
-
-func IsDatabaseEnabled(dbName string) bool {
-	return dbName != "" && DatabaseConfigurations[dbName] != nil
 }
 
 func GetJWTSecret(dbName string) []byte {
 	if !IsDatabaseEnabled(dbName) {
 		return nil
 	}
-	return []byte(dbName + DatabaseConfigurations[dbName].Database.JwtSecret)
+	return []byte(dbName + GetDatabaseConfiguration(dbName).JwtSecret)
 }
 
 func GetRootAndPassword(dbName string) (string, string) {
 	if !IsDatabaseEnabled(dbName) {
 		return "", ""
 	}
-	return DatabaseConfigurations[dbName].Database.Root, DatabaseConfigurations[dbName].Database.Password
+	dbConfiguration := GetDatabaseConfiguration(dbName)
+	return dbConfiguration.Root, dbConfiguration.Password
 }

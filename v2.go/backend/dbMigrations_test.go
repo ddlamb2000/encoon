@@ -12,8 +12,8 @@ import (
 )
 
 func TestRecreateDb(t *testing.T) {
-	utils.LoadConfiguration("../configurations/")
-	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"

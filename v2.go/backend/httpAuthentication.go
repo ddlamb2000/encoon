@@ -40,7 +40,7 @@ func authentication(c *gin.Context) {
 		}
 		return
 	}
-	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.Abort()

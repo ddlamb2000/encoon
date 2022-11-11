@@ -11,8 +11,8 @@ import (
 )
 
 func TestGetNewToken(t *testing.T) {
-	utils.LoadConfiguration("../configurations/")
-	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, err := getNewToken("test", "root", "0", "root", "root", expiration)
 	if err != nil {
 		t.Errorf("Token can't be created: %v.", err)

@@ -12,7 +12,6 @@ import (
 
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
-	"golang.org/x/exp/maps"
 )
 
 var (
@@ -27,8 +26,8 @@ func setDb(dbName string, db *sql.DB) {
 	dbs[dbName] = db
 }
 
-func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) error {
-	for _, conf := range maps.Values(dbConfigurations) {
+func ConnectDbServers(dbConfigurations []*utils.Database) error {
+	for _, conf := range dbConfigurations {
 		if err := connectDbServer(conf); err != nil {
 			return err
 		}
@@ -36,14 +35,13 @@ func ConnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) error {
 	return nil
 }
 
-func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
-	dbName := dbConfiguration.Database.Name
+func connectDbServer(dbConfiguration *utils.Database) error {
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=disable",
-		dbConfiguration.Database.Host,
-		dbConfiguration.Database.Port,
-		dbConfiguration.Database.User,
-		dbConfiguration.Database.Name,
+		dbConfiguration.Host,
+		dbConfiguration.Port,
+		dbConfiguration.User,
+		dbConfiguration.Name,
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
@@ -55,9 +53,9 @@ func connectDbServer(dbConfiguration *utils.DatabaseConfig) error {
 	if err := pingDb(ctx, db); err != nil {
 		return err
 	}
-	setDb(dbName, db)
-	utils.Log("[%s] Database connected.", dbName)
-	migrateDb(ctx, db, dbName)
+	setDb(dbConfiguration.Name, db)
+	utils.Log("[%s] Database connected.", dbConfiguration.Name)
+	migrateDb(ctx, db, dbConfiguration.Name)
 	return nil
 }
 
@@ -69,8 +67,8 @@ func pingDb(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) error {
-	for _, conf := range maps.Values(dbConfigurations) {
+func DisconnectDbServers(dbConfigurations []*utils.Database) error {
+	for _, conf := range dbConfigurations {
 		if err := disconnectDbServer(conf); err != nil {
 			return err
 		}
@@ -78,8 +76,8 @@ func DisconnectDbServers(dbConfigurations map[string]*utils.DatabaseConfig) erro
 	return nil
 }
 
-func disconnectDbServer(dbConfiguration *utils.DatabaseConfig) error {
-	dbName := dbConfiguration.Database.Name
+func disconnectDbServer(dbConfiguration *utils.Database) error {
+	dbName := dbConfiguration.Name
 	db := getDbByName(dbName)
 	if db != nil {
 		err := db.Close()
@@ -123,7 +121,8 @@ func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUui
 }
 
 func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
-	sleepTime := utils.DatabaseConfigurations[dbName].Database.TestSleepTime
+	dbConfiguration := utils.GetDatabaseConfiguration(dbName)
+	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
 		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
@@ -137,12 +136,10 @@ func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
 	return nil
 }
 
-func forceTestSleepTime(dbName string, time int) {
-	if utils.DatabaseConfigurations[dbName] != nil {
-		utils.DatabaseConfigurations[dbName].Database.TestSleepTime = time
+func forceTestSleepTimeAndTimeOutThreshold(dbName string, sleepTime, threshold int) {
+	dbConfiguration := utils.GetDatabaseConfiguration(dbName)
+	if dbConfiguration != nil {
+		dbConfiguration.TestSleepTime = sleepTime
+		dbConfiguration.TimeOutThreshold = threshold
 	}
-}
-
-func forceTimeOutThreshold(time int) {
-	utils.Configuration.TimeOutThreshold = time
 }

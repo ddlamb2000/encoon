@@ -12,8 +12,8 @@ import (
 )
 
 func TestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../configurations/")
-	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
@@ -26,14 +26,14 @@ func TestConnectDbServers(t *testing.T) {
 	if err := pingDb(ctx, db); err != nil {
 		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
-	if err := DisconnectDbServers(utils.DatabaseConfigurations); err != nil {
+	if err := DisconnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
 
 func TestConnectDbServer(t *testing.T) {
-	var conf utils.DatabaseConfig
-	conf.Database.Host = "xxx"
+	var conf utils.Database
+	conf.Host = "xxx"
 	if err := connectDbServer(&conf); err == nil {
 		t.Errorf(`Can connect to database?: %v.`, err)
 	}

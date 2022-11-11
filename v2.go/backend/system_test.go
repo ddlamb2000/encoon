@@ -24,8 +24,7 @@ var (
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
-	forceTestSleepTime("test", 0)
-	forceTimeOutThreshold(200)
+	forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -35,7 +34,7 @@ func TestSystem(t *testing.T) {
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
-	expiration := time.Now().Add(time.Duration(utils.Configuration.HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
 	return token
 }
@@ -115,12 +114,11 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 }
 
 func RunTestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../configurations/")
-	if err := ConnectDbServers(utils.DatabaseConfigurations); err != nil {
+	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
-	forceTestSleepTime(dbName, 0)
 	db := getDbByName(dbName)
 	if db == nil {
 		t.Errorf(`Database %q not found.`, dbName)
@@ -144,7 +142,7 @@ func RunTestRecreateDb(t *testing.T) {
 }
 
 func RunTestDisconnectDbServers(t *testing.T) {
-	if err := DisconnectDbServers(utils.DatabaseConfigurations); err != nil {
+	if err := DisconnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }

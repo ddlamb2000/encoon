@@ -28,7 +28,7 @@ var (
 func main() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	if utils.LoadConfiguration("configurations/") == nil {
+	if utils.LoadConfiguration("configurations/", "configuration.yml") == nil {
 		utils.Log("Starting.")
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -37,12 +37,12 @@ func main() {
 			utils.Log("Stopping.")
 			doneChan <- true
 		}()
-		go backend.ConnectDbServers(utils.DatabaseConfigurations)
+		go backend.ConnectDbServers(utils.GetConfiguration().Databases)
 		go setAndStartHttpServer()
 		<-doneChan
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		go backend.DisconnectDbServers(utils.DatabaseConfigurations)
+		go backend.DisconnectDbServers(utils.GetConfiguration().Databases)
 		if err := srv.Shutdown(ctx); err != nil {
 			utils.LogError("Error during server shutdown: %v.", err)
 		}
@@ -67,7 +67,7 @@ func setAndStartHttpServer() error {
 	router.GET("/:dbName/:gridUri/:uuid", getIndexHtml)
 	backend.SetApiRoutes(router)
 	srv = &http.Server{
-		Addr:         fmt.Sprintf(":%d", utils.Configuration.HttpServer.Port),
+		Addr:         fmt.Sprintf(":%d", utils.GetConfiguration().HttpServer.Port),
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -82,8 +82,8 @@ func setAndStartHttpServer() error {
 
 func getIndexHtml(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"appName": utils.Configuration.AppName,
-		"appTag":  utils.Configuration.AppTag,
+		"appName": utils.GetConfiguration().AppName,
+		"appTag":  utils.GetConfiguration().AppTag,
 		"dbName":  c.Param("dbName"),
 		"gridUri": c.Param("gridUri"),
 		"uuid":    c.Param("uuid"),

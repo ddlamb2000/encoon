@@ -20,7 +20,7 @@ func isDbAuthorized(dbName string, user string, password string) (string, string
 		selectSql := " SELECT uuid, text01, text02 FROM rows "
 		whereSql := " WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04) "
 		ctxChan := make(chan apiAuthResponse, 1)
-		ctx, cancel := utils.GetContextWithTimeOut()
+		ctx, cancel := utils.GetContextWithTimeOut(dbName)
 		defer cancel()
 		go func() {
 			if err := db.

@@ -69,7 +69,7 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 		return false, err
 	}
 	ctxChan := make(chan apiPostResponse, 1)
-	ctx, cancel := utils.GetContextWithTimeOut()
+	ctx, cancel := utils.GetContextWithTimeOut(dbName)
 	defer cancel()
 	go func() {
 		if err := testSleep(ctx, dbName, db); err != nil {
