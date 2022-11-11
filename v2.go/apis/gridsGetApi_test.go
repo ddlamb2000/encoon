@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"context"
@@ -12,6 +12,7 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
+	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
 )
@@ -95,7 +96,7 @@ func TestGetRowsForGridsApi2(t *testing.T) {
 }
 
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
-	var row Row
+	var row model.Row
 	got := getRowsQueryOutputForGridsApi(&row)
 	expect := []any{
 		&row.Uuid,
@@ -145,7 +146,7 @@ func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
 }
 
 func TestGetGridQueryOutputForGridsApi(t *testing.T) {
-	var grid Grid
+	var grid model.Grid
 	got := getGridQueryOutputForGridsApi(&grid)
 	expect := []any{
 		&grid.Uuid,

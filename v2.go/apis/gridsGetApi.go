@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"context"
@@ -10,6 +10,7 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
+	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -52,13 +53,13 @@ func getUserUui(c *gin.Context) (string, string, error) {
 }
 
 type apiGetResponse struct {
-	grid     *Grid
-	rows     []Row
+	grid     *model.Grid
+	rows     []model.Row
 	rowCount int
 	err      error
 }
 
-func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int, bool, error) {
+func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []model.Row, int, bool, error) {
 	utils.Trace(trace, "getGridsRows()")
 	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
@@ -111,9 +112,9 @@ func getDbForGridsApi(dbName, user string) (*sql.DB, error) {
 	return db, nil
 }
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*Grid, error) {
+func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {
 	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text01 = $2"
-	grid := new(Grid)
+	grid := new(model.Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
 		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
@@ -139,7 +140,7 @@ func getGridQueryColumnsForGridsApi() string {
 		"version"
 }
 
-func getGridQueryOutputForGridsApi(grid *Grid) []any {
+func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output := make([]any, 0)
 	output = append(output, &grid.Uuid)
 	output = append(output, &grid.Text01)
@@ -203,11 +204,11 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace string) ([]Row, int, error) {
-	var rowSet = make([]Row, 0)
+func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace string) ([]model.Row, int, error) {
+	var rowSet = make([]model.Row, 0)
 	var rowSetCount = 0
 	for rows.Next() {
-		var row = new(Row)
+		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(row)...); err != nil {
 			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, gridUri, err)
 		}
@@ -222,7 +223,7 @@ func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace st
 	return rowSet, rowSetCount, nil
 }
 
-func getRowsQueryOutputForGridsApi(row *Row) []any {
+func getRowsQueryOutputForGridsApi(row *model.Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
 	output = append(output, &row.Text01)

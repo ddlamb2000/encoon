@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"context"
@@ -10,14 +10,15 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
+	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
 type gridPost struct {
-	RowsAdded   []Row `json:"rowsAdded"`
-	RowsEdited  []Row `json:"rowsEdited"`
-	RowsDeleted []Row `json:"rowsDeleted"`
+	RowsAdded   []model.Row `json:"rowsAdded"`
+	RowsEdited  []model.Row `json:"rowsEdited"`
+	RowsDeleted []model.Row `json:"rowsDeleted"`
 }
 
 func PostGridsRowsApi(c *gin.Context) {
@@ -63,7 +64,7 @@ type apiPostResponse struct {
 	err error
 }
 
-func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rowsEdited []Row, rowsDeleted []Row, trace string) (bool, error) {
+func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited, rowsDeleted []model.Row, trace string) (bool, error) {
 	utils.Trace(trace, "postGridsRows()")
 	db, err := getDbForGridsApi(dbName, user)
 	if err != nil {
@@ -128,7 +129,7 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 	}
 }
 
-func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
 	utils.Trace(trace, "postInsertGridRow()")
 	row.Uuid = utils.GetNewUUID()
 	insertStatement := getInsertStatementForGridsApi()
@@ -177,7 +178,7 @@ func getInsertStatementForGridsApi() string {
 	return insertStr + valueStr
 }
 
-func getInsertValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
+func getInsertValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
@@ -193,7 +194,7 @@ func getInsertValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
 	return values
 }
 
-func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
 	utils.Trace(trace, "postUpdateGridRow()")
 	updateStatement := getUpdateStatementForGridsApi()
 	updateValues := getUpdateValuesForGridsApi(userUuid, gridUuid, row)
@@ -222,7 +223,7 @@ func getUpdateStatementForGridsApi() string {
 	return updateStr + whereStr
 }
 
-func getUpdateValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
+func getUpdateValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, gridUuid)
@@ -238,7 +239,7 @@ func getUpdateValuesForGridsApi(userUuid, gridUuid string, row Row) []any {
 	return values
 }
 
-func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row Row, trace string) error {
+func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
 	utils.Trace(trace, "postDeleteGridRow()")
 	_, err := db.ExecContext(ctx, "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2", row.Uuid, gridUuid)
 	if err != nil {

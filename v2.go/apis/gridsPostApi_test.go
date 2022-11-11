@@ -1,12 +1,13 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"reflect"
 	"testing"
 
+	"d.lambert.fr/encoon/model"
 	_ "github.com/lib/pq"
 )
 
@@ -22,7 +23,7 @@ func TestGetInsertValuesForGridsApi(t *testing.T) {
 	uuid := "aaa"
 	text01 := "zzz"
 	int01 := int64(10)
-	row := Row{
+	row := model.Row{
 		Uuid:   uuid,
 		Text01: &text01,
 		Text02: &text01,
@@ -64,7 +65,7 @@ func TestGetUpdateValuesForGridsApi(t *testing.T) {
 	uuid := "aaa"
 	text01 := "zzz"
 	int01 := int64(10)
-	row := Row{
+	row := model.Row{
 		Uuid:   uuid,
 		Text01: &text01,
 		Text02: &text01,
