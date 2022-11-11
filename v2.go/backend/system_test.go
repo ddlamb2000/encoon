@@ -41,36 +41,30 @@ func getTokenForUser(dbName, userName, userUuid string) string {
 	return token
 }
 
-func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte, error, int) {
+func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte, int, error) {
 	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer([]byte(body)))
 	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
 	w := httptest.NewRecorder()
 	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
-	return responseData, err, w.Code
+	return responseData, w.Code, err
 }
 
-func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, error, int) {
+func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, int, error) {
 	req, err := http.NewRequest("GET", uri, nil)
 	if err != nil {
-		return nil, err, 0
+		return nil, 0, err
 	}
 	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
 	w := httptest.NewRecorder()
 	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
-	return responseData, err, w.Code
+	return responseData, w.Code, err
 }
 
 func httpCodeEqual(t *testing.T, code int, expectCode int) {
 	if code != expectCode {
 		t.Errorf(`Response code %v instead of %v.`, code, expectCode)
-	}
-}
-
-func stringEqual(t *testing.T, got, expect string) {
-	if got != expect {
-		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }
 

@@ -13,7 +13,7 @@ import (
 
 func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyIncorrectUserUuid", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", "xxyyzz", "/test/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", "xxyyzz", "/test/api/v1/xxx")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
@@ -22,7 +22,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyDbNotFound", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/tst/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/tst/api/v1/xxx")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
@@ -31,7 +31,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/xxx")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
@@ -40,7 +40,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids")
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":6`)
@@ -50,7 +50,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidRootUser)
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidRootUser)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows"`)
@@ -58,7 +58,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
@@ -68,7 +68,7 @@ func RunSystemTestGet(t *testing.T) {
 
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
@@ -76,7 +76,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingleBis", func(t *testing.T) {
-		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
