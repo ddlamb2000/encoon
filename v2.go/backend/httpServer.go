@@ -4,21 +4,17 @@
 package backend
 
 import (
-	"d.lambert.fr/encoon/utils"
+	"d.lambert.fr/encoon/authentication"
 	"github.com/gin-gonic/gin"
 )
 
 func SetApiRoutes(r *gin.Engine) {
 	v1 := r.Group("/:dbName/api/v1")
 	{
-		v1.POST("/authentication", authentication)
-		v1.GET("/", authMiddleware(), GetGridsRowsApi)
-		v1.GET("/:gridUri", authMiddleware(), GetGridsRowsApi)
-		v1.GET("/:gridUri/:uuid", authMiddleware(), GetGridsRowsApi)
-		v1.POST("/:gridUri", authMiddleware(), PostGridsRowsApi)
+		v1.POST("/authentication", authentication.Authentication)
+		v1.GET("/", authentication.AuthMiddleware(), GetGridsRowsApi)
+		v1.GET("/:gridUri", authentication.AuthMiddleware(), GetGridsRowsApi)
+		v1.GET("/:gridUri/:uuid", authentication.AuthMiddleware(), GetGridsRowsApi)
+		v1.POST("/:gridUri", authentication.AuthMiddleware(), PostGridsRowsApi)
 	}
-}
-
-func logUri(c *gin.Context, dbName, user string) {
-	utils.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
 }

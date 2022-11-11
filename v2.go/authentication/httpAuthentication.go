@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package authentication
 
 import (
 	"fmt"
@@ -24,7 +24,7 @@ type JWTtoken struct {
 	Token string `json:"token" binding:"required"`
 }
 
-func authentication(c *gin.Context) {
+func Authentication(c *gin.Context) {
 	dbName := c.Param("dbName")
 	if dbName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
@@ -43,7 +43,7 @@ func authentication(c *gin.Context) {
 		return
 	}
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
+	tokenString, err := GetNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.Abort()
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
@@ -53,7 +53,7 @@ func authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
+func GetNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user":          id,
 		"userUuid":      userUuid,
@@ -66,7 +66,7 @@ func getNewToken(dbName string, id string, userUuid string, firstName string, la
 	return token.SignedString([]byte(jwtSecret))
 }
 
-func authMiddleware() gin.HandlerFunc {
+func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbName := c.Param("dbName")
 		if dbName == "" {
@@ -119,6 +119,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("authorized", true)
 			c.Set("user", user)
 			c.Set("userUuid", userUuid)
+			logUri(c, dbName, user)
 		} else {
 			utils.LogError("Invalid request: %v.", err)
 			c.Set("authorized", false)
@@ -128,4 +129,8 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 	}
+}
+
+func logUri(c *gin.Context, dbName string, user any) {
+	utils.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
 }

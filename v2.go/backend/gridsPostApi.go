@@ -29,7 +29,6 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
-	logUri(c, dbName, user)
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
 	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted, c.Query("trace"))

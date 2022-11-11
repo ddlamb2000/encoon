@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"d.lambert.fr/encoon/authentication"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
@@ -37,7 +38,7 @@ func TestSystem(t *testing.T) {
 
 func getTokenForUser(dbName, userName, userUuid string) string {
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
+	token, _ := authentication.GetNewToken(dbName, userName, userUuid, userName, userName, expiration)
 	return token
 }
 
