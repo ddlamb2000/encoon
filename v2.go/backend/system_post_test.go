@@ -200,7 +200,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `","text01":"test-01","text02":"test-02","text03":"test-03","text04":"test-04"}` +
 			`]` +
 			`}`
-		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":5`)
@@ -225,7 +225,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":6`)
@@ -240,7 +240,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"xxxx","text01":"test-01","text02":"test-02","text03":"test-03","text04":"test-04"}` +
 			`]` +
 			`}`
-		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringContains(t, responseData, `"error":"[test] [root] Update row error`)
@@ -252,7 +252,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"xxxx"}` +
 			`]` +
 			`}`
-		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringContains(t, responseData, `"error":"[test] [root] Delete row error`)
@@ -270,11 +270,28 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringDoesntContain(t, responseData, `"text01":"test-09"`)
+	})
+
+	t.Run("CreateNewRowInSingleGridWithTimeOut2", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text01":"test-29","text02":"test-30","text03":"test-31","text04":"test-32"}` +
+			`]` +
+			`}`
+		forceTestSleepTime("test", 10)
+		forceTimeOutThreshold(500)
+		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
+		forceTestSleepTime("test", 0)
+		forceTimeOutThreshold(200)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":6`)
+		jsonStringContains(t, responseData, `"text01":"test-29","text02":"test-30","text03":"test-31","text04":"test-32"`)
 	})
 
 }

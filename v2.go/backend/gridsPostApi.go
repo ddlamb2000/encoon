@@ -30,7 +30,6 @@ func PostGridsRowsApi(c *gin.Context) {
 	logUri(c, dbName, user)
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	utils.Trace(c.Query("trace"), "PostGridsRowsApi() - payload=%v", payload)
 	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted, c.Query("trace"))
 	if err != nil {
 		c.Abort()
@@ -73,6 +72,10 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	go func() {
+		if err := testSleep(ctx, dbName, db); err != nil {
+			ctxChan <- apiPostResponse{utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+			return
+		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
 		if err != nil {
 			ctxChan <- apiPostResponse{err}
@@ -82,37 +85,29 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		utils.Trace(trace, "postGridsRows() - rowsAdded=%v", rowsAdded)
 		for _, row := range rowsAdded {
 			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
+				_ = rollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
-		utils.Trace(trace, "postGridsRows() - rowsEdited=%v", rowsEdited)
 		for _, row := range rowsEdited {
 			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
+				_ = rollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
-		utils.Trace(trace, "postGridsRows() - rowsDeleted=%v", rowsDeleted)
 		for _, row := range rowsDeleted {
 			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = rollbackTransaction(dbName, db, userUuid, user, trace)
+				_ = rollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
-		}
-		if err := testSleep(ctx, dbName, db); err != nil {
-			_ = rollbackTransaction(dbName, db, userUuid, user, trace)
-			ctxChan <- apiPostResponse{err}
-			return
 		}
 		if err := commitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
@@ -120,13 +115,14 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 		}
 		ctxChan <- apiPostResponse{nil}
 	}()
+	utils.Trace(trace, "postGridsRows() - Started")
 	select {
 	case <-ctx.Done():
 		utils.Trace(trace, "postGridsRows() - Cancelled")
-		_ = rollbackTransaction(dbName, db, userUuid, user, trace)
+		_ = rollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 		return true, utils.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
-		utils.Trace(trace, "postGridsRows() - OK")
+		utils.Trace(trace, "postGridsRows() - OK ; response=%v", response)
 		return false, response.err
 	}
 }

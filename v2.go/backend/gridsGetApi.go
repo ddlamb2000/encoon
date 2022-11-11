@@ -67,6 +67,10 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int,
 	ctx, cancel := utils.GetContextWithTimeOut()
 	defer cancel()
 	go func() {
+		if err := testSleep(ctx, dbName, db); err != nil {
+			ctxChan <- apiGetResponse{nil, nil, 0, utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+			return
+		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
 		if err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
@@ -81,10 +85,6 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int,
 		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, rows, trace)
 		if uuid != "" && rowSetCount == 0 {
 			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
-			return
-		}
-		if err := testSleep(ctx, dbName, db); err != nil {
-			ctxChan <- apiGetResponse{nil, nil, 0, utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 			return
 		}
 		ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, err}
@@ -122,7 +122,7 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, 
 		}
 	}
 	grid.SetPath(dbName, gridUri)
-	utils.Log("[%s] [%s] Got grid %q: [%s].", dbName, user, gridUri, grid)
+	utils.Trace(trace, "Got grid %q: [%s].", gridUri, grid)
 	return grid, nil
 }
 

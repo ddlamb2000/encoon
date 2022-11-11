@@ -112,9 +112,9 @@ func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	return err
 }
 
-func rollbackTransaction(dbName string, db *sql.DB, userUuid, user, trace string) error {
+func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
 	utils.Trace(trace, "rollbackTransaction()")
-	_, err := db.Exec("ROLLBACK")
+	_, err := db.ExecContext(ctx, "ROLLBACK")
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
 	}
