@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
 )
@@ -52,9 +53,9 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 
 func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	gridUri := "_users"
 	user := "root"
 	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri, "")
@@ -68,10 +69,10 @@ func TestGetGridForGridsApi(t *testing.T) {
 
 func TestGetRowsForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
@@ -80,10 +81,10 @@ func TestGetRowsForGridsApi(t *testing.T) {
 
 func TestGetRowsForGridsApi2(t *testing.T) {
 	configuration.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "", "")
 	if err == nil {
 		t.Errorf(`expect error.`)
@@ -118,7 +119,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 
 func TestGetDbForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	_, err := getDbForGridsApi("test", "root")
 	if err != nil {
 		t.Errorf(`Got error %v.`, err)

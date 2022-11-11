@@ -1,15 +1,21 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package database
 
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"sort"
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
+)
+
+const (
+	numberOfTextFields = 10
+	numberOfIntFields  = 10
 )
 
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
@@ -21,7 +27,7 @@ func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	return nil
 }
 
-func recreateDb(ctx context.Context, db *sql.DB, dbName string) error {
+func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	if dbName != "test" {
 		return utils.LogAndReturnError("[%s] Only test database can be recreated.", dbName)
 	}
@@ -381,4 +387,15 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 		}
 	}
 	return nil
+}
+
+func getRowsColumnDefinitions() string {
+	var columnDefinitions = ""
+	for i := 1; i <= numberOfTextFields; i++ {
+		columnDefinitions += fmt.Sprintf("text%02d text, ", i)
+	}
+	for i := 1; i <= numberOfIntFields; i++ {
+		columnDefinitions += fmt.Sprintf("int%02d integer, ", i)
+	}
+	return columnDefinitions
 }

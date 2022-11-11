@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package database
 
 import (
 	"d.lambert.fr/encoon/configuration"
@@ -15,8 +15,8 @@ type apiAuthResponse struct {
 	err       error
 }
 
-func isDbAuthorized(dbName string, user string, password string) (string, string, string, bool, error) {
-	if db := getDbByName(dbName); db != nil {
+func IsDbAuthorized(dbName string, user string, password string) (string, string, string, bool, error) {
+	if db := GetDbByName(dbName); db != nil {
 		var uuid, firstName, lastName string
 		selectSql := " SELECT uuid, text01, text02 FROM rows "
 		whereSql := " WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04) "
@@ -30,7 +30,7 @@ func isDbAuthorized(dbName string, user string, password string) (string, string
 				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
 				return
 			}
-			if err := testSleep(ctx, dbName, db); err != nil {
+			if err := TestSleep(ctx, dbName, db); err != nil {
 				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 				return
 			}

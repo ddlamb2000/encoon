@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"testing"
 
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -142,9 +143,9 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text01":"test05","text02":"test06","text03":"test07","text04":"test08"}` +
 			`]` +
 			`}`
-		forceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01", postStr)
-		forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
 		jsonStringContains(t, responseData, `{"error":"[test] [root] Post request has been cancelled: context deadline exceeded."}`)
@@ -160,7 +161,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("UpdateNewRow", func(t *testing.T) {
-		db := getDbByName("test")
+		db := database.GetDbByName("test")
 		var uuid string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuid)
 		stringNotEqual(t, uuid, "")
@@ -180,7 +181,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("CreateNewandUpdateRowsInSingleGrid", func(t *testing.T) {
-		db := getDbByName("test")
+		db := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -207,7 +208,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("CreateDeleteRowsInSingleGrid", func(t *testing.T) {
-		db := getDbByName("test")
+		db := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -257,7 +258,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("DeleteRowInSingleGrid", func(t *testing.T) {
-		db := getDbByName("test")
+		db := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -281,9 +282,9 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text01":"test-29","text02":"test-30","text03":"test-31","text04":"test-32"}` +
 			`]` +
 			`}`
-		forceTestSleepTimeAndTimeOutThreshold("test", 10, 500)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 10, 500)
 		responseData, err, code := runPOSTRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/Grid01?trace=true", postStr)
-		forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":6`)

@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -181,7 +182,7 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 }
 
 func RunTestApiUsersExpired(t *testing.T) {
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
@@ -203,7 +204,7 @@ func RunTestApiUsersExpired(t *testing.T) {
 }
 
 func RunTestApiUsersPassing(t *testing.T) {
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
@@ -225,7 +226,7 @@ func RunTestApiUsersPassing(t *testing.T) {
 }
 
 func RunTestApiUsersNotFound(t *testing.T) {
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
@@ -247,7 +248,7 @@ func RunTestApiUsersNotFound(t *testing.T) {
 }
 
 func RunTestApiUsersNotFound2(t *testing.T) {
-	ConnectDbServers(configuration.GetConfiguration().Databases)
+	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
@@ -269,12 +270,12 @@ func RunTestApiUsersNotFound2(t *testing.T) {
 }
 
 func RunTestAuthWithTimeOut(t *testing.T) {
-	forceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
+	database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 	req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
 	w := httptest.NewRecorder()
 	testRouter.ServeHTTP(w, req)
 	responseData, err := io.ReadAll(w.Body)
-	forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+	database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 
 	httpCodeEqual(t, w.Code, http.StatusRequestTimeout)
 

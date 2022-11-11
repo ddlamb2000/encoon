@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package database
 
 import (
 	"context"
@@ -19,7 +19,7 @@ var (
 	dbs = make(map[string]*sql.DB)
 )
 
-func getDbByName(dbName string) *sql.DB {
+func GetDbByName(dbName string) *sql.DB {
 	return dbs[dbName]
 }
 
@@ -51,7 +51,7 @@ func connectDbServer(dbConfiguration *configuration.Database) error {
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
-	if err := pingDb(ctx, db); err != nil {
+	if err := PingDb(ctx, db); err != nil {
 		return err
 	}
 	setDb(dbConfiguration.Name, db)
@@ -60,7 +60,7 @@ func connectDbServer(dbConfiguration *configuration.Database) error {
 	return nil
 }
 
-func pingDb(ctx context.Context, db *sql.DB) error {
+func PingDb(ctx context.Context, db *sql.DB) error {
 	if err := db.PingContext(context.Background()); err != nil {
 		utils.LogError("Unable to connect to database: %v.", err)
 		return err
@@ -79,7 +79,7 @@ func DisconnectDbServers(dbConfigurations []*configuration.Database) error {
 
 func disconnectDbServer(dbConfiguration *configuration.Database) error {
 	dbName := dbConfiguration.Name
-	db := getDbByName(dbName)
+	db := GetDbByName(dbName)
 	if db != nil {
 		err := db.Close()
 		if err != nil {
@@ -91,7 +91,7 @@ func disconnectDbServer(dbConfiguration *configuration.Database) error {
 	return nil
 }
 
-func beginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+func BeginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
 	utils.Trace(trace, "beginTransaction()")
 	_, err := db.ExecContext(ctx, "BEGIN")
 	if err != nil {
@@ -101,7 +101,7 @@ func beginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, 
 	return err
 }
 
-func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+func CommitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
 	utils.Trace(trace, "commitTransaction()")
 	_, err := db.ExecContext(ctx, "COMMIT")
 	if err != nil {
@@ -111,7 +111,7 @@ func commitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	return err
 }
 
-func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+func RollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
 	utils.Trace(trace, "rollbackTransaction()")
 	_, err := db.ExecContext(ctx, "ROLLBACK")
 	if err != nil {
@@ -121,7 +121,7 @@ func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUui
 	return err
 }
 
-func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
+func TestSleep(ctx context.Context, dbName string, db *sql.DB) error {
 	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
@@ -137,7 +137,7 @@ func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
 	return nil
 }
 
-func forceTestSleepTimeAndTimeOutThreshold(dbName string, sleepTime, threshold int) {
+func ForceTestSleepTimeAndTimeOutThreshold(dbName string, sleepTime, threshold int) {
 	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	if dbConfiguration != nil {
 		dbConfiguration.TestSleepTime = sleepTime

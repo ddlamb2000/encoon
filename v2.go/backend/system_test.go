@@ -14,6 +14,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +26,7 @@ var (
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
-	forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+	database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -116,34 +117,34 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 
 func RunTestConnectDbServers(t *testing.T) {
 	configuration.LoadConfiguration("../", "configuration.yml")
-	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+	if err := database.ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	if db == nil {
 		t.Errorf(`Database %q not found.`, dbName)
+	}
+}
+
+func RunTestDisconnectDbServers(t *testing.T) {
+	if err := database.DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
 
 func RunTestRecreateDb(t *testing.T) {
 	dbName := "test"
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	if db == nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
-	if err := pingDb(ctx, db); err != nil {
+	if err := database.PingDb(ctx, db); err != nil {
 		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
-	if err := recreateDb(ctx, db, dbName); err != nil {
+	if err := database.RecreateDb(ctx, db, dbName); err != nil {
 		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
-	}
-}
-
-func RunTestDisconnectDbServers(t *testing.T) {
-	if err := DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
-		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }

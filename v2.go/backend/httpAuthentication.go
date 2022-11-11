@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -31,7 +32,7 @@ func authentication(c *gin.Context) {
 	}
 	var login login
 	c.ShouldBindJSON(&login)
-	userUuid, firstName, lastName, timeOut, err := isDbAuthorized(dbName, login.Id, login.Password)
+	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
 		c.Abort()
 		if timeOut {

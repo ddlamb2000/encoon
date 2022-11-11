@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"testing"
 
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -66,9 +67,9 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
-		forceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		responseData, err, code := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
-		forceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
 		jsonStringContains(t, responseData, `{"error":"[test] [root] Get request has been cancelled: context deadline exceeded."}`)

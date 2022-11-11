@@ -5,9 +5,6 @@ package backend
 
 import "fmt"
 
-const numberOfTextFields = 10
-const numberOfIntFields = 10
-
 type Row struct {
 	Uuid      string  `json:"uuid"`
 	Version   int8    `json:"version"`
@@ -45,15 +42,4 @@ func (row Row) String() string {
 
 func (row *Row) SetPath(dbName, gridUri string) {
 	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
-}
-
-func getRowsColumnDefinitions() string {
-	var columnDefinitions = ""
-	for i := 1; i <= numberOfTextFields; i++ {
-		columnDefinitions += fmt.Sprintf("text%02d text, ", i)
-	}
-	for i := 1; i <= numberOfIntFields; i++ {
-		columnDefinitions += fmt.Sprintf("int%02d integer, ", i)
-	}
-	return columnDefinitions
 }

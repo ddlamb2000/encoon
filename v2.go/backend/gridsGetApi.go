@@ -9,6 +9,7 @@ import (
 	"net/http"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -68,7 +69,7 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int,
 	ctx, cancel := configuration.GetContextWithTimeOut(dbName)
 	defer cancel()
 	go func() {
-		if err := testSleep(ctx, dbName, db); err != nil {
+		if err := database.TestSleep(ctx, dbName, db); err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 			return
 		}
@@ -104,7 +105,7 @@ func getDbForGridsApi(dbName, user string) (*sql.DB, error) {
 	if dbName == "" {
 		return nil, utils.LogAndReturnError("[%s] Missing database name parameter.", user)
 	}
-	db := getDbByName(dbName)
+	db := database.GetDbByName(dbName)
 	if db == nil {
 		return nil, utils.LogAndReturnError("[%s] [%s] Database not available.", dbName, user)
 	}

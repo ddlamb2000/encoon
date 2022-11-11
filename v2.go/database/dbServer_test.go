@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package database
 
 import (
 	"context"
@@ -17,13 +17,13 @@ func TestConnectDbServers(t *testing.T) {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
-	db := getDbByName(dbName)
+	db := GetDbByName(dbName)
 	if db == nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
-	if err := pingDb(ctx, db); err != nil {
+	if err := PingDb(ctx, db); err != nil {
 		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
 	if err := DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
