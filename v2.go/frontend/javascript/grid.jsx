@@ -44,7 +44,7 @@ class Grid extends React.Component {
 		const { uuid } = this.props
 		const countRows = rows ? rows.length : 0
 		return (
-			<div className="card mt-2 mb-2">
+			<div className="card my-4">
 				<div className="card-body">
 					{isLoaded && rows && grid &&
 						<h4 className="card-title">
@@ -59,33 +59,31 @@ class Grid extends React.Component {
 									rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
 									rowsAdded={rowsAdded}
-									onRowClick={uuid => this.selectRow(uuid)}
+									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
 									inputRef={this.setGridRowRef} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" && <GridView row={rows[0]} />}
-					{isLoaded && rows && uuid == "" &&
-						<GridFooter grid={grid}
-									rows={rows}
-									rowsSelected={rowsSelected}
-									rowsAdded={rowsAdded}
-									rowsEdited={rowsEdited}
-									rowsDeleted={rowsDeleted}
-									onAddRowClick={() => this.addRow()}
-									onSaveDataClick={() => this.saveData()} />
-					}
-					{isLoading && <Spinner />}
+					<GridFooter isLoading={isLoading}
+								grid={grid}
+								rows={rows}
+								uuid={uuid}
+								rowsSelected={rowsSelected}
+								rowsAdded={rowsAdded}
+								rowsEdited={rowsEdited}
+								rowsDeleted={rowsDeleted}
+								onSelectRowClick={() => this.deselectRows()}
+								onAddRowClick={() => this.addRow()}
+								onSaveDataClick={() => this.saveData()} />
 				</div>
 			</div>
 		)
 	}
 
-	selectRow(selectUuid) {
-		this.setState(state => ({
-			rowsSelected: [selectUuid]
-		}))
-	}
+	selectRow(selectUuid) { this.setState(state => ({ rowsSelected: [selectUuid] })) }
+
+	deselectRows() { this.setState(state => ({ rowsSelected: [] })) }
 
 	editRow(editUuid) {
 		if(!this.state.rowsAdded.includes(editUuid)) {
@@ -254,30 +252,33 @@ Grid.defaultProps = {
 
 class GridFooter extends React.Component {
 	render() {
-		const { grid, rows, rowsEdited, rowsAdded, rowsDeleted } = this.props
+		const { isLoading, grid, rows, uuid, rowsEdited, rowsAdded, rowsDeleted } = this.props
 		const countRows = rows ? rows.length : 0
 		const countRowsAdded = rowsAdded ? rowsAdded.length : 0
 		const countRowsEdited = rowsEdited ? rowsEdited.length : 0
 		const countRowsDeleted = rowsDeleted ? rowsDeleted.length : 0
 		return (
-			<div>
+			<div onClick={() => this.props.onSelectRowClick()}>
 				{countRows == 0 && <small className="text-muted px-1">No data</small>}
-				{grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right mx-1"></i></a>}
-				<button type="button" className="btn btn-outline-success btn-sm mx-1"
-						onClick={this.props.onAddRowClick}>
-					Add row <i className="bi bi-plus-circle"></i>
-				</button>
-				{countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
-					<button type="button" className="btn btn-outline-primary btn-sm mx-1"
-							onClick={this.props.onSaveDataClick}>
-						Save changes <i className="bi bi-save"></i>
-					</button>
-				}
 				{countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
 				{countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
 				{countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
 				{countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
 				{countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
+				{!isLoading && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right mx-1"></i></a>}
+				{!isLoading && grid && uuid == "" &&
+					<button type="button" className="btn btn-outline-success btn-sm mx-1"
+							onClick={this.props.onAddRowClick}>
+						Add <i className="bi bi-plus-circle"></i>
+					</button>
+				}
+				{!isLoading && countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
+					<button type="button" className="btn btn-outline-primary btn-sm mx-1"
+							onClick={this.props.onSaveDataClick}>
+						Save <i className="bi bi-save"></i>
+					</button>
+				}
+				{isLoading && <Spinner />}
 			</div>
 		)
 	}

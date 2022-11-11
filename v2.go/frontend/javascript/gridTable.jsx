@@ -12,11 +12,11 @@ class GridTable extends React.Component {
 						<th scope="col">Text02</th>
 						<th scope="col">Text03</th>
 						<th scope="col">Text04</th>
-						<th scope="col">Int01</th>
-						<th scope="col">Int02</th>
-						<th scope="col">Int03</th>
-						<th scope="col">Int04</th>
-						<th scope="col">Version</th>
+						<th scope="col" style={{width: "64px"}}>Int01</th>
+						<th scope="col" style={{width: "64px"}}>Int02</th>
+						<th scope="col" style={{width: "64px"}}>Int03</th>
+						<th scope="col" style={{width: "64px"}}>Int04</th>
+						<th scope="col" style={{width: "64px"}}>Version</th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -26,7 +26,7 @@ class GridTable extends React.Component {
 										rowSelected={this.props.rowsSelected.includes(row.uuid)}
 										rowEdited={this.props.rowsEdited.includes(row.uuid)}
 										rowAdded={this.props.rowsAdded.includes(row.uuid)}
-										onRowClick={uuid => this.props.onRowClick(uuid)}
+										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
 										inputRef={this.props.inputRef} />
@@ -42,15 +42,10 @@ class GridRow extends React.Component {
 		const variant = this.props.rowEdited ? "table-warning" : ""
 		const columns = this.getColumns()
 		return (
-			<tr className={variant}
-				onClick={() => this.props.onRowClick(this.props.row.uuid)}>
+			<tr className={variant}>
 				<td scope="row" className="vw-10">
 					{!(this.props.rowAdded || this.props.rowSelected) && 
-						<button
-							type="button"
-							className="btn btn-sm mx-0 p-0">
-							<a href={this.props.row.path}><i className="bi bi-card-text"></i></a>
-						</button>
+						<a href={this.props.row.path}><i className="bi bi-card-text"></i></a>
 					}
 					{(this.props.rowAdded || this.props.rowSelected) && 
 						<button
@@ -71,6 +66,7 @@ class GridRow extends React.Component {
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
 										rowEdited={this.props.rowEdited}
+										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										inputRef={this.props.inputRef} />
 				)}
@@ -97,7 +93,7 @@ class GridCell extends React.Component {
 	render() {
 		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext" : "form-control form-control-sm"
 		return (
-			<td>
+			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && 
 					<input type={this.props.type}
 							className={variant}
