@@ -1,11 +1,14 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package utils
+package configuration
 
 import (
+	"context"
 	"os"
+	"time"
 
+	"d.lambert.fr/encoon/utils"
 	"gopkg.in/yaml.v2"
 )
 
@@ -39,17 +42,17 @@ var appConfiguration Configuration
 func LoadConfiguration(directory, fileName string) error {
 	f, err := os.Open(directory + fileName)
 	if err != nil {
-		LogError("Error loading configuration from file %q: %v.", fileName, err)
+		utils.LogError("Error loading configuration from file %q: %v.", fileName, err)
 		return err
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&appConfiguration)
 	if err != nil {
-		LogError("Error parsing configuration from file %q: %v.", fileName, err)
+		utils.LogError("Error parsing configuration from file %q: %v.", fileName, err)
 		return err
 	}
-	Log("Configuration loaded from file %q.", fileName)
+	utils.Log("Configuration loaded from file %q.", fileName)
 	return nil
 }
 
@@ -58,17 +61,17 @@ func GetConfiguration() Configuration { return appConfiguration }
 func loadMainConfiguration(directory string, fileName string) error {
 	f, err := os.Open(directory + fileName)
 	if err != nil {
-		LogError("Error loading configuration from file %q: %v.", fileName, err)
+		utils.LogError("Error loading configuration from file %q: %v.", fileName, err)
 		return err
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
 	err = decoder.Decode(&appConfiguration)
 	if err != nil {
-		LogError("Error parsing configuration from file %q: %v.", fileName, err)
+		utils.LogError("Error parsing configuration from file %q: %v.", fileName, err)
 		return err
 	}
-	Log("Configuration loaded from file %q.", fileName)
+	utils.Log("Configuration loaded from file %q.", fileName)
 	return nil
 }
 
@@ -98,4 +101,14 @@ func GetRootAndPassword(dbName string) (string, string) {
 	}
 	dbConfiguration := GetDatabaseConfiguration(dbName)
 	return dbConfiguration.Root, dbConfiguration.Password
+}
+
+func GetContextWithTimeOut(dbName string) (context.Context, context.CancelFunc) {
+	dbConfiguration := GetDatabaseConfiguration(dbName)
+	threshold := dbConfiguration.TimeOutThreshold
+	if threshold < 10 {
+		threshold = 10
+	}
+	ctx, ctxFunc := context.WithTimeout(context.Background(), time.Duration(threshold)*time.Millisecond)
+	return ctx, ctxFunc
 }

@@ -11,6 +11,7 @@ import (
 	"testing"
 	"time"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -159,7 +160,7 @@ func RunTestApiUsersIncorrectToken2(t *testing.T) {
 }
 
 func RunTestApiUsersMissingBearer(t *testing.T) {
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", token)
@@ -180,8 +181,8 @@ func RunTestApiUsersMissingBearer(t *testing.T) {
 }
 
 func RunTestApiUsersExpired(t *testing.T) {
-	ConnectDbServers(utils.GetConfiguration().Databases)
-	expiration := time.Now().Add(-time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	ConnectDbServers(configuration.GetConfiguration().Databases)
+	expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -202,8 +203,8 @@ func RunTestApiUsersExpired(t *testing.T) {
 }
 
 func RunTestApiUsersPassing(t *testing.T) {
-	ConnectDbServers(utils.GetConfiguration().Databases)
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	ConnectDbServers(configuration.GetConfiguration().Databases)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -224,8 +225,8 @@ func RunTestApiUsersPassing(t *testing.T) {
 }
 
 func RunTestApiUsersNotFound(t *testing.T) {
-	ConnectDbServers(utils.GetConfiguration().Databases)
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	ConnectDbServers(configuration.GetConfiguration().Databases)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
 	req.Header.Add("Authorization", "Bearer "+token)
@@ -246,8 +247,8 @@ func RunTestApiUsersNotFound(t *testing.T) {
 }
 
 func RunTestApiUsersNotFound2(t *testing.T) {
-	ConnectDbServers(utils.GetConfiguration().Databases)
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	ConnectDbServers(configuration.GetConfiguration().Databases)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 	req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
 	req.Header.Add("Authorization", "Bearer "+token)

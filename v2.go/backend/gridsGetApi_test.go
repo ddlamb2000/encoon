@@ -10,6 +10,7 @@ import (
 	"strings"
 	"testing"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
 )
@@ -50,8 +51,8 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 }
 
 func TestGetGridForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(utils.GetConfiguration().Databases)
+	configuration.LoadConfiguration("../", "configuration.yml")
+	ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	db := getDbByName(dbName)
 	gridUri := "_users"
@@ -66,8 +67,8 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(utils.GetConfiguration().Databases)
+	configuration.LoadConfiguration("../", "configuration.yml")
+	ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
@@ -78,8 +79,8 @@ func TestGetRowsForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi2(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(utils.GetConfiguration().Databases)
+	configuration.LoadConfiguration("../", "configuration.yml")
+	ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
 	db := getDbByName(dbName)
@@ -116,8 +117,8 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 }
 
 func TestGetDbForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(utils.GetConfiguration().Databases)
+	configuration.LoadConfiguration("../", "configuration.yml")
+	ConnectDbServers(configuration.GetConfiguration().Databases)
 	_, err := getDbForGridsApi("test", "root")
 	if err != nil {
 		t.Errorf(`Got error %v.`, err)

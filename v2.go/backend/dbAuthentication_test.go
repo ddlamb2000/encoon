@@ -6,13 +6,13 @@ package backend
 import (
 	"testing"
 
-	"d.lambert.fr/encoon/utils"
+	"d.lambert.fr/encoon/configuration"
 	_ "github.com/lib/pq"
 )
 
 func TestIsDbAuthorized(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	ConnectDbServers(utils.GetConfiguration().Databases)
+	configuration.LoadConfiguration("../", "configuration.yml")
+	ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	uuid, firstName, lastName, _, err := isDbAuthorized(dbName, "root", "dGVzdA==")
 	if err != nil {

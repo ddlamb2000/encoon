@@ -7,13 +7,13 @@ import (
 	"context"
 	"testing"
 
-	"d.lambert.fr/encoon/utils"
+	"d.lambert.fr/encoon/configuration"
 	_ "github.com/lib/pq"
 )
 
 func TestRecreateDb(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
+	configuration.LoadConfiguration("../", "configuration.yml")
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"

@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -69,7 +70,7 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded []Row, rows
 		return false, err
 	}
 	ctxChan := make(chan apiPostResponse, 1)
-	ctx, cancel := utils.GetContextWithTimeOut(dbName)
+	ctx, cancel := configuration.GetContextWithTimeOut(dbName)
 	defer cancel()
 	go func() {
 		if err := testSleep(ctx, dbName, db); err != nil {

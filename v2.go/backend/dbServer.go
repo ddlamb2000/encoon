@@ -10,6 +10,7 @@ import (
 	"math/rand"
 	"time"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
 )
@@ -26,7 +27,7 @@ func setDb(dbName string, db *sql.DB) {
 	dbs[dbName] = db
 }
 
-func ConnectDbServers(dbConfigurations []*utils.Database) error {
+func ConnectDbServers(dbConfigurations []*configuration.Database) error {
 	for _, conf := range dbConfigurations {
 		if err := connectDbServer(conf); err != nil {
 			return err
@@ -35,7 +36,7 @@ func ConnectDbServers(dbConfigurations []*utils.Database) error {
 	return nil
 }
 
-func connectDbServer(dbConfiguration *utils.Database) error {
+func connectDbServer(dbConfiguration *configuration.Database) error {
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=disable",
 		dbConfiguration.Host,
@@ -67,7 +68,7 @@ func pingDb(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func DisconnectDbServers(dbConfigurations []*utils.Database) error {
+func DisconnectDbServers(dbConfigurations []*configuration.Database) error {
 	for _, conf := range dbConfigurations {
 		if err := disconnectDbServer(conf); err != nil {
 			return err
@@ -76,7 +77,7 @@ func DisconnectDbServers(dbConfigurations []*utils.Database) error {
 	return nil
 }
 
-func disconnectDbServer(dbConfiguration *utils.Database) error {
+func disconnectDbServer(dbConfiguration *configuration.Database) error {
 	dbName := dbConfiguration.Name
 	db := getDbByName(dbName)
 	if db != nil {
@@ -121,7 +122,7 @@ func rollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUui
 }
 
 func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
-	dbConfiguration := utils.GetDatabaseConfiguration(dbName)
+	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
@@ -137,7 +138,7 @@ func testSleep(ctx context.Context, dbName string, db *sql.DB) error {
 }
 
 func forceTestSleepTimeAndTimeOutThreshold(dbName string, sleepTime, threshold int) {
-	dbConfiguration := utils.GetDatabaseConfiguration(dbName)
+	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	if dbConfiguration != nil {
 		dbConfiguration.TestSleepTime = sleepTime
 		dbConfiguration.TimeOutThreshold = threshold

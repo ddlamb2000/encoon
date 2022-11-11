@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"sort"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -51,7 +52,7 @@ func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (in
 }
 
 func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMigration int) error {
-	root, password := utils.GetRootAndPassword(dbName)
+	root, password := configuration.GetRootAndPassword(dbName)
 	err := migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
 			1: "CREATE TABLE rows (" +

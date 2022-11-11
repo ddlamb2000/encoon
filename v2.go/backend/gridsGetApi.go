@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"net/http"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -64,7 +65,7 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*Grid, []Row, int,
 		return nil, nil, 0, false, err
 	}
 	ctxChan := make(chan apiGetResponse, 1)
-	ctx, cancel := utils.GetContextWithTimeOut(dbName)
+	ctx, cancel := configuration.GetContextWithTimeOut(dbName)
 	defer cancel()
 	go func() {
 		if err := testSleep(ctx, dbName, db); err != nil {

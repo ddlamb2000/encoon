@@ -13,6 +13,7 @@ import (
 	"testing"
 	"time"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
@@ -34,7 +35,7 @@ func TestSystem(t *testing.T) {
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
 	return token
 }
@@ -114,8 +115,8 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 }
 
 func RunTestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
+	configuration.LoadConfiguration("../", "configuration.yml")
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
@@ -142,7 +143,7 @@ func RunTestRecreateDb(t *testing.T) {
 }
 
 func RunTestDisconnectDbServers(t *testing.T) {
-	if err := DisconnectDbServers(utils.GetConfiguration().Databases); err != nil {
+	if err := DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }

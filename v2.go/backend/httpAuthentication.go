@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"time"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
@@ -40,7 +41,7 @@ func authentication(c *gin.Context) {
 		}
 		return
 	}
-	expiration := time.Now().Add(time.Duration(utils.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.Abort()
@@ -60,7 +61,7 @@ func getNewToken(dbName string, id string, userUuid string, firstName string, la
 		"expires":       expiration,
 	})
 	utils.Log("[%s] Token generated for %v, expiration: %v", dbName, id, expiration)
-	jwtSecret := utils.GetJWTSecret(dbName)
+	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
 
@@ -89,7 +90,7 @@ func authMiddleware() gin.HandlerFunc {
 		}
 		var tokenString = header[7:]
 
-		jwtSecret := utils.GetJWTSecret(dbName)
+		jwtSecret := configuration.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 				return nil, utils.LogAndReturnError("Unexpect signing method: %v.", token.Header["alg"])

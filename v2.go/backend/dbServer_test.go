@@ -7,13 +7,13 @@ import (
 	"context"
 	"testing"
 
-	"d.lambert.fr/encoon/utils"
+	"d.lambert.fr/encoon/configuration"
 	_ "github.com/lib/pq"
 )
 
 func TestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../", "configuration.yml")
-	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
+	configuration.LoadConfiguration("../", "configuration.yml")
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
 	dbName := "test"
@@ -26,13 +26,13 @@ func TestConnectDbServers(t *testing.T) {
 	if err := pingDb(ctx, db); err != nil {
 		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
-	if err := DisconnectDbServers(utils.GetConfiguration().Databases); err != nil {
+	if err := DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
 
 func TestConnectDbServer(t *testing.T) {
-	var conf utils.Database
+	var conf configuration.Database
 	conf.Host = "xxx"
 	if err := connectDbServer(&conf); err == nil {
 		t.Errorf(`Can connect to database?: %v.`, err)

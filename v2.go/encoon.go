@@ -17,6 +17,7 @@ import (
 	_ "github.com/lib/pq"
 
 	"d.lambert.fr/encoon/backend"
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -28,7 +29,7 @@ var (
 func main() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	if utils.LoadConfiguration("./", "configuration.yml") == nil {
+	if configuration.LoadConfiguration("./", "configuration.yml") == nil {
 		utils.Log("Starting.")
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -37,12 +38,12 @@ func main() {
 			utils.Log("Stopping.")
 			doneChan <- true
 		}()
-		go backend.ConnectDbServers(utils.GetConfiguration().Databases)
+		go backend.ConnectDbServers(configuration.GetConfiguration().Databases)
 		go setAndStartHttpServer()
 		<-doneChan
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		go backend.DisconnectDbServers(utils.GetConfiguration().Databases)
+		go backend.DisconnectDbServers(configuration.GetConfiguration().Databases)
 		if err := srv.Shutdown(ctx); err != nil {
 			utils.LogError("Error during server shutdown: %v.", err)
 		}
@@ -67,7 +68,7 @@ func setAndStartHttpServer() error {
 	router.GET("/:dbName/:gridUri/:uuid", getIndexHtml)
 	backend.SetApiRoutes(router)
 	srv = &http.Server{
-		Addr:         fmt.Sprintf(":%d", utils.GetConfiguration().HttpServer.Port),
+		Addr:         fmt.Sprintf(":%d", configuration.GetConfiguration().HttpServer.Port),
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
@@ -82,8 +83,8 @@ func setAndStartHttpServer() error {
 
 func getIndexHtml(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"appName": utils.GetConfiguration().AppName,
-		"appTag":  utils.GetConfiguration().AppTag,
+		"appName": configuration.GetConfiguration().AppName,
+		"appTag":  configuration.GetConfiguration().AppTag,
 		"dbName":  c.Param("dbName"),
 		"gridUri": c.Param("gridUri"),
 		"uuid":    c.Param("uuid"),
