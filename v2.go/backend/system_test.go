@@ -114,7 +114,7 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 }
 
 func RunTestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}

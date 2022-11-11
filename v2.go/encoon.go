@@ -28,7 +28,7 @@ var (
 func main() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	if utils.LoadConfiguration("configurations/", "configuration.yml") == nil {
+	if utils.LoadConfiguration("./", "configuration.yml") == nil {
 		utils.Log("Starting.")
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)

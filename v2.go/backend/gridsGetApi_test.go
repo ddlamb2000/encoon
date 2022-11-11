@@ -50,7 +50,7 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 }
 
 func TestGetGridForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	ConnectDbServers(utils.GetConfiguration().Databases)
 	dbName := "test"
 	db := getDbByName(dbName)
@@ -66,7 +66,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	ConnectDbServers(utils.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
@@ -78,7 +78,7 @@ func TestGetRowsForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi2(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	ConnectDbServers(utils.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
@@ -116,7 +116,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 }
 
 func TestGetDbForGridsApi(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	ConnectDbServers(utils.GetConfiguration().Databases)
 	_, err := getDbForGridsApi("test", "root")
 	if err != nil {

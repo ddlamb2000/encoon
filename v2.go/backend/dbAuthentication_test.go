@@ -11,7 +11,7 @@ import (
 )
 
 func TestIsDbAuthorized(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	ConnectDbServers(utils.GetConfiguration().Databases)
 	dbName := "test"
 	uuid, firstName, lastName, _, err := isDbAuthorized(dbName, "root", "dGVzdA==")

@@ -9,7 +9,7 @@ import (
 )
 
 func TestLoadMainConfiguration(t *testing.T) {
-	path := "../configurations/"
+	path := "../"
 	fileName := "configuration.yml"
 	if err := loadMainConfiguration(path, fileName); err != nil {
 		t.Errorf("Can't load configuration %q from path %q: %v.", fileName, path, err)
@@ -17,7 +17,7 @@ func TestLoadMainConfiguration(t *testing.T) {
 }
 
 func TestLoadMainConfiguration2(t *testing.T) {
-	path := "../configurations/"
+	path := "../"
 	fileName := "xxxx.yml"
 	if err := loadMainConfiguration(path, fileName); err == nil {
 		t.Errorf("Can load configuration %q from path %q.", fileName, path)
@@ -41,7 +41,7 @@ func TestGetRootAndPassword(t *testing.T) {
 }
 
 func TestLoadConfiguration(t *testing.T) {
-	dir := "../configurations/"
+	dir := "../"
 	fileName := "configuration.yml"
 	if err := LoadConfiguration(dir, fileName); err != nil {
 		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)

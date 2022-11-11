@@ -12,7 +12,7 @@ import (
 )
 
 func TestConnectDbServers(t *testing.T) {
-	utils.LoadConfiguration("../configurations/", "configuration.yml")
+	utils.LoadConfiguration("../", "configuration.yml")
 	if err := ConnectDbServers(utils.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
