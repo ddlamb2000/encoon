@@ -28,6 +28,7 @@ func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
 	database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+	t.Run("IncorrectDb", func(t *testing.T) { RunTestConnectDbServersIncorrect(t) })
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -107,6 +108,18 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 	expectJson := utils.CleanupStrings(expect)
 	if strings.Contains(gotJson, expectJson) {
 		t.Errorf(`Response %v includes %v.`, gotJson, expectJson)
+	}
+}
+
+func RunTestConnectDbServersIncorrect(t *testing.T) {
+	configuration.LoadConfiguration("abc/", "configuration.yml")
+	if err := database.ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
+	dbName := "test"
+	db := database.GetDbByName(dbName)
+	if db != nil {
+		t.Errorf(`Database %q found!`, dbName)
 	}
 }
 
