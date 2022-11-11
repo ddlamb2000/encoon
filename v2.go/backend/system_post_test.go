@@ -290,5 +290,4 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"countRows":6`)
 		jsonStringContains(t, responseData, `"text01":"test-29","text02":"test-30","text03":"test-31","text04":"test-32"`)
 	})
-
 }

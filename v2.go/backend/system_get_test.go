@@ -83,5 +83,4 @@ func RunSystemTestGet(t *testing.T) {
 		jsonStringContains(t, responseData, `"grid":{"uuid":"`+utils.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+utils.UuidGrids+`"`)
 	})
-
 }
