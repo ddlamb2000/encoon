@@ -13,6 +13,15 @@ httpServer:
 # Database configuration
 database:
 
+- name: "master"
+  host: "localhost"
+  port: 5432
+  user: "david.lambert"
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000
+
 - name: "test"
   host: "localhost"
   port: 5432

@@ -28,26 +28,30 @@ var (
 	router                = gin.New()
 	srv                   *http.Server
 	configurationFileName string
+	logFileName           string
 )
 
 const (
 	configurationFileNameFlag    = "configuration"
 	defaultConfigurationFileName = "./configuration.yml"
 	usageConfigurationFileName   = "Name of the file (.yml) used to configure the application (full path)."
+	logFileNameFlag              = "log"
+	defaultLogFileName           = "./logs/encoon.log"
+	usageLogFileName             = "Name of the file (.log) used for logging."
 )
 
 func main() {
+	handleFlags()
 	flags := os.O_APPEND | os.O_CREATE | os.O_WRONLY
-	f, err := os.OpenFile("logs/encoon.log", flags, 0666)
+	f, err := os.OpenFile(logFileName, flags, 0666)
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
-	handleFlags()
 	if configuration.LoadConfiguration(configurationFileName) == nil {
-		utils.Log("Starting.")
+		utils.Log("Starting, log into %v.", logFileName)
 		configuration.WatchConfigurationChanges(configurationFileName)
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -75,6 +79,7 @@ func main() {
 
 func handleFlags() {
 	flag.StringVar(&configurationFileName, configurationFileNameFlag, defaultConfigurationFileName, usageConfigurationFileName)
+	flag.StringVar(&logFileName, logFileNameFlag, defaultLogFileName, usageLogFileName)
 	flag.Parse()
 }
 
