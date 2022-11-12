@@ -27,7 +27,7 @@ func setDb(dbName string, db *sql.DB) {
 	dbs[dbName] = db
 }
 
-func ConnectDbServers(dbConfigurations []*configuration.Database) error {
+func ConnectDbServers(dbConfigurations []*configuration.DatabaseConfiguration) error {
 	for _, conf := range dbConfigurations {
 		if err := connectDbServer(conf); err != nil {
 			return err
@@ -36,7 +36,7 @@ func ConnectDbServers(dbConfigurations []*configuration.Database) error {
 	return nil
 }
 
-func connectDbServer(dbConfiguration *configuration.Database) error {
+func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) error {
 	psqlInfo := fmt.Sprintf(
 		"host=%s port=%d user=%s dbname=%s sslmode=disable",
 		dbConfiguration.Host,
@@ -68,7 +68,7 @@ func PingDb(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-func DisconnectDbServers(dbConfigurations []*configuration.Database) error {
+func DisconnectDbServers(dbConfigurations []*configuration.DatabaseConfiguration) error {
 	for _, conf := range dbConfigurations {
 		if err := disconnectDbServer(conf); err != nil {
 			return err
@@ -77,7 +77,7 @@ func DisconnectDbServers(dbConfigurations []*configuration.Database) error {
 	return nil
 }
 
-func disconnectDbServer(dbConfiguration *configuration.Database) error {
+func disconnectDbServer(dbConfiguration *configuration.DatabaseConfiguration) error {
 	dbName := dbConfiguration.Name
 	db := GetDbByName(dbName)
 	if db != nil {
