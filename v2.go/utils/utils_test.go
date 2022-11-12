@@ -52,18 +52,18 @@ func TestCleanupStrings(t *testing.T) {
 
 func TestCalculateFileHash1(t *testing.T) {
 	fileName := "../testData/validConfiguration1.yml"
-	got, err := CalculateFileHash(fileName)
+	got := CalculateFileHash(fileName)
 	expect := "b65c60887f0773546cdb387a71fcf9ce2b8c49008c6a4ebb6923f0dafb585253"
-	if err != nil || !strings.Contains(got, expect) {
-		t.Errorf("Got %q instead of %q, err=%v.", got, expect, err)
+	if !strings.Contains(got, expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
 	}
 }
 
 func TestCalculateFileHash2(t *testing.T) {
 	fileName := "../testData/validConfiguration2.yml"
-	got, err := CalculateFileHash(fileName)
+	got := CalculateFileHash(fileName)
 	expect := "548641131cdcb580f58aa24e1ece78fa4167234d0b45f73e9abf5420e351f28d"
-	if err != nil || !strings.Contains(got, expect) {
-		t.Errorf("Got %q instead of %q, err=%v.", got, expect, err)
+	if !strings.Contains(got, expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
 	}
 }

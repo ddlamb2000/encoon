@@ -38,16 +38,18 @@ func CleanupStrings(s string) string {
 	return strings.Join(strings.Fields(strings.Replace(s, "\n", "", -1)), " ")
 }
 
-func CalculateFileHash(fileName string) (string, error) {
+func CalculateFileHash(fileName string) string {
 	f, err := os.Open(fileName)
 	if err != nil {
-		return "", err
+		LogError("Can't open file %v: %v", fileName, err)
+		return ""
 	}
 	defer f.Close()
 	hash := sha256.New()
 	if _, err := io.Copy(hash, f); err != nil {
-		return "", err
+		LogError("Can't read file %v: %v", fileName, err)
+		return ""
 	}
 	sum := fmt.Sprintf("%x", hash.Sum(nil))
-	return sum, nil
+	return sum
 }

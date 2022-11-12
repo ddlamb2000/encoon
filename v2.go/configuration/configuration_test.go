@@ -86,25 +86,6 @@ func TestGetRootAndPassword(t *testing.T) {
 
 }
 
-func TestGetConfiguration1(t *testing.T) {
-	appConfiguration.valid = false
-	fileName := "../encoon.go"
-	LoadConfiguration(fileName)
-	conf := GetConfiguration()
-	if conf.valid {
-		t.Errorf("Configuration is valid while it shouldn't be: %v.", conf)
-	}
-}
-
-func TestGetConfiguration2(t *testing.T) {
-	fileName := "../configuration.yml"
-	LoadConfiguration(fileName)
-	conf := GetConfiguration()
-	if !conf.valid {
-		t.Errorf("Configuration is not valid while it should be: %v.", conf)
-	}
-}
-
 func TestValidateConfiguration1(t *testing.T) {
 	fileName := "../configuration.yml"
 	LoadConfiguration(fileName)
@@ -156,25 +137,16 @@ func TestValidateConfiguration5(t *testing.T) {
 	if got != nil {
 		t.Errorf("Got error: %q.", got)
 	}
-	if !IsConfigurationValid() {
-		t.Errorf("Configuration is not valid while it should be: %v.", appConfiguration)
-	}
 }
 
 func TestInvalidConfiguration(t *testing.T) {
 	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
-	if !IsConfigurationValid() {
-		t.Errorf("Configuration 1 is not valid while it should be: %v.", appConfiguration)
-	}
 	if GetConfiguration().AppName != "valid 1" {
 		t.Errorf("Configuration 1 doesn't have the expected name: %v.", appConfiguration)
 	}
 	fileName = "../testData/invalidConfiguration.yml"
 	LoadConfiguration(fileName)
-	if !IsConfigurationValid() {
-		t.Errorf("Configuration 2 is not valid while it should be: %v.", appConfiguration)
-	}
 	if GetConfiguration().AppName != "valid 1" {
 		t.Errorf("Configuration 2 doesn't have the expected name: %v.", appConfiguration)
 	}
@@ -258,10 +230,6 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		return
 	}
 	time.Sleep(2 * time.Second)
-	if !IsConfigurationValid() {
-		t.Errorf("Validation is not valid while it should: %v.", GetConfiguration())
-		return
-	}
 	got = GetConfiguration().AppName
 	expect = "testB"
 	if got != expect {

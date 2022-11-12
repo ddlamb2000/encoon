@@ -18,8 +18,6 @@ type Configuration struct {
 	AppTag     string                   `yaml:"appTag"`
 	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
 	Databases  []*DatabaseConfiguration `yaml:"database"`
-
-	valid bool
 }
 
 type HttpServerConfiguration struct {
@@ -37,8 +35,6 @@ type DatabaseConfiguration struct {
 	Password         string `yaml:"password"`
 	TestSleepTime    int    `yaml:"testSleepTime"`
 	TimeOutThreshold int    `yaml:"timeOutThreshold"`
-
-	valid bool
 }
 
 var (
@@ -68,10 +64,7 @@ func loadConfigurationFromFile() error {
 	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
 	}
-	hash, err := utils.CalculateFileHash(configurationFileName)
-	if err != nil {
-		return utils.LogAndReturnError("Error when calculating hash for configuration file %q: %v.", configurationFileName, err)
-	}
+	hash := utils.CalculateFileHash(configurationFileName)
 	appConfiguration = *newConfiguration
 	configurationHash = hash
 	utils.Log("Configuration loaded from file %q.", configurationFileName)
@@ -91,7 +84,6 @@ func validateConfiguration(conf *Configuration) error {
 	if conf.HttpServer.JwtExpiration == 0 {
 		return utils.LogAndReturnError("Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
 	}
-	conf.valid = true
 	utils.Log("Configuration from %v is valid.", configurationFileName)
 	return nil
 }
@@ -100,12 +92,6 @@ func GetConfiguration() Configuration {
 	appConfigurationMutex.Lock()
 	defer appConfigurationMutex.Unlock()
 	return appConfiguration
-}
-
-func IsConfigurationValid() bool {
-	appConfigurationMutex.Lock()
-	defer appConfigurationMutex.Unlock()
-	return appConfiguration.valid
 }
 
 func IsDatabaseEnabled(dbName string) bool {
@@ -153,11 +139,7 @@ func WatchConfigurationChanges(fileName string) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
 		for range ticker.C {
-			newHash, err := utils.CalculateFileHash(fileName)
-			if err != nil {
-				utils.LogError("Error watching configuration changes on file %q: %v.", fileName, err)
-				continue
-			}
+			newHash := utils.CalculateFileHash(fileName)
 			if newHash != configurationHash {
 				configurationHash = newHash
 				LoadConfiguration(fileName)
