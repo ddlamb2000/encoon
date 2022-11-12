@@ -130,17 +130,6 @@ func TestValidateConfiguration2(t *testing.T) {
 func TestValidateConfiguration3(t *testing.T) {
 	fileName := "../configuration.yml"
 	LoadConfiguration(fileName)
-	appConfiguration.HttpServer.Host = ""
-	got := validateConfiguration(&appConfiguration)
-	expect := "Missing host name"
-	if got == nil || !strings.Contains(got.Error(), expect) {
-		t.Errorf("Got %q instead of %q.", got, expect)
-	}
-}
-
-func TestValidateConfiguration4(t *testing.T) {
-	fileName := "../configuration.yml"
-	LoadConfiguration(fileName)
 	appConfiguration.HttpServer.Port = 0
 	got := validateConfiguration(&appConfiguration)
 	expect := "Missing port"
@@ -149,7 +138,7 @@ func TestValidateConfiguration4(t *testing.T) {
 	}
 }
 
-func TestValidateConfiguration5(t *testing.T) {
+func TestValidateConfiguration4(t *testing.T) {
 	fileName := "../configuration.yml"
 	LoadConfiguration(fileName)
 	appConfiguration.HttpServer.JwtExpiration = 0
@@ -160,7 +149,7 @@ func TestValidateConfiguration5(t *testing.T) {
 	}
 }
 
-func TestValidateConfiguration6(t *testing.T) {
+func TestValidateConfiguration5(t *testing.T) {
 	fileName := "../configuration.yml"
 	LoadConfiguration(fileName)
 	got := validateConfiguration(&appConfiguration)
@@ -228,7 +217,6 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		AppName: "testA",
 		AppTag:  "tagA",
 		HttpServer: HttpServerConfiguration{
-			Host:          "local",
 			Port:          22,
 			JwtExpiration: 10,
 		},
@@ -255,7 +243,6 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		AppName: "testB",
 		AppTag:  "tagB",
 		HttpServer: HttpServerConfiguration{
-			Host:          "local",
 			Port:          22,
 			JwtExpiration: 10,
 		},

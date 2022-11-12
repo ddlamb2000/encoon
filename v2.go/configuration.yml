@@ -6,7 +6,6 @@ appTag: "Data structuration, presentation and navigation." # Application tag to 
 
 # Http Server configuration
 httpServer:
-  host: "localhost"
   port: 8080
   jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
 

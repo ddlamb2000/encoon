@@ -23,9 +23,8 @@ type Configuration struct {
 }
 
 type HttpServerConfiguration struct {
-	Host          string `yaml:"host"`
-	Port          int    `yaml:"port"`
-	JwtExpiration int    `yaml:"jwtExpiration"`
+	Port          int `yaml:"port"`
+	JwtExpiration int `yaml:"jwtExpiration"`
 }
 
 type DatabaseConfiguration struct {
@@ -85,9 +84,6 @@ func validateConfiguration(conf *Configuration) error {
 	}
 	if conf.AppTag == "" {
 		return utils.LogAndReturnError("Missing application tag line (appTag) from configuration file %v.", configurationFileName)
-	}
-	if conf.HttpServer.Host == "" {
-		return utils.LogAndReturnError("Missing host name (httpServer.host) from configuration file %v.", configurationFileName)
 	}
 	if conf.HttpServer.Port == 0 {
 		return utils.LogAndReturnError("Missing port (httpServer.port) from configuration file %v.", configurationFileName)
