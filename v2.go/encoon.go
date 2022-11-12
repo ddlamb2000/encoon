@@ -8,6 +8,7 @@ import (
 	"flag"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -24,7 +25,7 @@ import (
 )
 
 var (
-	router                = gin.Default()
+	router                = gin.New()
 	srv                   *http.Server
 	configurationFileName string
 )
@@ -36,8 +37,14 @@ const (
 )
 
 func main() {
-	f, _ := os.Create("logs/encoon.log")
+	flags := os.O_APPEND | os.O_CREATE | os.O_WRONLY
+	f, err := os.OpenFile("logs/encoon.log", flags, 0666)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
+	router.Use(gin.Logger())
 	handleFlags()
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		utils.Log("Starting.")
