@@ -5,46 +5,48 @@ package configuration
 
 import (
 	"reflect"
+	"strings"
 	"testing"
 )
 
-func TestLoadMainConfiguration(t *testing.T) {
-	path := "../"
-	fileName := "configuration.yml"
-	if err := loadMainConfiguration(path, fileName); err != nil {
-		t.Errorf("Can't load configuration %q from path %q: %v.", fileName, path, err)
+func TestLoadConfiguration1(t *testing.T) {
+	fileName := "../configuration.yml"
+	if err := LoadConfiguration(fileName); err != nil {
+		t.Errorf("Can't load configuration %q: %v.", fileName, err)
+	}
+}
+func TestLoadConfiguration2(t *testing.T) {
+	fileName := "../utils/configuration.yml"
+	if err := LoadConfiguration(fileName); err == nil {
+		t.Errorf("Can't load configurations from %q: %v.", fileName, err)
 	}
 }
 
-func TestLoadMainConfiguration2(t *testing.T) {
-	path := "../"
-	fileName := "xxxx.yml"
-	if err := loadMainConfiguration(path, fileName); err == nil {
-		t.Errorf("Can load configuration %q from path %q.", fileName, path)
+func TestLoadConfiguration3(t *testing.T) {
+	secret := GetJWTSecret("xxx")
+	if secret != nil {
+		t.Errorf("Invalid Jwt secret: %q.", secret)
 	}
 }
 
-func TestLoadMainConfiguration3(t *testing.T) {
-	path := "../utils/"
-	fileName := "configuration.go"
-	if err := loadMainConfiguration(path, fileName); err == nil {
-		t.Errorf("Can load configuration %q from path %q.", fileName, path)
+func TestLoadMainConfiguration4(t *testing.T) {
+	fileName := "../encoon.go"
+	if err := LoadConfiguration(fileName); err == nil {
+		t.Errorf("Can load configuration %q.", fileName)
 	}
 }
 
-func TestGetRootAndPassword(t *testing.T) {
-	root, password := GetRootAndPassword("xxx")
-	if root != "" || password != "" {
-		t.Errorf("Root or password isn't correct for database %q: %q and %q.", "xxx", root, password)
+func TestLoadConfiguration5(t *testing.T) {
+	fileName := "../xxxx.yml"
+	if err := LoadConfiguration(fileName); err == nil {
+		t.Errorf("Can load configuration %q.", fileName)
 	}
-
 }
 
-func TestLoadConfiguration(t *testing.T) {
-	dir := "../"
-	fileName := "configuration.yml"
-	if err := LoadConfiguration(dir, fileName); err != nil {
-		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
+func TestLoadConfiguration6(t *testing.T) {
+	fileName := "../configuration.yml"
+	if err := LoadConfiguration(fileName); err != nil {
+		t.Errorf("Can't load configurations from %q: %v.", fileName, err)
 	}
 
 	dbName := "test"
@@ -72,17 +74,146 @@ func TestLoadConfiguration(t *testing.T) {
 	}
 }
 
-func TestLoadConfiguration2(t *testing.T) {
-	dir := "../utils/"
-	fileName := "configuration.yml"
-	if err := LoadConfiguration(dir, fileName); err == nil {
-		t.Errorf("Can't load configurations from directory %q: %v.", dir, err)
+func TestGetRootAndPassword(t *testing.T) {
+	root, password := GetRootAndPassword("xxx")
+	if root != "" || password != "" {
+		t.Errorf("Root or password isn't correct for database %q: %q and %q.", "xxx", root, password)
+	}
+
+}
+
+func TestGetConfiguration1(t *testing.T) {
+	appConfiguration.valid = false
+	fileName := "../encoon.go"
+	LoadConfiguration(fileName)
+	conf := GetConfiguration()
+	if conf.valid {
+		t.Errorf("Configuration is valid while it shouldn't be: %v.", conf)
 	}
 }
 
-func TestLoadConfiguration3(t *testing.T) {
-	secret := GetJWTSecret("xxx")
-	if secret != nil {
-		t.Errorf("Invalid Jwt secret: %q.", secret)
+func TestGetConfiguration2(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	conf := GetConfiguration()
+	if !conf.valid {
+		t.Errorf("Configuration is not valid while it should be: %v.", conf)
+	}
+}
+
+func TestValidateConfiguration1(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	appConfiguration.AppName = ""
+	got := validateConfiguration(&appConfiguration)
+	expect := "Missing application name"
+	if got == nil || !strings.Contains(got.Error(), expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestValidateConfiguration2(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	appConfiguration.AppTag = ""
+	got := validateConfiguration(&appConfiguration)
+	expect := "Missing application tag"
+	if got == nil || !strings.Contains(got.Error(), expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestValidateConfiguration3(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	appConfiguration.HttpServer.Host = ""
+	got := validateConfiguration(&appConfiguration)
+	expect := "Missing host name"
+	if got == nil || !strings.Contains(got.Error(), expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestValidateConfiguration4(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	appConfiguration.HttpServer.Port = 0
+	got := validateConfiguration(&appConfiguration)
+	expect := "Missing port"
+	if got == nil || !strings.Contains(got.Error(), expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestValidateConfiguration5(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	appConfiguration.HttpServer.JwtExpiration = 0
+	got := validateConfiguration(&appConfiguration)
+	expect := "Missing expiration"
+	if got == nil || !strings.Contains(got.Error(), expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestValidateConfiguration6(t *testing.T) {
+	fileName := "../configuration.yml"
+	LoadConfiguration(fileName)
+	got := validateConfiguration(&appConfiguration)
+	if got != nil {
+		t.Errorf("Got error: %q.", got)
+	}
+	if !IsConfigurationValid() {
+		t.Errorf("Configuration is not valid while it should be: %v.", appConfiguration)
+	}
+}
+
+func TestInvalidConfiguration(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	if !IsConfigurationValid() {
+		t.Errorf("Configuration 1 is not valid while it should be: %v.", appConfiguration)
+	}
+	if GetConfiguration().AppName != "valid 1" {
+		t.Errorf("Configuration 1 doesn't have the expected name: %v.", appConfiguration)
+	}
+	fileName = "../testData/invalidConfiguration.yml"
+	LoadConfiguration(fileName)
+	if !IsConfigurationValid() {
+		t.Errorf("Configuration 2 is not valid while it should be: %v.", appConfiguration)
+	}
+	if GetConfiguration().AppName != "valid 1" {
+		t.Errorf("Configuration 2 doesn't have the expected name: %v.", appConfiguration)
+	}
+}
+
+func TestReloadConfiguration(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	if GetConfiguration().AppName != "valid 1" {
+		t.Errorf("Configuration 1 doesn't have the expected name: %v.", appConfiguration)
+	}
+	fileName = "../testData/validConfiguration2.yml"
+	LoadConfiguration(fileName)
+	if GetConfiguration().AppName != "valid 2" {
+		t.Errorf("Configuration 2 doesn't have the expected name: %v.", appConfiguration)
+	}
+}
+
+func TestGetContextWithTimeOut1(t *testing.T) {
+	ctx, cancel := GetContextWithTimeOut("test")
+	defer cancel()
+	_, ok := ctx.Deadline()
+	if !ok {
+		t.Errorf("Context isn't set with a deadline: %v.", ctx)
+	}
+}
+
+func TestGetContextWithTimeOut2(t *testing.T) {
+	ctx, cancel := GetContextWithTimeOut("xxxx")
+	defer cancel()
+	_, ok := ctx.Deadline()
+	if !ok {
+		t.Errorf("Context isn't set with a deadline: %v.", ctx)
 	}
 }

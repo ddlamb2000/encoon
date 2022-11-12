@@ -11,8 +11,37 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func TestConnectDbServers(t *testing.T) {
-	configuration.LoadConfiguration("../", "configuration.yml")
+func TestConnectDbServers1(t *testing.T) {
+	configuration.LoadConfiguration("../configuration.yml")
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
+	dbName := "test"
+	db := GetDbByName(dbName)
+	if db == nil {
+		t.Errorf(`Database %q not found.`, dbName)
+	}
+}
+
+func TestConnectDbServers2(t *testing.T) {
+	configuration.LoadConfiguration("../configuration.yml")
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+		t.Errorf(`Can't connect to databases: %v.`, err)
+	}
+	dbName := "test"
+	db := GetDbByName(dbName)
+	if db == nil {
+		t.Errorf(`Database %q not found.`, dbName)
+	}
+	ctx, stop := context.WithCancel(context.Background())
+	defer stop()
+	if err := PingDb(ctx, db); err != nil {
+		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
+	}
+}
+
+func TestConnectDbServers3(t *testing.T) {
+	configuration.LoadConfiguration("../configuration.yml")
 	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}
@@ -28,6 +57,9 @@ func TestConnectDbServers(t *testing.T) {
 	}
 	if err := DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't disconnect to databases: %v.`, err)
+	}
+	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
+		t.Errorf(`Can't re-connect to databases: %v.`, err)
 	}
 }
 

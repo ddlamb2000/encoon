@@ -6,6 +6,7 @@ package configuration
 import (
 	"context"
 	"os"
+	"sync"
 	"time"
 
 	"d.lambert.fr/encoon/utils"
@@ -23,6 +24,8 @@ type Configuration struct {
 	} `yaml:"httpServer"`
 
 	Databases []*Database `yaml:"database"`
+
+	valid bool
 }
 
 type Database struct {
@@ -35,44 +38,74 @@ type Database struct {
 	Password         string `yaml:"password"`
 	TestSleepTime    int    `yaml:"testSleepTime"`
 	TimeOutThreshold int    `yaml:"timeOutThreshold"`
+
+	valid bool
 }
 
-var appConfiguration Configuration
+var (
+	appConfiguration      Configuration
+	configurationFileName string
+	appConfigurationMutex sync.Mutex
+)
 
-func LoadConfiguration(directory, fileName string) error {
-	f, err := os.Open(directory + fileName)
+func LoadConfiguration(fileName string) error {
+	configurationFileName = fileName
+	return loadConfigurationFromFile()
+}
+
+func loadConfigurationFromFile() error {
+	utils.Log("Loading configuration from %v.", configurationFileName)
+	appConfigurationMutex.Lock()
+	defer appConfigurationMutex.Unlock()
+	f, err := os.Open(configurationFileName)
 	if err != nil {
-		utils.LogError("Error loading configuration from file %q: %v.", fileName, err)
-		return err
+		return utils.LogAndReturnError("Error loading configuration from file %q: %v.", configurationFileName, err)
 	}
 	defer f.Close()
 	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&appConfiguration)
-	if err != nil {
-		utils.LogError("Error parsing configuration from file %q: %v.", fileName, err)
+	newConfiguration := new(Configuration)
+	if err = decoder.Decode(&newConfiguration); err != nil {
+		return utils.LogAndReturnError("Error parsing configuration from file %q: %v.", configurationFileName, err)
+	}
+	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
 	}
-	utils.Log("Configuration loaded from file %q.", fileName)
+	appConfiguration = *newConfiguration
+	utils.Log("Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
 
-func GetConfiguration() Configuration { return appConfiguration }
-
-func loadMainConfiguration(directory string, fileName string) error {
-	f, err := os.Open(directory + fileName)
-	if err != nil {
-		utils.LogError("Error loading configuration from file %q: %v.", fileName, err)
-		return err
+func validateConfiguration(conf *Configuration) error {
+	if conf.AppName == "" {
+		return utils.LogAndReturnError("Missing application name (appName) from configuration file %v.", configurationFileName)
 	}
-	defer f.Close()
-	decoder := yaml.NewDecoder(f)
-	err = decoder.Decode(&appConfiguration)
-	if err != nil {
-		utils.LogError("Error parsing configuration from file %q: %v.", fileName, err)
-		return err
+	if conf.AppTag == "" {
+		return utils.LogAndReturnError("Missing application tag line (appTag) from configuration file %v.", configurationFileName)
 	}
-	utils.Log("Configuration loaded from file %q.", fileName)
+	if conf.HttpServer.Host == "" {
+		return utils.LogAndReturnError("Missing host name (httpServer.host) from configuration file %v.", configurationFileName)
+	}
+	if conf.HttpServer.Port == 0 {
+		return utils.LogAndReturnError("Missing port (httpServer.port) from configuration file %v.", configurationFileName)
+	}
+	if conf.HttpServer.JwtExpiration == 0 {
+		return utils.LogAndReturnError("Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
+	}
+	conf.valid = true
+	utils.Log("Configuration from %v is valid.", configurationFileName)
 	return nil
+}
+
+func GetConfiguration() Configuration {
+	appConfigurationMutex.Lock()
+	defer appConfigurationMutex.Unlock()
+	return appConfiguration
+}
+
+func IsConfigurationValid() bool {
+	appConfigurationMutex.Lock()
+	defer appConfigurationMutex.Unlock()
+	return appConfiguration.valid
 }
 
 func IsDatabaseEnabled(dbName string) bool {
@@ -104,8 +137,11 @@ func GetRootAndPassword(dbName string) (string, string) {
 }
 
 func GetContextWithTimeOut(dbName string) (context.Context, context.CancelFunc) {
+	var threshold = 0
 	dbConfiguration := GetDatabaseConfiguration(dbName)
-	threshold := dbConfiguration.TimeOutThreshold
+	if dbConfiguration != nil {
+		threshold = dbConfiguration.TimeOutThreshold
+	}
 	if threshold < 10 {
 		threshold = 10
 	}

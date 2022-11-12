@@ -25,7 +25,7 @@ func TestGetRowsColumnDefinitions(t *testing.T) {
 }
 
 func TestRecreateDb(t *testing.T) {
-	configuration.LoadConfiguration("../", "configuration.yml")
+	configuration.LoadConfiguration("../configuration.yml")
 	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
 		t.Errorf(`Can't connect to databases: %v.`, err)
 	}

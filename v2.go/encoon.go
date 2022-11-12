@@ -5,6 +5,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"io"
 	"net/http"
@@ -23,14 +24,22 @@ import (
 )
 
 var (
-	router = gin.Default()
-	srv    *http.Server
+	router                = gin.Default()
+	srv                   *http.Server
+	configurationFileName string
+)
+
+const (
+	configurationFileNameFlag    = "configuration"
+	defaultConfigurationFileName = "./configuration.yml"
+	usageConfigurationFileName   = "Name of the file (.yml) used to configure the application (full path)."
 )
 
 func main() {
 	f, _ := os.Create("logs/encoon.log")
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
-	if configuration.LoadConfiguration("./", "configuration.yml") == nil {
+	handleFlags()
+	if configuration.LoadConfiguration(configurationFileName) == nil {
 		utils.Log("Starting.")
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -54,6 +63,11 @@ func main() {
 		}
 	}
 	utils.Log("Stopped.")
+}
+
+func handleFlags() {
+	flag.StringVar(&configurationFileName, configurationFileNameFlag, defaultConfigurationFileName, usageConfigurationFileName)
+	flag.Parse()
 }
 
 func setAndStartHttpServer() error {
