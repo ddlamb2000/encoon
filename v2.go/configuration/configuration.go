@@ -5,7 +5,7 @@ package configuration
 
 import (
 	"context"
-	"os"
+	"io/ioutil"
 	"sync"
 	"time"
 
@@ -14,21 +14,21 @@ import (
 )
 
 type Configuration struct {
-	AppName string `yaml:"appName"`
-	AppTag  string `yaml:"appTag"`
-
-	HttpServer struct {
-		Host          string `yaml:"host"`
-		Port          int    `yaml:"port"`
-		JwtExpiration int    `yaml:"jwtExpiration"`
-	} `yaml:"httpServer"`
-
-	Databases []*Database `yaml:"database"`
+	AppName    string                   `yaml:"appName"`
+	AppTag     string                   `yaml:"appTag"`
+	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
+	Databases  []*DatabaseConfiguration `yaml:"database"`
 
 	valid bool
 }
 
-type Database struct {
+type HttpServerConfiguration struct {
+	Host          string `yaml:"host"`
+	Port          int    `yaml:"port"`
+	JwtExpiration int    `yaml:"jwtExpiration"`
+}
+
+type DatabaseConfiguration struct {
 	Host             string `yaml:"host"`
 	Port             int    `yaml:"port"`
 	Name             string `yaml:"name"`
@@ -45,6 +45,7 @@ type Database struct {
 var (
 	appConfiguration      Configuration
 	configurationFileName string
+	configurationHash     string
 	appConfigurationMutex sync.Mutex
 )
 
@@ -57,20 +58,23 @@ func loadConfigurationFromFile() error {
 	utils.Log("Loading configuration from %v.", configurationFileName)
 	appConfigurationMutex.Lock()
 	defer appConfigurationMutex.Unlock()
-	f, err := os.Open(configurationFileName)
+	f, err := ioutil.ReadFile(configurationFileName)
 	if err != nil {
 		return utils.LogAndReturnError("Error loading configuration from file %q: %v.", configurationFileName, err)
 	}
-	defer f.Close()
-	decoder := yaml.NewDecoder(f)
 	newConfiguration := new(Configuration)
-	if err = decoder.Decode(&newConfiguration); err != nil {
+	if err = yaml.Unmarshal(f, &newConfiguration); err != nil {
 		return utils.LogAndReturnError("Error parsing configuration from file %q: %v.", configurationFileName, err)
 	}
 	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
 	}
+	hash, err := utils.CalculateFileHash(configurationFileName)
+	if err != nil {
+		return utils.LogAndReturnError("Error when calculating hash for configuration file %q: %v.", configurationFileName, err)
+	}
 	appConfiguration = *newConfiguration
+	configurationHash = hash
 	utils.Log("Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
@@ -112,7 +116,7 @@ func IsDatabaseEnabled(dbName string) bool {
 	return dbName != "" && GetDatabaseConfiguration(dbName) != nil
 }
 
-func GetDatabaseConfiguration(dbName string) *Database {
+func GetDatabaseConfiguration(dbName string) *DatabaseConfiguration {
 	for _, dbConfig := range appConfiguration.Databases {
 		if dbConfig.Name == dbName {
 			return dbConfig
@@ -147,4 +151,21 @@ func GetContextWithTimeOut(dbName string) (context.Context, context.CancelFunc) 
 	}
 	ctx, ctxFunc := context.WithTimeout(context.Background(), time.Duration(threshold)*time.Millisecond)
 	return ctx, ctxFunc
+}
+
+func WatchConfigurationChanges(fileName string) {
+	go func() {
+		ticker := time.NewTicker(time.Second)
+		for range ticker.C {
+			newHash, err := utils.CalculateFileHash(fileName)
+			if err != nil {
+				utils.LogError("Error watching configuration changes on file %q: %v.", fileName, err)
+				continue
+			}
+			if newHash != configurationHash {
+				configurationHash = newHash
+				LoadConfiguration(fileName)
+			}
+		}
+	}()
 }

@@ -10,6 +10,11 @@ import (
 func TestGetNewUUID(t *testing.T) {
 	uuid := GetNewUUID()
 	if uuid == "" {
-		t.Fatal("No uuid generated.")
+		t.Errorf("No uuid generated.")
+	}
+	got := len(uuid)
+	expect := 36
+	if got != expect {
+		t.Errorf("Uuid has a length of %d instead of %d.", got, expect)
 	}
 }

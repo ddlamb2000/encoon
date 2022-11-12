@@ -41,6 +41,7 @@ func main() {
 	handleFlags()
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		utils.Log("Starting.")
+		configuration.WatchConfigurationChanges(configurationFileName)
 		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 		go func() {

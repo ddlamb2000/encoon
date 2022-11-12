@@ -4,8 +4,11 @@
 package utils
 
 import (
+	"crypto/sha256"
 	"errors"
 	"fmt"
+	"io"
+	"os"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -13,12 +16,6 @@ import (
 
 func Log(format string, a ...any) {
 	fmt.Fprintf(gin.DefaultWriter, format+"\n", a...)
-}
-
-func Trace(trace, format string, a ...any) {
-	if trace != "" {
-		fmt.Fprintf(gin.DefaultWriter, "[TRACE] "+format+"\n", a...)
-	}
 }
 
 func LogError(format string, a ...any) {
@@ -31,6 +28,26 @@ func LogAndReturnError(format string, a ...any) error {
 	return errors.New(m)
 }
 
+func Trace(trace, format string, a ...any) {
+	if trace != "" {
+		fmt.Fprintf(gin.DefaultWriter, "[TRACE] "+format+"\n", a...)
+	}
+}
+
 func CleanupStrings(s string) string {
 	return strings.Join(strings.Fields(strings.Replace(s, "\n", "", -1)), " ")
+}
+
+func CalculateFileHash(fileName string) (string, error) {
+	f, err := os.Open(fileName)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+	hash := sha256.New()
+	if _, err := io.Copy(hash, f); err != nil {
+		return "", err
+	}
+	sum := fmt.Sprintf("%x", hash.Sum(nil))
+	return sum, nil
 }

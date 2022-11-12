@@ -4,9 +4,13 @@
 package configuration
 
 import (
+	"io/ioutil"
 	"reflect"
 	"strings"
 	"testing"
+	"time"
+
+	"gopkg.in/yaml.v2"
 )
 
 func TestLoadConfiguration1(t *testing.T) {
@@ -215,5 +219,66 @@ func TestGetContextWithTimeOut2(t *testing.T) {
 	_, ok := ctx.Deadline()
 	if !ok {
 		t.Errorf("Context isn't set with a deadline: %v.", ctx)
+	}
+}
+
+func TestConfigurationAutoUpdates(t *testing.T) {
+	fileName := "/tmp/testConfiguration.yml"
+	conf := Configuration{
+		AppName: "testA",
+		AppTag:  "tagA",
+		HttpServer: HttpServerConfiguration{
+			Host:          "local",
+			Port:          22,
+			JwtExpiration: 10,
+		},
+	}
+	out, err := yaml.Marshal(conf)
+	if err != nil {
+		t.Errorf("Can't marshal yaml: %v.", err)
+		return
+	}
+	err = ioutil.WriteFile(fileName, out, 0666)
+	if err != nil {
+		t.Errorf("Can't create file %q: %v.", fileName, err)
+		return
+	}
+	WatchConfigurationChanges(fileName)
+	time.Sleep(2 * time.Second)
+	got := GetConfiguration().AppName
+	expect := "testA"
+	if got != expect {
+		t.Errorf("Application name is %q while it should be: %q.", got, expect)
+		return
+	}
+	conf = Configuration{
+		AppName: "testB",
+		AppTag:  "tagB",
+		HttpServer: HttpServerConfiguration{
+			Host:          "local",
+			Port:          22,
+			JwtExpiration: 10,
+		},
+	}
+	out, err = yaml.Marshal(conf)
+	if err != nil {
+		t.Errorf("Can't marshal yaml: %v.", err)
+		return
+	}
+	err = ioutil.WriteFile(fileName, out, 0666)
+	if err != nil {
+		t.Errorf("Can't create file %q: %v.", fileName, err)
+		return
+	}
+	time.Sleep(2 * time.Second)
+	if !IsConfigurationValid() {
+		t.Errorf("Validation is not valid while it should: %v.", GetConfiguration())
+		return
+	}
+	got = GetConfiguration().AppName
+	expect = "testB"
+	if got != expect {
+		t.Errorf("Application name is %q while it should be: %q.", got, expect)
+		return
 	}
 }
