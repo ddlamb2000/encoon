@@ -15,30 +15,44 @@ import (
 	_ "github.com/lib/pq"
 )
 
-var (
-	dbs = make(map[string]*sql.DB)
-)
+var dbs = make(map[string]*sql.DB)
 
-func GetDbByName(dbName string) *sql.DB {
-	return dbs[dbName]
-}
-
-func setDb(dbName string, db *sql.DB) {
+func GetDbByName(dbName string) (*sql.DB, error) {
+	if dbName == "" {
+		return nil, utils.LogAndReturnError("Missing database name parameter.")
+	}
+	db := dbs[dbName]
+	if db != nil {
+		return db, nil
+	}
+	dbConfiguration, err := findDbConfiguration(dbName)
+	if err != nil {
+		return nil, err
+	}
+	db, err = connectDbServer(dbConfiguration)
+	if err != nil {
+		return nil, err
+	}
 	dbs[dbName] = db
+	return db, nil
 }
 
-func ConnectDbServers(dbConfigurations []*configuration.DatabaseConfiguration) error {
-	for _, conf := range dbConfigurations {
-		if err := connectDbServer(conf); err != nil {
-			return err
+func findDbConfiguration(dbName string) (*configuration.DatabaseConfiguration, error) {
+	if configuration.GetConfiguration().Databases != nil {
+		for _, conf := range configuration.GetConfiguration().Databases {
+			if conf.Name == dbName {
+				return conf, nil
+			}
 		}
 	}
-	return nil
+	return nil, utils.LogAndReturnError("Database %q isn't configured.", dbName)
 }
 
-func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) error {
-	psqlInfo := fmt.Sprintf(
-		"host=%s port=%d user=%s dbname=%s sslmode=disable",
+func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) (*sql.DB, error) {
+	if dbConfiguration.Host == "" || dbConfiguration.Port == 0 || dbConfiguration.User == "" || dbConfiguration.Name == "" {
+		return nil, utils.LogAndReturnError("Incorrect database configuration.")
+	}
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
 		dbConfiguration.Host,
 		dbConfiguration.Port,
 		dbConfiguration.User,
@@ -46,47 +60,21 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) error
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		utils.LogError("Can't connect to database with %q: %v", psqlInfo, err)
-		return err
+		return nil, utils.LogAndReturnError("Can't connect to database with %q: %v", psqlInfo, err)
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
 	if err := PingDb(ctx, db); err != nil {
-		return err
+		return nil, err
 	}
-	setDb(dbConfiguration.Name, db)
 	utils.Log("[%s] Database connected.", dbConfiguration.Name)
 	migrateDb(ctx, db, dbConfiguration.Name)
-	return nil
+	return db, nil
 }
 
 func PingDb(ctx context.Context, db *sql.DB) error {
-	if err := db.PingContext(context.Background()); err != nil {
-		utils.LogError("Unable to connect to database: %v.", err)
-		return err
-	}
-	return nil
-}
-
-func DisconnectDbServers(dbConfigurations []*configuration.DatabaseConfiguration) error {
-	for _, conf := range dbConfigurations {
-		if err := disconnectDbServer(conf); err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
-func disconnectDbServer(dbConfiguration *configuration.DatabaseConfiguration) error {
-	dbName := dbConfiguration.Name
-	db := GetDbByName(dbName)
-	if db != nil {
-		err := db.Close()
-		if err != nil {
-			utils.LogError("Unable to disconnect database %q: %v.", dbName, err)
-			return err
-		}
-		utils.Log("[%s] Database disconnected.", dbName)
+	if err := db.PingContext(ctx); err != nil {
+		return utils.LogAndReturnError("Unable to connect to database: %v.", err)
 	}
 	return nil
 }

@@ -189,7 +189,6 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersExpired", func(t *testing.T) {
-		database.ConnectDbServers(configuration.GetConfiguration().Databases)
 		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := authentication.GetNewToken("test", "root", "0", "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
@@ -211,7 +210,6 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersPassing", func(t *testing.T) {
-		database.ConnectDbServers(configuration.GetConfiguration().Databases)
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := authentication.GetNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
@@ -233,7 +231,6 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersNotFound", func(t *testing.T) {
-		database.ConnectDbServers(configuration.GetConfiguration().Databases)
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := authentication.GetNewToken("test", "root", "0", "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
@@ -255,7 +252,6 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersNotFound2", func(t *testing.T) {
-		database.ConnectDbServers(configuration.GetConfiguration().Databases)
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := authentication.GetNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)

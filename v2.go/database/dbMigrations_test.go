@@ -26,17 +26,12 @@ func TestGetRowsColumnDefinitions(t *testing.T) {
 
 func TestRecreateDb(t *testing.T) {
 	configuration.LoadConfiguration("../configuration.yml")
-	if err := ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
-		t.Errorf(`Can't connect to databases: %v.`, err)
-	}
 	dbName := "test"
-	db := GetDbByName(dbName)
-	if db == nil {
+	db, err := GetDbByName(dbName)
+	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
-	err := RecreateDb(ctx, db, "xxx")
+	err = RecreateDb(context.Background(), db, "xxx")
 	expect := "[xxx] Only test database can be recreated."
 	if err.Error() != expect {
 		t.Errorf(`expect %v and found %v.`, expect, err)

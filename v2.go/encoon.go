@@ -20,7 +20,6 @@ import (
 
 	"d.lambert.fr/encoon/backend"
 	"d.lambert.fr/encoon/configuration"
-	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -60,12 +59,10 @@ func main() {
 			utils.Log("Stopping.")
 			doneChan <- true
 		}()
-		go database.ConnectDbServers(configuration.GetConfiguration().Databases)
 		go setAndStartHttpServer()
 		<-doneChan
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		go database.DisconnectDbServers(configuration.GetConfiguration().Databases)
 		if err := srv.Shutdown(ctx); err != nil {
 			utils.LogError("Error during server shutdown: %v.", err)
 		}

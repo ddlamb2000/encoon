@@ -66,7 +66,7 @@ type apiPostResponse struct {
 
 func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited, rowsDeleted []model.Row, trace string) (bool, error) {
 	utils.Trace(trace, "postGridsRows()")
-	db, err := getDbForGridsApi(dbName, user)
+	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return false, err
 	}

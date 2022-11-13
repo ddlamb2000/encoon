@@ -34,7 +34,6 @@ func TestSystem(t *testing.T) {
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
 	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
-	t.Run("DisconnectDb", func(t *testing.T) { RunTestDisconnectDbServers(t) })
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
@@ -113,46 +112,32 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 
 func RunTestConnectDbServersIncorrect(t *testing.T) {
 	configuration.LoadConfiguration("abc/configuration.yml")
-	if err := database.ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
-		t.Errorf(`Can't connect to databases: %v.`, err)
-	}
 	dbName := "test"
-	db := database.GetDbByName(dbName)
-	if db != nil {
+	_, err := database.GetDbByName(dbName)
+	if err == nil {
 		t.Errorf(`Database %q found!`, dbName)
 	}
 }
 
 func RunTestConnectDbServers(t *testing.T) {
 	configuration.LoadConfiguration("../configuration.yml")
-	if err := database.ConnectDbServers(configuration.GetConfiguration().Databases); err != nil {
-		t.Errorf(`Can't connect to databases: %v.`, err)
-	}
 	dbName := "test"
-	db := database.GetDbByName(dbName)
-	if db == nil {
+	_, err := database.GetDbByName(dbName)
+	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
-	}
-}
-
-func RunTestDisconnectDbServers(t *testing.T) {
-	if err := database.DisconnectDbServers(configuration.GetConfiguration().Databases); err != nil {
-		t.Errorf(`Can't disconnect to databases: %v.`, err)
 	}
 }
 
 func RunTestRecreateDb(t *testing.T) {
 	dbName := "test"
-	db := database.GetDbByName(dbName)
-	if db == nil {
+	db, err := database.GetDbByName(dbName)
+	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
-	ctx, stop := context.WithCancel(context.Background())
-	defer stop()
-	if err := database.PingDb(ctx, db); err != nil {
+	if err := database.PingDb(context.Background(), db); err != nil {
 		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
-	if err := database.RecreateDb(ctx, db, dbName); err != nil {
+	if err := database.RecreateDb(context.Background(), db, dbName); err != nil {
 		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
 	}
 }

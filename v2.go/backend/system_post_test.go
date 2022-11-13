@@ -161,7 +161,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("UpdateNewRow", func(t *testing.T) {
-		db := database.GetDbByName("test")
+		db, _ := database.GetDbByName("test")
 		var uuid string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuid)
 		stringNotEqual(t, uuid, "")
@@ -181,7 +181,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("CreateNewandUpdateRowsInSingleGrid", func(t *testing.T) {
-		db := database.GetDbByName("test")
+		db, _ := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -208,7 +208,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("CreateDeleteRowsInSingleGrid", func(t *testing.T) {
-		db := database.GetDbByName("test")
+		db, _ := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -258,7 +258,7 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("DeleteRowInSingleGrid", func(t *testing.T) {
-		db := database.GetDbByName("test")
+		db, _ := database.GetDbByName("test")
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text01= $2", utils.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")

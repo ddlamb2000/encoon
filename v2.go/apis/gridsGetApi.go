@@ -61,7 +61,7 @@ type apiGetResponse struct {
 
 func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []model.Row, int, bool, error) {
 	utils.Trace(trace, "getGridsRows()")
-	db, err := getDbForGridsApi(dbName, user)
+	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return nil, nil, 0, false, err
 	}
@@ -99,17 +99,6 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []mod
 		utils.Trace(trace, "getGridsRows() - OK")
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}
-}
-
-func getDbForGridsApi(dbName, user string) (*sql.DB, error) {
-	if dbName == "" {
-		return nil, utils.LogAndReturnError("[%s] Missing database name parameter.", user)
-	}
-	db := database.GetDbByName(dbName)
-	if db == nil {
-		return nil, utils.LogAndReturnError("[%s] [%s] Database not available.", dbName, user)
-	}
-	return db, nil
 }
 
 func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {

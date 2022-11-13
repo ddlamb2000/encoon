@@ -54,9 +54,8 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 
 func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../configuration.yml")
-	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
-	db := database.GetDbByName(dbName)
+	db, _ := database.GetDbByName(dbName)
 	gridUri := "_users"
 	user := "root"
 	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri, "")
@@ -70,10 +69,9 @@ func TestGetGridForGridsApi(t *testing.T) {
 
 func TestGetRowsForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../configuration.yml")
-	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
-	db := database.GetDbByName(dbName)
+	db, _ := database.GetDbByName(dbName)
 	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
@@ -82,10 +80,9 @@ func TestGetRowsForGridsApi(t *testing.T) {
 
 func TestGetRowsForGridsApi2(t *testing.T) {
 	configuration.LoadConfiguration("../configuration.yml")
-	database.ConnectDbServers(configuration.GetConfiguration().Databases)
 	dbName := "test"
 	user := "root"
-	db := database.GetDbByName(dbName)
+	db, _ := database.GetDbByName(dbName)
 	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "", "")
 	if err == nil {
 		t.Errorf(`expect error.`)
@@ -115,25 +112,6 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
-	}
-}
-
-func TestGetDbForGridsApi(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
-	database.ConnectDbServers(configuration.GetConfiguration().Databases)
-	_, err := getDbForGridsApi("test", "root")
-	if err != nil {
-		t.Errorf(`Got error %v.`, err)
-	}
-	expect := "[aaa] [root] Database not available."
-	_, err = getDbForGridsApi("aaa", "root")
-	if err.Error() != expect {
-		t.Errorf(`Got error %v instead of %v.`, err, expect)
-	}
-	_, err = getDbForGridsApi("", "root")
-	expect = "[root] Missing database name parameter."
-	if err.Error() != expect {
-		t.Errorf(`Got error %v instead of %v.`, err, expect)
 	}
 }
 
