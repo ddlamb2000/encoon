@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"bytes"
@@ -13,7 +13,6 @@ import (
 	"testing"
 	"time"
 
-	"d.lambert.fr/encoon/authentication"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
@@ -38,7 +37,7 @@ func TestSystem(t *testing.T) {
 
 func getTokenForUser(dbName, userName, userUuid string) string {
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-	token, _ := authentication.GetNewToken(dbName, userName, userUuid, userName, userName, expiration)
+	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
 	return token
 }
 
@@ -112,7 +111,7 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 
 func RunTestConnectDbServersIncorrect(t *testing.T) {
 	configuration.LoadConfiguration("abc/configuration.yml")
-	dbName := "test"
+	dbName := "alpha"
 	_, err := database.GetDbByName(dbName)
 	if err == nil {
 		t.Errorf(`Database %q found!`, dbName)

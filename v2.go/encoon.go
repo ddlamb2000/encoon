@@ -18,7 +18,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
 
-	"d.lambert.fr/encoon/backend"
+	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 )
@@ -91,7 +91,7 @@ func setAndStartHttpServer() error {
 	router.GET("/:dbName", getIndexHtml)
 	router.GET("/:dbName/:gridUri", getIndexHtml)
 	router.GET("/:dbName/:gridUri/:uuid", getIndexHtml)
-	backend.SetApiRoutes(router)
+	apis.SetApiRoutes(router)
 	srv = &http.Server{
 		Addr:         fmt.Sprintf(":%d", configuration.GetConfiguration().HttpServer.Port),
 		Handler:      router,

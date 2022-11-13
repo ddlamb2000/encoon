@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package authentication
+package apis
 
 import (
 	"fmt"
@@ -24,7 +24,7 @@ type JWTtoken struct {
 	Token string `json:"token" binding:"required"`
 }
 
-func Authentication(c *gin.Context) {
+func authentication(c *gin.Context) {
 	dbName := c.Param("dbName")
 	if dbName == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
@@ -43,7 +43,7 @@ func Authentication(c *gin.Context) {
 		return
 	}
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-	tokenString, err := GetNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
+	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.Abort()
 		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
@@ -53,7 +53,7 @@ func Authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-func GetNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
+func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		"user":          id,
 		"userUuid":      userUuid,
@@ -66,7 +66,7 @@ func GetNewToken(dbName string, id string, userUuid string, firstName string, la
 	return token.SignedString([]byte(jwtSecret))
 }
 
-func AuthMiddleware() gin.HandlerFunc {
+func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbName := c.Param("dbName")
 		if dbName == "" {

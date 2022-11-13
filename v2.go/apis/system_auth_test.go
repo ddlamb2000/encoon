@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package backend
+package apis
 
 import (
 	"io"
@@ -11,7 +11,6 @@ import (
 	"testing"
 	"time"
 
-	"d.lambert.fr/encoon/authentication"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
@@ -169,7 +168,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersMissingBearer", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		token, _ := authentication.GetNewToken("test", "root", "0", "root", "root", expiration)
+		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 		req.Header.Add("Authorization", token)
 		w := httptest.NewRecorder()
@@ -190,7 +189,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersExpired", func(t *testing.T) {
 		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		token, _ := authentication.GetNewToken("test", "root", "0", "root", "root", expiration)
+		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
@@ -211,7 +210,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersPassing", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		token, _ := authentication.GetNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
+		token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
@@ -232,7 +231,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersNotFound", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		token, _ := authentication.GetNewToken("test", "root", "0", "root", "root", expiration)
+		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
@@ -253,7 +252,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersNotFound2", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		token, _ := authentication.GetNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
+		token, _ := getNewToken("test", "root", utils.UuidRootUser, "root", "root", expiration)
 		req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
