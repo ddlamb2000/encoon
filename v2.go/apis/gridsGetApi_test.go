@@ -13,7 +13,6 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
-	"d.lambert.fr/encoon/utils"
 	_ "github.com/lib/pq"
 )
 
@@ -62,7 +61,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
-	if grid.Uuid != utils.UuidUsers {
+	if grid.Uuid != model.UuidUsers {
 		t.Errorf(`Grid Uuid is wrong: %v.`, grid.Uuid)
 	}
 }
@@ -72,7 +71,7 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	dbName := "test"
 	user := "root"
 	db, _ := database.GetDbByName(dbName)
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, utils.UuidUsers, "", "")
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, model.UuidUsers, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}

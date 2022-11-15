@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2022
 
-package utils
+package model
 
 const (
 	UuidGrids               = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
@@ -13,6 +13,7 @@ const (
 	UuidTextColumnType      = "65f3c258-fb1e-4f8b-96ca-f790e70d29c1"
 	UuidNumberColumnType    = "8c28d527-66f4-481c-902e-ac1e65a8abb0"
 	UuidReferenceColumnType = "c8b16312-d4f0-40a5-aa04-c0bc1350fea7"
+	UuidRelationships       = "c3deef8a-8c10-44f3-814b-02d242e959c5"
 
 	UuidRootUser = "3a33485c-7683-4482-aa5d-0aa51e58d79d"
 )

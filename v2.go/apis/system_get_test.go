@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/utils"
+	"d.lambert.fr/encoon/model"
 )
 
 func RunSystemTestGet(t *testing.T) {
@@ -22,7 +22,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyDbNotFound", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/tst/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/tst/api/v1/xxx")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
@@ -31,7 +31,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/xxx")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
@@ -40,17 +40,17 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids")
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":6`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+utils.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
-		jsonStringContains(t, responseData, `"createdBy":"`+utils.UuidRootUser+`"`)
+		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidRootUser)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidRootUser)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows"`)
@@ -58,29 +58,29 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+utils.UuidGrids+`"`)
-		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+utils.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+model.UuidGrids+`"`)
 	})
 
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
 		jsonStringContains(t, responseData, `{"error":"[test] [root] Get request has been cancelled: context deadline exceeded."}`)
 	})
 
 	t.Run("VerifyActualRowSingleBis", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", utils.UuidRootUser, "/test/api/v1/_grids/"+utils.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+utils.UuidGrids+`"`)
-		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+utils.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+model.UuidGrids+`"`)
 	})
 }

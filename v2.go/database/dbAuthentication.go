@@ -5,6 +5,7 @@ package database
 
 import (
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -29,7 +30,7 @@ func IsDbAuthorized(dbName string, user string, password string) (string, string
 				return
 			}
 			if err := db.
-				QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, user, password).
+				QueryRowContext(ctx, selectSql+whereSql, model.UuidUsers, user, password).
 				Scan(&uuid, &firstName, &lastName); err != nil {
 				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
 				return

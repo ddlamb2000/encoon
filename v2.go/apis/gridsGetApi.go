@@ -104,7 +104,7 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []mod
 func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {
 	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text01 = $2"
 	grid := new(model.Grid)
-	if err := db.QueryRowContext(ctx, selectGridStatement, utils.UuidGrids, gridUri).
+	if err := db.QueryRowContext(ctx, selectGridStatement, model.UuidGrids, gridUri).
 		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)

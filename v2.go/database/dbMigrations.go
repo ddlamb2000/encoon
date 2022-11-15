@@ -10,6 +10,7 @@ import (
 	"sort"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -45,7 +46,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 
 func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (int, error) {
 	var latestMigration int = 0
-	if err := db.QueryRow("SELECT MAX(int01) FROM rows WHERE gridUuid = $1", utils.UuidMigrations).Scan(&latestMigration); err != nil {
+	if err := db.QueryRow("SELECT MAX(int01) FROM rows WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
 		utils.Log("[%s] No latest migration found: %v.", dbName, err)
 		return 0, nil
 	}
@@ -65,17 +66,13 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"updatedBy uuid, " +
 				"enabled boolean, " +
 				"gridUuid uuid, " +
-				"parentUuid uuid, " +
 				getRowsColumnDefinitions() +
 				"version integer)",
 
 			2: "CREATE EXTENSION pgcrypto",
-
 			4: "CREATE INDEX gridUuid ON rows(gridUuid);",
-
-			5: "CREATE INDEX gridParentUuid ON rows(parentUuid);",
-
-			6: "CREATE INDEX gridText01 ON rows(text01);",
+			5: "CREATE INDEX gridText01 ON rows(text01);",
+			6: "CREATE INDEX gridText02 ON rows(text02);",
 
 			7: "INSERT INTO rows " +
 				"(uuid, " +
@@ -90,14 +87,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidGrids + "', " +
+				"VALUES ('" + model.UuidGrids + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_grids', " +
 				"'Grids', " +
 				"'Data organized in rows and columns.', " +
@@ -116,14 +113,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidUsers + "', " +
+				"VALUES ('" + model.UuidUsers + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_users', " +
 				"'Users', " +
 				"'Users who has access to the system.', " +
@@ -142,14 +139,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidRootUser + "', " +
+				"VALUES ('" + model.UuidRootUser + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidUsers + "', " +
+				"'" + model.UuidUsers + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
 				"'" + root + "', " +
@@ -168,14 +165,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidColumns + "', " +
+				"VALUES ('" + model.UuidColumns + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_columns', " +
 				"'Columns', " +
 				"'Columns of data grids.', " +
@@ -194,14 +191,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidMigrations + "', " +
+				"VALUES ('" + model.UuidMigrations + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_migrations', " +
 				"'Migrations', " +
 				"'Statements run to create database.', " +
@@ -220,14 +217,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidTransactions + "', " +
+				"VALUES ('" + model.UuidTransactions + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_transactions', " +
 				"'Transactions', " +
 				"'Log of data changes.', " +
@@ -246,14 +243,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text02, " +
 				"text03, " +
 				"text04) " +
-				"VALUES ('" + utils.UuidColumnTypes + "', " +
+				"VALUES ('" + model.UuidColumnTypes + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
 				"'_columntypes', " +
 				"'Column types', " +
 				"'Types of data grids columns.', " +
@@ -270,14 +267,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('" + utils.UuidTextColumnType + "', " +
+				"VALUES ('" + model.UuidTextColumnType + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidColumnTypes + "', " +
+				"'" + model.UuidColumnTypes + "', " +
 				"'Text', " +
 				"'Text column type.')",
 
@@ -292,14 +289,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('" + utils.UuidNumberColumnType + "', " +
+				"VALUES ('" + model.UuidNumberColumnType + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidColumnTypes + "', " +
+				"'" + model.UuidColumnTypes + "', " +
 				"'Number', " +
 				"'Number column type.')",
 
@@ -314,16 +311,42 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"gridUuid, " +
 				"text01, " +
 				"text02) " +
-				"VALUES ('" + utils.UuidReferenceColumnType + "', " +
+				"VALUES ('" + model.UuidReferenceColumnType + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidColumnTypes + "', " +
+				"'" + model.UuidColumnTypes + "', " +
 				"'Reference', " +
 				"'Reference to another data grid row column type.')",
+
+			17: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text01, " +
+				"text02, " +
+				"text03, " +
+				"text04) " +
+				"VALUES ('" + model.UuidRelationships + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidGrids + "', " +
+				"'_relationships', " +
+				"'Relationships', " +
+				"'Relationships between grid rows.', " +
+				"'file-code')",
 		})
 	if err != nil {
 		return err
@@ -367,10 +390,10 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
-				"'" + utils.UuidRootUser + "', " +
-				"'" + utils.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
 				"true, " +
-				"'" + utils.UuidMigrations + "', " +
+				"'" + model.UuidMigrations + "', " +
 				"$2, " +
 				"$3)"
 			newUuid := utils.GetNewUUID()
