@@ -25,7 +25,7 @@ func TestGetRowsColumnDefinitions(t *testing.T) {
 }
 
 func TestRecreateDb(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	db, err := GetDbByName(dbName)
 	if err != nil {

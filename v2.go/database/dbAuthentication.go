@@ -24,14 +24,14 @@ func IsDbAuthorized(dbName string, user string, password string) (string, string
 		ctx, cancel := configuration.GetContextWithTimeOut(dbName)
 		defer cancel()
 		go func() {
+			if err := TestSleep(ctx, dbName, db); err != nil {
+				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+				return
+			}
 			if err := db.
 				QueryRowContext(ctx, selectSql+whereSql, utils.UuidUsers, user, password).
 				Scan(&uuid, &firstName, &lastName); err != nil {
 				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
-				return
-			}
-			if err := TestSleep(ctx, dbName, db); err != nil {
-				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 				return
 			}
 			utils.Log("[%s] ID and password verified for %q.", dbName, user)

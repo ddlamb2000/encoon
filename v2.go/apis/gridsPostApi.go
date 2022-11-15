@@ -83,14 +83,14 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := database.BeginTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
+		if err := BeginTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
 		for _, row := range rowsAdded {
 			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = database.RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
+				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
@@ -98,7 +98,7 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited
 		for _, row := range rowsEdited {
 			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = database.RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
+				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
@@ -106,12 +106,12 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited
 		for _, row := range rowsDeleted {
 			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
 			if err != nil {
-				_ = database.RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
+				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 				ctxChan <- apiPostResponse{err}
 				return
 			}
 		}
-		if err := database.CommitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
+		if err := CommitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
@@ -121,7 +121,7 @@ func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited
 	select {
 	case <-ctx.Done():
 		utils.Trace(trace, "postGridsRows() - Cancelled")
-		_ = database.RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
+		_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 		return true, utils.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
 		utils.Trace(trace, "postGridsRows() - OK ; response=%v", response)
@@ -246,5 +246,35 @@ func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 		return utils.LogAndReturnError("[%s] [%s] Delete row error: %v.", dbName, user, err)
 	}
 	utils.Log("[%s] [%s] Row [%s] deleted in %q.", dbName, user, row, gridUri)
+	return err
+}
+
+func BeginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+	utils.Trace(trace, "beginTransaction()")
+	_, err := db.ExecContext(ctx, "BEGIN")
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] Begin transaction.", dbName, user)
+	return err
+}
+
+func CommitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+	utils.Trace(trace, "commitTransaction()")
+	_, err := db.ExecContext(ctx, "COMMIT")
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] Commit transaction.", dbName, user)
+	return err
+}
+
+func RollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
+	utils.Trace(trace, "rollbackTransaction()")
+	_, err := db.ExecContext(ctx, "ROLLBACK")
+	if err != nil {
+		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
+	}
+	utils.Log("[%s] [%s] ROLLBACK transaction.", dbName, user)
 	return err
 }

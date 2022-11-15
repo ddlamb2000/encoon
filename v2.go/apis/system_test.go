@@ -119,7 +119,7 @@ func RunTestConnectDbServersIncorrect(t *testing.T) {
 }
 
 func RunTestConnectDbServers(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	_, err := database.GetDbByName(dbName)
 	if err != nil {
@@ -132,9 +132,6 @@ func RunTestRecreateDb(t *testing.T) {
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := database.PingDb(context.Background(), db); err != nil {
-		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
 	if err := database.RecreateDb(context.Background(), db, dbName); err != nil {
 		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)

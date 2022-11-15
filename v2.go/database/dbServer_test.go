@@ -4,7 +4,6 @@
 package database
 
 import (
-	"context"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -12,7 +11,7 @@ import (
 )
 
 func TestConnectDbServers1(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	_, err := GetDbByName(dbName)
 	if err != nil {
@@ -21,26 +20,30 @@ func TestConnectDbServers1(t *testing.T) {
 }
 
 func TestConnectDbServers2(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	db, err := GetDbByName(dbName)
+	_, err := GetDbByName(dbName)
 	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := PingDb(context.Background(), db); err != nil {
-		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
 	}
 }
 
 func TestConnectDbServers3(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	db, err := GetDbByName(dbName)
+	_, err := GetDbByName(dbName)
 	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
-	if err := PingDb(context.Background(), db); err != nil {
-		t.Errorf(`Database %q doesn't respond to ping: %v.`, dbName, err)
+}
+
+func TestConnectDbServers4(t *testing.T) {
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+	dbName := "baddb"
+	_, err := GetDbByName(dbName)
+	expect := "Unable to connect to database: dial tcp: lookup testhost: no such host."
+	if err == nil || err.Error() != expect {
+		t.Errorf("Got err %v instead of %v.", err, expect)
 	}
 }
 
@@ -49,5 +52,14 @@ func TestConnectDbServer(t *testing.T) {
 	conf.Host = "xxx"
 	if _, err := connectDbServer(&conf); err == nil {
 		t.Errorf(`Can connect to database?: %v.`, err)
+	}
+}
+
+func TestGetDbByName(t *testing.T) {
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+	_, err := GetDbByName("")
+	expect := "Missing database name parameter."
+	if err == nil || err.Error() != expect {
+		t.Errorf("Got err %v instead of %v.", err, expect)
 	}
 }

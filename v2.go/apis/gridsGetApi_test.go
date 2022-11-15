@@ -53,7 +53,7 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 }
 
 func TestGetGridForGridsApi(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	db, _ := database.GetDbByName(dbName)
 	gridUri := "_users"
@@ -68,7 +68,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	user := "root"
 	db, _ := database.GetDbByName(dbName)
@@ -79,7 +79,7 @@ func TestGetRowsForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsForGridsApi2(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	user := "root"
 	db, _ := database.GetDbByName(dbName)

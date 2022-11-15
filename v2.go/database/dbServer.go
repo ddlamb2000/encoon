@@ -64,49 +64,12 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) (*sql
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
-	if err := PingDb(ctx, db); err != nil {
-		return nil, err
+	if err := db.PingContext(ctx); err != nil {
+		return nil, utils.LogAndReturnError("Unable to connect to database: %v.", err)
 	}
 	utils.Log("[%s] Database connected.", dbConfiguration.Name)
 	migrateDb(ctx, db, dbConfiguration.Name)
 	return db, nil
-}
-
-func PingDb(ctx context.Context, db *sql.DB) error {
-	if err := db.PingContext(ctx); err != nil {
-		return utils.LogAndReturnError("Unable to connect to database: %v.", err)
-	}
-	return nil
-}
-
-func BeginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "beginTransaction()")
-	_, err := db.ExecContext(ctx, "BEGIN")
-	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
-	}
-	utils.Log("[%s] [%s] Begin transaction.", dbName, user)
-	return err
-}
-
-func CommitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "commitTransaction()")
-	_, err := db.ExecContext(ctx, "COMMIT")
-	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
-	}
-	utils.Log("[%s] [%s] Commit transaction.", dbName, user)
-	return err
-}
-
-func RollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "rollbackTransaction()")
-	_, err := db.ExecContext(ctx, "ROLLBACK")
-	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
-	}
-	utils.Log("[%s] [%s] ROLLBACK transaction.", dbName, user)
-	return err
 }
 
 func TestSleep(ctx context.Context, dbName string, db *sql.DB) error {

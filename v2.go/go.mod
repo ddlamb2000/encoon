@@ -8,8 +8,9 @@ go 1.19
 require (
 	github.com/gin-gonic/gin v1.8.1
 	github.com/google/uuid v1.3.0
-	golang.org/x/exp v0.0.0-20221012211006-4de253d81b95
 )
+
+require github.com/google/go-cmp v0.5.8 // indirect
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect

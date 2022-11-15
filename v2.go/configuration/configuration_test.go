@@ -14,15 +14,16 @@ import (
 )
 
 func TestLoadConfiguration1(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	if err := LoadConfiguration(fileName); err != nil {
 		t.Errorf("Can't load configuration %q: %v.", fileName, err)
 	}
 }
+
 func TestLoadConfiguration2(t *testing.T) {
-	fileName := "../utils/configuration.yml"
+	fileName := "../xxx/validConfiguration1.yml"
 	if err := LoadConfiguration(fileName); err == nil {
-		t.Errorf("Can't load configurations from %q: %v.", fileName, err)
+		t.Errorf("Can load configurations from %q: %v!", fileName, err)
 	}
 }
 
@@ -48,7 +49,7 @@ func TestLoadConfiguration5(t *testing.T) {
 }
 
 func TestLoadConfiguration6(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	if err := LoadConfiguration(fileName); err != nil {
 		t.Errorf("Can't load configurations from %q: %v.", fileName, err)
 	}
@@ -87,7 +88,7 @@ func TestGetRootAndPassword(t *testing.T) {
 }
 
 func TestValidateConfiguration1(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
 	appConfiguration.AppName = ""
 	got := validateConfiguration(&appConfiguration)
@@ -98,7 +99,7 @@ func TestValidateConfiguration1(t *testing.T) {
 }
 
 func TestValidateConfiguration2(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
 	appConfiguration.AppTag = ""
 	got := validateConfiguration(&appConfiguration)
@@ -109,7 +110,7 @@ func TestValidateConfiguration2(t *testing.T) {
 }
 
 func TestValidateConfiguration3(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
 	appConfiguration.HttpServer.Port = 0
 	got := validateConfiguration(&appConfiguration)
@@ -120,7 +121,7 @@ func TestValidateConfiguration3(t *testing.T) {
 }
 
 func TestValidateConfiguration4(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
 	appConfiguration.HttpServer.JwtExpiration = 0
 	got := validateConfiguration(&appConfiguration)
@@ -131,7 +132,7 @@ func TestValidateConfiguration4(t *testing.T) {
 }
 
 func TestValidateConfiguration5(t *testing.T) {
-	fileName := "../configuration.yml"
+	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
 	got := validateConfiguration(&appConfiguration)
 	if got != nil {

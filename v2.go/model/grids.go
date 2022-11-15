@@ -9,6 +9,6 @@ type Grid struct {
 	Row
 }
 
-func (row *Grid) SetPath(dbName, gridUri string) {
-	row.Path = fmt.Sprintf("/%s/%s", dbName, gridUri)
+func (grid *Grid) SetPath(dbName, gridUri string) {
+	grid.Path = fmt.Sprintf("/%s/%s", dbName, gridUri)
 }

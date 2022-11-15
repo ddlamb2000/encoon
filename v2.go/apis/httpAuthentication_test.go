@@ -11,7 +11,7 @@ import (
 )
 
 func TestGetNewToken(t *testing.T) {
-	configuration.LoadConfiguration("../configuration.yml")
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, err := getNewToken("test", "root", "0", "root", "root", expiration)
 	if err != nil {
