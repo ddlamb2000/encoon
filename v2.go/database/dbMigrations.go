@@ -20,11 +20,7 @@ const (
 
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	latestMigration, _ := migrateInitializationDb(ctx, db, dbName)
-	err := migrateDataModelDb(ctx, db, dbName, latestMigration)
-	if err != nil {
-		return err
-	}
-	return nil
+	return migrateDataModelDb(ctx, db, dbName, latestMigration)
 }
 
 func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {

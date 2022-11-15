@@ -37,3 +37,15 @@ func TestRecreateDb(t *testing.T) {
 		t.Errorf(`expect %v and found %v.`, expect, err)
 	}
 }
+
+func TestRecreateDb2(t *testing.T) {
+	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+	dbName := "test"
+	db, err := GetDbByName(dbName)
+	if err != nil {
+		t.Errorf(`Database %q not found.`, dbName)
+	}
+	if err := RecreateDb(context.Background(), db, dbName); err != nil {
+		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
+	}
+}
