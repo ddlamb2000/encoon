@@ -450,7 +450,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidUserColumnIdRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -478,7 +478,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidUserColumnFirstNameRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -506,7 +506,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidUserColumnLastNameRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -534,7 +534,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidUserColumnPasswordRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -650,7 +650,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidGridColumnUriRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -678,7 +678,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidGridColumnNameRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -706,7 +706,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidGridColumnDescRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -734,7 +734,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidGridColumnIconRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -806,7 +806,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidColumnColumnLabelRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -834,7 +834,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidColumnColumnNameRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -906,7 +906,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidColumnTypeColumnNameRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -934,7 +934,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidColumnTypeColumnDescRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -1006,7 +1006,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidMigrationsColumnSeqRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -1034,7 +1034,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidMigrationsColumnCommandRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -1136,7 +1136,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"text3, " +
 				"text4, " +
 				"text5) " +
-				"VALUES ('" + model.UuidColumnColumnGridUriRel + "', " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
 				"1, " +
 				"NOW(), " +
 				"NOW(), " +
@@ -1149,6 +1149,252 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidColumns + "', " +
 				"'" + model.UuidColumns + "', " +
 				"'" + model.UuidColumnColumnGridUri + "')",
+
+			50: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidUserColumnId + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			51: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidUserColumnFirstName + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			52: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidUserColumnLastName + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			53: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2) " +
+				"VALUES ('" + model.UuidPasswordColumnType + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'Password', " +
+				"'Password or passphrase.')",
+
+			54: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidUserColumnPassword + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidPasswordColumnType + "')",
+
+			55: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnUri + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			56: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnName + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			57: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnDesc + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
+
+			58: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnIcon + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidTextColumnType + "')",
 		})
 	if err != nil {
 		return err
