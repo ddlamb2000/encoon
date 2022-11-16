@@ -9,14 +9,14 @@ class GridView extends React.Component {
 				<table className="table table-hover table-sm">
 					<thead className="table-light"></thead>
 					<tbody>
-						<tr><td>Text01</td><td>{this.props.row.text01}</td></tr>
-						<tr><td>Text02</td><td>{this.props.row.text02}</td></tr>
-						<tr><td>Text03</td><td>{this.props.row.text03}</td></tr>
-						<tr><td>Text04</td><td>{this.props.row.text04}</td></tr>
-						<tr><td>Int01</td><td>{this.props.row.int01}</td></tr>
-						<tr><td>Int02</td><td>{this.props.row.int02}</td></tr>
-						<tr><td>Int03</td><td>{this.props.row.int03}</td></tr>
-						<tr><td>Int04</td><td>{this.props.row.int04}</td></tr>
+						<tr><td>Text1</td><td>{this.props.row.text1}</td></tr>
+						<tr><td>Text2</td><td>{this.props.row.text2}</td></tr>
+						<tr><td>Text3</td><td>{this.props.row.text3}</td></tr>
+						<tr><td>Text4</td><td>{this.props.row.text4}</td></tr>
+						<tr><td>Int1</td><td>{this.props.row.int1}</td></tr>
+						<tr><td>Int2</td><td>{this.props.row.int2}</td></tr>
+						<tr><td>Int3</td><td>{this.props.row.int3}</td></tr>
+						<tr><td>Int4</td><td>{this.props.row.int4}</td></tr>
 						<tr><td>Version</td><td>{this.props.row.version}</td></tr>
 						<tr><td>Created by</td><td>{this.props.row.createdBy}</td></tr>
 						<tr><td>Updated by</td><td>{this.props.row.updatedBy}</td></tr>

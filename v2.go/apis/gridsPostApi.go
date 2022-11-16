@@ -151,14 +151,14 @@ func getInsertStatementForGridsApi() string {
 		"updatedBy, " +
 		"enabled, " +
 		"gridUuid, " +
-		"text01, " +
-		"text02, " +
-		"text03, " +
-		"text04, " +
-		"int01, " +
-		"int02, " +
-		"int03, " +
-		"int04) "
+		"text1, " +
+		"text2, " +
+		"text3, " +
+		"text4, " +
+		"int1, " +
+		"int2, " +
+		"int3, " +
+		"int4) "
 	valueStr := " VALUES ($1, " +
 		"1, " +
 		"NOW(), " +
@@ -183,14 +183,14 @@ func getInsertValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any 
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	values = append(values, gridUuid)
-	values = append(values, row.Text01)
-	values = append(values, row.Text02)
-	values = append(values, row.Text03)
-	values = append(values, row.Text04)
-	values = append(values, row.Int01)
-	values = append(values, row.Int02)
-	values = append(values, row.Int03)
-	values = append(values, row.Int04)
+	values = append(values, row.Text1)
+	values = append(values, row.Text2)
+	values = append(values, row.Text3)
+	values = append(values, row.Text4)
+	values = append(values, row.Int1)
+	values = append(values, row.Int2)
+	values = append(values, row.Int3)
+	values = append(values, row.Int4)
 	return values
 }
 
@@ -211,14 +211,14 @@ func getUpdateStatementForGridsApi() string {
 		"version = version + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3, " +
-		"text01 = $4, " +
-		"text02 = $5, " +
-		"text03 = $6, " +
-		"text04 = $7, " +
-		"int01 = $8, " +
-		"int02 = $9, " +
-		"int03 = $10, " +
-		"int04 = $11"
+		"text1 = $4, " +
+		"text2 = $5, " +
+		"text3 = $6, " +
+		"text4 = $7, " +
+		"int1 = $8, " +
+		"int2 = $9, " +
+		"int3 = $10, " +
+		"int4 = $11"
 	whereStr := " WHERE uuid = $1 and gridUuid = $2"
 	return updateStr + whereStr
 }
@@ -228,14 +228,14 @@ func getUpdateValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any 
 	values = append(values, row.Uuid)
 	values = append(values, gridUuid)
 	values = append(values, userUuid)
-	values = append(values, row.Text01)
-	values = append(values, row.Text02)
-	values = append(values, row.Text03)
-	values = append(values, row.Text04)
-	values = append(values, row.Int01)
-	values = append(values, row.Int02)
-	values = append(values, row.Int03)
-	values = append(values, row.Int04)
+	values = append(values, row.Text1)
+	values = append(values, row.Text2)
+	values = append(values, row.Text3)
+	values = append(values, row.Text4)
+	values = append(values, row.Int1)
+	values = append(values, row.Int2)
+	values = append(values, row.Int3)
+	values = append(values, row.Int4)
 	return values
 }
 

@@ -8,14 +8,14 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						<th scope="col">Text01</th>
-						<th scope="col">Text02</th>
-						<th scope="col">Text03</th>
-						<th scope="col">Text04</th>
-						<th scope="col" style={{width: "64px"}}>Int01</th>
-						<th scope="col" style={{width: "64px"}}>Int02</th>
-						<th scope="col" style={{width: "64px"}}>Int03</th>
-						<th scope="col" style={{width: "64px"}}>Int04</th>
+						<th scope="col">Text1</th>
+						<th scope="col">Text2</th>
+						<th scope="col">Text3</th>
+						<th scope="col">Text4</th>
+						<th scope="col" style={{width: "64px"}}>Int1</th>
+						<th scope="col" style={{width: "64px"}}>Int2</th>
+						<th scope="col" style={{width: "64px"}}>Int3</th>
+						<th scope="col" style={{width: "64px"}}>Int4</th>
 						<th scope="col" style={{width: "64px"}}>Version</th>
 					</tr>
 				</thead>
@@ -76,14 +76,14 @@ class GridRow extends React.Component {
 
 	getColumns() {
 		const columns = []
-		columns.push({col: "text01", value: this.props.row.text01, type: "text", readonly: false})
-		columns.push({col: "text02", value: this.props.row.text02, type: "text", readonly: false})
-		columns.push({col: "text03", value: this.props.row.text03, type: "text", readonly: false})
-		columns.push({col: "text04", value: this.props.row.text04, type: "text", readonly: false})
-		columns.push({col: "int01", value: this.props.row.int01, type: "number", readonly: false})
-		columns.push({col: "int02", value: this.props.row.int02, type: "number", readonly: false})
-		columns.push({col: "int03", value: this.props.row.int03, type: "number", readonly: false})
-		columns.push({col: "int04", value: this.props.row.int04, type: "number", readonly: false})
+		columns.push({col: "text1", value: this.props.row.text1, type: "text", readonly: false})
+		columns.push({col: "text2", value: this.props.row.text2, type: "text", readonly: false})
+		columns.push({col: "text3", value: this.props.row.text3, type: "text", readonly: false})
+		columns.push({col: "text4", value: this.props.row.text4, type: "text", readonly: false})
+		columns.push({col: "int1", value: this.props.row.int1, type: "number", readonly: false})
+		columns.push({col: "int2", value: this.props.row.int2, type: "number", readonly: false})
+		columns.push({col: "int3", value: this.props.row.int3, type: "number", readonly: false})
+		columns.push({col: "int4", value: this.props.row.int4, type: "number", readonly: false})
 		columns.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
 		return columns
 	}

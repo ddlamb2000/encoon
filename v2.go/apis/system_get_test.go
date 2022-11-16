@@ -43,7 +43,7 @@ func RunSystemTestGet(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"countRows":6`)
+		jsonStringContains(t, responseData, `"countRows":7`)
 		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
 		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)

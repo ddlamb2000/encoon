@@ -14,11 +14,11 @@ import (
 
 func TestGetRowsColumnDefinitions(t *testing.T) {
 	got := getRowsColumnDefinitions()
-	expect := "text01 text, text02 text, text03 text"
+	expect := "text1 text, text2 text, text3 text"
 	if !strings.Contains(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
-	expect2 := "int01 integer, int02 integer, int03 integer"
+	expect2 := "int1 integer, int2 integer, int3 integer"
 	if !strings.Contains(got, expect2) {
 		t.Errorf(`Got %v instead of %v.`, got, expect2)
 	}

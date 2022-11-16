@@ -219,7 +219,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusOK)
 
-		expect := utils.CleanupStrings(`"text01":"root","text02":"root"`)
+		expect := utils.CleanupStrings(`"text1":"root","text2":"root"`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {

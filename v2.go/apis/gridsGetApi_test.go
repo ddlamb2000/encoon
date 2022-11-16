@@ -96,14 +96,14 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	got := getRowsQueryOutputForGridsApi(&row)
 	expect := []any{
 		&row.Uuid,
-		&row.Text01,
-		&row.Text02,
-		&row.Text03,
-		&row.Text04,
-		&row.Int01,
-		&row.Int02,
-		&row.Int03,
-		&row.Int04,
+		&row.Text1,
+		&row.Text2,
+		&row.Text3,
+		&row.Text4,
+		&row.Int1,
+		&row.Int2,
+		&row.Int3,
+		&row.Int4,
 		&row.Enabled,
 		&row.CreateBy,
 		&row.UpdatedBy,
@@ -116,7 +116,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 
 func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
 	got := getGridQueryColumnsForGridsApi()
-	expect := "SELECT uuid, text01, text02, text03, text04, enabled, createdBy, updatedBy, version"
+	expect := "SELECT uuid, text1, text2, text3, text4, enabled, createdBy, updatedBy, version"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
@@ -127,10 +127,10 @@ func TestGetGridQueryOutputForGridsApi(t *testing.T) {
 	got := getGridQueryOutputForGridsApi(&grid)
 	expect := []any{
 		&grid.Uuid,
-		&grid.Text01,
-		&grid.Text02,
-		&grid.Text03,
-		&grid.Text04,
+		&grid.Text1,
+		&grid.Text2,
+		&grid.Text3,
+		&grid.Text4,
 		&grid.Enabled,
 		&grid.CreateBy,
 		&grid.UpdatedBy,

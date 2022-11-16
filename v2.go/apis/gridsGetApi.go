@@ -102,7 +102,7 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []mod
 }
 
 func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {
-	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text01 = $2"
+	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text1 = $2"
 	grid := new(model.Grid)
 	if err := db.QueryRowContext(ctx, selectGridStatement, model.UuidGrids, gridUri).
 		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
@@ -119,10 +119,10 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, 
 
 func getGridQueryColumnsForGridsApi() string {
 	return "SELECT uuid, " +
-		"text01, " +
-		"text02, " +
-		"text03, " +
-		"text04, " +
+		"text1, " +
+		"text2, " +
+		"text3, " +
+		"text4, " +
 		"enabled, " +
 		"createdBy, " +
 		"updatedBy, " +
@@ -132,10 +132,10 @@ func getGridQueryColumnsForGridsApi() string {
 func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output := make([]any, 0)
 	output = append(output, &grid.Uuid)
-	output = append(output, &grid.Text01)
-	output = append(output, &grid.Text02)
-	output = append(output, &grid.Text03)
-	output = append(output, &grid.Text04)
+	output = append(output, &grid.Text1)
+	output = append(output, &grid.Text2)
+	output = append(output, &grid.Text3)
+	output = append(output, &grid.Text4)
 	output = append(output, &grid.Enabled)
 	output = append(output, &grid.CreateBy)
 	output = append(output, &grid.UpdatedBy)
@@ -157,20 +157,20 @@ func getRowsQueryForGridsApi(uuid string) string {
 	selectStr := getRowsQueryColumnsForGridsApi()
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	orderByStr := " ORDER BY text01, text02, text03, text04 "
+	orderByStr := " ORDER BY text1, text2, text3, text4 "
 	return selectStr + fromStr + whereStr + orderByStr
 }
 
 func getRowsQueryColumnsForGridsApi() string {
 	return "SELECT uuid, " +
-		"text01, " +
-		"text02, " +
-		"text03, " +
-		"text04, " +
-		"int01, " +
-		"int02, " +
-		"int03, " +
-		"int04, " +
+		"text1, " +
+		"text2, " +
+		"text3, " +
+		"text4, " +
+		"int1, " +
+		"int2, " +
+		"int3, " +
+		"int4, " +
 		"enabled, " +
 		"createdBy, " +
 		"updatedBy, " +
@@ -215,14 +215,14 @@ func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace st
 func getRowsQueryOutputForGridsApi(row *model.Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
-	output = append(output, &row.Text01)
-	output = append(output, &row.Text02)
-	output = append(output, &row.Text03)
-	output = append(output, &row.Text04)
-	output = append(output, &row.Int01)
-	output = append(output, &row.Int02)
-	output = append(output, &row.Int03)
-	output = append(output, &row.Int04)
+	output = append(output, &row.Text1)
+	output = append(output, &row.Text2)
+	output = append(output, &row.Text3)
+	output = append(output, &row.Text4)
+	output = append(output, &row.Int1)
+	output = append(output, &row.Int2)
+	output = append(output, &row.Int3)
+	output = append(output, &row.Int4)
 	output = append(output, &row.Enabled)
 	output = append(output, &row.CreateBy)
 	output = append(output, &row.UpdatedBy)

@@ -19,8 +19,8 @@ type apiAuthResponse struct {
 func IsDbAuthorized(dbName string, user string, password string) (string, string, string, bool, error) {
 	if db, err := GetDbByName(dbName); err == nil {
 		var uuid, firstName, lastName string
-		selectSql := " SELECT uuid, text01, text02 FROM rows "
-		whereSql := " WHERE gridUuid = $1 AND text01 = $2 AND text04 = crypt($3, text04) "
+		selectSql := " SELECT uuid, text1, text2 FROM rows "
+		whereSql := " WHERE gridUuid = $1 AND text1 = $2 AND text4 = crypt($3, text4) "
 		ctxChan := make(chan apiAuthResponse, 1)
 		ctx, cancel := configuration.GetContextWithTimeOut(dbName)
 		defer cancel()

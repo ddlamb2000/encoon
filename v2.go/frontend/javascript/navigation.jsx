@@ -33,8 +33,8 @@ class Navigation extends React.Component {
 					<ul className="nav flex-column mb-2">
 						{isLoaded && rows && rows.map(row => 
 							<li className="nav-item" key={row.uuid}>
-								<a className="nav-link" href={`/${this.props.dbName}/${row.text01}`}>
-									{row.text02} {row.text04 && <i className={`bi bi-${row.text04}`}></i>}
+								<a className="nav-link" href={`/${this.props.dbName}/${row.text1}`}>
+									{row.text2} {row.text4 && <i className={`bi bi-${row.text4}`}></i>}
 								</a>
 							</li>
 						)}
