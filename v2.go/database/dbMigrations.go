@@ -1058,7 +1058,9 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled, " +
 				"gridUuid, " +
 				"text1, " +
-				"text2) " +
+				"text2, " +
+				"text3, " +
+				"int1) " +
 				"VALUES ('" + model.UuidColumnColumnColumnType + "', " +
 				"1, " +
 				"NOW(), " +
@@ -1068,7 +1070,85 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"true, " +
 				"'" + model.UuidColumns + "', " +
 				"'Type', " +
-				"'relationship1')",
+				"'relationship1', " +
+				"'_columntypes'," +
+				"1)",
+
+			47: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"int1) " +
+				"VALUES ('" + model.UuidGridColumnColumns + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidColumns + "', " +
+				"'Columns', " +
+				"'relationship1', " +
+				"'_columns'," +
+				"99)",
+
+			48: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2) " +
+				"VALUES ('" + model.UuidColumnColumnGridUri + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidColumns + "', " +
+				"'Grid uri', " +
+				"'text3')",
+
+			49: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + model.UuidColumnColumnGridUriRel + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidColumnColumnGridUri + "')",
 		})
 	if err != nil {
 		return err
