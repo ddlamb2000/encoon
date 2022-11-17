@@ -101,48 +101,6 @@ func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []mod
 	}
 }
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {
-	selectGridStatement := getGridQueryColumnsForGridsApi() + " FROM rows WHERE gridUuid = $1 AND text1 = $2"
-	grid := new(model.Grid)
-	if err := db.QueryRowContext(ctx, selectGridStatement, model.UuidGrids, gridUri).
-		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)
-		} else {
-			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid definition %q: %v.", dbName, user, gridUri, err)
-		}
-	}
-	grid.SetPath(dbName, gridUri)
-	utils.Trace(trace, "Got grid %q: [%s].", gridUri, grid)
-	return grid, nil
-}
-
-func getGridQueryColumnsForGridsApi() string {
-	return "SELECT uuid, " +
-		"text1, " +
-		"text2, " +
-		"text3, " +
-		"text4, " +
-		"enabled, " +
-		"createdBy, " +
-		"updatedBy, " +
-		"version"
-}
-
-func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
-	output := make([]any, 0)
-	output = append(output, &grid.Uuid)
-	output = append(output, &grid.Text1)
-	output = append(output, &grid.Text2)
-	output = append(output, &grid.Text3)
-	output = append(output, &grid.Text4)
-	output = append(output, &grid.Enabled)
-	output = append(output, &grid.CreateBy)
-	output = append(output, &grid.UpdatedBy)
-	output = append(output, &grid.Version)
-	return output
-}
-
 func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid, uuid, trace string) (*sql.Rows, error) {
 	rows, err := db.QueryContext(ctx,
 		getRowsQueryForGridsApi(uuid),

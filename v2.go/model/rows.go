@@ -32,7 +32,7 @@ type Row struct {
 	Int8      *int64  `json:"int8,omitempty" yaml:"int1,omitempty"`
 	Int9      *int64  `json:"int9,omitempty" yaml:"int1,omitempty"`
 	Int10     *int64  `json:"int10,omitempty" yaml:"int1,omitempty"`
-	Path      string  `json:"path" yaml:"path"`
+	Path      string  `json:"path,omitempty" yaml:"path,omitempty"`
 }
 
 func (row Row) String() string {

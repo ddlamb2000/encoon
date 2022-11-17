@@ -7,6 +7,7 @@ import "fmt"
 
 type Grid struct {
 	Row
+	Columns []*Column `json:"columns,omitempty" yaml:"columns,omitempty"`
 }
 
 func (grid *Grid) SetPath(dbName, gridUri string) {
