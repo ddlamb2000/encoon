@@ -82,15 +82,14 @@ func getGridColumsQueryForGridsApi() string {
 		"col.gridUuid, " +
 		"col.text1, " +
 		"col.text2, " +
-		"col.text3, " +
 		"col.enabled, " +
 		"col.createdBy, " +
 		"col.updatedBy, " +
 		"col.version " +
 		"FROM rows rel " +
 		"JOIN rows col " +
-		"ON rel.text4 = col.gridUuid::text " +
-		"AND rel.text5 = col.uuid::text " +
+		"ON rel.text4 = col.gridUuid " +
+		"AND rel.text5 = col.uuid " +
 		"WHERE rel.gridUuid = $1 " +
 		"AND rel.text1 = $2 " +
 		"AND rel.text2 = $3 " +
@@ -105,7 +104,6 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.GridUuid)
 	output = append(output, &column.Text1)
 	output = append(output, &column.Text2)
-	output = append(output, &column.Text3)
 	output = append(output, &column.Enabled)
 	output = append(output, &column.CreateBy)
 	output = append(output, &column.UpdatedBy)

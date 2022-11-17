@@ -59,13 +59,13 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 	err := migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
 			1: "CREATE TABLE rows (" +
-				"uuid uuid NOT NULL PRIMARY KEY, " +
+				"uuid text NOT NULL PRIMARY KEY, " +
 				"created timestamp with time zone, " +
-				"createdBy uuid, " +
+				"createdBy text, " +
 				"updated timestamp with time zone, " +
-				"updatedBy uuid, " +
+				"updatedBy text, " +
 				"enabled boolean, " +
-				"gridUuid uuid, " +
+				"gridUuid text, " +
 				getRowsColumnDefinitions() +
 				"version integer)",
 
@@ -1058,9 +1058,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled, " +
 				"gridUuid, " +
 				"text1, " +
-				"text2, " +
-				"text3, " +
-				"int1) " +
+				"text2) " +
 				"VALUES ('" + model.UuidColumnColumnColumnType + "', " +
 				"1, " +
 				"NOW(), " +
@@ -1070,9 +1068,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"true, " +
 				"'" + model.UuidColumns + "', " +
 				"'Type', " +
-				"'relationship1', " +
-				"'_columntypes'," +
-				"1)",
+				"'relationship1')",
 
 			47: "INSERT INTO rows " +
 				"(uuid, " +
@@ -1084,9 +1080,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled, " +
 				"gridUuid, " +
 				"text1, " +
-				"text2, " +
-				"text3, " +
-				"int1) " +
+				"text2) " +
 				"VALUES ('" + model.UuidGridColumnColumns + "', " +
 				"1, " +
 				"NOW(), " +
@@ -1096,59 +1090,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"true, " +
 				"'" + model.UuidColumns + "', " +
 				"'Columns', " +
-				"'relationship1', " +
-				"'_columns'," +
-				"99)",
-
-			48: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
-				"text1, " +
-				"text2) " +
-				"VALUES ('" + model.UuidColumnColumnGridUri + "', " +
-				"1, " +
-				"NOW(), " +
-				"NOW(), " +
-				"'" + model.UuidRootUser + "', " +
-				"'" + model.UuidRootUser + "', " +
-				"true, " +
-				"'" + model.UuidColumns + "', " +
-				"'Grid uri', " +
-				"'text3')",
-
-			49: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
-				"text1, " +
-				"text2, " +
-				"text3, " +
-				"text4, " +
-				"text5) " +
-				"VALUES ('" + utils.GetNewUUID() + "', " +
-				"1, " +
-				"NOW(), " +
-				"NOW(), " +
-				"'" + model.UuidRootUser + "', " +
-				"'" + model.UuidRootUser + "', " +
-				"true, " +
-				"'" + model.UuidRelationships + "', " +
-				"'relationship1', " +
-				"'" + model.UuidGrids + "', " +
-				"'" + model.UuidColumns + "', " +
-				"'" + model.UuidColumns + "', " +
-				"'" + model.UuidColumnColumnGridUri + "')",
+				"'relationship1')",
 
 			50: "INSERT INTO rows " +
 				"(uuid, " +
@@ -1449,34 +1391,6 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'relationship1', " +
 				"'" + model.UuidColumns + "', " +
 				"'" + model.UuidColumnColumnName + "', " +
-				"'" + model.UuidColumnTypes + "', " +
-				"'" + model.UuidTextColumnType + "')",
-
-			61: "INSERT INTO rows " +
-				"(uuid, " +
-				"version, " +
-				"created, " +
-				"updated, " +
-				"createdBy, " +
-				"updatedBy, " +
-				"enabled, " +
-				"gridUuid, " +
-				"text1, " +
-				"text2, " +
-				"text3, " +
-				"text4, " +
-				"text5) " +
-				"VALUES ('" + utils.GetNewUUID() + "', " +
-				"1, " +
-				"NOW(), " +
-				"NOW(), " +
-				"'" + model.UuidRootUser + "', " +
-				"'" + model.UuidRootUser + "', " +
-				"true, " +
-				"'" + model.UuidRelationships + "', " +
-				"'relationship1', " +
-				"'" + model.UuidColumns + "', " +
-				"'" + model.UuidColumnColumnGridUri + "', " +
 				"'" + model.UuidColumnTypes + "', " +
 				"'" + model.UuidTextColumnType + "')",
 

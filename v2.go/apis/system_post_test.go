@@ -233,30 +233,6 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringDoesntContain(t, responseData, `"text1":"test-13"`)
 	})
 
-	t.Run("UpdateIncorrectRowInSingleGrid", func(t *testing.T) {
-		postStr := `{"rowsEdited":` +
-			`[` +
-			`{"uuid":"xxxx","text1":"test-01","text2":"test-02","text3":"test-03","text4":"test-04"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/Grid01", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"[test] [root] Update row error`)
-	})
-
-	t.Run("DeleteIncorrectRowInSingleGrid", func(t *testing.T) {
-		postStr := `{"rowsDeleted":` +
-			`[` +
-			`{"uuid":"xxxx"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/Grid01", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"[test] [root] Delete row error`)
-	})
-
 	t.Run("DeleteRowInSingleGrid", func(t *testing.T) {
 		db, _ := database.GetDbByName("test")
 		var uuidGrid, uuidRow string

@@ -5,9 +5,7 @@ package apis
 
 import (
 	"context"
-	"fmt"
 	"reflect"
-	"strings"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -59,20 +57,6 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, model.UuidUsers, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
-	}
-}
-
-func TestGetRowsForGridsApi2(t *testing.T) {
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	user := "root"
-	db, _ := database.GetDbByName(dbName)
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, "xxx", "", "")
-	if err == nil {
-		t.Errorf(`expect error.`)
-	}
-	if !strings.Contains(fmt.Sprintf("%v", err), "Error when querying rows:") {
-		t.Errorf(`Wrong error: %v.`, err)
 	}
 }
 
