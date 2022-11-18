@@ -23,15 +23,15 @@ type Row struct {
 	Text9     *string `json:"text9,omitempty" yaml:"text9,omitempty"`
 	Text10    *string `json:"text10,omitempty" yaml:"text10,omitempty"`
 	Int1      *int64  `json:"int1,omitempty" yaml:"int1,omitempty"`
-	Int2      *int64  `json:"int2,omitempty" yaml:"int1,omitempty"`
-	Int3      *int64  `json:"int3,omitempty" yaml:"int1,omitempty"`
-	Int4      *int64  `json:"int4,omitempty" yaml:"int1,omitempty"`
-	Int5      *int64  `json:"int5,omitempty" yaml:"int1,omitempty"`
-	Int6      *int64  `json:"int6,omitempty" yaml:"int1,omitempty"`
-	Int7      *int64  `json:"int7,omitempty" yaml:"int1,omitempty"`
-	Int8      *int64  `json:"int8,omitempty" yaml:"int1,omitempty"`
-	Int9      *int64  `json:"int9,omitempty" yaml:"int1,omitempty"`
-	Int10     *int64  `json:"int10,omitempty" yaml:"int1,omitempty"`
+	Int2      *int64  `json:"int2,omitempty" yaml:"int2,omitempty"`
+	Int3      *int64  `json:"int3,omitempty" yaml:"int3,omitempty"`
+	Int4      *int64  `json:"int4,omitempty" yaml:"int4,omitempty"`
+	Int5      *int64  `json:"int5,omitempty" yaml:"int5,omitempty"`
+	Int6      *int64  `json:"int6,omitempty" yaml:"int6,omitempty"`
+	Int7      *int64  `json:"int7,omitempty" yaml:"int7,omitempty"`
+	Int8      *int64  `json:"int8,omitempty" yaml:"int8,omitempty"`
+	Int9      *int64  `json:"int9,omitempty" yaml:"int9,omitempty"`
+	Int10     *int64  `json:"int10,omitempty" yaml:"int10,omitempty"`
 	Path      string  `json:"path,omitempty" yaml:"path,omitempty"`
 }
 
