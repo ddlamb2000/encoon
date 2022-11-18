@@ -4,6 +4,7 @@
 package configuration
 
 import (
+	"context"
 	"io/ioutil"
 	"reflect"
 	"strings"
@@ -167,7 +168,7 @@ func TestReloadConfiguration(t *testing.T) {
 }
 
 func TestGetContextWithTimeOut1(t *testing.T) {
-	ctx, cancel := GetContextWithTimeOut("test")
+	ctx, cancel := GetContextWithTimeOut(context.Background(), "test")
 	defer cancel()
 	_, ok := ctx.Deadline()
 	if !ok {
@@ -176,7 +177,7 @@ func TestGetContextWithTimeOut1(t *testing.T) {
 }
 
 func TestGetContextWithTimeOut2(t *testing.T) {
-	ctx, cancel := GetContextWithTimeOut("xxxx")
+	ctx, cancel := GetContextWithTimeOut(context.Background(), "xxxx")
 	defer cancel()
 	_, ok := ctx.Deadline()
 	if !ok {

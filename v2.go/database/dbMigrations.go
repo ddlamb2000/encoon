@@ -14,11 +14,6 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-const (
-	numberOfTextFields = 10
-	numberOfIntFields  = 10
-)
-
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	latestMigration, _ := migrateInitializationDb(ctx, db, dbName)
 	return migrateDataModelDb(ctx, db, dbName, latestMigration)
@@ -1624,10 +1619,10 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 
 func getRowsColumnDefinitions() string {
 	var columnDefinitions = ""
-	for i := 1; i <= numberOfTextFields; i++ {
+	for i := 1; i <= model.NumberOfTextFields; i++ {
 		columnDefinitions += fmt.Sprintf("text%d text, ", i)
 	}
-	for i := 1; i <= numberOfIntFields; i++ {
+	for i := 1; i <= model.NumberOfIntFields; i++ {
 		columnDefinitions += fmt.Sprintf("int%d integer, ", i)
 	}
 	return columnDefinitions

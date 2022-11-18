@@ -32,7 +32,7 @@ func authentication(c *gin.Context) {
 	}
 	var login login
 	c.ShouldBindJSON(&login)
-	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(dbName, login.Id, login.Password)
+	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(c.Request.Context(), dbName, login.Id, login.Password)
 	if err != nil || userUuid == "" {
 		c.Abort()
 		if timeOut {

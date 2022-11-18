@@ -26,7 +26,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, uuid, user, c.Query("trace"))
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, uuid, user, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -59,14 +59,14 @@ type apiGetResponse struct {
 	err      error
 }
 
-func getGridsRows(dbName, gridUri, uuid, user, trace string) (*model.Grid, []model.Row, int, bool, error) {
+func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string) (*model.Grid, []model.Row, int, bool, error) {
 	utils.Trace(trace, "getGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return nil, nil, 0, false, err
 	}
 	ctxChan := make(chan apiGetResponse, 1)
-	ctx, cancel := configuration.GetContextWithTimeOut(dbName)
+	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, db); err != nil {

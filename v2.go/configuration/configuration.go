@@ -122,7 +122,7 @@ func GetRootAndPassword(dbName string) (string, string) {
 	return dbConfiguration.Root, dbConfiguration.Password
 }
 
-func GetContextWithTimeOut(dbName string) (context.Context, context.CancelFunc) {
+func GetContextWithTimeOut(ct context.Context, dbName string) (context.Context, context.CancelFunc) {
 	var threshold = 0
 	dbConfiguration := GetDatabaseConfiguration(dbName)
 	if dbConfiguration != nil {
@@ -131,7 +131,7 @@ func GetContextWithTimeOut(dbName string) (context.Context, context.CancelFunc) 
 	if threshold < 10 {
 		threshold = 10
 	}
-	ctx, ctxFunc := context.WithTimeout(context.Background(), time.Duration(threshold)*time.Millisecond)
+	ctx, ctxFunc := context.WithTimeout(ct, time.Duration(threshold)*time.Millisecond)
 	return ctx, ctxFunc
 }
 

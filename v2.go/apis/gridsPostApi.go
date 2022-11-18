@@ -32,7 +32,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	gridUri := c.Param("gridUri")
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	timeOut, err := postGridsRows(dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted, c.Query("trace"))
+	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload.RowsAdded, payload.RowsEdited, payload.RowsDeleted, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -44,7 +44,7 @@ func PostGridsRowsApi(c *gin.Context) {
 		}
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(dbName, gridUri, "", user, c.Query("trace"))
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user, c.Query("trace"))
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -64,14 +64,14 @@ type apiPostResponse struct {
 	err error
 }
 
-func postGridsRows(dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited, rowsDeleted []model.Row, trace string) (bool, error) {
+func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, rowsAdded, rowsEdited, rowsDeleted []model.Row, trace string) (bool, error) {
 	utils.Trace(trace, "postGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return false, err
 	}
 	ctxChan := make(chan apiPostResponse, 1)
-	ctx, cancel := configuration.GetContextWithTimeOut(dbName)
+	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, db); err != nil {

@@ -4,6 +4,7 @@
 package database
 
 import (
+	"context"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -13,7 +14,7 @@ import (
 func TestIsDbAuthorized1(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	_, _, _, _, err := IsDbAuthorized(dbName, "root", "dGVzdA==")
+	_, _, _, _, err := IsDbAuthorized(context.Background(), dbName, "root", "dGVzdA==")
 	if err != nil {
 		t.Errorf("Can't authenticate: %v.", err)
 	}
@@ -22,7 +23,7 @@ func TestIsDbAuthorized1(t *testing.T) {
 func TestIsDbAuthorized2(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	uuid, firstName, lastName, _, err2 := IsDbAuthorized(dbName, "rot", "dGVzdA==")
+	uuid, firstName, lastName, _, err2 := IsDbAuthorized(context.Background(), dbName, "rot", "dGVzdA==")
 	if err2 == nil {
 		t.Errorf("Can authenticate with a wrong id: %v, %v, %v.", uuid, firstName, lastName)
 	}
@@ -31,7 +32,7 @@ func TestIsDbAuthorized2(t *testing.T) {
 func TestIsDbAuthorized3(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	uuid, firstName, lastName, _, err3 := IsDbAuthorized(dbName, "root", "========")
+	uuid, firstName, lastName, _, err3 := IsDbAuthorized(context.Background(), dbName, "root", "========")
 	if err3 == nil {
 		t.Errorf("Can authenticate with a wrong password: %v, %v, %v.", uuid, firstName, lastName)
 	}
@@ -40,7 +41,7 @@ func TestIsDbAuthorized3(t *testing.T) {
 func TestIsDbAuthorized4(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "===="
-	uuid, firstName, lastName, _, err4 := IsDbAuthorized(dbName, "root", "========")
+	uuid, firstName, lastName, _, err4 := IsDbAuthorized(context.Background(), dbName, "root", "========")
 	if err4 == nil {
 		t.Errorf("Can authenticate on a dummy database: %v, %v, %v.", uuid, firstName, lastName)
 	}
@@ -51,7 +52,7 @@ func TestIsDbAuthorizedTimeOut(t *testing.T) {
 	ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 	defer ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
 	dbName := "test"
-	_, _, _, _, err := IsDbAuthorized(dbName, "root", "dGVzdA==")
+	_, _, _, _, err := IsDbAuthorized(context.Background(), dbName, "root", "dGVzdA==")
 	if err == nil {
 		t.Errorf("Can authenticate: %v!", err)
 	}
