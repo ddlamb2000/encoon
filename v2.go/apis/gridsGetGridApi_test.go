@@ -31,7 +31,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 
 func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
 	got := getGridQueryForGridsApi()
-	expect := "SELECT uuid, text1, text2, text3, text4, enabled, createdBy, updatedBy, version FROM rows WHERE gridUuid = $1 AND text1 = $2"
+	expect := "SELECT uuid, text1, text2, text3, text4, enabled, created, createdBy, updated, updatedBy, version FROM rows WHERE gridUuid = $1 AND text1 = $2"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
@@ -47,7 +47,9 @@ func TestGetGridQueryOutputForGridsApi(t *testing.T) {
 		&grid.Text3,
 		&grid.Text4,
 		&grid.Enabled,
-		&grid.CreateBy,
+		&grid.Created,
+		&grid.CreatedBy,
+		&grid.Updated,
 		&grid.UpdatedBy,
 		&grid.Version,
 	}

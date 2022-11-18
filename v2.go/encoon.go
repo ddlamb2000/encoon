@@ -20,6 +20,7 @@ import (
 
 	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 )
 
@@ -28,6 +29,8 @@ var (
 	srv                   *http.Server
 	configurationFileName string
 	logFileName           string
+	exportDb              string
+	exportFileName        string
 )
 
 const (
@@ -37,12 +40,19 @@ const (
 	logFileNameFlag              = "log"
 	defaultLogFileName           = "./logs/encoon.log"
 	usageLogFileName             = "Name of the file (.log) used for logging."
+	exportDbFlag                 = "export"
+	defaultDbExport              = ""
+	usageDbExport                = "Name of the database to export."
+	exportFileNameFlag           = "exportfile"
+	defaultExportFileName        = ""
+	usageExportFileName          = "Name of the file (.ymp) used for exporting data."
 )
 
 func main() {
 	handleFlags()
 	flags := os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	f, err := os.OpenFile(logFileName, flags, 0666)
+	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -51,24 +61,29 @@ func main() {
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		utils.Log("Starting, log into %v.", logFileName)
-		configuration.WatchConfigurationChanges(configurationFileName)
-		quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
-		signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
-		go func() {
-			<-quitChan
-			utils.Log("Stopping.")
-			doneChan <- true
-		}()
-		go setAndStartHttpServer()
-		<-doneChan
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		if err := srv.Shutdown(ctx); err != nil {
-			utils.LogError("Error during server shutdown: %v.", err)
-		}
-		select {
-		case <-ctx.Done():
-			utils.Log("Timeout of 5 seconds.")
+		if exportDb != "" && exportFileName != "" {
+			database.ExportDb(context.Background(), exportDb, exportFileName, "")
+			utils.Log("Exported database %s into %s.", exportDb, exportFileName)
+		} else {
+			configuration.WatchConfigurationChanges(configurationFileName)
+			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
+			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
+			go func() {
+				<-quitChan
+				utils.Log("Stopping.")
+				doneChan <- true
+			}()
+			go setAndStartHttpServer()
+			<-doneChan
+			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+			defer cancel()
+			if err := srv.Shutdown(ctx); err != nil {
+				utils.LogError("Error during server shutdown: %v.", err)
+			}
+			select {
+			case <-ctx.Done():
+				utils.Log("Timeout of 5 seconds.")
+			}
 		}
 	}
 	utils.Log("Stopped.")
@@ -77,6 +92,8 @@ func main() {
 func handleFlags() {
 	flag.StringVar(&configurationFileName, configurationFileNameFlag, defaultConfigurationFileName, usageConfigurationFileName)
 	flag.StringVar(&logFileName, logFileNameFlag, defaultLogFileName, usageLogFileName)
+	flag.StringVar(&exportDb, exportDbFlag, defaultDbExport, usageDbExport)
+	flag.StringVar(&exportFileName, exportFileNameFlag, defaultExportFileName, usageExportFileName)
 	flag.Parse()
 }
 

@@ -74,7 +74,9 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 		&row.Int3,
 		&row.Int4,
 		&row.Enabled,
-		&row.CreateBy,
+		&row.Created,
+		&row.CreatedBy,
+		&row.Updated,
 		&row.UpdatedBy,
 		&row.Version,
 	}

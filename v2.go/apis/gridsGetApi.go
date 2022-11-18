@@ -130,7 +130,9 @@ func getRowsQueryColumnsForGridsApi() string {
 		"int3, " +
 		"int4, " +
 		"enabled, " +
+		"created, " +
 		"createdBy, " +
+		"updated, " +
 		"updatedBy, " +
 		"version "
 }
@@ -182,7 +184,9 @@ func getRowsQueryOutputForGridsApi(row *model.Row) []any {
 	output = append(output, &row.Int3)
 	output = append(output, &row.Int4)
 	output = append(output, &row.Enabled)
-	output = append(output, &row.CreateBy)
+	output = append(output, &row.Created)
+	output = append(output, &row.CreatedBy)
+	output = append(output, &row.Updated)
 	output = append(output, &row.UpdatedBy)
 	output = append(output, &row.Version)
 	return output

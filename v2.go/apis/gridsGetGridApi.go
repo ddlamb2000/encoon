@@ -37,7 +37,9 @@ func getGridQueryForGridsApi() string {
 		"text3, " +
 		"text4, " +
 		"enabled, " +
+		"created, " +
 		"createdBy, " +
+		"updated, " +
 		"updatedBy, " +
 		"version " +
 		"FROM rows " +
@@ -52,7 +54,9 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output = append(output, &grid.Text3)
 	output = append(output, &grid.Text4)
 	output = append(output, &grid.Enabled)
-	output = append(output, &grid.CreateBy)
+	output = append(output, &grid.Created)
+	output = append(output, &grid.CreatedBy)
+	output = append(output, &grid.Updated)
 	output = append(output, &grid.UpdatedBy)
 	output = append(output, &grid.Version)
 	return output
@@ -83,7 +87,9 @@ func getGridColumsQueryForGridsApi() string {
 		"col.text1, " +
 		"col.text2, " +
 		"col.enabled, " +
+		"col.created, " +
 		"col.createdBy, " +
+		"col.updated, " +
 		"col.updatedBy, " +
 		"col.version " +
 		"FROM rows rel " +
@@ -105,7 +111,9 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.Text1)
 	output = append(output, &column.Text2)
 	output = append(output, &column.Enabled)
-	output = append(output, &column.CreateBy)
+	output = append(output, &column.Created)
+	output = append(output, &column.CreatedBy)
+	output = append(output, &column.Updated)
 	output = append(output, &column.UpdatedBy)
 	output = append(output, &column.Version)
 	return output
