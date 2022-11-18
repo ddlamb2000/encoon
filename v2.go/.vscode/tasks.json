@@ -14,6 +14,16 @@
             "problemMatcher": []
         },
         {
+            "label": "Export data from master",
+            "type": "shell",
+            "command": "go run . -export master -exportfile ./seedData/master.yml",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Run all tests",
             "type": "shell",
             "command": "./scripts/run_all_tests.sh",
