@@ -54,7 +54,9 @@ func TestGetRowsForGridsApi(t *testing.T) {
 	dbName := "test"
 	user := "root"
 	db, _ := database.GetDbByName(dbName)
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, model.UuidUsers, "", "")
+	var grid model.Grid
+	grid.Uuid = model.UuidUsers
+	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, &grid, "", "")
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 	}
@@ -62,29 +64,17 @@ func TestGetRowsForGridsApi(t *testing.T) {
 
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	var row model.Row
-	got := getRowsQueryOutputForGridsApi(&row)
+	var grid model.Grid
+	grid.Uuid = model.UuidUsers
+	grid.Columns = append(grid.Columns, &model.Column{Name: "text2"})
+	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
+	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
+	got := getRowsQueryOutputForGridsApi(&grid, &row)
 	expect := []any{
 		&row.Uuid,
-		&row.Text1,
 		&row.Text2,
-		&row.Text3,
-		&row.Text4,
 		&row.Text5,
-		&row.Text6,
-		&row.Text7,
-		&row.Text8,
-		&row.Text9,
-		&row.Text10,
-		&row.Int1,
-		&row.Int2,
-		&row.Int3,
-		&row.Int4,
-		&row.Int5,
-		&row.Int6,
-		&row.Int7,
 		&row.Int8,
-		&row.Int9,
-		&row.Int10,
 		&row.Enabled,
 		&row.Created,
 		&row.CreatedBy,

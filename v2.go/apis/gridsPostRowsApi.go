@@ -155,6 +155,7 @@ func getInsertStatementForGridsApi() string {
 		"text2, " +
 		"text3, " +
 		"text4, " +
+		"text5, " +
 		"int1, " +
 		"int2, " +
 		"int3, " +
@@ -174,7 +175,8 @@ func getInsertStatementForGridsApi() string {
 		"$8, " +
 		"$9, " +
 		"$10, " +
-		"$11)"
+		"$11, " +
+		"$12)"
 	return insertStr + valueStr
 }
 
@@ -187,6 +189,7 @@ func getInsertValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any 
 	values = append(values, row.Text2)
 	values = append(values, row.Text3)
 	values = append(values, row.Text4)
+	values = append(values, row.Text5)
 	values = append(values, row.Int1)
 	values = append(values, row.Int2)
 	values = append(values, row.Int3)

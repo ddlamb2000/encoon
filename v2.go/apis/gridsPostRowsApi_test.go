@@ -13,7 +13,7 @@ import (
 
 func TestGetInsertStatementForGridsApi(t *testing.T) {
 	got := getInsertStatementForGridsApi()
-	expect := "INSERT INTO rows (uuid, version, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, int1, int2, int3, int4)  VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, $11)"
+	expect := "INSERT INTO rows (uuid, version, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, int1, int2, int3, int4)  VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
@@ -29,6 +29,7 @@ func TestGetInsertValuesForGridsApi(t *testing.T) {
 		Text2: &text1,
 		Text3: &text1,
 		Text4: &text1,
+		Text5: &text1,
 		Int1:  &int1,
 		Int2:  &int1,
 		Int3:  &int1,
@@ -39,6 +40,7 @@ func TestGetInsertValuesForGridsApi(t *testing.T) {
 		uuid,
 		"xxx",
 		"yyy",
+		&text1,
 		&text1,
 		&text1,
 		&text1,

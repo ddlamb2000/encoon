@@ -78,13 +78,13 @@ func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string)
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
-		rows, err := getRowsForGridsApi(ctx, db, dbName, user, grid.Uuid, uuid, trace)
+		rows, err := getRowsForGridsApi(ctx, db, dbName, user, grid, uuid, trace)
 		if err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
 		defer rows.Close()
-		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, rows, trace)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, grid, rows, trace)
 		if uuid != "" && rowSetCount == 0 {
 			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
@@ -101,46 +101,33 @@ func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string)
 	}
 }
 
-func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid, uuid, trace string) (*sql.Rows, error) {
+func getRowsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, uuid, trace string) (*sql.Rows, error) {
 	rows, err := db.QueryContext(ctx,
-		getRowsQueryForGridsApi(uuid),
-		getRowsQueryParametersForGridsApi(gridUuid, uuid)...)
+		getRowsQueryForGridsApi(grid, uuid),
+		getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
 	if err != nil {
 		return nil, utils.LogAndReturnError("[%s] [%s] Error when querying rows: %v.", dbName, user, err)
 	}
 	return rows, nil
 }
 
-func getRowsQueryForGridsApi(uuid string) string {
-	selectStr := getRowsQueryColumnsForGridsApi()
+func getRowsQueryForGridsApi(grid *model.Grid, uuid string) string {
+	selectStr := getRowsQueryColumnsForGridsApi(grid)
 	fromStr := " FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
 	orderByStr := " ORDER BY text1, text2, text3, text4 "
 	return selectStr + fromStr + whereStr + orderByStr
 }
 
-func getRowsQueryColumnsForGridsApi() string {
+func getRowsQueryColumnsForGridsApi(grid *model.Grid) string {
+	var columns = ""
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			columns += col.Name + ", "
+		}
+	}
 	return "SELECT uuid, " +
-		"text1, " +
-		"text2, " +
-		"text3, " +
-		"text4, " +
-		"text5, " +
-		"text6, " +
-		"text7, " +
-		"text8, " +
-		"text9, " +
-		"text10, " +
-		"int1, " +
-		"int2, " +
-		"int3, " +
-		"int4, " +
-		"int5, " +
-		"int6, " +
-		"int7, " +
-		"int8, " +
-		"int9, " +
-		"int10, " +
+		columns +
 		"enabled, " +
 		"created, " +
 		"createdBy, " +
@@ -165,12 +152,12 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace string) ([]model.Row, int, error) {
+func getRowSetForGridsApi(dbName, user string, gridUri string, grid *model.Grid, rows *sql.Rows, trace string) ([]model.Row, int, error) {
 	var rowSet = make([]model.Row, 0)
 	var rowSetCount = 0
 	for rows.Next() {
 		var row = new(model.Row)
-		if err := rows.Scan(getRowsQueryOutputForGridsApi(row)...); err != nil {
+		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
 			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, gridUri, err)
 		}
 		row.SetPath(dbName, gridUri)
@@ -184,34 +171,65 @@ func getRowSetForGridsApi(dbName, user, gridUri string, rows *sql.Rows, trace st
 	return rowSet, rowSetCount, nil
 }
 
-func getRowsQueryOutputForGridsApi(row *model.Row) []any {
+func getRowsQueryOutputForGridsApi(grid *model.Grid, row *model.Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
-	output = append(output, &row.Text1)
-	output = append(output, &row.Text2)
-	output = append(output, &row.Text3)
-	output = append(output, &row.Text4)
-	output = append(output, &row.Text5)
-	output = append(output, &row.Text6)
-	output = append(output, &row.Text7)
-	output = append(output, &row.Text8)
-	output = append(output, &row.Text9)
-	output = append(output, &row.Text10)
-	output = append(output, &row.Int1)
-	output = append(output, &row.Int2)
-	output = append(output, &row.Int3)
-	output = append(output, &row.Int4)
-	output = append(output, &row.Int5)
-	output = append(output, &row.Int6)
-	output = append(output, &row.Int7)
-	output = append(output, &row.Int8)
-	output = append(output, &row.Int9)
-	output = append(output, &row.Int10)
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			output = appendRowAttribute(output, row, col.Name)
+		}
+	}
 	output = append(output, &row.Enabled)
 	output = append(output, &row.Created)
 	output = append(output, &row.CreatedBy)
 	output = append(output, &row.Updated)
 	output = append(output, &row.UpdatedBy)
 	output = append(output, &row.Version)
+	return output
+}
+
+func appendRowAttribute(output []any, row *model.Row, attributeName string) []any {
+	switch attributeName {
+	case "text1":
+		output = append(output, &row.Text1)
+	case "text2":
+		output = append(output, &row.Text2)
+	case "text3":
+		output = append(output, &row.Text3)
+	case "text4":
+		output = append(output, &row.Text4)
+	case "text5":
+		output = append(output, &row.Text5)
+	case "text6":
+		output = append(output, &row.Text6)
+	case "text7":
+		output = append(output, &row.Text7)
+	case "text8":
+		output = append(output, &row.Text8)
+	case "text9":
+		output = append(output, &row.Text9)
+	case "text10":
+		output = append(output, &row.Text10)
+	case "int1":
+		output = append(output, &row.Int1)
+	case "int2":
+		output = append(output, &row.Int2)
+	case "int3":
+		output = append(output, &row.Int3)
+	case "int4":
+		output = append(output, &row.Int4)
+	case "int5":
+		output = append(output, &row.Int5)
+	case "int6":
+		output = append(output, &row.Int6)
+	case "int7":
+		output = append(output, &row.Int7)
+	case "int8":
+		output = append(output, &row.Int8)
+	case "int9":
+		output = append(output, &row.Int9)
+	case "int10":
+		output = append(output, &row.Int10)
+	}
 	return output
 }

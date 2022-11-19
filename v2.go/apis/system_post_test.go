@@ -107,6 +107,48 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"rows":[]`)
 	})
 
+	t.Run("CreateNewColumnsInSingleGrid", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"Test Column 01","text2":"text1"},` +
+			`{"text1":"Test Column 02","text2":"text2"},` +
+			`{"text1":"Test Column 03","text2":"text3"},` +
+			`{"text1":"Test Column 04","text2":"text4"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_columns", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"Test Column 01","text2":"text1"`)
+		jsonStringContains(t, responseData, `"text1":"Test Column 02","text2":"text2"`)
+		jsonStringContains(t, responseData, `"text1":"Test Column 03","text2":"text3"`)
+		jsonStringContains(t, responseData, `"text1":"Test Column 04","text2":"text4"`)
+
+		db, _ := database.GetDbByName("test")
+		var gridUuid, uuidCol1, uuidCol2, uuidCol3, uuidCol4 string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 01").Scan(&uuidCol1)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 02").Scan(&uuidCol2)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 03").Scan(&uuidCol3)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 04").Scan(&uuidCol4)
+
+		postStr = `{"rowsAdded":` +
+			`[` +
+			`{"text1":"relationship1","text2":"` + model.UuidGrids + `", "text3":"` + gridUuid + `", "text4":"` + model.UuidColumns + `", "text5":"` + uuidCol1 + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidGrids + `", "text3":"` + gridUuid + `", "text4":"` + model.UuidColumns + `", "text5":"` + uuidCol2 + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidGrids + `", "text3":"` + gridUuid + `", "text4":"` + model.UuidColumns + `", "text5":"` + uuidCol3 + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidGrids + `", "text3":"` + gridUuid + `", "text4":"` + model.UuidColumns + `", "text5":"` + uuidCol4 + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol1 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol2 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol3 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"},` +
+			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol4 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"}` +
+			`]` +
+			`}`
+		responseData, code, err = runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_relationships", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+	})
+
 	t.Run("CreateNewRowInSingleGrid", func(t *testing.T) {
 		postStr := `{"rowsAdded":` +
 			`[` +
