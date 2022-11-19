@@ -9,9 +9,8 @@ class GridTable extends React.Component {
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
 						{this.props.columns && this.props.columns.map(
-							col => <th scope="col" key={col.name}>{col.label}<br/><small>{col.name}</small></th>
+							col => <th scope="col" key={col.name}>{col.label}</th>
 						)}
-						<th scope="col" style={{width: "64px"}}>Version</th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -36,7 +35,7 @@ class GridTable extends React.Component {
 class GridRow extends React.Component {
 	render() {
 		const variant = this.props.rowEdited ? "table-warning" : ""
-		const columns = this.getColumns(this.props.columns)
+		const columns = getColumnValueForRow(this.props.columns, this.props.row)
 		return (
 			<tr className={variant}>
 				<td scope="row" className="vw-10">
@@ -69,26 +68,6 @@ class GridRow extends React.Component {
 			</tr>
 		)
 	}
-
-	getColumnType(type) {
-		switch(type) {
-			case UuidIntColumnType:
-				return "number"
-			case UuidPasswordColumnType:
-				return "password"
-			default:
-				return "text"
-		}
-	}
-
-	getColumns(columns) {
-		const cols = []
-		{columns && columns.map(
-			col => cols.push({col: col.name, value: this.props.row[col.name], type: this.getColumnType(col.typeUuid), readonly: false})
-		)}
-		cols.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
-		return cols
-	}
 }
 
 class GridCell extends React.Component {
@@ -106,13 +85,8 @@ class GridCell extends React.Component {
 							ref={this.props.inputRef}
 							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && <span>{this.getCellValue(this.props.type, this.props.value)}</span>}
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && <span>{getCellValue(this.props.type, this.props.value)}</span>}
 			</td>
 		)
-	}
-
-	getCellValue(type, value) {
-		if(type == 'password') return '*****'
-		return value
 	}
 }

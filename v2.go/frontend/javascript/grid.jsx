@@ -65,7 +65,10 @@ class Grid extends React.Component {
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
 									inputRef={this.setGridRowRef} />
 					}
-					{isLoaded && rows && countRows > 0 && uuid != "" && <GridView row={rows[0]} />}
+					{isLoaded && rows && countRows > 0 && uuid != "" &&
+						<GridView row={rows[0]}
+									columns={grid.columns} />
+					}
 					<GridFooter isLoading={isLoading}
 								grid={grid}
 								rows={rows}
@@ -283,4 +286,36 @@ class GridFooter extends React.Component {
 			</div>
 		)
 	}
+}
+
+function getColumnType(type) {
+	switch(type) {
+		case UuidIntColumnType:
+			return "number"
+		case UuidPasswordColumnType:
+			return "password"
+		default:
+			return "text"
+	}
+}
+
+function getColumnValueForRow(columns, row, withTimeStamps) {
+	const cols = []
+	{columns && columns.map(
+		col => cols.push({col: col.name, label: col.label, value: row[col.name], type: getColumnType(col.typeUuid), readonly: false})
+	)}
+	if(withTimeStamps) {
+		cols.push({col: "uuid", label: "Identifier", value: row.uuid, type: "text", readonly: true})
+		cols.push({col: "version", label: "Version", value: row.version, type: "number", readonly: true})
+		cols.push({col: "created", label: "Created", value: row.created, type: "text", readonly: true})
+		cols.push({col: "createdBy", label: "Created by", value: row.createdBy, type: "text", readonly: true})
+		cols.push({col: "updated", label: "Updated", value: row.updated, type: "text", readonly: true})
+		cols.push({col: "updatedBy", label: "Updated by", value: row.updatedBy, type: "text", readonly: true})
+	}
+	return cols
+}
+
+function getCellValue(type, value) {
+	if(type == 'password') return '*****'
+	return value
 }
