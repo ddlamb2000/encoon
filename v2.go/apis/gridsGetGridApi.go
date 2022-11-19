@@ -93,6 +93,7 @@ func setColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string,
 func getGridColumsQueryForGridsApi() string {
 	return "SELECT col.text1, " +
 		"col.text2, " +
+		"coltype.uuid, " +
 		"coltype.text1 " +
 		"FROM rows rel1 " +
 		"INNER JOIN rows col " +
@@ -119,6 +120,7 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output := make([]any, 0)
 	output = append(output, &column.Label)
 	output = append(output, &column.Name)
+	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
 	return output
 }

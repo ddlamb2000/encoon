@@ -72,9 +72,9 @@ class GridRow extends React.Component {
 
 	getColumnType(type) {
 		switch(type) {
-			case 'Integer':
+			case UuidIntColumnType:
 				return "number"
-			case 'Password':
+			case UuidPasswordColumnType:
 				return "password"
 			default:
 				return "text"
@@ -84,7 +84,7 @@ class GridRow extends React.Component {
 	getColumns(columns) {
 		const cols = []
 		{columns && columns.map(
-			col => cols.push({col: col.name, value: this.props.row[col.name], type: this.getColumnType(col.type), readonly: false})
+			col => cols.push({col: col.name, value: this.props.row[col.name], type: this.getColumnType(col.typeUuid), readonly: false})
 		)}
 		cols.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
 		return cols
