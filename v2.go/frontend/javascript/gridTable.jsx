@@ -8,7 +8,7 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						{this.props.columns.map(
+						{this.props.columns && this.props.columns.map(
 							col => <th scope="col" key={col.name}>{col.label}<br/><small>{col.name}</small></th>
 						)}
 						<th scope="col" style={{width: "64px"}}>Version</th>
@@ -83,7 +83,7 @@ class GridRow extends React.Component {
 
 	getColumns(columns) {
 		const cols = []
-		{columns.map(
+		{columns && columns.map(
 			col => cols.push({col: col.name, value: this.props.row[col.name], type: this.getColumnType(col.type), readonly: false})
 		)}
 		cols.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
