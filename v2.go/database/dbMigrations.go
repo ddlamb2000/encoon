@@ -292,7 +292,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidColumnTypes + "', " +
-				"'Integer number', " +
+				"'Integer', " +
 				"'Integer number column type.')",
 
 			16: "INSERT INTO rows " +

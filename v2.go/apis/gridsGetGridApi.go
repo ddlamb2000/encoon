@@ -65,7 +65,16 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 func setColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, trace string) error {
 	grid.Columns = make([]*model.Column, 0)
 	statement := getGridColumsQueryForGridsApi()
-	rows, err := db.QueryContext(ctx, statement, model.UuidRelationships, "relationship1", model.UuidGrids, grid.Uuid, model.UuidColumns)
+	rows, err := db.QueryContext(ctx,
+		statement,
+		model.UuidRelationships,
+		"relationship1",
+		model.UuidGrids,
+		grid.Uuid,
+		model.UuidColumns,
+		model.UuidRelationships,
+		"relationship1",
+		model.UuidColumnTypes)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Error when querying columns from %q using %q: %v.", dbName, user, grid.Uuid, statement, err)
 	}
@@ -75,46 +84,41 @@ func setColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string,
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
 			return utils.LogAndReturnError("[%s] [%s] Error when scanning columns for %q using %q: %v.", dbName, user, grid.Uuid, statement, err)
 		}
-		utils.Trace(trace, "Got column for %q: [%s,%s,%s].", grid.Uuid, column.Text1, column.Text2, column.Text3)
+		utils.Trace(trace, "Got column for %q: [%s].", grid.Uuid, column)
 		grid.Columns = append(grid.Columns, *&column)
 	}
 	return nil
 }
 
 func getGridColumsQueryForGridsApi() string {
-	return "SELECT col.uuid, " +
-		"col.gridUuid, " +
-		"col.text1, " +
+	return "SELECT col.text1, " +
 		"col.text2, " +
-		"col.enabled, " +
-		"col.created, " +
-		"col.createdBy, " +
-		"col.updated, " +
-		"col.updatedBy, " +
-		"col.version " +
-		"FROM rows rel " +
-		"JOIN rows col " +
-		"ON rel.text4 = col.gridUuid " +
-		"AND rel.text5 = col.uuid " +
-		"WHERE rel.gridUuid = $1 " +
-		"AND rel.text1 = $2 " +
-		"AND rel.text2 = $3 " +
-		"AND rel.text3 = $4 " +
-		"AND rel.text4 = $5 " +
+		"coltype.text1 " +
+		"FROM rows rel1 " +
+		"INNER JOIN rows col " +
+		"ON rel1.text4 = col.gridUuid " +
+		"AND rel1.text5 = col.uuid " +
+		"INNER JOIN rows rel2 " +
+		"ON rel2.text2 = col.gridUuid " +
+		"AND rel2.text3 = col.uuid " +
+		"INNER JOIN rows coltype " +
+		"ON rel2.text4 = coltype.gridUuid " +
+		"AND rel2.text5 = coltype.Uuid " +
+		"WHERE rel1.gridUuid = $1 " +
+		"AND rel1.text1 = $2 " +
+		"AND rel1.text2 = $3 " +
+		"AND rel1.text3 = $4 " +
+		"AND rel1.text4 = $5 " +
+		"AND rel2.gridUuid = $6 " +
+		"AND rel2.text1 = $7 " +
+		"AND rel2.text4 = $8 " +
 		"ORDER BY col.text1 "
 }
 
 func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output := make([]any, 0)
-	output = append(output, &column.Uuid)
-	output = append(output, &column.GridUuid)
-	output = append(output, &column.Text1)
-	output = append(output, &column.Text2)
-	output = append(output, &column.Enabled)
-	output = append(output, &column.Created)
-	output = append(output, &column.CreatedBy)
-	output = append(output, &column.Updated)
-	output = append(output, &column.UpdatedBy)
-	output = append(output, &column.Version)
+	output = append(output, &column.Label)
+	output = append(output, &column.Name)
+	output = append(output, &column.Type)
 	return output
 }
