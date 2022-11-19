@@ -271,4 +271,81 @@ func RunSystemTestAuth(t *testing.T) {
 			t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
 		}
 	})
+
+	t.Run("CreateNewUserNoAuth", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"aaaa","text2":"bbbb"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("te st", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusUnauthorized)
+		jsonStringContains(t, responseData, `"error":"Invalid request or unauthorized database access: signature is invalid."`)
+	})
+
+	t.Run("Post404", func(t *testing.T) {
+		postStr := `{}`
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		byteEqualString(t, responseData, `404 page not found`)
+	})
+
+	t.Run("CreateUserNoData", func(t *testing.T) {
+		postStr := `{}`
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":1`)
+		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
+		jsonStringContains(t, responseData, `"rows":[`)
+		jsonStringContains(t, responseData, `{"uuid":"`+model.UuidRootUser+`"`)
+	})
+
+	t.Run("CreateNewSingleUser", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test01","text2":"Zero-one","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringDoesntContain(t, responseData, `"countRows":1`)
+		jsonStringContains(t, responseData, `"countRows":2`)
+		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
+		jsonStringContains(t, responseData, `"rows":[`)
+		jsonStringContains(t, responseData, `{"uuid":"`+model.UuidRootUser+`"`)
+		jsonStringContains(t, responseData, `"text1":"test01","text2":"Zero-one","text3":"Test"`)
+	})
+
+	t.Run("Create3Users", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test02","text2":"Zero-two","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"},` +
+			`{"text1":"test03","text2":"Zero-three","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"},` +
+			`{"text1":"test04","text2":"Zero-four","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringDoesntContain(t, responseData, `"countRows":2`)
+		jsonStringContains(t, responseData, `"countRows":5`)
+		jsonStringContains(t, responseData, `"text1":"test02","text2":"Zero-two","text3":"Test"`)
+		jsonStringContains(t, responseData, `"text1":"test03","text2":"Zero-three","text3":"Test"`)
+		jsonStringContains(t, responseData, `"text1":"test04","text2":"Zero-four","text3":"Test"`)
+	})
+
+	t.Run("CreateWithIncorrectUserUuid", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test02","text2":"Zero-two","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "root", "xxyyzz", "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusUnauthorized)
+	})
 }
