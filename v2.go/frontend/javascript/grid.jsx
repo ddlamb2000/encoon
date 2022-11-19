@@ -328,7 +328,7 @@ function getColumnValueForReferencedRow(type, col, row) {
 			row.references.map(
 				ref => {
 					if(ref.name == col.name && ref.rows) {
-						ref.rows.map(refRow => output.push(refRow.uuid))
+						ref.rows.map(refRow => output.push('[' + refRow.uuid + ']'))
 					}
 				}
 			)
