@@ -46,12 +46,12 @@ class Grid extends React.Component {
 		return (
 			<div className="card my-4">
 				<div className="card-body">
-					{isLoaded && rows && grid &&
+					{isLoaded && rows && grid  && uuid == "" && 
 						<h4 className="card-title">
 							{grid.text2} {grid.text4 && <small><i className={`bi bi-${grid.text4} mx-1`}></i></small>}
 						</h4>
 					}
-					{isLoaded && rows && grid && grid.text3 && <div className="card-subtitle mb-2 text-muted">{grid.text3}</div>}
+					{isLoaded && rows && grid && grid.text3 && uuid == "" && <div className="card-subtitle mb-2 text-muted">{grid.text3}</div>}
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
 					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&

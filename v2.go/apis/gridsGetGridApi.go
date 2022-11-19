@@ -76,6 +76,7 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, trace string) error {
 	grid.Columns = make([]*model.Column, 0)
 	statement := getGridColumsQueryForGridsApi()
+	utils.Trace(trace, "getColumnsForGridsApi() - statement=%s", statement)
 	rows, err := db.QueryContext(ctx,
 		statement,
 		model.UuidRelationships,
