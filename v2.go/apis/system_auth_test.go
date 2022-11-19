@@ -296,7 +296,7 @@ func RunSystemTestAuth(t *testing.T) {
 		postStr := `{}`
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
@@ -311,7 +311,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringDoesntContain(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"countRows":2`)
 		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
@@ -330,7 +330,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringDoesntContain(t, responseData, `"countRows":2`)
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringContains(t, responseData, `"text1":"test02","text2":"Zero-two","text3":"Test"`)

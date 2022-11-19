@@ -53,12 +53,12 @@ func PostGridsRowsApi(c *gin.Context) {
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
 			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Error")
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}
 	utils.Trace(c.Query("trace"), "PostGridsRowsApi() - OK")
-	c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
+	c.JSON(http.StatusCreated, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
 type apiPostResponse struct {
