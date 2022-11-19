@@ -6,6 +6,7 @@ package apis
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"net/http"
 
 	"d.lambert.fr/encoon/configuration"
@@ -87,29 +88,17 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, r
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		for _, row := range rowsAdded {
-			err := postInsertGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
-			if err != nil {
-				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
-				ctxChan <- apiPostResponse{err}
-				return
-			}
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, grid, rowsAdded, trace, postInsertGridRow); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
 		}
-		for _, row := range rowsEdited {
-			err := postUpdateGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
-			if err != nil {
-				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
-				ctxChan <- apiPostResponse{err}
-				return
-			}
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, grid, rowsEdited, trace, postUpdateGridRow); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
 		}
-		for _, row := range rowsDeleted {
-			err := postDeleteGridRow(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, row, trace)
-			if err != nil {
-				_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
-				ctxChan <- apiPostResponse{err}
-				return
-			}
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, grid, rowsDeleted, trace, postDeleteGridRow); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
 		}
 		if err := CommitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
@@ -129,11 +118,24 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, r
 	}
 }
 
-func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
+type persistGridRowDataFunc func(context.Context, string, *sql.DB, string, string, string, string, *model.Grid, *model.Row, string) error
+
+func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, grid *model.Grid, rows []model.Row, trace string, f persistGridRowDataFunc) error {
+	for _, row := range rows {
+		err := f(ctx, dbName, db, userUuid, user, gridUri, grid.Uuid, grid, &row, trace)
+		if err != nil {
+			_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
+			return err
+		}
+	}
+	return nil
+}
+
+func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, grid *model.Grid, row *model.Row, trace string) error {
 	utils.Trace(trace, "postInsertGridRow()")
 	row.Uuid = utils.GetNewUUID()
-	insertStatement := getInsertStatementForGridsApi()
-	insertValues := getInsertValuesForGridsApi(userUuid, gridUuid, row)
+	insertStatement := getInsertStatementForGridsApi(grid)
+	insertValues := getInsertValuesForGridsApi(userUuid, gridUuid, grid, row)
 	_, err := db.ExecContext(ctx, insertStatement, insertValues...)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Insert row error on %q: %v.", dbName, user, insertStatement, err)
@@ -142,7 +144,16 @@ func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	return err
 }
 
-func getInsertStatementForGridsApi() string {
+func getInsertStatementForGridsApi(grid *model.Grid) string {
+	var parameterIndex = 4
+	var columns, parameters = "", ""
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			columns += ", " + col.Name
+			parameters += fmt.Sprintf(", $%d", parameterIndex)
+			parameterIndex += 1
+		}
+	}
 	insertStr := "INSERT INTO rows (uuid, " +
 		"version, " +
 		"created, " +
@@ -150,16 +161,9 @@ func getInsertStatementForGridsApi() string {
 		"createdBy, " +
 		"updatedBy, " +
 		"enabled, " +
-		"gridUuid, " +
-		"text1, " +
-		"text2, " +
-		"text3, " +
-		"text4, " +
-		"text5, " +
-		"int1, " +
-		"int2, " +
-		"int3, " +
-		"int4) "
+		"gridUuid" +
+		columns +
+		") "
 	valueStr := " VALUES ($1, " +
 		"1, " +
 		"NOW(), " +
@@ -167,40 +171,75 @@ func getInsertStatementForGridsApi() string {
 		"$2, " +
 		"$2, " +
 		"true, " +
-		"$3, " +
-		"$4, " +
-		"$5, " +
-		"$6, " +
-		"$7, " +
-		"$8, " +
-		"$9, " +
-		"$10, " +
-		"$11, " +
-		"$12)"
+		"$3" +
+		parameters +
+		")"
 	return insertStr + valueStr
 }
 
-func getInsertValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any {
+func getInsertValuesForGridsApi(userUuid, gridUuid string, grid *model.Grid, row *model.Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	values = append(values, gridUuid)
-	values = append(values, row.Text1)
-	values = append(values, row.Text2)
-	values = append(values, row.Text3)
-	values = append(values, row.Text4)
-	values = append(values, row.Text5)
-	values = append(values, row.Int1)
-	values = append(values, row.Int2)
-	values = append(values, row.Int3)
-	values = append(values, row.Int4)
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			values = appendRowParameter(values, row, col.Name)
+		}
+	}
 	return values
 }
 
-func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
+func appendRowParameter(output []any, row *model.Row, attributeName string) []any {
+	switch attributeName {
+	case "text1":
+		output = append(output, row.Text1)
+	case "text2":
+		output = append(output, row.Text2)
+	case "text3":
+		output = append(output, row.Text3)
+	case "text4":
+		output = append(output, row.Text4)
+	case "text5":
+		output = append(output, row.Text5)
+	case "text6":
+		output = append(output, row.Text6)
+	case "text7":
+		output = append(output, row.Text7)
+	case "text8":
+		output = append(output, row.Text8)
+	case "text9":
+		output = append(output, row.Text9)
+	case "text10":
+		output = append(output, row.Text10)
+	case "int1":
+		output = append(output, row.Int1)
+	case "int2":
+		output = append(output, row.Int2)
+	case "int3":
+		output = append(output, row.Int3)
+	case "int4":
+		output = append(output, row.Int4)
+	case "int5":
+		output = append(output, row.Int5)
+	case "int6":
+		output = append(output, row.Int6)
+	case "int7":
+		output = append(output, row.Int7)
+	case "int8":
+		output = append(output, row.Int8)
+	case "int9":
+		output = append(output, row.Int9)
+	case "int10":
+		output = append(output, row.Int10)
+	}
+	return output
+}
+
+func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, grid *model.Grid, row *model.Row, trace string) error {
 	utils.Trace(trace, "postUpdateGridRow()")
-	updateStatement := getUpdateStatementForGridsApi()
-	updateValues := getUpdateValuesForGridsApi(userUuid, gridUuid, row)
+	updateStatement := getUpdateStatementForGridsApi(grid)
+	updateValues := getUpdateValuesForGridsApi(userUuid, gridUuid, grid, row)
 	_, err := db.ExecContext(ctx, updateStatement, updateValues...)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Update row error on %q: %v.", dbName, user, updateStatement, err)
@@ -209,40 +248,38 @@ func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	return err
 }
 
-func getUpdateStatementForGridsApi() string {
+func getUpdateStatementForGridsApi(grid *model.Grid) string {
+	var parameterIndex = 4
+	var columns = ""
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			columns += fmt.Sprintf(", %s = $%d", col.Name, parameterIndex)
+			parameterIndex += 1
+		}
+	}
 	updateStr := "UPDATE rows SET " +
 		"version = version + 1, " +
 		"updated = NOW(), " +
-		"updatedBy = $3, " +
-		"text1 = $4, " +
-		"text2 = $5, " +
-		"text3 = $6, " +
-		"text4 = $7, " +
-		"int1 = $8, " +
-		"int2 = $9, " +
-		"int3 = $10, " +
-		"int4 = $11"
+		"updatedBy = $3" +
+		columns
 	whereStr := " WHERE uuid = $1 and gridUuid = $2"
 	return updateStr + whereStr
 }
 
-func getUpdateValuesForGridsApi(userUuid, gridUuid string, row model.Row) []any {
+func getUpdateValuesForGridsApi(userUuid, gridUuid string, grid *model.Grid, row *model.Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, gridUuid)
 	values = append(values, userUuid)
-	values = append(values, row.Text1)
-	values = append(values, row.Text2)
-	values = append(values, row.Text3)
-	values = append(values, row.Text4)
-	values = append(values, row.Int1)
-	values = append(values, row.Int2)
-	values = append(values, row.Int3)
-	values = append(values, row.Int4)
+	for _, col := range grid.Columns {
+		if col.IsAttribute() {
+			values = appendRowParameter(values, row, col.Name)
+		}
+	}
 	return values
 }
 
-func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, row model.Row, trace string) error {
+func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user, gridUri, gridUuid string, grid *model.Grid, row *model.Row, trace string) error {
 	utils.Trace(trace, "postDeleteGridRow()")
 	_, err := db.ExecContext(ctx, "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2", row.Uuid, gridUuid)
 	if err != nil {
