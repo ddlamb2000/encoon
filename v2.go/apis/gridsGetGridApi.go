@@ -23,7 +23,7 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, 
 	}
 	grid.SetPath(dbName, gridUri)
 	utils.Trace(trace, "Got grid %q: [%s].", gridUri, grid)
-	err := setColumnsForGridsApi(ctx, db, dbName, user, grid, trace)
+	err := getColumnsForGridsApi(ctx, db, dbName, user, grid, trace)
 	if err != nil {
 		return nil, err
 	}
@@ -32,6 +32,7 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, 
 
 func getGridQueryForGridsApi() string {
 	return "SELECT uuid, " +
+		"gridUuid, " +
 		"text1, " +
 		"text2, " +
 		"text3, " +
@@ -49,6 +50,7 @@ func getGridQueryForGridsApi() string {
 func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output := make([]any, 0)
 	output = append(output, &grid.Uuid)
+	output = append(output, &grid.GridUuid)
 	output = append(output, &grid.Text1)
 	output = append(output, &grid.Text2)
 	output = append(output, &grid.Text3)
@@ -62,7 +64,7 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	return output
 }
 
-func setColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, trace string) error {
+func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, trace string) error {
 	grid.Columns = make([]*model.Column, 0)
 	statement := getGridColumsQueryForGridsApi()
 	rows, err := db.QueryContext(ctx,

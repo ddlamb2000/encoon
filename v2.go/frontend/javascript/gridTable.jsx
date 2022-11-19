@@ -9,7 +9,7 @@ class GridTable extends React.Component {
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
 						{this.props.columns && this.props.columns.map(
-							col => <th scope="col" key={col.name}>{col.label}</th>
+							col => <th scope="col" key={col.name}>{col.label}<br/><small>{col.name}</small></th>
 						)}
 					</tr>
 				</thead>

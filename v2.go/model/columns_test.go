@@ -17,7 +17,7 @@ func TestColumnString(t *testing.T) {
 }
 
 func TestIsAttribute(t *testing.T) {
-	column := Column{TypeUuid: UuidColumns}
+	column := Column{TypeUuid: UuidTextColumnType}
 	got := column.IsAttribute()
 	expect := true
 	if got != expect {
@@ -28,6 +28,24 @@ func TestIsAttribute(t *testing.T) {
 func TestIsAttribute2(t *testing.T) {
 	column := Column{TypeUuid: UuidReferenceColumnType}
 	got := column.IsAttribute()
+	expect := false
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestIsReference(t *testing.T) {
+	column := Column{TypeUuid: UuidReferenceColumnType}
+	got := column.IsReference()
+	expect := true
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestIsReference2(t *testing.T) {
+	column := Column{TypeUuid: UuidTextColumnType}
+	got := column.IsReference()
 	expect := false
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)

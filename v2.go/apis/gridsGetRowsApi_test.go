@@ -4,12 +4,9 @@
 package apis
 
 import (
-	"context"
 	"reflect"
 	"testing"
 
-	"d.lambert.fr/encoon/configuration"
-	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
 	_ "github.com/lib/pq"
 )
@@ -49,19 +46,6 @@ func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
 	}
 }
 
-func TestGetRowsForGridsApi(t *testing.T) {
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	user := "root"
-	db, _ := database.GetDbByName(dbName)
-	grid := model.Grid{}
-	grid.Uuid = model.UuidUsers
-	_, err := getRowsForGridsApi(context.Background(), db, dbName, user, &grid, "", "")
-	if err != nil {
-		t.Errorf(`Error: %v.`, err)
-	}
-}
-
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	row := model.Row{}
 	grid := model.Grid{}
@@ -72,6 +56,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	got := getRowsQueryOutputForGridsApi(&grid, &row)
 	expect := []any{
 		&row.Uuid,
+		&row.GridUuid,
 		&row.Text2,
 		&row.Text5,
 		&row.Int8,
@@ -105,6 +90,7 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 	got := getRowsQueryOutputForGridsApi(&grid, &row)
 	expect := []any{
 		&row.Uuid,
+		&row.GridUuid,
 		&row.Text6,
 		&row.Text7,
 		&row.Text8,
@@ -138,6 +124,7 @@ func TestGetRowsQueryOutputForGridsApi3(t *testing.T) {
 	got := getRowsQueryOutputForGridsApi(&grid, &row)
 	expect := []any{
 		&row.Uuid,
+		&row.GridUuid,
 		&row.Int7,
 		&row.Int9,
 		&row.Int10,

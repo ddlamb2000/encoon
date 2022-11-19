@@ -154,7 +154,7 @@ class Grid extends React.Component {
 
 	loadData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}?trace=true`
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',
@@ -294,6 +294,8 @@ function getColumnType(type) {
 			return "number"
 		case UuidPasswordColumnType:
 			return "password"
+		case UuidReferenceColumnType:
+			return "reference"
 		default:
 			return "text"
 	}
@@ -302,7 +304,11 @@ function getColumnType(type) {
 function getColumnValueForRow(columns, row, withTimeStamps) {
 	const cols = []
 	{columns && columns.map(
-		col => cols.push({col: col.name, label: col.label, value: row[col.name], type: getColumnType(col.typeUuid), readonly: false})
+		col => {
+			let type = getColumnType(col.typeUuid)
+			let value = getColumnValueForReferencedRow(type, col, row)
+			cols.push({col: col.name, label: col.label, value: value, type: type, readonly: false})
+		}
 	)}
 	if(withTimeStamps) {
 		cols.push({col: "uuid", label: "Identifier", value: row.uuid, type: "text", readonly: true})
@@ -313,6 +319,24 @@ function getColumnValueForRow(columns, row, withTimeStamps) {
 		cols.push({col: "updatedBy", label: "Updated by", value: row.updatedBy, type: "text", readonly: true})
 	}
 	return cols
+}
+
+function getColumnValueForReferencedRow(type, col, row) {
+	if(type == "reference") {
+		let output = []
+		if(row.references) {
+			row.references.map(
+				ref => {
+					if(ref.name == col.name && ref.rows) {
+						ref.rows.map(refRow => output.push(refRow.uuid))
+					}
+				}
+			)
+		}
+		return output.toString()
+	} else {
+		return row[col.name]
+	}
 }
 
 function getCellValue(type, value) {
