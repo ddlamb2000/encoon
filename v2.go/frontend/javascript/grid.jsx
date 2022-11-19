@@ -128,7 +128,7 @@ class Grid extends React.Component {
 			const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
 			const e3 = Object.keys(e2).map(key => ({
 					col: e2[key].name,
-					value: this.getConvertedValue(e1.get(e2[key].name))
+					value: getConvertedValue(e1.get(e2[key].name))
 				}))
 			const e4 = e3.reduce(
 				(hash, {col, value}) => {
@@ -139,17 +139,6 @@ class Grid extends React.Component {
 			)
 			return e4
 		})
-	}
-
-	getConvertedValue(cell) {
-		switch(cell.type) {
-			case "number":
-				return Number(cell.value)
-			case "text":
-				return String(cell.value)
-			default:
-				return cell.value
-		}
 	}
 
 	loadData() {
@@ -306,40 +295,57 @@ function getColumnValueForRow(columns, row, withTimeStamps) {
 	{columns && columns.map(
 		col => {
 			let type = getColumnType(col.typeUuid)
-			let value = getColumnValueForReferencedRow(type, col, row)
-			cols.push({col: col.name, label: col.label, value: value, type: type, readonly: false})
+			if(type == "reference") {
+				let values = getColumnValueForReferencedRow(col, row)
+				cols.push({col: col.name, label: col.label, values: values, typeUuid: col.typeUuid, type: type, readonly: false})
+			} else {
+				cols.push({col: col.name, label: col.label, value: row[col.name], typeUuid: col.typeUuid, type: type, readonly: false})	
+			}
 		}
 	)}
 	if(withTimeStamps) {
-		cols.push({col: "uuid", label: "Identifier", value: row.uuid, type: "text", readonly: true})
+		cols.push({col: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 		cols.push({col: "version", label: "Version", value: row.version, type: "number", readonly: true})
 		cols.push({col: "created", label: "Created", value: row.created, type: "text", readonly: true})
-		cols.push({col: "createdBy", label: "Created by", value: row.createdBy, type: "text", readonly: true})
+		cols.push({col: "createdBy", label: "Created by", value: row.createdBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 		cols.push({col: "updated", label: "Updated", value: row.updated, type: "text", readonly: true})
-		cols.push({col: "updatedBy", label: "Updated by", value: row.updatedBy, type: "text", readonly: true})
+		cols.push({col: "updatedBy", label: "Updated by", value: row.updatedBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 	}
 	return cols
 }
 
-function getColumnValueForReferencedRow(type, col, row) {
-	if(type == "reference") {
-		let output = []
-		if(row.references) {
-			row.references.map(
-				ref => {
-					if(ref.name == col.name && ref.rows) {
-						ref.rows.map(refRow => output.push('[' + refRow.uuid + ']'))
-					}
+function getColumnValueForReferencedRow(col, row) {
+	let output = []
+	if(row.references) {
+		row.references.map(
+			ref => {
+				if(ref.name == col.name && ref.rows) {
+					ref.rows.map(
+						refRow => output.push({
+							uuid: refRow.uuid,
+							label: refRow.displayString,
+							path: refRow.path
+						})
+					)
 				}
-			)
-		}
-		return output.toString()
-	} else {
-		return row[col.name]
+			}
+		)
 	}
+	return output
 }
 
 function getCellValue(type, value) {
 	if(type == 'password') return '*****'
 	return value
+}
+
+function getConvertedValue(cell) {
+	switch(cell.type) {
+		case "number":
+			return Number(cell.value)
+		case "text":
+			return String(cell.value)
+		default:
+			return cell.value
+	}
 }

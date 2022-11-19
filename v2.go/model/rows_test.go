@@ -8,13 +8,19 @@ import (
 )
 
 func TestSetPath(t *testing.T) {
+	text1 := "xxx"
 	row := Row{
-		Uuid: "12345",
+		Uuid:  "12345",
+		Text1: &text1,
 	}
-	row.SetPath("test", "users")
+	row.SetPathAndDisplayString("test", "users")
 	expect := "/test/users/12345"
 	if row.Path != expect {
 		t.Errorf(`Got %v instead of %v.`, row.Path, expect)
+	}
+	expect2 := "xxx"
+	if row.DisplayString != expect2 {
+		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect2)
 	}
 }
 

@@ -54,9 +54,11 @@ class GridRow extends React.Component {
 				{columns.map(
 					col => <GridCell uuid={this.props.row.uuid}
 										key={col.col}
-										col={col.col}
+										col={col}
 										type={col.type}
+										typeUuid={col.typeUuid}
 										value={col.value}
+										values={col.values}
 										readonly={col.readonly}
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
@@ -72,7 +74,8 @@ class GridRow extends React.Component {
 
 class GridCell extends React.Component {
 	render() {
-		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext" : "form-control form-control-sm"
+		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext" : "form-control form-control-sm "
+		const variantSize = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && 
@@ -85,8 +88,23 @@ class GridCell extends React.Component {
 							ref={this.props.inputRef}
 							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && <span>{getCellValue(this.props.type, this.props.value)}</span>}
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" &&
+					<span className={variantSize}>{getCellValue(this.props.type, this.props.value)}</span>
+				}
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
+					<GridCellReferences values={this.props.values}/>
+				}
 			</td>
+		)
+	}
+}
+
+class GridCellReferences extends React.Component {
+	render() {
+		return (
+			<span>
+				{this.props.values.map(value => <a className="pe-2" key={value.uuid} href={value.path}>{value.label}</a>)}
+			</span>
 		)
 	}
 }

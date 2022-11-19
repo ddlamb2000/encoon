@@ -78,7 +78,7 @@ func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string)
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, trace)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, true, trace)
 		if uuid != "" && rowSetCount == 0 {
 			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
@@ -137,7 +137,7 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid string, grid *model.Grid, trace string) ([]model.Row, int, error) {
+func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid string, grid *model.Grid, getReferences bool, trace string) ([]model.Row, int, error) {
 	utils.Trace(trace, "getRowSetForGridsApi()")
 	rows, err := db.QueryContext(ctx, getRowsQueryForGridsApi(grid, uuid), getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
 	if err != nil {
@@ -150,9 +150,11 @@ func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid st
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
 			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
 		}
-		row.SetPath(dbName, grid.GetUri())
-		if err := getRelationshipsForRow(ctx, db, dbName, user, grid, row, trace); err != nil {
-			return nil, 0, err
+		row.SetPathAndDisplayString(dbName, grid.GetUri())
+		if getReferences {
+			if err := getRelationshipsForRow(ctx, db, dbName, user, grid, row, trace); err != nil {
+				return nil, 0, err
+			}
 		}
 		rowSet = append(rowSet, *row)
 	}

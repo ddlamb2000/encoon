@@ -24,8 +24,6 @@ func getRelationshipsForRow(ctx context.Context, db *sql.DB, dbName, user string
 				var reference = new(model.Reference)
 				reference.Name = col.Name
 				reference.Label = col.Label
-				reference.Type = col.Type
-				reference.TypeUuid = col.TypeUuid
 				reference.Rows = referencedRows
 				row.References = append(row.References, reference)
 			}
@@ -37,8 +35,6 @@ func getRelationshipsForRow(ctx context.Context, db *sql.DB, dbName, user string
 func getReferencedRowsForRow(ctx context.Context, db *sql.DB, dbName, user string, parentRow *model.Row, referenceName string, trace string) ([]model.Row, error) {
 	statement := getQueryReferencedRowsForRow()
 	parameters := getQueryParametersReferencedRowsForRow(referenceName, parentRow)
-	utils.Trace(trace, "getReferencedRowsForRow() - statement=%s", statement)
-	utils.Trace(trace, "getReferencedRowsForRow() - parameters=%v", parameters)
 	rows, err := db.QueryContext(ctx, statement, parameters...)
 	if err != nil {
 		return nil, utils.LogAndReturnError("[%s] [%s] Error when querying referenced rows: %v.", dbName, user, err)
@@ -46,11 +42,20 @@ func getReferencedRowsForRow(ctx context.Context, db *sql.DB, dbName, user strin
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
 	for rows.Next() {
-		var row = new(model.Row)
-		if err := rows.Scan(getRowsQueryOutputReferencedRowsForRow(row)...); err != nil {
+		var referencedUuid string
+		var referencedGridUuid string
+		if err := rows.Scan(&referencedGridUuid, &referencedUuid); err != nil {
 			return nil, utils.LogAndReturnError("[%s] [%s] Error when scanning referenced rows: %v.", dbName, user, err)
 		}
-		rowSet = append(rowSet, *row)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, referencedGridUuid, trace)
+		if err != nil {
+			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid for referenced rows: %v.", dbName, user, err)
+		}
+		rows, _, err := getRowSetForGridsApi(ctx, db, dbName, user, referencedUuid, grid, false, trace)
+		if err != nil {
+			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving referenced rows: %v.", dbName, user, err)
+		}
+		rowSet = append(rowSet, rows...)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, utils.LogAndReturnError("[%s] [%s] Error when scanning referenced rows: %v.", dbName, user, err)
@@ -60,22 +65,13 @@ func getReferencedRowsForRow(ctx context.Context, db *sql.DB, dbName, user strin
 }
 
 func getQueryReferencedRowsForRow() string {
-	return "SELECT ref.uuid, " +
-		"ref.gridUuid, " +
-		"ref.enabled, " +
-		"ref.created, " +
-		"ref.createdBy, " +
-		"ref.updated, " +
-		"ref.updatedBy, " +
-		"ref.version " +
-		"FROM rows rel " +
-		"INNER JOIN rows ref " +
-		"ON rel.text4 = ref.gridUuid " +
-		"AND rel.text5 = ref.uuid " +
-		"WHERE rel.gridUuid = $1 " +
-		"AND rel.text1 = $2 " +
-		"AND rel.text2 = $3 " +
-		"AND rel.text3 = $4"
+	return "SELECT text4, " +
+		"text5 " +
+		"FROM rows " +
+		"WHERE gridUuid = $1 " +
+		"AND text1 = $2 " +
+		"AND text2 = $3 " +
+		"AND text3 = $4"
 }
 
 func getQueryParametersReferencedRowsForRow(referenceName string, parentRow *model.Row) []any {
@@ -85,17 +81,4 @@ func getQueryParametersReferencedRowsForRow(referenceName string, parentRow *mod
 	parameters = append(parameters, parentRow.GridUuid)
 	parameters = append(parameters, parentRow.Uuid)
 	return parameters
-}
-
-func getRowsQueryOutputReferencedRowsForRow(row *model.Row) []any {
-	output := make([]any, 0)
-	output = append(output, &row.Uuid)
-	output = append(output, &row.GridUuid)
-	output = append(output, &row.Enabled)
-	output = append(output, &row.Created)
-	output = append(output, &row.CreatedBy)
-	output = append(output, &row.Updated)
-	output = append(output, &row.UpdatedBy)
-	output = append(output, &row.Version)
-	return output
 }

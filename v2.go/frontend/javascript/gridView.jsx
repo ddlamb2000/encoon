@@ -11,7 +11,23 @@ class GridView extends React.Component {
 					<thead className="table-light"></thead>
 					<tbody>
 						{columns && columns.map(
-							col => <tr key={col.col}><td>{col.label}</td><td>{getCellValue(col.type, col.value)}</td></tr>
+							col => <tr key={col.col}>
+										<td>{col.label}</td>
+										<td><GridCell uuid={this.props.row.uuid}
+														key={col.col}
+														col={col.col}
+														type={col.type}
+														typeUuid={col.typeUuid}
+														value={col.value}
+														values={col.values}
+														readonly={col.readonly}
+														rowAdded={this.props.rowAdded}
+														rowSelected={this.props.rowSelected}
+														rowEdited={this.props.rowEdited}
+														onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
+														onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
+														inputRef={this.props.inputRef} /></td>
+									</tr>
 						)}
 					</tbody>
 				</table>

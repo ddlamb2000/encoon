@@ -11,18 +11,18 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, trace string) (*model.Grid, error) {
+func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUriOrUuid, trace string) (*model.Grid, error) {
 	grid := new(model.Grid)
-	if err := db.QueryRowContext(ctx, getGridQueryForGridsApi(), model.UuidGrids, gridUri).
+	if err := db.QueryRowContext(ctx, getGridQueryForGridsApi(gridUriOrUuid), model.UuidGrids, gridUriOrUuid).
 		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUri)
+			return nil, utils.LogAndReturnError("[%s] [%s] Grid %q not found.", dbName, user, gridUriOrUuid)
 		} else {
-			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid definition %q: %v.", dbName, user, gridUri, err)
+			return nil, utils.LogAndReturnError("[%s] [%s] Error when retrieving grid definition %q: %v.", dbName, user, gridUriOrUuid, err)
 		}
 	}
-	grid.SetPath(dbName, gridUri)
-	utils.Trace(trace, "Got grid %q: [%s].", gridUri, grid)
+	grid.SetPath(dbName, *grid.Text1)
+	utils.Trace(trace, "Got grid %q: [%s].", gridUriOrUuid, grid)
 	err := getColumnsForGridsApi(ctx, db, dbName, user, grid, trace)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUri, 
 	return grid, nil
 }
 
-func getGridQueryForGridsApi() string {
+func getGridQueryForGridsApi(gridUriOrUuid string) string {
 	return "SELECT uuid, " +
 		"gridUuid, " +
 		"text1, " +
@@ -44,7 +44,16 @@ func getGridQueryForGridsApi() string {
 		"updatedBy, " +
 		"version " +
 		"FROM rows " +
-		"WHERE gridUuid = $1 AND text1 = $2"
+		"WHERE gridUuid = $1 AND " +
+		getGridQueryWhereForGridsApi(gridUriOrUuid)
+}
+
+func getGridQueryWhereForGridsApi(gridUriOrUuid string) string {
+	if len(gridUriOrUuid) == len(model.UuidGrids) {
+		return "uuid = $2"
+	} else {
+		return "text1 = $2"
+	}
 }
 
 func getGridQueryOutputForGridsApi(grid *model.Grid) []any {

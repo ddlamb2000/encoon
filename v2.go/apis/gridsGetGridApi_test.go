@@ -30,8 +30,16 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
-	got := getGridQueryForGridsApi()
+	got := getGridQueryForGridsApi("_grids")
 	expect := "SELECT uuid, gridUuid, text1, text2, text3, text4, enabled, created, createdBy, updated, updatedBy, version FROM rows WHERE gridUuid = $1 AND text1 = $2"
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetGridQueryColumnsForGridsApi2(t *testing.T) {
+	got := getGridQueryForGridsApi(model.UuidColumns)
+	expect := "SELECT uuid, gridUuid, text1, text2, text3, text4, enabled, created, createdBy, updated, updatedBy, version FROM rows WHERE gridUuid = $1 AND uuid = $2"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
