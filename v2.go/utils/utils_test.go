@@ -67,3 +67,12 @@ func TestCalculateFileHash2(t *testing.T) {
 		t.Errorf("Got %q instead of %q.", got, expect)
 	}
 }
+
+func TestCalculateFileHash3(t *testing.T) {
+	fileName := "../xxx.yml"
+	got := CalculateFileHash(fileName)
+	expect := ""
+	if !strings.Contains(got, expect) {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}

@@ -13,3 +13,10 @@ type Grid struct {
 func (grid *Grid) SetPath(dbName, gridUri string) {
 	grid.Path = fmt.Sprintf("/%s/%s", dbName, gridUri)
 }
+
+func (grid *Grid) GetUri() string {
+	if grid.Text1 == nil {
+		return "?"
+	}
+	return *grid.Text1
+}

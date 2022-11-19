@@ -38,7 +38,7 @@ func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
 }
 
 func TestGetGridQueryOutputForGridsApi(t *testing.T) {
-	var grid model.Grid
+	grid := model.Grid{}
 	got := getGridQueryOutputForGridsApi(&grid)
 	expect := []any{
 		&grid.Uuid,

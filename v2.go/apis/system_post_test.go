@@ -78,6 +78,17 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"test04","text2":"Zero-four","text3":"Test"`)
 	})
 
+	t.Run("CreateWithIncorrectUserUuid", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test02","text2":"Zero-two","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "root", "xxyyzz", "/test/api/v1/_users", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusUnauthorized)
+	})
+
 	t.Run("CreateNewSingleGrid", func(t *testing.T) {
 		postStr := `{"rowsAdded":` +
 			`[` +

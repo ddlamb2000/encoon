@@ -84,7 +84,7 @@ func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string)
 			return
 		}
 		defer rows.Close()
-		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, gridUri, grid, rows, trace)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(dbName, user, grid, rows, trace)
 		if uuid != "" && rowSetCount == 0 {
 			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
@@ -152,22 +152,22 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(dbName, user string, gridUri string, grid *model.Grid, rows *sql.Rows, trace string) ([]model.Row, int, error) {
+func getRowSetForGridsApi(dbName, user string, grid *model.Grid, rows *sql.Rows, trace string) ([]model.Row, int, error) {
 	var rowSet = make([]model.Row, 0)
 	var rowSetCount = 0
 	for rows.Next() {
 		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
-			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, gridUri, err)
+			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
 		}
-		row.SetPath(dbName, gridUri)
+		row.SetPath(dbName, grid.GetUri())
 		rowSet = append(rowSet, *row)
 		rowSetCount += 1
 	}
 	if err := rows.Err(); err != nil {
-		return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, gridUri, err)
+		return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
 	}
-	utils.Log("[%s] [%s] Got %d rows from %q.", dbName, user, rowSetCount, gridUri)
+	utils.Log("[%s] [%s] Got %d rows from %q.", dbName, user, rowSetCount, grid.GetUri())
 	return rowSet, rowSetCount, nil
 }
 
