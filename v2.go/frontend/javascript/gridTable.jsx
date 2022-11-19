@@ -8,14 +8,9 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						<th scope="col">Text1</th>
-						<th scope="col">Text2</th>
-						<th scope="col">Text3</th>
-						<th scope="col">Text4</th>
-						<th scope="col" style={{width: "64px"}}>Int1</th>
-						<th scope="col" style={{width: "64px"}}>Int2</th>
-						<th scope="col" style={{width: "64px"}}>Int3</th>
-						<th scope="col" style={{width: "64px"}}>Int4</th>
+						{this.props.columns.map(
+							col => <th scope="col" key={col.name}>{col.label}<br/><small>{col.name}</small></th>
+						)}
 						<th scope="col" style={{width: "64px"}}>Version</th>
 					</tr>
 				</thead>
@@ -26,6 +21,7 @@ class GridTable extends React.Component {
 										rowSelected={this.props.rowsSelected.includes(row.uuid)}
 										rowEdited={this.props.rowsEdited.includes(row.uuid)}
 										rowAdded={this.props.rowsAdded.includes(row.uuid)}
+										columns={this.props.columns}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
@@ -40,7 +36,7 @@ class GridTable extends React.Component {
 class GridRow extends React.Component {
 	render() {
 		const variant = this.props.rowEdited ? "table-warning" : ""
-		const columns = this.getColumns()
+		const columns = this.getColumns(this.props.columns)
 		return (
 			<tr className={variant}>
 				<td scope="row" className="vw-10">
@@ -74,18 +70,24 @@ class GridRow extends React.Component {
 		)
 	}
 
-	getColumns() {
-		const columns = []
-		columns.push({col: "text1", value: this.props.row.text1, type: "text", readonly: false})
-		columns.push({col: "text2", value: this.props.row.text2, type: "text", readonly: false})
-		columns.push({col: "text3", value: this.props.row.text3, type: "text", readonly: false})
-		columns.push({col: "text4", value: this.props.row.text4, type: "text", readonly: false})
-		columns.push({col: "int1", value: this.props.row.int1, type: "number", readonly: false})
-		columns.push({col: "int2", value: this.props.row.int2, type: "number", readonly: false})
-		columns.push({col: "int3", value: this.props.row.int3, type: "number", readonly: false})
-		columns.push({col: "int4", value: this.props.row.int4, type: "number", readonly: false})
-		columns.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
-		return columns
+	getColumnType(type) {
+		switch(type) {
+			case 'Integer':
+				return "number"
+			case 'Password':
+				return "password"
+			default:
+				return "text"
+		}
+	}
+
+	getColumns(columns) {
+		const cols = []
+		{columns.map(
+			col => cols.push({col: col.name, value: this.props.row[col.name], type: this.getColumnType(col.type), readonly: false})
+		)}
+		cols.push({col: "version", value: this.props.row.version, type: "number", readonly: true})
+		return cols
 	}
 }
 
@@ -104,8 +106,13 @@ class GridCell extends React.Component {
 							ref={this.props.inputRef}
 							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && <span>{this.props.value}</span>}
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && <span>{this.getCellValue(this.props.type, this.props.value)}</span>}
 			</td>
 		)
+	}
+
+	getCellValue(type, value) {
+		if(type == 'password') return '*****'
+		return value
 	}
 }

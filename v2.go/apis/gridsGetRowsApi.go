@@ -125,10 +125,22 @@ func getRowsQueryColumnsForGridsApi() string {
 		"text2, " +
 		"text3, " +
 		"text4, " +
+		"text5, " +
+		"text6, " +
+		"text7, " +
+		"text8, " +
+		"text9, " +
+		"text10, " +
 		"int1, " +
 		"int2, " +
 		"int3, " +
 		"int4, " +
+		"int5, " +
+		"int6, " +
+		"int7, " +
+		"int8, " +
+		"int9, " +
+		"int10, " +
 		"enabled, " +
 		"created, " +
 		"createdBy, " +
@@ -179,10 +191,22 @@ func getRowsQueryOutputForGridsApi(row *model.Row) []any {
 	output = append(output, &row.Text2)
 	output = append(output, &row.Text3)
 	output = append(output, &row.Text4)
+	output = append(output, &row.Text5)
+	output = append(output, &row.Text6)
+	output = append(output, &row.Text7)
+	output = append(output, &row.Text8)
+	output = append(output, &row.Text9)
+	output = append(output, &row.Text10)
 	output = append(output, &row.Int1)
 	output = append(output, &row.Int2)
 	output = append(output, &row.Int3)
 	output = append(output, &row.Int4)
+	output = append(output, &row.Int5)
+	output = append(output, &row.Int6)
+	output = append(output, &row.Int7)
+	output = append(output, &row.Int8)
+	output = append(output, &row.Int9)
+	output = append(output, &row.Int10)
 	output = append(output, &row.Enabled)
 	output = append(output, &row.Created)
 	output = append(output, &row.CreatedBy)

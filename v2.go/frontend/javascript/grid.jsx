@@ -59,6 +59,7 @@ class Grid extends React.Component {
 									rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
 									rowsAdded={rowsAdded}
+									columns={grid.columns}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}

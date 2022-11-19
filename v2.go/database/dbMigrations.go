@@ -1732,7 +1732,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidColumns + "', " +
-				"'From grid Uuid', " +
+				"'From grid', " +
 				"'text2')",
 
 			75: "INSERT INTO rows " +
@@ -1810,7 +1810,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidColumns + "', " +
-				"'From row Uuid', " +
+				"'From row', " +
 				"'text3')",
 
 			78: "INSERT INTO rows " +
@@ -1888,7 +1888,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidColumns + "', " +
-				"'To grid Uuid', " +
+				"'To grid', " +
 				"'text4')",
 
 			81: "INSERT INTO rows " +
@@ -1966,7 +1966,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidColumns + "', " +
-				"'To row Uuid', " +
+				"'To row', " +
 				"'text5')",
 
 			84: "INSERT INTO rows " +
