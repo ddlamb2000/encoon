@@ -178,7 +178,7 @@ class GridCellDropDown extends React.Component {
 
 	render() {
 		const { isLoading, isLoaded, error, rows } = this.state
-		const { values, gridPromptUuid, gridPromptUri, referencedValuesAdded, referencedValuesRemoved } = this.props
+		const { values, gridPromptUri, referencedValuesAdded, referencedValuesRemoved } = this.props
 		const referencedValuesIncluded = values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).

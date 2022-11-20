@@ -14,9 +14,9 @@ import (
 
 type persistGridRowDataFunc func(context.Context, string, *sql.DB, string, string, *model.Grid, *model.Row, string) error
 
-func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, rows []model.Row, trace string, f persistGridRowDataFunc) error {
+func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, rows []*model.Row, trace string, f persistGridRowDataFunc) error {
 	for _, row := range rows {
-		err := f(ctx, dbName, db, userUuid, user, grid, &row, trace)
+		err := f(ctx, dbName, db, userUuid, user, grid, row, trace)
 		if err != nil {
 			_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
 			return err
@@ -27,7 +27,9 @@ func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid
 
 func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row, trace string) error {
 	utils.Trace(trace, "postInsertGridRow()")
+	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
+	utils.Trace(trace, "postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
 	insertStatement := getInsertStatementForGridsApi(grid)
 	insertValues := getInsertValuesForGridsApi(userUuid, grid, row)
 	_, err := db.ExecContext(ctx, insertStatement, insertValues...)

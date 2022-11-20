@@ -23,9 +23,9 @@ type gridReferencePost struct {
 }
 
 type gridPost struct {
-	RowsAdded              []model.Row         `json:"rowsAdded"`
-	RowsEdited             []model.Row         `json:"rowsEdited"`
-	RowsDeleted            []model.Row         `json:"rowsDeleted"`
+	RowsAdded              []*model.Row        `json:"rowsAdded"`
+	RowsEdited             []*model.Row        `json:"rowsEdited"`
+	RowsDeleted            []*model.Row        `json:"rowsDeleted"`
 	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded"`
 	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved"`
 }
@@ -39,34 +39,36 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
+	trace := c.Query("trace")
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	utils.Trace(c.Query("trace"), "ReferenceValuesAdded=%v", payload.ReferenceValuesAdded)
-	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload, c.Query("trace"))
+	utils.Trace(trace, "PostGridsRowsApi() - ReferenceValuesAdded=%v", payload.ReferenceValuesAdded)
+	utils.Trace(trace, "PostGridsRowsApi() - payload.RowsAdded=%v", payload.RowsAdded)
+	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload, trace)
 	if err != nil {
 		c.Abort()
 		if timeOut {
-			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Timeout")
+			utils.Trace(trace, "PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
-			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Error")
+			utils.Trace(trace, "PostGridsRowsApi() - Error")
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user, c.Query("trace"))
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user, trace)
 	if err != nil {
 		c.Abort()
 		if timeOut {
-			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Timeout")
+			utils.Trace(trace, "PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
-			utils.Trace(c.Query("trace"), "PostGridsRowsApi() - Error")
+			utils.Trace(trace, "PostGridsRowsApi() - Error")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	utils.Trace(c.Query("trace"), "PostGridsRowsApi() - OK")
+	utils.Trace(trace, "PostGridsRowsApi() - OK")
 	c.JSON(http.StatusCreated, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
@@ -101,6 +103,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, p
 			ctxChan <- apiPostResponse{err}
 			return
 		}
+		utils.Trace(trace, "postGridsRows() - payload.RowsAdded=%v", payload.RowsAdded)
 		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsEdited, trace, postUpdateGridRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
@@ -109,11 +112,11 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, p
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.ReferenceValuesAdded, trace, postInsertReferenceRow); err != nil {
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesAdded, trace, postInsertReferenceRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.ReferenceValuesRemoved, trace, postDeleteReferenceRow); err != nil {
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesRemoved, trace, postDeleteReferenceRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}

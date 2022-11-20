@@ -208,19 +208,23 @@ class Grid extends React.Component {
 	getInputValues(rows) {
 		return rows.map(uuid => {
 			const e1 = this.gridInput.get(uuid)
-			const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
-			const e3 = Object.keys(e2).map(key => ({
-					col: e2[key].name,
-					value: getConvertedValue(e1.get(e2[key].name))
-				}))
-			const e4 = e3.reduce(
-				(hash, {col, value}) => {
-					hash[col] = value
-					return hash
-				},
-				{uuid: uuid}
-			)
-			return e4
+			if(e1) {
+				const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
+				const e3 = Object.keys(e2).map(key => ({
+						col: e2[key].name,
+						value: getConvertedValue(e1.get(e2[key].name))
+					}))
+				const e4 = e3.reduce(
+					(hash, {col, value}) => {
+						hash[col] = value
+						return hash
+					},
+					{uuid: uuid}
+				)
+				return e4
+			} else {
+				return undefined
+			}
 		})
 	}
 
