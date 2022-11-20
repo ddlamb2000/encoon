@@ -54,7 +54,7 @@ class GridRow extends React.Component {
 				{columns.map(
 					col => <GridCell uuid={this.props.row.uuid}
 										key={col.col}
-										col={col}
+										col={col.col}
 										type={col.type}
 										typeUuid={col.typeUuid}
 										value={col.value}
@@ -74,37 +74,88 @@ class GridRow extends React.Component {
 
 class GridCell extends React.Component {
 	render() {
-		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext" : "form-control form-control-sm "
+		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext rounded-2 " : "form-control form-control-sm rounded-2 "
 		const variantSize = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
-				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && 
-					<input type={this.props.type}
-							className={variant}
-							uuid={this.props.uuid}
-							col={this.props.col}
-							readOnly={this.props.readonly}
-							defaultValue={this.props.value}
-							ref={this.props.inputRef}
-							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && 
+					<GridCellInput type={this.props.type}
+									variant={variant}
+									uuid={this.props.uuid}
+									col={this.props.col}
+									readOnly={this.props.readonly}
+									value={this.props.value}
+									inputRef={this.props.inputRef}
+									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" &&
 					<span className={variantSize}>{getCellValue(this.props.type, this.props.value)}</span>
 				}
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && 
+					<GridCellDropDown uuid={this.props.uuid}
+										values={this.props.values}/>
+				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
-					<GridCellReferences values={this.props.values}/>
+					<GridCellReferences uuid={this.props.uuid}
+										values={this.props.values}/>
 				}
 			</td>
 		)
 	}
 }
 
-class GridCellReferences extends React.Component {
+class GridCellInput  extends React.Component {
 	render() {
 		return (
-			<span>
-				{this.props.values.map(value => <a className="pe-2" key={value.uuid} href={value.path}>{value.label}</a>)}
-			</span>
+			<input type={this.props.type}
+					className={this.props.variant}
+					uuid={this.props.uuid}
+					col={this.props.col}
+					readOnly={this.props.readonly}
+					defaultValue={this.props.value}
+					ref={this.props.inputRef}
+					onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+		)
+	}
+}
+
+class GridCellReferences extends React.Component {
+	render() {
+		if(this.props.values.length > 0) {
+			return (
+				<div className="d-block position-static py-0 mx-0 rounded-2 overflow-hidden">
+					<ul className="list-unstyled mb-0">
+						{this.props.values.map(value => 
+							<li key={value.uuid}>
+								<a className="d-flex align-items-center gap-2 p-0" href={value.path}>
+									{value.label}
+								</a>
+							</li>
+						)}
+					</ul>
+				</div>
+			)
+		}
+	}
+}
+
+class GridCellDropDown extends React.Component {
+	render() {
+		return (
+			<div className="dropdown-menu d-block position-static py-0 mx-0 rounded-2 shadow overflow-hidden w-280px">
+				<ul className="list-unstyled mb-0">
+					{this.props.values.map(value => 
+						<li key={value.uuid}>
+							<a className="dropdown-item d-flex align-items-center gap-2 p-1" href="#">
+								<button type="button" className="btn text-danger btn-sm mx-0 p-0">
+									<i className="bi bi-dash-circle"></i>
+								</button>
+								{value.label}
+							</a>
+						</li>
+					)}
+				</ul>
+			</div>
 		)
 	}
 }

@@ -122,25 +122,6 @@ class Grid extends React.Component {
 		}))
 	}
 
-	getInputValues(rows) {
-		return rows.map(uuid => {
-			const e1 = this.gridInput.get(uuid)
-			const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
-			const e3 = Object.keys(e2).map(key => ({
-					col: e2[key].name,
-					value: getConvertedValue(e1.get(e2[key].name))
-				}))
-			const e4 = e3.reduce(
-				(hash, {col, value}) => {
-					hash[col] = value
-					return hash
-				},
-				{uuid: uuid}
-			)
-			return e4
-		})
-	}
-
 	loadData() {
 		this.setState({isLoading: true})
 		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}?trace=true`
@@ -181,6 +162,25 @@ class Grid extends React.Component {
 					error: `[${response.status}] Internal server issue.`
 				})
 			}
+		})
+	}
+
+	getInputValues(rows) {
+		return rows.map(uuid => {
+			const e1 = this.gridInput.get(uuid)
+			const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
+			const e3 = Object.keys(e2).map(key => ({
+					col: e2[key].name,
+					value: getConvertedValue(e1.get(e2[key].name))
+				}))
+			const e4 = e3.reduce(
+				(hash, {col, value}) => {
+					hash[col] = value
+					return hash
+				},
+				{uuid: uuid}
+			)
+			return e4
 		})
 	}
 
