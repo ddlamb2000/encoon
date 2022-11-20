@@ -77,7 +77,8 @@ func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string,
 	grid.Columns = make([]*model.Column, 0)
 	statement := getGridColumsQueryForGridsApi()
 	utils.Trace(trace, "getColumnsForGridsApi() - statement=%s", statement)
-	rows, err := db.QueryContext(ctx,
+	rows, err := db.QueryContext(
+		ctx,
 		statement,
 		model.UuidRelationships,
 		"relationship1",
@@ -86,7 +87,10 @@ func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string,
 		model.UuidColumns,
 		model.UuidRelationships,
 		"relationship1",
-		model.UuidColumnTypes)
+		model.UuidColumnTypes,
+		model.UuidRelationships,
+		"relationship2",
+	)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Error when querying columns from %q using %q: %v.", dbName, user, grid.Uuid, statement, err)
 	}
@@ -106,25 +110,31 @@ func getGridColumsQueryForGridsApi() string {
 	return "SELECT col.text1, " +
 		"col.text2, " +
 		"coltype.uuid, " +
-		"coltype.text1 " +
+		"coltype.text1, " +
+		"rel3.text5 " +
 		"FROM rows rel1 " +
 		"INNER JOIN rows col " +
 		"ON rel1.text4 = col.gridUuid " +
 		"AND rel1.text5 = col.uuid " +
-		"INNER JOIN rows rel2 " +
-		"ON rel2.text2 = col.gridUuid " +
-		"AND rel2.text3 = col.uuid " +
-		"INNER JOIN rows coltype " +
-		"ON rel2.text4 = coltype.gridUuid " +
-		"AND rel2.text5 = coltype.Uuid " +
-		"WHERE rel1.gridUuid = $1 " +
+		"AND rel1.gridUuid = $1 " +
 		"AND rel1.text1 = $2 " +
 		"AND rel1.text2 = $3 " +
 		"AND rel1.text3 = $4 " +
 		"AND rel1.text4 = $5 " +
+		"INNER JOIN rows rel2 " +
+		"ON rel2.text2 = col.gridUuid " +
+		"AND rel2.text3 = col.uuid " +
 		"AND rel2.gridUuid = $6 " +
 		"AND rel2.text1 = $7 " +
 		"AND rel2.text4 = $8 " +
+		"INNER JOIN rows coltype " +
+		"ON rel2.text4 = coltype.gridUuid " +
+		"AND rel2.text5 = coltype.Uuid " +
+		"LEFT OUTER JOIN rows rel3 " +
+		"ON rel3.text2 = col.gridUuid " +
+		"AND rel3.text3 = col.uuid " +
+		"AND rel3.gridUuid = $9 " +
+		"AND rel3.text1 = $10 " +
 		"ORDER BY col.text1 "
 }
 
@@ -134,5 +144,6 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.Name)
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
+	output = append(output, &column.GridPromptUuid)
 	return output
 }

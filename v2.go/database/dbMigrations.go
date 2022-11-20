@@ -2158,6 +2158,34 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidGridColumnColumns + "', " +
 				"'" + model.UuidGrids + "', " +
 				"'" + model.UuidColumns + "')",
+
+			91: "INSERT INTO rows " +
+				"(uuid, " +
+				"version, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship2', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidColumnTypeColumnGridPrompt + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidGrids + "')",
 		})
 	if err != nil {
 		return err
