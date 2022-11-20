@@ -26,8 +26,8 @@ class GridTable extends React.Component {
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
-										onAddReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, uuid, displayString, path)}
-										onRemoveReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, uuid, displayString, path)}
+										onAddReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)}
+										onRemoveReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token} />
@@ -65,6 +65,7 @@ class GridRow extends React.Component {
 										typeUuid={col.typeUuid}
 										value={col.value}
 										values={col.values}
+										gridPromptUuid={col.gridPromptUuid}
 										gridPromptUri={col.gridPromptUri}
 										readonly={col.readonly}
 										rowAdded={this.props.rowAdded}
@@ -74,8 +75,8 @@ class GridRow extends React.Component {
 										referencedValuesRemoved={this.props.referencedValuesRemoved.filter(ref => ref.col == col.name)}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-										onAddReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, uuid, displayString, path)}
-										onRemoveReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, uuid, displayString, path)}
+										onAddReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)}
+										onRemoveReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token} />
@@ -110,11 +111,12 @@ class GridCell extends React.Component {
 										values={this.props.values}
 										dbName={this.props.dbName}
 										token={this.props.token}
+										gridPromptUuid={this.props.gridPromptUuid}
 										gridPromptUri={this.props.gridPromptUri}
 										referencedValuesAdded={this.props.referencedValuesAdded}
 										referencedValuesRemoved={this.props.referencedValuesRemoved}
-										onAddReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, uuid, displayString, path)}
-										onRemoveReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, uuid, displayString, path)} />
+										onAddReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)}
+										onRemoveReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(rowUuid, col, gridUuid, uuid, displayString, path)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
 					<GridCellReferences uuid={this.props.uuid}
@@ -176,7 +178,7 @@ class GridCellDropDown extends React.Component {
 
 	render() {
 		const { isLoading, isLoaded, error, rows } = this.state
-		const { values, gridPromptUri, referencedValuesAdded, referencedValuesRemoved } = this.props
+		const { values, gridPromptUuid, gridPromptUri, referencedValuesAdded, referencedValuesRemoved } = this.props
 		const referencedValuesIncluded = values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).
@@ -192,7 +194,7 @@ class GridCellDropDown extends React.Component {
 					<li key={ref.uuid}>
 						<span>
 							<button type="button" className="btn text-danger btn-sm mx-0 p-0"
-									onClick={() => this.props.onRemoveReferencedValueClick(this.props.uuid, this.props.col, ref.uuid, ref.displayString, ref.path)}>
+									onClick={() => this.props.onRemoveReferencedValueClick(this.props.uuid, this.props.col, this.props.gridPromptUuid, ref.uuid, ref.displayString, ref.path)}>
 								<i className="bi bi-dash-circle pe-1"></i>
 							</button>
 							{ref.displayString}
@@ -214,7 +216,7 @@ class GridCellDropDown extends React.Component {
 						<span>
 							<button type="button"
 									className="btn text-success btn-sm mx-0 p-0"
-									onClick={() => this.props.onAddReferencedValueClick(this.props.uuid, this.props.col, ref.uuid, ref.displayString, ref.path)}>
+									onClick={() => this.props.onAddReferencedValueClick(this.props.uuid, this.props.col, this.props.gridPromptUuid, ref.uuid, ref.displayString, ref.path)}>
 								<i className="bi bi-plus-circle pe-1"></i>
 							</button>
 							{ref.displayString}

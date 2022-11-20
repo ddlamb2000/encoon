@@ -67,8 +67,8 @@ class Grid extends React.Component {
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
-									onAddReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.addReferencedValue(rowUuid, col, uuid, displayString, path)}
-									onRemoveReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.removeReferencedValue(rowUuid, col, uuid, displayString, path)}
+									onAddReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.addReferencedValue(rowUuid, col, gridUuid, uuid, displayString, path)}
+									onRemoveReferencedValueClick={(rowUuid, col, gridUuid, uuid, displayString, path) => this.removeReferencedValue(rowUuid, col, gridUuid, uuid, displayString, path)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token} />
@@ -130,11 +130,12 @@ class Grid extends React.Component {
 		}))
 	}
 
-	addReferencedValue(rowUuid, col, uuid, displayString, path) {
+	addReferencedValue(rowUuid, col, gridUuid, uuid, displayString, path) {
 		this.setState(state => ({
 			referencedValuesAdded: state.referencedValuesAdded.concat({
 				rowUuid: rowUuid,
 				col: col,
+				gridUuid: gridUuid, 
 				uuid: uuid,
 				displayString: displayString,
 				path: path
@@ -144,11 +145,12 @@ class Grid extends React.Component {
 		this.editRow(rowUuid)
 	}
 
-	removeReferencedValue(rowUuid, col, uuid, displayString, path) {
+	removeReferencedValue(rowUuid, col, gridUuid, uuid, displayString, path) {
 		this.setState(state => ({
 			referencedValuesRemoved: state.referencedValuesRemoved.concat({
 				rowUuid: rowUuid,
 				col: col,
+				gridUuid: gridUuid, 
 				uuid: uuid,
 				displayString: displayString,
 				path: path
@@ -233,7 +235,9 @@ class Grid extends React.Component {
 			body: JSON.stringify({
 				rowsAdded: this.getInputValues(this.state.rowsAdded),
 				rowsEdited: this.getInputValues(this.state.rowsEdited),
-				rowsDeleted: this.getInputValues(this.state.rowsDeleted)
+				rowsDeleted: this.getInputValues(this.state.rowsDeleted),
+				referencedValuesAdded: this.state.referencedValuesAdded,
+				referencedValuesRemoved: this.state.referencedValuesRemoved
 			})
 		})
 		.then(response => {
@@ -250,8 +254,10 @@ class Grid extends React.Component {
 							rowsEdited: [],
 							rowsSelected: [],
 							rowsAdded: [],
-							rowsDeleted: []
-						})
+							rowsDeleted: [],
+							referencedValuesAdded: [],
+							referencedValuesRemoved: []
+									})
 					},
 					(error) => {
 						this.setState({
@@ -338,6 +344,7 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 					label: col.label,
 					values: values,
 					typeUuid: col.typeUuid,
+					gridPromptUuid: col.gridPromptUuid,
 					gridPromptUri: col.gridPromptUri,
 					type: type,
 					readonly: false

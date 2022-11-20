@@ -111,6 +111,7 @@ func getGridColumsQueryForGridsApi() string {
 		"col.text2, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
+		"grid.uuid, " +
 		"grid.text1 " +
 		"FROM rows rel1 " +
 		"INNER JOIN rows col " +
@@ -147,6 +148,7 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.Name)
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
+	output = append(output, &column.GridPromptUuid)
 	output = append(output, &column.GridPromptUri)
 	return output
 }
