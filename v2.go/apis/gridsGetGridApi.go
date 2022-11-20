@@ -111,7 +111,7 @@ func getGridColumsQueryForGridsApi() string {
 		"col.text2, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
-		"rel3.text5 " +
+		"grid.text1 " +
 		"FROM rows rel1 " +
 		"INNER JOIN rows col " +
 		"ON rel1.text4 = col.gridUuid " +
@@ -135,6 +135,9 @@ func getGridColumsQueryForGridsApi() string {
 		"AND rel3.text3 = col.uuid " +
 		"AND rel3.gridUuid = $9 " +
 		"AND rel3.text1 = $10 " +
+		"LEFT OUTER JOIN rows grid " +
+		"ON grid.gridUuid = rel3.text4 " +
+		"AND grid.Uuid = rel3.text5 " +
 		"ORDER BY col.text1 "
 }
 
@@ -144,6 +147,6 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.Name)
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
-	output = append(output, &column.GridPromptUuid)
+	output = append(output, &column.GridPromptUri)
 	return output
 }

@@ -24,7 +24,9 @@ class GridTable extends React.Component {
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
-										inputRef={this.props.inputRef} />
+										inputRef={this.props.inputRef}
+										dbName={this.props.dbName}
+										token={this.props.token} />
 					)}
 				</tbody>
 			</table>
@@ -53,19 +55,22 @@ class GridRow extends React.Component {
 				</td>
 				{columns.map(
 					col => <GridCell uuid={this.props.row.uuid}
-										key={col.col}
-										col={col.col}
+										key={col.name}
+										col={col.name}
 										type={col.type}
 										typeUuid={col.typeUuid}
 										value={col.value}
 										values={col.values}
+										gridPromptUri={col.gridPromptUri}
 										readonly={col.readonly}
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
 										rowEdited={this.props.rowEdited}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-										inputRef={this.props.inputRef} />
+										inputRef={this.props.inputRef}
+										dbName={this.props.dbName}
+										token={this.props.token} />
 				)}
 			</tr>
 		)
@@ -74,7 +79,7 @@ class GridRow extends React.Component {
 
 class GridCell extends React.Component {
 	render() {
-		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext rounded-2 " : "form-control form-control-sm rounded-2 "
+		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext rounded-2 shadow " : "form-control form-control-sm rounded-2 shadow "
 		const variantSize = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
@@ -93,7 +98,10 @@ class GridCell extends React.Component {
 				}
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && 
 					<GridCellDropDown uuid={this.props.uuid}
-										values={this.props.values}/>
+										values={this.props.values}
+										dbName={this.props.dbName}
+										token={this.props.token}
+										gridPromptUri={this.props.gridPromptUri} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
 					<GridCellReferences uuid={this.props.uuid}
@@ -123,44 +131,116 @@ class GridCellReferences extends React.Component {
 	render() {
 		if(this.props.values.length > 0) {
 			return (
-				<div className="d-block position-static py-0 mx-0 rounded-2 overflow-hidden">
-					<ul className="list-unstyled mb-0">
-						{this.props.values.map(value => 
-							<li key={value.uuid}>
-								<a className="d-flex align-items-center gap-2 p-0" href={value.path}>
-									{value.label}
-								</a>
-							</li>
-						)}
-					</ul>
-				</div>
+				<ul className="list-unstyled mb-0">
+					{this.props.values.map(value => 
+						<li key={value.uuid}>
+							<a className="gap-2 p-0" href={value.path}>{value.label}</a>
+						</li>
+					)}
+				</ul>
 			)
 		}
 	}
 }
 
 class GridCellDropDown extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			error: "",
+			isLoaded: false,
+			isLoading: false,
+			rows: [],
+		}
+	}
+
 	render() {
+		const { isLoading, isLoaded, error, rows } = this.state
+		const { values, gridPromptUri } = this.props
+		const countRows = rows ? rows.length : 0
 		return (
-			<div className="dropdown-menu d-block position-static p-2 mx-0 rounded-2 shadow overflow-hidden w-280px">
-				<ul className="list-unstyled mb-0">
-					{this.props.values.map(value => 
-						<li key={value.uuid}>
-							<span className="dropdown-item d-flex align-items-center gap-2 p-1">
-								<button type="button" className="btn text-danger btn-sm mx-0 p-0">
-									<i className="bi bi-dash-circle"></i>
-								</button>
-								{value.label}
-							</span>
-						</li>
-					)}
-					<li><hr className="dropdown-divider" /></li>
-					<li>
-						<input type="search" className="form-control form-control-sm dropdown-item d-flex align-items-center gap-2 p-1" autoComplete="false" placeholder="Search..." />
+			<ul className="list-unstyled mb-0">
+				{values.map(value => 
+					<li key={value.uuid}>
+						<span>
+							<button type="button" className="btn text-danger btn-sm mx-0 p-0">
+								<i className="bi bi-dash-circle pe-1"></i>
+							</button>
+							{value.label}
+						</span>
 					</li>
-					<li><hr className="dropdown-divider" /></li>
-				</ul>
-			</div>
+				)}
+				<li>
+					<input type="search"
+							className="form-control form-control-sm rounded-2 shadow gap-2 p-1"
+							autoComplete="false"
+							placeholder="Search (* for all)..."
+							onInput={(e) => this.loadDropDownData(gridPromptUri, e.target.value)} />
+				</li>
+				{isLoading && <li><Spinner /></li>}
+				{error && !isLoading && !isLoaded && <li className="alert alert-danger" role="alert">{error}</li>}
+				{error && !isLoading && isLoaded && <li className="alert alert-primary" role="alert">{error}</li>}
+				{isLoaded && rows && countRows > 0 && rows.map(row => (
+					<li key={row.uuid}>
+						<span>
+							<button type="button" className="btn text-success btn-sm mx-0 p-0">
+								<i className="bi bi-plus-circle pe-1"></i>
+							</button>
+							{row.displayString}
+						</span>
+					</li>
+				))}
+			</ul>
 		)
+	}
+
+	loadDropDownData(gridPromptUri, value) {
+		this.setState({isLoading: true})
+		if(value.length > 0) {
+			const uri = `/${this.props.dbName}/api/v1/${gridPromptUri}?trace=true`
+			fetch(uri, {
+				headers: {
+					'Accept': 'application/json',
+					'Content-Type': 'application/json',
+					'Authorization': 'Bearer ' + this.props.token
+				}
+			})
+			.then(response => {
+				const contentType = response.headers.get("content-type")
+				if(contentType && contentType.indexOf("application/json") !== -1) {
+					return response.json().then(	
+						(result) => {
+							this.setState({
+								isLoading: false,
+								isLoaded: true,
+								rows: result.rows,
+								error: result.error
+							})
+						},
+						(error) => {
+							this.setState({
+								isLoading: false,
+								isLoaded: false,
+								rows: [],
+								error: error.message
+							})
+						}
+					)
+				} else {
+					this.setState({
+						isLoading: false,
+						isLoaded: false,
+						rows: [],
+						error: `[${response.status}] Internal server issue.`
+					})
+				}
+			})
+		} else {
+			this.setState({
+				isLoading: false,
+				isLoaded: false,
+				rows: []
+			})
+		}
 	}
 }

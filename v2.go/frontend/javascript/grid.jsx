@@ -41,7 +41,7 @@ class Grid extends React.Component {
 
 	render() {
 		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted } = this.state
-		const { uuid } = this.props
+		const { uuid, dbName, token } = this.props
 		const countRows = rows ? rows.length : 0
 		return (
 			<div className="card my-4">
@@ -63,7 +63,9 @@ class Grid extends React.Component {
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
-									inputRef={this.setGridRowRef} />
+									inputRef={this.setGridRowRef}
+									dbName={dbName}
+									token={token} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
@@ -297,9 +299,24 @@ function getColumnValueForRow(columns, row, withTimeStamps) {
 			let type = getColumnType(col.typeUuid)
 			if(type == "reference") {
 				let values = getColumnValueForReferencedRow(col, row)
-				cols.push({col: col.name, label: col.label, values: values, typeUuid: col.typeUuid, type: type, readonly: false})
+				cols.push({
+					name: col.name,
+					label: col.label,
+					values: values,
+					typeUuid: col.typeUuid,
+					gridPromptUri: col.gridPromptUri,
+					type: type,
+					readonly: false
+				})
 			} else {
-				cols.push({col: col.name, label: col.label, value: row[col.name], typeUuid: col.typeUuid, type: type, readonly: false})	
+				cols.push({
+					name: col.name,
+					label: col.label,
+					value: row[col.name],
+					typeUuid: col.typeUuid,
+					type: type,
+					readonly: false
+				})	
 			}
 		}
 	)}
