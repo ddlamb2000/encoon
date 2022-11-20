@@ -13,7 +13,9 @@ class Grid extends React.Component {
 			rowsSelected: [],
 			rowsEdited: [],
 			rowsAdded: [],
-			rowsDeleted: []
+			rowsDeleted: [],
+			referencedValuesAdded: [],
+			referencedValuesRemoved: []
 		}
 		this.gridInput = new Map()
 		this.setGridRowRef = element => {
@@ -40,7 +42,7 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted } = this.state
+		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted, referencedValuesAdded, referencedValuesRemoved } = this.state
 		const { uuid, dbName, token } = this.props
 		const countRows = rows ? rows.length : 0
 		return (
@@ -59,10 +61,14 @@ class Grid extends React.Component {
 									rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
 									rowsAdded={rowsAdded}
+									referencedValuesAdded={referencedValuesAdded}
+									referencedValuesRemoved={referencedValuesRemoved}
 									columns={grid.columns}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
+									onAddReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.addReferencedValue(rowUuid, col, uuid, displayString, path)}
+									onRemoveReferencedValueClick={(rowUuid, col, uuid, displayString, path) => this.removeReferencedValue(rowUuid, col, uuid, displayString, path)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token} />
@@ -122,6 +128,34 @@ class Grid extends React.Component {
 			rowsEdited: state.rowsEdited.filter(uuid => uuid != deleteUuid),
 			rows: state.rows.filter(row => row.uuid != deleteUuid)
 		}))
+	}
+
+	addReferencedValue(rowUuid, col, uuid, displayString, path) {
+		this.setState(state => ({
+			referencedValuesAdded: state.referencedValuesAdded.concat({
+				rowUuid: rowUuid,
+				col: col,
+				uuid: uuid,
+				displayString: displayString,
+				path: path
+			}),
+			referencedValuesRemoved: state.referencedValuesRemoved.filter(ref => ref.rowUuid != rowUuid || ref.col != col || ref.uuid != uuid)
+		}))
+		this.editRow(rowUuid)
+	}
+
+	removeReferencedValue(rowUuid, col, uuid, displayString, path) {
+		this.setState(state => ({
+			referencedValuesRemoved: state.referencedValuesRemoved.concat({
+				rowUuid: rowUuid,
+				col: col,
+				uuid: uuid,
+				displayString: displayString,
+				path: path
+			}),
+			referencedValuesAdded: state.referencedValuesAdded.filter(ref => ref.rowUuid != rowUuid || ref.col != col || ref.uuid != uuid)
+		}))
+		this.editRow(rowUuid)
 	}
 
 	loadData() {
