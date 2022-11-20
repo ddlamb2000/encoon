@@ -340,7 +340,7 @@ function getColumnValueForReferencedRow(col, row) {
 					ref.rows.map(
 						refRow => output.push({
 							uuid: refRow.uuid,
-							label: refRow.displayString,
+							displayString: refRow.displayString,
 							path: refRow.path
 						})
 					)

@@ -134,7 +134,7 @@ class GridCellReferences extends React.Component {
 				<ul className="list-unstyled mb-0">
 					{this.props.values.map(value => 
 						<li key={value.uuid}>
-							<a className="gap-2 p-0" href={value.path}>{value.label}</a>
+							<a className="gap-2 p-0" href={value.path}>{value.displayString}</a>
 						</li>
 					)}
 				</ul>
@@ -166,7 +166,7 @@ class GridCellDropDown extends React.Component {
 							<button type="button" className="btn text-danger btn-sm mx-0 p-0">
 								<i className="bi bi-dash-circle pe-1"></i>
 							</button>
-							{value.label}
+							{value.displayString}
 						</span>
 					</li>
 				)}
@@ -183,7 +183,9 @@ class GridCellDropDown extends React.Component {
 				{isLoaded && rows && countRows > 0 && rows.map(row => (
 					<li key={row.uuid}>
 						<span>
-							<button type="button" className="btn text-success btn-sm mx-0 p-0">
+							<button type="button"
+									className="btn text-success btn-sm mx-0 p-0"
+									onClick={() => this.addReferencedValueClick(row.uuid, row.displayString, row.path)}>
 								<i className="bi bi-plus-circle pe-1"></i>
 							</button>
 							{row.displayString}
@@ -194,7 +196,14 @@ class GridCellDropDown extends React.Component {
 		)
 	}
 
+	addReferencedValueClick(uuid, displayString, path) {
+		console.log(uuid, displayString, path)
+		this.props.values.push({uuid: uuid, displayString: displayString, path: path})
+		console.log(this.props.values)
+	}
+
 	loadDropDownData(gridPromptUri, value) {
+		console.log(this.props.values)
 		this.setState({isLoading: true})
 		if(value.length > 0) {
 			const uri = `/${this.props.dbName}/api/v1/${gridPromptUri}?trace=true`
