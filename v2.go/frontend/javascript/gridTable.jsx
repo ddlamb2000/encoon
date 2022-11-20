@@ -142,18 +142,23 @@ class GridCellReferences extends React.Component {
 class GridCellDropDown extends React.Component {
 	render() {
 		return (
-			<div className="dropdown-menu d-block position-static py-0 mx-0 rounded-2 shadow overflow-hidden w-280px">
+			<div className="dropdown-menu d-block position-static p-2 mx-0 rounded-2 shadow overflow-hidden w-280px">
 				<ul className="list-unstyled mb-0">
 					{this.props.values.map(value => 
 						<li key={value.uuid}>
-							<a className="dropdown-item d-flex align-items-center gap-2 p-1" href="#">
+							<span className="dropdown-item d-flex align-items-center gap-2 p-1">
 								<button type="button" className="btn text-danger btn-sm mx-0 p-0">
 									<i className="bi bi-dash-circle"></i>
 								</button>
 								{value.label}
-							</a>
+							</span>
 						</li>
 					)}
+					<li><hr className="dropdown-divider" /></li>
+					<li>
+						<input type="search" className="form-control form-control-sm dropdown-item d-flex align-items-center gap-2 p-1" autoComplete="false" placeholder="Search..." />
+					</li>
+					<li><hr className="dropdown-divider" /></li>
 				</ul>
 			</div>
 		)
