@@ -75,7 +75,9 @@ class Grid extends React.Component {
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
-									columns={grid.columns} />
+									columns={grid.columns}
+									referencedValuesAdded={referencedValuesAdded}
+									referencedValuesRemoved={referencedValuesRemoved} />
 					}
 					<GridFooter isLoading={isLoading}
 								grid={grid}

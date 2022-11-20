@@ -175,10 +175,14 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 
 func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row, trace string) error {
 	utils.Trace(trace, "postDeleteGridRow()")
-	_, err := db.ExecContext(ctx, "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2", row.Uuid, grid.Uuid)
+	_, err := db.ExecContext(ctx, getDeleteRowStatement(), row.Uuid, grid.Uuid)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Delete row error: %v.", dbName, user, err)
 	}
 	utils.Log("[%s] [%s] Row [%s] deleted in %q.", dbName, user, row, grid.GetUri())
 	return err
+}
+
+func getDeleteRowStatement() string {
+	return "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
 }

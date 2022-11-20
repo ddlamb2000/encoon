@@ -23,6 +23,8 @@ class GridView extends React.Component {
 													rowAdded={this.props.rowAdded}
 													rowSelected={this.props.rowSelected}
 													rowEdited={this.props.rowEdited}
+													referencedValuesAdded={this.props.referencedValuesAdded}
+													referencedValuesRemoved={this.props.referencedValuesRemoved}
 													onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 													onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 													inputRef={this.props.inputRef} />

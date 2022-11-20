@@ -109,6 +109,14 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, p
 			ctxChan <- apiPostResponse{err}
 			return
 		}
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.ReferenceValuesAdded, trace, postInsertReferenceRow); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
+		}
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.ReferenceValuesRemoved, trace, postDeleteReferenceRow); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
+		}
 		if err := CommitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return

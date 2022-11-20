@@ -186,6 +186,7 @@ class GridCellDropDown extends React.Component {
 		const referencedValuesNotIncluded = rows.
 			concat(referencedValuesRemoved).
 			filter(ref => !referencedValuesAdded.map(ref => ref.uuid).includes(ref.uuid)).
+			filter(ref => !referencedValuesIncluded.map(ref => ref.uuid).includes(ref.uuid)).
 			filter((value, index, self) => index === self.findIndex((t) => (t.uuid === value.uuid)))
 		const countRows = referencedValuesNotIncluded ? referencedValuesNotIncluded.length : 0
 		return (
@@ -195,7 +196,7 @@ class GridCellDropDown extends React.Component {
 						<span>
 							<button type="button" className="btn text-danger btn-sm mx-0 p-0"
 									onClick={() => this.props.onRemoveReferencedValueClick(this.props.uuid, this.props.col, this.props.gridPromptUuid, ref.uuid, ref.displayString, ref.path)}>
-								<i className="bi bi-dash-circle pe-1"></i>
+								<i className="bi bi-box-arrow-down pe-1"></i>
 							</button>
 							{ref.displayString}
 						</span>
@@ -205,7 +206,7 @@ class GridCellDropDown extends React.Component {
 					<input type="search"
 							className="form-control form-control-sm rounded-2 shadow gap-2 p-1"
 							autoComplete="false"
-							placeholder="Search (* for all)..."
+							placeholder="Search..."
 							onInput={(e) => this.loadDropDownData(gridPromptUri, e.target.value)} />
 				</li>
 				{isLoading && <li><Spinner /></li>}
@@ -217,7 +218,7 @@ class GridCellDropDown extends React.Component {
 							<button type="button"
 									className="btn text-success btn-sm mx-0 p-0"
 									onClick={() => this.props.onAddReferencedValueClick(this.props.uuid, this.props.col, this.props.gridPromptUuid, ref.uuid, ref.displayString, ref.path)}>
-								<i className="bi bi-plus-circle pe-1"></i>
+								<i className="bi bi-box-arrow-up pe-1"></i>
 							</button>
 							{ref.displayString}
 						</span>
