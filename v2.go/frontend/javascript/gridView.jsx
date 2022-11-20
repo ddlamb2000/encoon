@@ -3,20 +3,17 @@
 
 class GridView extends React.Component {
 	render() {
-		const columns = getColumnValueForRow(this.props.columns, this.props.row, true)
+		const columns = getColumnValuesForRow(this.props.columns, this.props.row, true)
 		return (
 			<div>
-				<h4 className="card-title">
-					{this.props.row.displayString}
-				</h4>
+				<h4 className="card-title">{this.props.row.displayString}</h4>
 				<table className="table table-hover table-sm">
 					<thead className="table-light"></thead>
 					<tbody>
 						{columns && columns.map(
-							col => <tr key={col.col}>
+							col => <tr key={col.name}>
 										<td>{col.label}</td>
 										<GridCell uuid={this.props.row.uuid}
-													key={col.col}
 													col={col.name}
 													type={col.type}
 													typeUuid={col.typeUuid}

@@ -292,7 +292,7 @@ function getColumnType(type) {
 	}
 }
 
-function getColumnValueForRow(columns, row, withTimeStamps) {
+function getColumnValuesForRow(columns, row, withTimeStamps) {
 	const cols = []
 	{columns && columns.map(
 		col => {
@@ -321,12 +321,12 @@ function getColumnValueForRow(columns, row, withTimeStamps) {
 		}
 	)}
 	if(withTimeStamps) {
-		cols.push({col: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
-		cols.push({col: "version", label: "Version", value: row.version, type: "number", readonly: true})
-		cols.push({col: "created", label: "Created", value: row.created, type: "text", readonly: true})
-		cols.push({col: "createdBy", label: "Created by", value: row.createdBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
-		cols.push({col: "updated", label: "Updated", value: row.updated, type: "text", readonly: true})
-		cols.push({col: "updatedBy", label: "Updated by", value: row.updatedBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
+		cols.push({name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
+		cols.push({name: "version", label: "Version", value: row.version, type: "number", readonly: true})
+		cols.push({name: "created", label: "Created", value: row.created, type: "text", readonly: true})
+		cols.push({name: "createdBy", label: "Created by", value: row.createdBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
+		cols.push({name: "updated", label: "Updated", value: row.updated, type: "text", readonly: true})
+		cols.push({name: "updatedBy", label: "Updated by", value: row.updatedBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 	}
 	return cols
 }

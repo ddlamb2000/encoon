@@ -37,7 +37,7 @@ class GridTable extends React.Component {
 class GridRow extends React.Component {
 	render() {
 		const variant = this.props.rowEdited ? "table-warning" : ""
-		const columns = getColumnValueForRow(this.props.columns, this.props.row)
+		const columns = getColumnValuesForRow(this.props.columns, this.props.row)
 		return (
 			<tr className={variant}>
 				<td scope="row" className="vw-10">
