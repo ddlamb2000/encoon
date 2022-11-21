@@ -40,10 +40,10 @@ class GridTable extends React.Component {
 
 class GridRow extends React.Component {
 	render() {
-		const variant = this.props.rowEdited ? "table-warning" : ""
+		const variantEdited = this.props.rowEdited ? "table-warning" : ""
 		const columns = getColumnValuesForRow(this.props.columns, this.props.row)
 		return (
-			<tr className={variant}>
+			<tr className={variantEdited}>
 				<td scope="row" className="vw-10">
 					{!(this.props.rowAdded || this.props.rowSelected) && 
 						<a href={this.props.row.path}><i className="bi bi-card-text"></i></a>
@@ -88,13 +88,13 @@ class GridRow extends React.Component {
 
 class GridCell extends React.Component {
 	render() {
-		const variant = this.props.readonly ? " form-control form-control-sm form-control-plaintext rounded-2 shadow " : "form-control form-control-sm rounded-2 shadow "
-		const variantSize = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
+		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
+		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && 
 					<GridCellInput type={this.props.type}
-									variant={variant}
+									variantReadOnly={variantReadOnly}
 									uuid={this.props.uuid}
 									col={this.props.col}
 									readOnly={this.props.readonly}
@@ -103,7 +103,7 @@ class GridCell extends React.Component {
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" &&
-					<span className={variantSize}>{getCellValue(this.props.type, this.props.value)}</span>
+					<span className={variantMonospace}>{getCellValue(this.props.type, this.props.value)}</span>
 				}
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && 
 					<GridCellDropDown uuid={this.props.uuid}
@@ -133,7 +133,7 @@ class GridCellInput  extends React.Component {
 	render() {
 		return (
 			<input type={this.props.type}
-					className={this.props.variant}
+					className={"form-control form-control-sm rounded-2 shadow " + this.props.variantReadOnly}
 					uuid={this.props.uuid}
 					col={this.props.col}
 					readOnly={this.props.readonly}
