@@ -16,10 +16,10 @@ import (
 )
 
 type gridReferencePost struct {
-	Relationship string `json:"col"`
-	FromUuid     string `json:"rowUuid"`
-	ToGridUuid   string `json:"gridUuid"`
-	ToUuid       string `json:"uuid"`
+	ColumnName string `json:"columnName"`
+	FromUuid   string `json:"fromUuid"`
+	ToGridUuid string `json:"toGridUuid"`
+	ToUuid     string `json:"uuid"`
 }
 
 type gridPost struct {

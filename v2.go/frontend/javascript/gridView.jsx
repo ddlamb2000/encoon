@@ -14,7 +14,7 @@ class GridView extends React.Component {
 							col => <tr key={col.name}>
 										<td>{col.label}</td>
 										<GridCell uuid={this.props.row.uuid}
-													col={col.name}
+													columnName={col.name}
 													type={col.type}
 													typeUuid={col.typeUuid}
 													value={col.value}

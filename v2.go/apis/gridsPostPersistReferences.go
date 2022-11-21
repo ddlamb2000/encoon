@@ -30,7 +30,7 @@ func postInsertReferenceRow(ctx context.Context, dbName string, db *sql.DB, user
 	utils.Trace(trace, "postInsertReferenceRow() - ref.FromUuid=%v, addedRows=%v", ref.FromUuid, addedRows)
 	rowUuid := getUuidFromRowsForTmpUuid(addedRows, ref.FromUuid, trace)
 	utils.Trace(trace, "postInsertReferenceRow() - rowUuid=%v", rowUuid)
-	_, err := db.ExecContext(ctx, insertStatement, utils.GetNewUUID(), userUuid, model.UuidRelationships, ref.Relationship, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid)
+	_, err := db.ExecContext(ctx, insertStatement, utils.GetNewUUID(), userUuid, model.UuidRelationships, ref.ColumnName, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Insert referenced row error on %q: %v.", dbName, user, insertStatement, err)
 	}
@@ -80,7 +80,7 @@ func getInsertStatementForRefereceRow() string {
 func postDeleteReferenceRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost, trace string) error {
 	utils.Trace(trace, "postDeleteReferenceRow()")
 	deleteStatement := getDeleteReferenceRowStatement()
-	_, err := db.ExecContext(ctx, deleteStatement, model.UuidRelationships, ref.Relationship, grid.Uuid, ref.FromUuid, ref.ToGridUuid, ref.ToUuid)
+	_, err := db.ExecContext(ctx, deleteStatement, model.UuidRelationships, ref.ColumnName, grid.Uuid, ref.FromUuid, ref.ToGridUuid, ref.ToUuid)
 	if err != nil {
 		return utils.LogAndReturnError("[%s] [%s] Delete referenced row error on %q: %v.", dbName, user, deleteStatement, err)
 	}
