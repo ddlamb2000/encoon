@@ -5,17 +5,21 @@ package configuration
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"sync"
 	"time"
 
 	"d.lambert.fr/encoon/utils"
+	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
 )
 
 type Configuration struct {
 	AppName    string                   `yaml:"appName"`
 	AppTag     string                   `yaml:"appTag"`
+	Trace      bool                     `yaml:"trace"`
 	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
 	Databases  []*DatabaseConfiguration `yaml:"database"`
 }
@@ -50,47 +54,48 @@ func LoadConfiguration(fileName string) error {
 }
 
 func loadConfigurationFromFile() error {
-	utils.Log("Loading configuration from %v.", configurationFileName)
+	Log("Loading configuration from %v.", configurationFileName)
 	appConfigurationMutex.Lock()
 	defer appConfigurationMutex.Unlock()
 	f, err := ioutil.ReadFile(configurationFileName)
 	if err != nil {
-		return utils.LogAndReturnError("Error loading configuration from file %q: %v.", configurationFileName, err)
+		return LogAndReturnError("Error loading configuration from file %q: %v.", configurationFileName, err)
 	}
 	newConfiguration := new(Configuration)
 	if err = yaml.Unmarshal(f, &newConfiguration); err != nil {
-		return utils.LogAndReturnError("Error parsing configuration from file %q: %v.", configurationFileName, err)
+		return LogAndReturnError("Error parsing configuration from file %q: %v.", configurationFileName, err)
 	}
 	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
 	}
-	hash := utils.CalculateFileHash(configurationFileName)
+	hash, err := utils.CalculateFileHash(configurationFileName)
+	if err != nil {
+		return err
+	}
 	appConfiguration = *newConfiguration
 	configurationHash = hash
-	utils.Log("Configuration loaded from file %q.", configurationFileName)
+	Log("Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
 
 func validateConfiguration(conf *Configuration) error {
 	if conf.AppName == "" {
-		return utils.LogAndReturnError("Missing application name (appName) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("Missing application name (appName) from configuration file %v.", configurationFileName)
 	}
 	if conf.AppTag == "" {
-		return utils.LogAndReturnError("Missing application tag line (appTag) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("Missing application tag line (appTag) from configuration file %v.", configurationFileName)
 	}
 	if conf.HttpServer.Port == 0 {
-		return utils.LogAndReturnError("Missing port (httpServer.port) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("Missing port (httpServer.port) from configuration file %v.", configurationFileName)
 	}
 	if conf.HttpServer.JwtExpiration == 0 {
-		return utils.LogAndReturnError("Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
 	}
-	utils.Log("Configuration from %v is valid.", configurationFileName)
+	Log("Configuration from %v is valid.", configurationFileName)
 	return nil
 }
 
 func GetConfiguration() Configuration {
-	appConfigurationMutex.Lock()
-	defer appConfigurationMutex.Unlock()
 	return appConfiguration
 }
 
@@ -139,11 +144,31 @@ func WatchConfigurationChanges(fileName string) {
 	go func() {
 		ticker := time.NewTicker(time.Second)
 		for range ticker.C {
-			newHash := utils.CalculateFileHash(fileName)
+			newHash, _ := utils.CalculateFileHash(fileName)
 			if newHash != configurationHash {
 				configurationHash = newHash
 				LoadConfiguration(fileName)
 			}
 		}
 	}()
+}
+
+func Log(format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, format+"\n", a...)
+}
+
+func LogError(format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, "[ERROR] "+format+"\n", a...)
+}
+
+func LogAndReturnError(format string, a ...any) error {
+	m := fmt.Sprintf(format, a...)
+	LogError(m)
+	return errors.New(m)
+}
+
+func Trace(format string, a ...any) {
+	if appConfiguration.Trace {
+		fmt.Fprintf(gin.DefaultWriter, "[TRACE] "+format+"\n", a...)
+	}
 }

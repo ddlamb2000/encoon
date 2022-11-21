@@ -19,7 +19,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	db, _ := database.GetDbByName(dbName)
 	gridUri := "_users"
 	user := "root"
-	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri, "true")
+	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 		return

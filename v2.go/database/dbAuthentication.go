@@ -8,7 +8,6 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
-	"d.lambert.fr/encoon/utils"
 )
 
 type apiAuthResponse struct {
@@ -28,24 +27,24 @@ func IsDbAuthorized(ct context.Context, dbName string, user string, password str
 		defer cancel()
 		go func() {
 			if err := TestSleep(ctx, dbName, db); err != nil {
-				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 				return
 			}
 			if err := db.
 				QueryRowContext(ctx, selectSql+whereSql, model.UuidUsers, user, password).
 				Scan(&uuid, &firstName, &lastName); err != nil {
-				ctxChan <- apiAuthResponse{"", "", "", utils.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
+				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
 				return
 			}
-			utils.Log("[%s] ID and password verified for %q.", dbName, user)
+			configuration.Log("[%s] ID and password verified for %q.", dbName, user)
 			ctxChan <- apiAuthResponse{uuid, firstName, lastName, nil}
 		}()
 		select {
 		case <-ctx.Done():
-			return "", "", "", true, utils.LogAndReturnError("[%s] [%s] Authentication request has been cancelled: %v.", dbName, user, ctx.Err())
+			return "", "", "", true, configuration.LogAndReturnError("[%s] [%s] Authentication request has been cancelled: %v.", dbName, user, ctx.Err())
 		case response := <-ctxChan:
 			return response.uuid, response.firstName, response.lastName, false, response.err
 		}
 	}
-	return "", "", "", false, utils.LogAndReturnError("[%s] No database connection.", dbName)
+	return "", "", "", false, configuration.LogAndReturnError("[%s] No database connection.", dbName)
 }

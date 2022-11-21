@@ -21,20 +21,20 @@ func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
 
 func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	if dbName != "test" {
-		return utils.LogAndReturnError("[%s] Only test database can be recreated.", dbName)
+		return configuration.LogAndReturnError("[%s] Only test database can be recreated.", dbName)
 	}
 	var rowsCount int
 	if err := db.QueryRow("SELECT COUNT(uuid) FROM rows").Scan(&rowsCount); err == nil && rowsCount >= 0 {
-		utils.Log("[%s] Found %d rows in table.", dbName, rowsCount)
+		configuration.Log("[%s] Found %d rows in table.", dbName, rowsCount)
 		command := "DROP TABLE rows"
 		if _, err := db.Exec(command); err != nil {
-			return utils.LogAndReturnError("[%s] Can't delete database rows: %v", dbName, err)
+			return configuration.LogAndReturnError("[%s] Can't delete database rows: %v", dbName, err)
 		}
 		command = "DROP EXTENSION pgcrypto"
 		if _, err := db.Exec(command); err != nil {
-			return utils.LogAndReturnError("[%s] Can't drop extension: %v", dbName, err)
+			return configuration.LogAndReturnError("[%s] Can't drop extension: %v", dbName, err)
 		}
-		utils.Log("[%s] Table rows removed.", dbName)
+		configuration.Log("[%s] Table rows removed.", dbName)
 	}
 	return migrateDb(ctx, db, dbName)
 }
@@ -42,10 +42,10 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 func migrateInitializationDb(ctx context.Context, db *sql.DB, dbName string) (int, error) {
 	var latestMigration int = 0
 	if err := db.QueryRow("SELECT MAX(int1) FROM rows WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
-		utils.Log("[%s] No latest migration found: %v.", dbName, err)
+		configuration.Log("[%s] No latest migration found: %v.", dbName, err)
 		return 0, nil
 	}
-	utils.Log("[%s] Latest migration: %d.", dbName, latestMigration)
+	configuration.Log("[%s] Latest migration: %d.", dbName, latestMigration)
 	return latestMigration, nil
 }
 
@@ -2212,7 +2212,7 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 	if migration > latestMigration {
 		_, err := db.Exec(command)
 		if err != nil {
-			return utils.LogAndReturnError("[%s] %d %q: %v", dbName, migration, command, err)
+			return configuration.LogAndReturnError("[%s] %d %q: %v", dbName, migration, command, err)
 		} else {
 			insertMigrationStatement := "INSERT INTO rows " +
 				"(uuid, " +
@@ -2238,9 +2238,9 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 			newUuid := utils.GetNewUUID()
 			_, err = db.Exec(insertMigrationStatement, newUuid, migration, command)
 			if err != nil {
-				return utils.LogAndReturnError("[%s] Can't insert into migrations: %v", dbName, err)
+				return configuration.LogAndReturnError("[%s] Can't insert into migrations: %v", dbName, err)
 			} else {
-				utils.Log("[%s] Migration %v executed.", dbName, migration)
+				configuration.Log("[%s] Migration %v executed.", dbName, migration)
 			}
 		}
 	}

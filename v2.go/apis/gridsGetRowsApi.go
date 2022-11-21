@@ -11,12 +11,11 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
-	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
 func GetGridsRowsApi(c *gin.Context) {
-	utils.Trace(c.Query("trace"), "GetGridsRowsApi()")
+	configuration.Trace("GetGridsRowsApi()")
 	_, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
@@ -26,7 +25,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
 	uuid := c.Param("uuid")
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, uuid, user, c.Query("trace"))
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, uuid, user)
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -36,18 +35,18 @@ func GetGridsRowsApi(c *gin.Context) {
 		}
 		return
 	}
-	utils.Trace(c.Query("trace"), "GetGridsRowsApi() - OK")
+	configuration.Trace("GetGridsRowsApi() - OK")
 	c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
 func getUserUui(c *gin.Context) (string, string, error) {
 	auth, exists := c.Get("authorized")
 	if !exists || auth == false {
-		return "", "", utils.LogAndReturnError("Not authorized for %v.", c.Request.URL)
+		return "", "", configuration.LogAndReturnError("Not authorized for %v.", c.Request.URL)
 	}
 	userUuid, user := c.GetString("userUuid"), c.GetString("user")
 	if len(userUuid) < 10 || user == "" {
-		return "", "", utils.LogAndReturnError("User not authorized for %v.", c.Request.URL)
+		return "", "", configuration.LogAndReturnError("User not authorized for %v.", c.Request.URL)
 	}
 	return userUuid, user, nil
 }
@@ -59,8 +58,8 @@ type apiGetResponse struct {
 	err      error
 }
 
-func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string) (*model.Grid, []model.Row, int, bool, error) {
-	utils.Trace(trace, "getGridsRows()")
+func getGridsRows(ct context.Context, dbName, gridUri, uuid, user string) (*model.Grid, []model.Row, int, bool, error) {
+	configuration.Trace("getGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return nil, nil, 0, false, err
@@ -70,27 +69,27 @@ func getGridsRows(ct context.Context, dbName, gridUri, uuid, user, trace string)
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, db); err != nil {
-			ctxChan <- apiGetResponse{nil, nil, 0, utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+			ctxChan <- apiGetResponse{nil, nil, 0, configuration.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 			return
 		}
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 		if err != nil {
 			ctxChan <- apiGetResponse{nil, nil, 0, err}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, true, trace)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, true)
 		if uuid != "" && rowSetCount == 0 {
-			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, utils.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
+			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, configuration.LogAndReturnError("[%s] [%s] Data not found.", dbName, user)}
 			return
 		}
 		ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, err}
 	}()
 	select {
 	case <-ctx.Done():
-		utils.Trace(trace, "getGridsRows() - Cancelled")
-		return nil, nil, 0, true, utils.LogAndReturnError("[%s] [%s] Get request has been cancelled: %v.", dbName, user, ctx.Err())
+		configuration.Trace("getGridsRows() - Cancelled")
+		return nil, nil, 0, true, configuration.LogAndReturnError("[%s] [%s] Get request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
-		utils.Trace(trace, "getGridsRows() - OK")
+		configuration.Trace("getGridsRows() - OK")
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}
 }
@@ -137,31 +136,31 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid string, grid *model.Grid, getReferences bool, trace string) ([]model.Row, int, error) {
-	utils.Trace(trace, "getRowSetForGridsApi()")
+func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
+	configuration.Trace("getRowSetForGridsApi()")
 	rows, err := db.QueryContext(ctx, getRowsQueryForGridsApi(grid, uuid), getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
 	if err != nil {
-		return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when querying rows: %v.", dbName, user, err)
+		return nil, 0, configuration.LogAndReturnError("[%s] [%s] Error when querying rows: %v.", dbName, user, err)
 	}
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
 	for rows.Next() {
 		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
-			return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
+			return nil, 0, configuration.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
 		}
 		row.SetPathAndDisplayString(dbName, grid.GetUri())
 		if getReferences {
-			if err := getRelationshipsForRow(ctx, db, dbName, user, grid, row, trace); err != nil {
+			if err := getRelationshipsForRow(ctx, db, dbName, user, grid, row); err != nil {
 				return nil, 0, err
 			}
 		}
 		rowSet = append(rowSet, *row)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, 0, utils.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
+		return nil, 0, configuration.LogAndReturnError("[%s] [%s] Error when scanning rows for %q: %v.", dbName, user, grid.GetUri(), err)
 	}
-	utils.Log("[%s] [%s] Got %d rows from %q.", dbName, user, len(rowSet), grid.GetUri())
+	configuration.Trace("[%s] [%s] Got %d rows from %q.", dbName, user, len(rowSet), grid.GetUri())
 	return rowSet, len(rowSet), nil
 }
 

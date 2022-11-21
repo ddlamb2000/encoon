@@ -239,3 +239,23 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		return
 	}
 }
+
+func TestLog(t *testing.T) {
+	Log("Test: %v", "test")
+}
+
+func TestLogError(t *testing.T) {
+	LogError("Test: %v", "test")
+}
+
+func TestLogAndReturnError(t *testing.T) {
+	got := LogAndReturnError("Test: %v", "test")
+	expect := "Test: test"
+	if got.Error() != expect {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestTrace(t *testing.T) {
+	Trace("Test: %v", "test")
+}

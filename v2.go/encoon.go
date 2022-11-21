@@ -21,7 +21,6 @@ import (
 	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/utils"
 )
 
 var (
@@ -60,17 +59,17 @@ func main() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
-		utils.Log("Starting, log into %v.", logFileName)
+		configuration.Log("Starting, log into %v.", logFileName)
 		if exportDb != "" && exportFileName != "" {
-			database.ExportDb(context.Background(), exportDb, exportFileName, "")
-			utils.Log("Exported database %s into %s.", exportDb, exportFileName)
+			database.ExportDb(context.Background(), exportDb, exportFileName)
+			configuration.Log("Exported database %s into %s.", exportDb, exportFileName)
 		} else {
 			configuration.WatchConfigurationChanges(configurationFileName)
 			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 			go func() {
 				<-quitChan
-				utils.Log("Stopping.")
+				configuration.Log("Stopping.")
 				doneChan <- true
 			}()
 			go setAndStartHttpServer()
@@ -78,15 +77,15 @@ func main() {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			if err := srv.Shutdown(ctx); err != nil {
-				utils.LogError("Error during server shutdown: %v.", err)
+				configuration.LogError("Error during server shutdown: %v.", err)
 			}
 			select {
 			case <-ctx.Done():
-				utils.Log("Timeout of 5 seconds.")
+				configuration.Log("Timeout of 5 seconds.")
 			}
 		}
 	}
-	utils.Log("Stopped.")
+	configuration.Log("Stopped.")
 }
 
 func handleFlags() {
@@ -115,9 +114,9 @@ func setAndStartHttpServer() error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	utils.Log("Listening http.")
+	configuration.Log("Listening http.")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		utils.LogError("Error on http listening: %v.", err)
+		configuration.LogError("Error on http listening: %v.", err)
 		return err
 	}
 	return nil

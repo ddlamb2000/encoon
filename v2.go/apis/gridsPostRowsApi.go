@@ -11,7 +11,6 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
-	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -31,7 +30,7 @@ type gridPost struct {
 }
 
 func PostGridsRowsApi(c *gin.Context) {
-	utils.Trace(c.Query("trace"), "PostGridsRowsApi()")
+	configuration.Trace("PostGridsRowsApi()")
 	userUuid, user, err := getUserUui(c)
 	if err != nil {
 		c.Abort()
@@ -39,36 +38,35 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	dbName := c.Param("dbName")
 	gridUri := c.Param("gridUri")
-	trace := c.Query("trace")
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	utils.Trace(trace, "PostGridsRowsApi() - ReferenceValuesAdded=%v", payload.ReferenceValuesAdded)
-	utils.Trace(trace, "PostGridsRowsApi() - payload.RowsAdded=%v", payload.RowsAdded)
-	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload, trace)
+	configuration.Trace("PostGridsRowsApi() - ReferenceValuesAdded=%v", payload.ReferenceValuesAdded)
+	configuration.Trace("PostGridsRowsApi() - payload.RowsAdded=%v", payload.RowsAdded)
+	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload)
 	if err != nil {
 		c.Abort()
 		if timeOut {
-			utils.Trace(trace, "PostGridsRowsApi() - Timeout")
+			configuration.Trace("PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
-			utils.Trace(trace, "PostGridsRowsApi() - Error")
+			configuration.Trace("PostGridsRowsApi() - Error")
 			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user, trace)
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user)
 	if err != nil {
 		c.Abort()
 		if timeOut {
-			utils.Trace(trace, "PostGridsRowsApi() - Timeout")
+			configuration.Trace("PostGridsRowsApi() - Timeout")
 			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
 		} else {
-			utils.Trace(trace, "PostGridsRowsApi() - Error")
+			configuration.Trace("PostGridsRowsApi() - Error")
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		}
 		return
 	}
-	utils.Trace(trace, "PostGridsRowsApi() - OK")
+	configuration.Trace("PostGridsRowsApi() - OK")
 	c.JSON(http.StatusCreated, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
@@ -76,8 +74,8 @@ type apiPostResponse struct {
 	err error
 }
 
-func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, payload gridPost, trace string) (bool, error) {
-	utils.Trace(trace, "postGridsRows()")
+func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, payload gridPost) (bool, error) {
+	configuration.Trace("postGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return false, err
@@ -87,83 +85,83 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, p
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, db); err != nil {
-			ctxChan <- apiPostResponse{utils.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+			ctxChan <- apiPostResponse{configuration.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
 			return
 		}
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri, trace)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
 		if err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := BeginTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
+		if err := BeginTransaction(ctx, dbName, db, userUuid, user); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, trace, postInsertGridRow); err != nil {
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, postInsertGridRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		utils.Trace(trace, "postGridsRows() - payload.RowsAdded=%v", payload.RowsAdded)
-		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsEdited, trace, postUpdateGridRow); err != nil {
+		configuration.Trace("postGridsRows() - payload.RowsAdded=%v", payload.RowsAdded)
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsEdited, postUpdateGridRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsDeleted, trace, postDeleteGridRow); err != nil {
+		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsDeleted, postDeleteGridRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesAdded, trace, postInsertReferenceRow); err != nil {
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesAdded, postInsertReferenceRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesRemoved, trace, postDeleteReferenceRow); err != nil {
+		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesRemoved, postDeleteReferenceRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		if err := CommitTransaction(ctx, dbName, db, userUuid, user, trace); err != nil {
+		if err := CommitTransaction(ctx, dbName, db, userUuid, user); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
 		}
 		ctxChan <- apiPostResponse{nil}
 	}()
-	utils.Trace(trace, "postGridsRows() - Started")
+	configuration.Trace("postGridsRows() - Started")
 	select {
 	case <-ctx.Done():
-		utils.Trace(trace, "postGridsRows() - Cancelled")
-		_ = RollbackTransaction(ctx, dbName, db, userUuid, user, trace)
-		return true, utils.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
+		configuration.Trace("postGridsRows() - Cancelled")
+		_ = RollbackTransaction(ctx, dbName, db, userUuid, user)
+		return true, configuration.LogAndReturnError("[%s] [%s] Post request has been cancelled: %v.", dbName, user, ctx.Err())
 	case response := <-ctxChan:
-		utils.Trace(trace, "postGridsRows() - OK ; response=%v", response)
+		configuration.Trace("postGridsRows() - OK ; response=%v", response)
 		return false, response.err
 	}
 }
 
-func BeginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "beginTransaction()")
+func BeginTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user string) error {
+	configuration.Trace("beginTransaction()")
 	_, err := db.ExecContext(ctx, "BEGIN")
 	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
+		return configuration.LogAndReturnError("[%s] [%s] Begin transaction error: %v.", dbName, user, err)
 	}
-	utils.Log("[%s] [%s] Begin transaction.", dbName, user)
+	configuration.Log("[%s] [%s] Begin transaction.", dbName, user)
 	return err
 }
 
-func CommitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "commitTransaction()")
+func CommitTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user string) error {
+	configuration.Trace("commitTransaction()")
 	_, err := db.ExecContext(ctx, "COMMIT")
 	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
+		return configuration.LogAndReturnError("[%s] [%s] Commit transaction error: %v.", dbName, user, err)
 	}
-	utils.Log("[%s] [%s] Commit transaction.", dbName, user)
+	configuration.Log("[%s] [%s] Commit transaction.", dbName, user)
 	return err
 }
 
-func RollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user, trace string) error {
-	utils.Trace(trace, "rollbackTransaction()")
+func RollbackTransaction(ctx context.Context, dbName string, db *sql.DB, userUuid, user string) error {
+	configuration.Trace("rollbackTransaction()")
 	_, err := db.ExecContext(ctx, "ROLLBACK")
 	if err != nil {
-		return utils.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
+		return configuration.LogAndReturnError("[%s] [%s] Rollback transaction error: %v.", dbName, user, err)
 	}
-	utils.Log("[%s] [%s] ROLLBACK transaction.", dbName, user)
+	configuration.Log("[%s] [%s] ROLLBACK transaction.", dbName, user)
 	return err
 }

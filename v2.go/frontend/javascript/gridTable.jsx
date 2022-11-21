@@ -231,7 +231,7 @@ class GridCellDropDown extends React.Component {
 	loadDropDownData(gridPromptUri, value) {
 		this.setState({isLoading: true})
 		if(value.length > 0) {
-			const uri = `/${this.props.dbName}/api/v1/${gridPromptUri}?trace=true`
+			const uri = `/${this.props.dbName}/api/v1/${gridPromptUri}`
 			fetch(uri, {
 				headers: {
 					'Accept': 'application/json',

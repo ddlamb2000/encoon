@@ -10,7 +10,6 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt"
 )
@@ -61,7 +60,7 @@ func getNewToken(dbName string, id string, userUuid string, firstName string, la
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	utils.Log("[%s] Token generated for %v, expiration: %v", dbName, id, expiration)
+	configuration.Log("[%s] Token generated for %v, expiration: %v", dbName, id, expiration)
 	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
@@ -94,7 +93,7 @@ func authMiddleware() gin.HandlerFunc {
 		jwtSecret := configuration.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, utils.LogAndReturnError("Unexpect signing method: %v.", token.Header["alg"])
+				return nil, configuration.LogAndReturnError("Unexpect signing method: %v.", token.Header["alg"])
 			}
 			return []byte(jwtSecret), nil
 		})
@@ -111,7 +110,7 @@ func authMiddleware() gin.HandlerFunc {
 
 			if today.After(expirationDate) {
 				c.Set("authorized", false)
-				utils.Log("[%v] Authorization expired (%v).", user, expirationDate)
+				configuration.Log("[%v] Authorization expired (%v).", user, expirationDate)
 				c.Abort()
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization expired.", "expired": true})
 				return
@@ -121,7 +120,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("userUuid", userUuid)
 			logUri(c, dbName, user)
 		} else {
-			utils.LogError("Invalid request: %v.", err)
+			configuration.LogError("Invalid request: %v.", err)
 			c.Set("authorized", false)
 			c.Abort()
 			c.JSON(http.StatusUnauthorized,
@@ -132,5 +131,5 @@ func authMiddleware() gin.HandlerFunc {
 }
 
 func logUri(c *gin.Context, dbName string, user any) {
-	utils.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
+	configuration.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
 }

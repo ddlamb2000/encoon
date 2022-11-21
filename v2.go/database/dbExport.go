@@ -7,12 +7,12 @@ import (
 	"context"
 	"os"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
-	"d.lambert.fr/encoon/utils"
 	"gopkg.in/yaml.v2"
 )
 
-func ExportDb(ct context.Context, dbName, exportFileName, trace string) error {
+func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	flags := os.O_CREATE | os.O_WRONLY
 	f, err := os.OpenFile(exportFileName, flags, 0666)
 	if err != nil {
@@ -20,7 +20,7 @@ func ExportDb(ct context.Context, dbName, exportFileName, trace string) error {
 	}
 	defer f.Close()
 
-	utils.Trace(trace, "ExportDb()")
+	configuration.Trace("ExportDb()")
 	db, err := GetDbByName(dbName)
 	if err != nil {
 		return err
@@ -28,27 +28,27 @@ func ExportDb(ct context.Context, dbName, exportFileName, trace string) error {
 
 	rows, err := db.QueryContext(ct, getRowsQueryForExportDb())
 	if err != nil {
-		return utils.LogAndReturnError("[%s] Error when querying rows: %v.", dbName, err)
+		return configuration.LogAndReturnError("[%s] Error when querying rows: %v.", dbName, err)
 	}
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
 	for rows.Next() {
 		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForExportDb(row)...); err != nil {
-			return utils.LogAndReturnError("[%s] Error when exporting rows: %v.", dbName, err)
+			return configuration.LogAndReturnError("[%s] Error when exporting rows: %v.", dbName, err)
 		}
 		rowSet = append(rowSet, *row)
 	}
-	utils.Trace(trace, "ExportDb() - end of fetching rows.")
+	configuration.Trace("ExportDb() - end of fetching rows.")
 	out, err := yaml.Marshal(rowSet)
 	if err != nil {
-		return utils.LogAndReturnError("[%s] Error when marshalling rows: %v.", dbName, err)
+		return configuration.LogAndReturnError("[%s] Error when marshalling rows: %v.", dbName, err)
 	}
 	_, err = f.Write(out)
 	if err != nil {
-		return utils.LogAndReturnError("[%s] Error when writing file: %v.", dbName, err)
+		return configuration.LogAndReturnError("[%s] Error when writing file: %v.", dbName, err)
 	}
-	utils.Trace(trace, "ExportDb() - done.")
+	configuration.Trace("ExportDb() - done.")
 	return nil
 }
 

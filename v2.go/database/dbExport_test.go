@@ -12,7 +12,7 @@ import (
 
 func TestExportDb(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	err := ExportDb(context.Background(), "test", "/tmp/exportTestDb.yml", "true")
+	err := ExportDb(context.Background(), "test", "/tmp/exportTestDb.yml")
 	if err != nil {
 		t.Errorf("Can't export daabase: %v.", err)
 	}

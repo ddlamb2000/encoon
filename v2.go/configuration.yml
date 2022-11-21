@@ -4,6 +4,8 @@
 appName: "εncooη" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
+trace: false
+
 # Http Server configuration
 httpServer:
   port: 8080
