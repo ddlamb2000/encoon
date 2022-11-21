@@ -52,15 +52,15 @@ func authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-func getNewToken(dbName string, id string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
+func getNewToken(dbName string, user string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user":          id,
+		"user":          user,
 		"userUuid":      userUuid,
 		"userFirstName": firstName,
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	configuration.Log("[%s] Token generated for %v, expiration: %v", dbName, id, expiration)
+	configuration.Log(dbName, user, "Token generated for %v, expiration: %v", expiration)
 	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
@@ -93,7 +93,7 @@ func authMiddleware() gin.HandlerFunc {
 		jwtSecret := configuration.GetJWTSecret(dbName)
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, configuration.LogAndReturnError("Unexpect signing method: %v.", token.Header["alg"])
+				return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
 			}
 			return []byte(jwtSecret), nil
 		})
@@ -107,10 +107,11 @@ func authMiddleware() gin.HandlerFunc {
 			today := time.Now()
 			expiration := claims["expires"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
+			userName := fmt.Sprintf("%v", user)
 
 			if today.After(expirationDate) {
 				c.Set("authorized", false)
-				configuration.Log("[%v] Authorization expired (%v).", user, expirationDate)
+				configuration.Log(dbName, userName, "Authorization expired (%v).", expirationDate)
 				c.Abort()
 				c.JSON(http.StatusUnauthorized, gin.H{"error": "Authorization expired.", "expired": true})
 				return
@@ -120,7 +121,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("userUuid", userUuid)
 			logUri(c, dbName, user)
 		} else {
-			configuration.LogError("Invalid request: %v.", err)
+			configuration.LogError(dbName, "", "Invalid request: %v.", err)
 			c.Set("authorized", false)
 			c.Abort()
 			c.JSON(http.StatusUnauthorized,
@@ -131,5 +132,6 @@ func authMiddleware() gin.HandlerFunc {
 }
 
 func logUri(c *gin.Context, dbName string, user any) {
-	configuration.Log("[%s] [%s] %v", dbName, user, c.Request.RequestURI)
+	userName := fmt.Sprintf("%v", user)
+	configuration.Log(dbName, userName, "%v", c.Request.RequestURI)
 }

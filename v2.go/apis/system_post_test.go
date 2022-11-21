@@ -127,7 +127,7 @@ func RunSystemTestPost(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/Grid01", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
-		jsonStringContains(t, responseData, `{"error":"[test] [root] Post request has been cancelled: context deadline exceeded."}`)
+		jsonStringContains(t, responseData, `{"error":"Post request has been cancelled: context deadline exceeded."}`)
 	})
 
 	t.Run("VerifyNoNewRowInSingleGrid", func(t *testing.T) {

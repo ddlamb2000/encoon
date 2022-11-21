@@ -26,16 +26,16 @@ func persistGridReferenceData(ctx context.Context, dbName string, db *sql.DB, us
 }
 
 func postInsertReferenceRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
-	configuration.Trace("postInsertReferenceRow()")
+	configuration.Trace(dbName, user, "postInsertReferenceRow()")
 	insertStatement := getInsertStatementForRefereceRow()
-	configuration.Trace("postInsertReferenceRow() - ref.FromUuid=%v, addedRows=%v", ref.FromUuid, addedRows)
+	configuration.Trace(dbName, user, "postInsertReferenceRow() - ref.FromUuid=%v, addedRows=%v", ref.FromUuid, addedRows)
 	rowUuid := getUuidFromRowsForTmpUuid(addedRows, ref.FromUuid)
-	configuration.Trace("postInsertReferenceRow() - rowUuid=%v", rowUuid)
+	configuration.Trace(dbName, user, "postInsertReferenceRow() - rowUuid=%v", rowUuid)
 	_, err := db.ExecContext(ctx, insertStatement, utils.GetNewUUID(), userUuid, model.UuidRelationships, ref.ColumnName, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] [%s] Insert referenced row error on %q: %v.", dbName, user, insertStatement, err)
+		return configuration.LogAndReturnError(dbName, user, "Insert referenced row error on %q: %v.", insertStatement, err)
 	}
-	configuration.Log("[%s] [%s] Referenced row [%v] inserted into %q.", dbName, user, ref, grid.GetUri())
+	configuration.Log(dbName, user, "Referenced row [%v] inserted into %q.", ref, grid.GetUri())
 	return err
 }
 
@@ -79,13 +79,13 @@ func getInsertStatementForRefereceRow() string {
 }
 
 func postDeleteReferenceRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
-	configuration.Trace("postDeleteReferenceRow()")
+	configuration.Trace(dbName, user, "postDeleteReferenceRow()")
 	deleteStatement := getDeleteReferenceRowStatement()
 	_, err := db.ExecContext(ctx, deleteStatement, model.UuidRelationships, ref.ColumnName, grid.Uuid, ref.FromUuid, ref.ToGridUuid, ref.ToUuid)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] [%s] Delete referenced row error on %q: %v.", dbName, user, deleteStatement, err)
+		return configuration.LogAndReturnError(dbName, user, "Delete referenced row error on %q: %v.", deleteStatement, err)
 	}
-	configuration.Log("[%s] [%s] Referenced row [%v] delete into %q.", dbName, user, ref, grid.GetUri())
+	configuration.Log(dbName, user, "Referenced row [%v] delete into %q.", ref, grid.GetUri())
 	return err
 }
 

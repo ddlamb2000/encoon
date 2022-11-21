@@ -59,7 +59,7 @@ func main() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
-		configuration.Log("Starting, log into %v.", logFileName)
+		configuration.Log("", "", "Starting, log into %v.", logFileName)
 		if exportDb != "" && exportFileName != "" {
 			database.ExportDb(context.Background(), exportDb, exportFileName)
 			configuration.Log("Exported database %s into %s.", exportDb, exportFileName)
@@ -69,7 +69,7 @@ func main() {
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 			go func() {
 				<-quitChan
-				configuration.Log("Stopping.")
+				configuration.Log("", "", "Stopping.")
 				doneChan <- true
 			}()
 			go setAndStartHttpServer()
@@ -77,15 +77,15 @@ func main() {
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
 			if err := srv.Shutdown(ctx); err != nil {
-				configuration.LogError("Error during server shutdown: %v.", err)
+				configuration.LogError("", "", "Error during server shutdown: %v.", err)
 			}
 			select {
 			case <-ctx.Done():
-				configuration.Log("Timeout of 5 seconds.")
+				configuration.Log("", "", "Timeout of 5 seconds.")
 			}
 		}
 	}
-	configuration.Log("Stopped.")
+	configuration.Log("", "", "Stopped.")
 }
 
 func handleFlags() {
@@ -114,9 +114,9 @@ func setAndStartHttpServer() error {
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	configuration.Log("Listening http.")
+	configuration.Log("", "", "Listening http.")
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-		configuration.LogError("Error on http listening: %v.", err)
+		configuration.LogError("", "", "Error on http listening: %v.", err)
 		return err
 	}
 	return nil

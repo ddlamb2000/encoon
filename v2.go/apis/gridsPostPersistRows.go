@@ -27,7 +27,7 @@ func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid
 }
 
 func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace("postInsertGridRow()")
+	configuration.Trace(dbName, user, "postInsertGridRow()")
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
 	configuration.Trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
@@ -35,9 +35,9 @@ func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	insertValues := getInsertValuesForGridsApi(userUuid, grid, row)
 	_, err := db.ExecContext(ctx, insertStatement, insertValues...)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] [%s] Insert row error on %q: %v.", dbName, user, insertStatement, err)
+		return configuration.LogAndReturnError(dbName, user, "Insert row error on %q: %v.", insertStatement, err)
 	}
-	configuration.Log("[%s] [%s] Row [%s] inserted into %q.", dbName, user, row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] inserted into %q.", row, grid.GetUri())
 	return err
 }
 
@@ -134,14 +134,14 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 }
 
 func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace("postUpdateGridRow()")
+	configuration.Trace(dbName, user, "postUpdateGridRow()")
 	updateStatement := getUpdateStatementForGridsApi(grid)
 	updateValues := getUpdateValuesForGridsApi(userUuid, grid, row)
 	_, err := db.ExecContext(ctx, updateStatement, updateValues...)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] [%s] Update row error on %q: %v.", dbName, user, updateStatement, err)
+		return configuration.LogAndReturnError(dbName, user, "Update row error on %q: %v.", updateStatement, err)
 	}
-	configuration.Log("[%s] [%s] Row [%s] updated in %q.", dbName, user, row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] updated in %q.", row, grid.GetUri())
 	return err
 }
 
@@ -177,12 +177,12 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace("postDeleteGridRow()")
+	configuration.Trace(dbName, user, "postDeleteGridRow()")
 	_, err := db.ExecContext(ctx, getDeleteRowStatement(), row.Uuid, grid.Uuid)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] [%s] Delete row error: %v.", dbName, user, err)
+		return configuration.LogAndReturnError(dbName, user, "Delete row error: %v.", err)
 	}
-	configuration.Log("[%s] [%s] Row [%s] deleted in %q.", dbName, user, row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] deleted in %q.", row, grid.GetUri())
 	return err
 }
 

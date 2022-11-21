@@ -54,16 +54,16 @@ func LoadConfiguration(fileName string) error {
 }
 
 func loadConfigurationFromFile() error {
-	Log("Loading configuration from %v.", configurationFileName)
+	Log("", "", "Loading configuration from %v.", configurationFileName)
 	appConfigurationMutex.Lock()
 	defer appConfigurationMutex.Unlock()
 	f, err := ioutil.ReadFile(configurationFileName)
 	if err != nil {
-		return LogAndReturnError("Error loading configuration from file %q: %v.", configurationFileName, err)
+		return LogAndReturnError("", "", "Error loading configuration from file %q: %v.", configurationFileName, err)
 	}
 	newConfiguration := new(Configuration)
 	if err = yaml.Unmarshal(f, &newConfiguration); err != nil {
-		return LogAndReturnError("Error parsing configuration from file %q: %v.", configurationFileName, err)
+		return LogAndReturnError("", "", "Error parsing configuration from file %q: %v.", configurationFileName, err)
 	}
 	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
@@ -74,24 +74,24 @@ func loadConfigurationFromFile() error {
 	}
 	appConfiguration = *newConfiguration
 	configurationHash = hash
-	Log("Configuration loaded from file %q.", configurationFileName)
+	Log("", "", "Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
 
 func validateConfiguration(conf *Configuration) error {
 	if conf.AppName == "" {
-		return LogAndReturnError("Missing application name (appName) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("", "", "Missing application name (appName) from configuration file %v.", configurationFileName)
 	}
 	if conf.AppTag == "" {
-		return LogAndReturnError("Missing application tag line (appTag) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("", "", "Missing application tag line (appTag) from configuration file %v.", configurationFileName)
 	}
 	if conf.HttpServer.Port == 0 {
-		return LogAndReturnError("Missing port (httpServer.port) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("", "", "Missing port (httpServer.port) from configuration file %v.", configurationFileName)
 	}
 	if conf.HttpServer.JwtExpiration == 0 {
-		return LogAndReturnError("Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
+		return LogAndReturnError("", "", "Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
 	}
-	Log("Configuration from %v is valid.", configurationFileName)
+	Log("", "", "Configuration from %v is valid.", configurationFileName)
 	return nil
 }
 
@@ -153,22 +153,26 @@ func WatchConfigurationChanges(fileName string) {
 	}()
 }
 
-func Log(format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, format+"\n", a...)
+func Log(dbName, userName, format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+format+"\n", a...)
 }
 
-func LogError(format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, "[ERROR] "+format+"\n", a...)
+func LogError(dbName, userName, format string, a ...any) {
+	fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[ERROR] "+format+"\n", a...)
 }
 
-func LogAndReturnError(format string, a ...any) error {
+func LogAndReturnError(dbName, userName, format string, a ...any) error {
 	m := fmt.Sprintf(format, a...)
-	LogError(m)
+	LogError(dbName, userName, m)
 	return errors.New(m)
 }
 
-func Trace(format string, a ...any) {
+func Trace(dbName, userName, format string, a ...any) {
 	if appConfiguration.Trace {
-		fmt.Fprintf(gin.DefaultWriter, "[TRACE] "+format+"\n", a...)
+		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[TRACE] "+format+"\n", a...)
 	}
+}
+
+func getLogPrefix(dbName, userName string) string {
+	return "[" + appConfiguration.AppName + "] [" + dbName + "] [" + userName + "] "
 }

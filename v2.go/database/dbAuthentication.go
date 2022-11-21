@@ -26,25 +26,25 @@ func IsDbAuthorized(ct context.Context, dbName string, user string, password str
 		ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 		defer cancel()
 		go func() {
-			if err := TestSleep(ctx, dbName, db); err != nil {
-				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError("[%s] [%s] Sleep interrupted: %v.", dbName, user, err)}
+			if err := TestSleep(ctx, dbName, user, db); err != nil {
+				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
 				return
 			}
 			if err := db.
 				QueryRowContext(ctx, selectSql+whereSql, model.UuidUsers, user, password).
 				Scan(&uuid, &firstName, &lastName); err != nil {
-				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError("[%s] Invalid username or passphrase for %q: %v.", dbName, user, err)}
+				ctxChan <- apiAuthResponse{"", "", "", configuration.LogAndReturnError(dbName, user, "Invalid username or passphrase: %v.", err)}
 				return
 			}
-			configuration.Log("[%s] ID and password verified for %q.", dbName, user)
+			configuration.Log(dbName, user, "ID and password verified.")
 			ctxChan <- apiAuthResponse{uuid, firstName, lastName, nil}
 		}()
 		select {
 		case <-ctx.Done():
-			return "", "", "", true, configuration.LogAndReturnError("[%s] [%s] Authentication request has been cancelled: %v.", dbName, user, ctx.Err())
+			return "", "", "", true, configuration.LogAndReturnError(dbName, user, "Authentication request has been cancelled: %v.", ctx.Err())
 		case response := <-ctxChan:
 			return response.uuid, response.firstName, response.lastName, false, response.err
 		}
 	}
-	return "", "", "", false, configuration.LogAndReturnError("[%s] No database connection.", dbName)
+	return "", "", "", false, configuration.LogAndReturnError(dbName, user, "No database connection.")
 }

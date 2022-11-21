@@ -18,7 +18,7 @@ var dbs = make(map[string]*sql.DB)
 
 func GetDbByName(dbName string) (*sql.DB, error) {
 	if dbName == "" {
-		return nil, configuration.LogAndReturnError("Missing database name parameter.")
+		return nil, configuration.LogAndReturnError("", "", "Missing database name parameter.")
 	}
 	db := dbs[dbName]
 	if db != nil {
@@ -28,7 +28,7 @@ func GetDbByName(dbName string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	db, err = connectDbServer(dbConfiguration)
+	db, err = connectDbServer(dbConfiguration, dbName)
 	if err != nil {
 		return nil, err
 	}
@@ -44,12 +44,12 @@ func findDbConfiguration(dbName string) (*configuration.DatabaseConfiguration, e
 			}
 		}
 	}
-	return nil, configuration.LogAndReturnError("Database %q isn't configured.", dbName)
+	return nil, configuration.LogAndReturnError(dbName, "", "Database isn't configured.")
 }
 
-func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) (*sql.DB, error) {
+func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbName string) (*sql.DB, error) {
 	if dbConfiguration.Host == "" || dbConfiguration.Port == 0 || dbConfiguration.User == "" || dbConfiguration.Name == "" {
-		return nil, configuration.LogAndReturnError("Incorrect database configuration.")
+		return nil, configuration.LogAndReturnError(dbName, "", "Incorrect database configuration.")
 	}
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
 		dbConfiguration.Host,
@@ -59,27 +59,27 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration) (*sql
 	)
 	db, err := sql.Open("postgres", psqlInfo)
 	if err != nil {
-		return nil, configuration.LogAndReturnError("Can't connect to database with %q: %v", psqlInfo, err)
+		return nil, configuration.LogAndReturnError(dbName, "", "Can't connect to database with %q: %v", psqlInfo, err)
 	}
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
 	if err := db.PingContext(ctx); err != nil {
-		return nil, configuration.LogAndReturnError("Unable to connect to database: %v.", err)
+		return nil, configuration.LogAndReturnError(dbName, "", "Unable to connect to database: %v.", err)
 	}
-	configuration.Log("[%s] Database connected.", dbConfiguration.Name)
+	configuration.Log(dbName, "", "Database connected.")
 	migrateDb(ctx, db, dbConfiguration.Name)
 	return db, nil
 }
 
-func TestSleep(ctx context.Context, dbName string, db *sql.DB) error {
+func TestSleep(ctx context.Context, dbName, user string, db *sql.DB) error {
 	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
 		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
-		configuration.Log("*** BEFORE SLEEP It's now %v.", time.Now())
+		configuration.Log(dbName, user, "*** BEFORE SLEEP It's now %v.", time.Now())
 		_, err := db.QueryContext(ctx, st)
-		configuration.Log("*** AFTER SLEEP It's now %v.", time.Now())
+		configuration.Log(dbName, user, "*** AFTER SLEEP It's now %v.", time.Now())
 		if err != nil {
 			return err
 		}

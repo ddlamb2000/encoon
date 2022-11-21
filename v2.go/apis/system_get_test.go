@@ -36,7 +36,7 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `{"error":"[test] [root] Grid \"xxx\" not found."}`)
+		jsonStringContains(t, responseData, `{"error":"Grid \"xxx\" not found."}`)
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
@@ -57,7 +57,7 @@ func RunSystemTestGet(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows"`)
-		jsonStringContains(t, responseData, `{"error":"[test] [root] Data not found."}`)
+		jsonStringContains(t, responseData, `{"error":"Data not found."}`)
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {
@@ -75,7 +75,7 @@ func RunSystemTestGet(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
-		jsonStringContains(t, responseData, `{"error":"[test] [root] Get request has been cancelled: context deadline exceeded."}`)
+		jsonStringContains(t, responseData, `{"error":"Get request has been cancelled: context deadline exceeded."}`)
 	})
 
 	t.Run("VerifyActualRowSingleBis", func(t *testing.T) {

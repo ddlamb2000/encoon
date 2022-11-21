@@ -12,13 +12,13 @@ import (
 )
 
 func getRelationshipsForRow(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace("getRelationshipsForRow()")
+	configuration.Trace(dbName, user, "getRelationshipsForRow()")
 	for _, col := range grid.Columns {
 		if col.IsReference() {
-			configuration.Trace("getRelationshipsForRow() - col=%s", col)
+			configuration.Trace(dbName, user, "getRelationshipsForRow() - col=%s", col)
 			referencedRows, err := getReferencedRowsForRow(ctx, db, dbName, user, row, col.Name)
 			if err != nil {
-				return configuration.LogAndReturnError("[%s] [%s] Error when retrieving referenced rows: %v.", dbName, user, err)
+				return configuration.LogAndReturnError(dbName, user, "Error when retrieving referenced rows: %v.", err)
 			}
 			if len(referencedRows) > 0 {
 				var reference = new(model.Reference)
@@ -37,7 +37,7 @@ func getReferencedRowsForRow(ctx context.Context, db *sql.DB, dbName, user strin
 	parameters := getQueryParametersReferencedRowsForRow(referenceName, parentRow)
 	rows, err := db.QueryContext(ctx, statement, parameters...)
 	if err != nil {
-		return nil, configuration.LogAndReturnError("[%s] [%s] Error when querying referenced rows: %v.", dbName, user, err)
+		return nil, configuration.LogAndReturnError(dbName, user, "Error when querying referenced rows: %v.", err)
 	}
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
@@ -45,22 +45,22 @@ func getReferencedRowsForRow(ctx context.Context, db *sql.DB, dbName, user strin
 		var referencedUuid string
 		var referencedGridUuid string
 		if err := rows.Scan(&referencedGridUuid, &referencedUuid); err != nil {
-			return nil, configuration.LogAndReturnError("[%s] [%s] Error when scanning referenced rows: %v.", dbName, user, err)
+			return nil, configuration.LogAndReturnError(dbName, user, "Error when scanning referenced rows: %v.", err)
 		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, referencedGridUuid)
 		if err != nil {
-			return nil, configuration.LogAndReturnError("[%s] [%s] Error when retrieving grid for referenced rows: %v.", dbName, user, err)
+			return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid for referenced rows: %v.", err)
 		}
 		rows, _, err := getRowSetForGridsApi(ctx, db, dbName, user, referencedUuid, grid, false)
 		if err != nil {
-			return nil, configuration.LogAndReturnError("[%s] [%s] Error when retrieving referenced rows: %v.", dbName, user, err)
+			return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving referenced rows: %v.", err)
 		}
 		rowSet = append(rowSet, rows...)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, configuration.LogAndReturnError("[%s] [%s] Error when scanning referenced rows: %v.", dbName, user, err)
+		return nil, configuration.LogAndReturnError(dbName, user, "Error when scanning referenced rows: %v.", err)
 	}
-	configuration.Trace("[%s] [%s] Got referenced rows for %q.", dbName, user, parentRow)
+	configuration.Trace(dbName, user, "Got referenced rows for %q.", parentRow)
 	return rowSet, nil
 }
 

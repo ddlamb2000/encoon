@@ -50,7 +50,7 @@ func TestConnectDbServers4(t *testing.T) {
 func TestConnectDbServer(t *testing.T) {
 	var conf configuration.DatabaseConfiguration
 	conf.Host = "xxx"
-	if _, err := connectDbServer(&conf); err == nil {
+	if _, err := connectDbServer(&conf, "root"); err == nil {
 		t.Errorf(`Can connect to database?: %v.`, err)
 	}
 }

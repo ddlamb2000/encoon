@@ -56,7 +56,7 @@ func TestIsDbAuthorizedTimeOut(t *testing.T) {
 	if err == nil {
 		t.Errorf("Can authenticate: %v!", err)
 	}
-	expect := "[test] [root] Authentication request has been cancelled: context deadline exceeded."
+	expect := "Authentication request has been cancelled: context deadline exceeded."
 	if err == nil || err.Error() != expect {
 		t.Errorf("Got err %v instead of %v.", err, expect)
 	}

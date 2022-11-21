@@ -25,7 +25,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-		expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"\": sql: no rows in result set."}`)
+		expect := utils.CleanupStrings(`{"error":"Invalid username or passphrase: sql: no rows in result set."}`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -43,7 +43,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-		expect := utils.CleanupStrings(`{"error":"[test] Invalid username or passphrase for \"root\": sql: no rows in result set."}`)
+		expect := utils.CleanupStrings(`{"error":"Invalid username or passphrase: sql: no rows in result set."}`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -82,7 +82,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 		httpCodeEqual(t, w.Code, http.StatusRequestTimeout)
 
-		expect := utils.CleanupStrings(`{"error":"[test] [root] Authentication request has been cancelled: context deadline exceeded."}`)
+		expect := utils.CleanupStrings(`{"error":"Authentication request has been cancelled: context deadline exceeded."}`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -137,7 +137,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-		expect := utils.CleanupStrings(`Not authorized for /test/api/v1/_users`)
+		expect := utils.CleanupStrings(`User not authorized for /test/api/v1/_users`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -261,7 +261,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusNotFound)
 
-		expect := utils.CleanupStrings(`{"error":"[test] [root] Grid \"us\" not found."}`)
+		expect := utils.CleanupStrings(`{"error":"Grid \"us\" not found."}`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {

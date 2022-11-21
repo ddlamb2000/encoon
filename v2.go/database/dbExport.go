@@ -20,35 +20,35 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	}
 	defer f.Close()
 
-	configuration.Trace("ExportDb()")
 	db, err := GetDbByName(dbName)
 	if err != nil {
 		return err
 	}
+	configuration.Trace(dbName, "", "ExportDb()")
 
 	rows, err := db.QueryContext(ct, getRowsQueryForExportDb())
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] Error when querying rows: %v.", dbName, err)
+		return configuration.LogAndReturnError(dbName, "", "Error when querying rows: %v.", err)
 	}
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
 	for rows.Next() {
 		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForExportDb(row)...); err != nil {
-			return configuration.LogAndReturnError("[%s] Error when exporting rows: %v.", dbName, err)
+			return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 		}
 		rowSet = append(rowSet, *row)
 	}
-	configuration.Trace("ExportDb() - end of fetching rows.")
+	configuration.Trace(dbName, "", "ExportDb() - end of fetching rows.")
 	out, err := yaml.Marshal(rowSet)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] Error when marshalling rows: %v.", dbName, err)
+		return configuration.LogAndReturnError(dbName, "", "Error when marshalling rows: %v.", err)
 	}
 	_, err = f.Write(out)
 	if err != nil {
-		return configuration.LogAndReturnError("[%s] Error when writing file: %v.", dbName, err)
+		return configuration.LogAndReturnError(dbName, "", "Error when writing file: %v.", err)
 	}
-	configuration.Trace("ExportDb() - done.")
+	configuration.Trace(dbName, "", "ExportDb() - done.")
 	return nil
 }
 
