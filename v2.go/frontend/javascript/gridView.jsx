@@ -11,23 +11,23 @@ class GridView extends React.Component {
 					<thead className="table-light"></thead>
 					<tbody>
 						{columns && columns.map(
-							col => <tr key={col.name}>
-										<td>{col.label}</td>
-										<GridCell uuid={this.props.row.uuid}
-													columnName={col.name}
-													type={col.type}
-													typeUuid={col.typeUuid}
-													value={col.value}
-													values={col.values}
-													readonly={col.readonly}
-													rowAdded={this.props.rowAdded}
-													rowSelected={this.props.rowSelected}
-													rowEdited={this.props.rowEdited}
-													referencedValuesAdded={this.props.referencedValuesAdded}
-													referencedValuesRemoved={this.props.referencedValuesRemoved}
-													onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
-													onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-													inputRef={this.props.inputRef} />
+							column => <tr key={column.name}>
+											<td>{column.label}</td>
+											<GridCell uuid={this.props.row.uuid}
+														columnName={column.name}
+														type={column.type}
+														typeUuid={column.typeUuid}
+														value={column.value}
+														values={column.values}
+														readonly={column.readonly}
+														rowAdded={this.props.rowAdded}
+														rowSelected={this.props.rowSelected}
+														rowEdited={this.props.rowEdited}
+														referencedValuesAdded={this.props.referencedValuesAdded}
+														referencedValuesRemoved={this.props.referencedValuesRemoved}
+														onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
+														onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
+														inputRef={this.props.inputRef} />
 									</tr>
 						)}
 					</tbody>

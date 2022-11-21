@@ -9,7 +9,7 @@ class GridTable extends React.Component {
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
 						{this.props.columns && this.props.columns.map(
-							col => <th scope="col" key={col.name}>{col.label}<br/><small>{col.name}</small></th>
+							column => <th scope="col" key={column.name}>{column.label}<br/><small>{column.name}</small></th>
 						)}
 					</tr>
 				</thead>
@@ -58,21 +58,21 @@ class GridRow extends React.Component {
 					}
 				</td>
 				{columns.map(
-					col => <GridCell uuid={this.props.row.uuid}
-										key={col.name}
-										columnName={col.name}
-										type={col.type}
-										typeUuid={col.typeUuid}
-										value={col.value}
-										values={col.values}
-										gridPromptUuid={col.gridPromptUuid}
-										gridPromptUri={col.gridPromptUri}
-										readonly={col.readonly}
+					column => <GridCell uuid={this.props.row.uuid}
+										key={column.name}
+										columnName={column.name}
+										type={column.type}
+										typeUuid={column.typeUuid}
+										value={column.value}
+										values={column.values}
+										gridPromptUuid={column.gridPromptUuid}
+										gridPromptUri={column.gridPromptUri}
+										readonly={column.readonly}
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
 										rowEdited={this.props.rowEdited}
-										referencedValuesAdded={this.props.referencedValuesAdded.filter(ref => ref.columnName == col.name)}
-										referencedValuesRemoved={this.props.referencedValuesRemoved.filter(ref => ref.columnName == col.name)}
+										referencedValuesAdded={this.props.referencedValuesAdded.filter(ref => ref.columnName == column.name)}
+										referencedValuesRemoved={this.props.referencedValuesRemoved.filter(ref => ref.columnName == column.name)}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onAddReferencedValueClick={(fromUuid, columnName, toGridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(fromUuid, columnName, toGridUuid, uuid, displayString, path)}

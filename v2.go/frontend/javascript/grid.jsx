@@ -341,26 +341,25 @@ function getColumnType(type) {
 function getColumnValuesForRow(columns, row, withTimeStamps) {
 	const cols = []
 	{columns && columns.map(
-		col => {
-			let type = getColumnType(col.typeUuid)
+		column => {
+			let type = getColumnType(column.typeUuid)
 			if(type == "reference") {
-				let values = getColumnValueForReferencedRow(col, row)
 				cols.push({
-					name: col.name,
-					label: col.label,
-					values: values,
-					typeUuid: col.typeUuid,
-					gridPromptUuid: col.gridPromptUuid,
-					gridPromptUri: col.gridPromptUri,
+					name: column.name,
+					label: column.label,
+					values: getColumnValueForReferencedRow(column, row),
+					typeUuid: column.typeUuid,
+					gridPromptUuid: column.gridPromptUuid,
+					gridPromptUri: column.gridPromptUri,
 					type: type,
 					readonly: false
 				})
 			} else {
 				cols.push({
-					name: col.name,
-					label: col.label,
-					value: row[col.name],
-					typeUuid: col.typeUuid,
+					name: column.name,
+					label: column.label,
+					value: row[column.name],
+					typeUuid: column.typeUuid,
 					type: type,
 					readonly: false
 				})	
@@ -378,12 +377,12 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 	return cols
 }
 
-function getColumnValueForReferencedRow(col, row) {
+function getColumnValueForReferencedRow(column, row) {
 	let output = []
 	if(row.references) {
 		row.references.map(
 			ref => {
-				if(ref.name == col.name && ref.rows) {
+				if(ref.name == column.name && ref.rows) {
 					ref.rows.map(
 						refRow => output.push({
 							uuid: refRow.uuid,
