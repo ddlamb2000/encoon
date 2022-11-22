@@ -54,20 +54,23 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 	err := migrateCommandsDb(ctx, db, dbName, latestMigration,
 		map[int]string{
 			1: "CREATE TABLE rows (" +
-				"uuid text NOT NULL PRIMARY KEY, " +
-				"created timestamp with time zone, " +
-				"createdBy text, " +
-				"updated timestamp with time zone, " +
-				"updatedBy text, " +
-				"enabled boolean, " +
-				"gridUuid text, " +
+				"gridUuid text NOT NULL, " +
+				"uuid text NOT NULL, " +
+				"created timestamp with time zone NOT NULL, " +
+				"createdBy text NOT NULL, " +
+				"updated timestamp with time zone NOT NULL, " +
+				"updatedBy text NOT NULL, " +
+				"enabled boolean NOT NULL, " +
 				getRowsColumnDefinitions() +
-				"revision integer)",
+				"revision integer NOT NULL CHECK (revision > 0), " +
+				"PRIMARY KEY (gridUuid, uuid)" +
+				")",
 
 			2: "CREATE EXTENSION pgcrypto",
-			4: "CREATE INDEX gridUuid ON rows(gridUuid);",
-			5: "CREATE INDEX gridText1 ON rows(text1);",
-			6: "CREATE INDEX gridText2 ON rows(text2);",
+
+			4: "CREATE INDEX gridText1 ON rows(text1);",
+			5: "CREATE INDEX gridText2 ON rows(text2);",
+			6: "CREATE INDEX gridText3 ON rows(text3);",
 
 			7: "INSERT INTO rows " +
 				"(uuid, " +
@@ -2094,6 +2097,14 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidColumnTypeColumnGridPrompt + "', " +
 				"'" + model.UuidGrids + "', " +
 				"'" + model.UuidGrids + "')",
+
+			92: "CREATE INDEX gridText4 ON rows(text4);",
+			93: "CREATE INDEX gridText5 ON rows(text5);",
+			94: "CREATE INDEX gridText6 ON rows(text6);",
+			95: "CREATE INDEX gridText7 ON rows(text7);",
+			96: "CREATE INDEX gridText8 ON rows(text8);",
+			97: "CREATE INDEX gridText9 ON rows(text9);",
+			98: "CREATE INDEX gridText10 ON rows(text10);",
 		})
 	if err != nil {
 		return err

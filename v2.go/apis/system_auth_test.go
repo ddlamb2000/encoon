@@ -298,9 +298,9 @@ func RunSystemTestAuth(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":1`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
+		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidUsers+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
-		jsonStringContains(t, responseData, `{"uuid":"`+model.UuidRootUser+`"`)
+		jsonStringContains(t, responseData, `{"gridUuid":"`+model.UuidUsers+`","uuid":"`+model.UuidRootUser+`"`)
 	})
 
 	t.Run("CreateNewSingleUser", func(t *testing.T) {
@@ -314,9 +314,9 @@ func RunSystemTestAuth(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringDoesntContain(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"countRows":2`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidUsers+`"`)
+		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidUsers+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
-		jsonStringContains(t, responseData, `{"uuid":"`+model.UuidRootUser+`"`)
+		jsonStringContains(t, responseData, `{"gridUuid":"`+model.UuidUsers+`","uuid":"`+model.UuidRootUser+`"`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"Zero-one","text3":"Test"`)
 	})
 

@@ -9,10 +9,10 @@ import (
 )
 
 type Row struct {
+	GridUuid      string       `json:"gridUuid" yaml:"gridUuid"`
 	Uuid          string       `json:"uuid" yaml:"uuid"`
 	Revision      int8         `json:"revision" yaml:"revision"`
 	Enabled       bool         `json:"enabled" yaml:"enabled"`
-	GridUuid      *string      `json:"gridUuid" yaml:"gridUuid"`
 	Created       *time.Time   `json:"created" yaml:"created"`
 	CreatedBy     *string      `json:"createdBy" yaml:"createdBy"`
 	Updated       *time.Time   `json:"updated" yaml:"updated"`
@@ -48,7 +48,7 @@ func (row Row) String() string {
 }
 
 func (row *Row) SetPathAndDisplayString(dbName string) {
-	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, *row.GridUuid, row.Uuid)
+	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, row.GridUuid, row.Uuid)
 	if row.Text1 != nil {
 		row.DisplayString = fmt.Sprintf("%s", *row.Text1)
 	}

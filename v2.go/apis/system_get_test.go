@@ -44,7 +44,7 @@ func RunSystemTestGet(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":7`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
 		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)
 		jsonStringContains(t, responseData, `"columns":[`)
@@ -65,8 +65,8 @@ func RunSystemTestGet(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
-		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"rows":[{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
 	})
 
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
@@ -83,7 +83,7 @@ func RunSystemTestGet(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
-		jsonStringContains(t, responseData, `"grid":{"uuid":"`+model.UuidGrids+`"`)
-		jsonStringContains(t, responseData, `"rows":[{"uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
+		jsonStringContains(t, responseData, `"rows":[{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
 	})
 }

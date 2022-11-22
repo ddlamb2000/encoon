@@ -9,10 +9,9 @@ import (
 
 func TestSetPath(t *testing.T) {
 	text1 := "xxx"
-	gridUuid := "56789"
 	row := Row{
 		Uuid:     "12345",
-		GridUuid: &gridUuid,
+		GridUuid: "56789",
 		Text1:    &text1,
 	}
 	row.SetPathAndDisplayString("test")
