@@ -25,7 +25,6 @@ const (
 	UuidUserColumnFirstName            = "83762777-8bd3-4f7c-a060-e7ceebfebe1c"
 	UuidUserColumnLastName             = "afe9d02b-0313-44d7-965f-e84a7047e047"
 	UuidUserColumnPassword             = "51270c2c-704d-4ae7-9fdb-08fd6f0c9065"
-	UuidGridColumnUri                  = "14acf8c8-ecbf-4c0d-98d7-6fa01c103681"
 	UuidGridColumnName                 = "e9e4a415-c31e-4383-ae70-18949d6ec692"
 	UuidGridColumnDesc                 = "bc1c489d-40c3-441c-9257-c8717be290cd"
 	UuidGridColumnIcon                 = "83a603fc-3ad7-47e7-9595-ad15e9cf82c8"

@@ -49,7 +49,7 @@ func RunSystemTestGet(t *testing.T) {
 		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)
 		jsonStringContains(t, responseData, `"columns":[`)
 		jsonStringContains(t, responseData, `"label":"Columns","name":"relationship1","type":"Reference"`)
-		jsonStringContains(t, responseData, `"label":"Description","name":"text3","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Description","name":"text2","type":"Text"`)
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
