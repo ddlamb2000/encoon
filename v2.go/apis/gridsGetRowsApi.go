@@ -36,7 +36,11 @@ func GetGridsRowsApi(c *gin.Context) {
 		return
 	}
 	configuration.Trace(dbName, user, "GetGridsRowsApi() - OK")
-	c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet, "countRows": rowSetCount})
+	if uuid != "" {
+		c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet})
+	} else {
+		c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
+	}
 }
 
 func getUserUui(c *gin.Context, dbName string) (string, string, error) {
