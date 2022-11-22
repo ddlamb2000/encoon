@@ -200,13 +200,15 @@ class GridCellDropDown extends React.Component {
 						</span>
 					</li>
 				)}
-				<li>
-					<input type="search"
-							className="form-control form-control-sm rounded-2 shadow gap-2 p-1"
-							autoComplete="false"
-							placeholder="Search..."
-							onInput={(e) => this.loadDropDownData(gridPromptUuid, e.target.value)} />
-				</li>
+				{gridPromptUuid &&
+					<li>
+						<input type="search"
+								className="form-control form-control-sm rounded-2 shadow gap-2 p-1"
+								autoComplete="false"
+								placeholder="Search..."
+								onInput={(e) => this.loadDropDownData(gridPromptUuid, e.target.value)} />
+					</li>
+				}
 				{isLoading && <li><Spinner /></li>}
 				{error && !isLoading && !isLoaded && <li className="alert alert-danger" role="alert">{error}</li>}
 				{error && !isLoading && isLoaded && <li className="alert alert-primary" role="alert">{error}</li>}
