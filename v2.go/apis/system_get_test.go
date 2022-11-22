@@ -18,7 +18,7 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `{"error":"User not authorized for /test/api/v1/xxx."}`)
+		jsonStringContains(t, responseData, `{"error":"User not authorized."}`)
 	})
 
 	t.Run("VerifyDbNotFound", func(t *testing.T) {
@@ -36,7 +36,7 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `{"error":"Grid \"xxx\" not found."}`)
+		jsonStringContains(t, responseData, `Error when retrieving grid definition`)
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {

@@ -13,20 +13,16 @@ import (
 
 func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
-	if err := db.QueryRowContext(ctx, getGridQueryForGridsApi(), model.UuidGrids, gridUuid).
-		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, configuration.LogAndReturnError(dbName, user, "Grid %q not found.", gridUuid)
-		} else {
-			return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid definition %q: %v.", gridUuid, err)
-		}
+	statement := getGridQueryForGridsApi()
+	if err := db.QueryRowContext(ctx, statement, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+		return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid definition %q using %q: %v.", gridUuid, statement, err)
 	}
 	grid.SetPath(dbName)
-	configuration.Trace(dbName, user, "Got grid %q: [%s].", gridUuid, grid)
 	err := getColumnsForGridsApi(ctx, db, dbName, user, grid)
 	if err != nil {
 		return nil, err
 	}
+	configuration.Trace(dbName, user, "Got grid %q: [%s].", gridUuid, grid)
 	return grid, nil
 }
 

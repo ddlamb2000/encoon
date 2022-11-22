@@ -137,7 +137,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-		expect := utils.CleanupStrings(`User not authorized for /test/api/v1/` + model.UuidUsers)
+		expect := utils.CleanupStrings(`User not authorized.`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -261,7 +261,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusNotFound)
 
-		expect := utils.CleanupStrings(`{"error":"Grid \"us\" not found."}`)
+		expect := utils.CleanupStrings(`Error when retrieving grid definition`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {

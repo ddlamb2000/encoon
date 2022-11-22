@@ -18,7 +18,7 @@ func GetGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUuid := c.Param("gridUuid")
 	uuid := c.Param("uuid")
-	_, user, err := getUserUui(c, dbName)
+	_, user, err := getUserUuid(c, dbName)
 	if err != nil {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
@@ -43,14 +43,11 @@ func GetGridsRowsApi(c *gin.Context) {
 	}
 }
 
-func getUserUui(c *gin.Context, dbName string) (string, string, error) {
+func getUserUuid(c *gin.Context, dbName string) (string, string, error) {
 	userUuid, user := c.GetString("userUuid"), c.GetString("user")
-	if len(userUuid) < 10 || user == "" {
-		return "", "", configuration.LogAndReturnError(dbName, user, "User not authorized for %v.", c.Request.URL)
-	}
 	auth, exists := c.Get("authorized")
-	if !exists || auth == false {
-		return "", "", configuration.LogAndReturnError(dbName, user, "Not authorized for %v.", c.Request.URL)
+	if len(userUuid) != len(model.UuidUsers) || user == "" || !exists || auth == false {
+		return "", "", configuration.LogAndReturnError(dbName, user, "User not authorized.")
 	}
 	return userUuid, user, nil
 }

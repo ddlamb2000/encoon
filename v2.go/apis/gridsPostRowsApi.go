@@ -32,7 +32,7 @@ type gridReferencePost struct {
 func PostGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
 	gridUuid := c.Param("gridUuid")
-	userUuid, user, err := getUserUui(c, dbName)
+	userUuid, user, err := getUserUuid(c, dbName)
 	if err != nil {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
