@@ -40,7 +40,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids")
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":7`)
@@ -53,7 +53,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidRootUser)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidRootUser)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows"`)
@@ -61,7 +61,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)
@@ -72,14 +72,14 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
 		jsonStringContains(t, responseData, `{"error":"Get request has been cancelled: context deadline exceeded."}`)
 	})
 
 	t.Run("VerifyActualRowSingleBis", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_grids/"+model.UuidGrids)
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":1`)

@@ -112,7 +112,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersNoHeader", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
 		responseData, err := io.ReadAll(w.Body)
@@ -130,14 +130,14 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersIncorrectToken", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		req.Header.Add("Authorization", "xxxxxxxxxxx")
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
-		expect := utils.CleanupStrings(`User not authorized for /test/api/v1/_users`)
+		expect := utils.CleanupStrings(`User not authorized for /test/api/v1/` + model.UuidUsers)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -149,7 +149,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersIncorrectToken2", func(t *testing.T) {
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		req.Header.Add("Authorization", "xxxxxxx")
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
@@ -170,7 +170,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersMissingBearer", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		req.Header.Add("Authorization", token)
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
@@ -191,7 +191,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersExpired", func(t *testing.T) {
 		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
@@ -212,7 +212,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersPassing", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
-		req, _ := http.NewRequest("GET", "/test/api/v1/_users", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
@@ -278,7 +278,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"aaaa","text2":"bbbb"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("te st", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		responseData, code, err := runPOSTRequestForUser("te st", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 		jsonStringContains(t, responseData, `"error":"Invalid request or unauthorized database access: signature is invalid."`)
@@ -294,7 +294,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("CreateUserNoData", func(t *testing.T) {
 		postStr := `{}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":1`)
@@ -309,7 +309,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test01","text2":"Zero-one","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringDoesntContain(t, responseData, `"countRows":1`)
@@ -328,7 +328,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test04","text2":"Zero-four","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/_users", postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringDoesntContain(t, responseData, `"countRows":2`)
@@ -344,7 +344,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test02","text2":"Zero-two","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "root", "xxyyzz", "/test/api/v1/_users", postStr)
+		_, code, err := runPOSTRequestForUser("test", "root", "xxyyzz", "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
 	})

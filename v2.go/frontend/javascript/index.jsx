@@ -36,7 +36,7 @@ class App extends React.Component {
 
 	render() {
 		if(!this.loggedIn) return <Login appName={this.props.appName} appTag={this.props.appTag} dbName={this.props.dbName} />
-		if(this.props.gridUri != "") return (
+		if(this.props.gridUuid != "") return (
 			<div>
 				<Header appName={this.props.appName} 
 						appTag={this.props.appTag}
@@ -54,7 +54,7 @@ class App extends React.Component {
 									userLastName={this.userLastName}
 									token={this.token} />
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-							<Grid token={this.token} dbName={this.props.dbName} gridUri={this.props.gridUri} uuid={this.props.uuid} />
+							<Grid token={this.token} dbName={this.props.dbName} gridUuid={this.props.gridUuid} uuid={this.props.uuid} />
 						</main>
 					</div>
 				</div>
@@ -78,9 +78,9 @@ class App extends React.Component {
 									userLastName={this.userLastName}
 									token={this.token} />
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="_users" />
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="_grids" />
-							<Grid token={this.token} dbName={this.props.dbName} gridUri="_columns" />
+							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} />
+							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} />
+							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} />
 							<Grid token={this.token} dbName={this.props.dbName} />
 							<Grid token={this.token} />
 							<Grid />
@@ -283,11 +283,15 @@ const UuidIntColumnType                  = "8c28d527-66f4-481c-902e-ac1e65a8abb0
 const UuidReferenceColumnType            = "c8b16312-d4f0-40a5-aa04-c0bc1350fea7"
 const UuidPasswordColumnType             = "5f038b21-d9a4-45fc-aa3f-fc405342c287"
 const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508"
+const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
+const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
+const UuidColumns                        = "533b6862-add3-4fef-8f93-20a17aaaaf5a"
+
 
 root.render(
 	<App  appName={rootElement.getAttribute("appName")}
 			appTag={rootElement.getAttribute("appTag")}
 			dbName={rootElement.getAttribute("dbName")}
-			gridUri={rootElement.getAttribute("gridUri")}
+			gridUuid={rootElement.getAttribute("gridUuid")}
 			uuid={rootElement.getAttribute("uuid")} />
 )

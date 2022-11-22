@@ -108,7 +108,7 @@ class Grid extends React.Component {
 	}
 
 	addRow() {
-		const newRow = { uuid: `${this.props.gridUri}-${this.state.rows.length+1}` }
+		const newRow = { uuid: `${this.props.gridUuid}-${this.state.rows.length+1}` }
 		this.setState(state => ({
 			rows: state.rows.concat(newRow),
 			rowsAdded: state.rowsAdded.concat(newRow.uuid)
@@ -164,7 +164,7 @@ class Grid extends React.Component {
 
 	loadData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUuid}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',
@@ -230,7 +230,7 @@ class Grid extends React.Component {
 
 	saveData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUri}`
+		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUuid}`
 		fetch(uri, {
 			method: 'POST',
 			headers: {
@@ -287,7 +287,7 @@ class Grid extends React.Component {
 }
 
 Grid.defaultProps = {
-	gridUri: '',
+	gridUuid: '',
 	uuid: ''
 }
 
@@ -350,7 +350,6 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 					values: getColumnValueForReferencedRow(column, row),
 					typeUuid: column.typeUuid,
 					gridPromptUuid: column.gridPromptUuid,
-					gridPromptUri: column.gridPromptUri,
 					type: type,
 					readonly: false
 				})

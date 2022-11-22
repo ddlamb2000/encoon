@@ -35,7 +35,7 @@ func postInsertReferenceRow(ctx context.Context, dbName string, db *sql.DB, user
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Insert referenced row error on %q: %v.", insertStatement, err)
 	}
-	configuration.Log(dbName, user, "Referenced row [%v] inserted into %q.", ref, grid.GetUri())
+	configuration.Log(dbName, user, "Referenced row [%v] inserted into %q.", ref, grid.Uuid)
 	return err
 }
 
@@ -85,7 +85,7 @@ func postDeleteReferenceRow(ctx context.Context, dbName string, db *sql.DB, user
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Delete referenced row error on %q: %v.", deleteStatement, err)
 	}
-	configuration.Log(dbName, user, "Referenced row [%v] delete into %q.", ref, grid.GetUri())
+	configuration.Log(dbName, user, "Referenced row [%v] delete into %q.", ref, grid.Uuid)
 	return err
 }
 

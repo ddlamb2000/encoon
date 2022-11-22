@@ -11,18 +11,18 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUriOrUuid string) (*model.Grid, error) {
+func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
-	if err := db.QueryRowContext(ctx, getGridQueryForGridsApi(gridUriOrUuid), model.UuidGrids, gridUriOrUuid).
+	if err := db.QueryRowContext(ctx, getGridQueryForGridsApi(), model.UuidGrids, gridUuid).
 		Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
-			return nil, configuration.LogAndReturnError(dbName, user, "Grid %q not found.", gridUriOrUuid)
+			return nil, configuration.LogAndReturnError(dbName, user, "Grid %q not found.", gridUuid)
 		} else {
-			return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid definition %q: %v.", gridUriOrUuid, err)
+			return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid definition %q: %v.", gridUuid, err)
 		}
 	}
-	grid.SetPath(dbName, *grid.Text1)
-	configuration.Trace(dbName, user, "Got grid %q: [%s].", gridUriOrUuid, grid)
+	grid.SetPath(dbName)
+	configuration.Trace(dbName, user, "Got grid %q: [%s].", gridUuid, grid)
 	err := getColumnsForGridsApi(ctx, db, dbName, user, grid)
 	if err != nil {
 		return nil, err
@@ -30,7 +30,7 @@ func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUriOr
 	return grid, nil
 }
 
-func getGridQueryForGridsApi(gridUriOrUuid string) string {
+func getGridQueryForGridsApi() string {
 	return "SELECT uuid, " +
 		"gridUuid, " +
 		"text1, " +
@@ -44,16 +44,7 @@ func getGridQueryForGridsApi(gridUriOrUuid string) string {
 		"updatedBy, " +
 		"version " +
 		"FROM rows " +
-		"WHERE gridUuid = $1 AND " +
-		getGridQueryWhereForGridsApi(gridUriOrUuid)
-}
-
-func getGridQueryWhereForGridsApi(gridUriOrUuid string) string {
-	if len(gridUriOrUuid) == len(model.UuidGrids) {
-		return "uuid = $2"
-	} else {
-		return "text1 = $2"
-	}
+		"WHERE gridUuid = $1 AND uuid = $2"
 }
 
 func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
@@ -111,8 +102,7 @@ func getGridColumsQueryForGridsApi() string {
 		"col.text2, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
-		"grid.uuid, " +
-		"grid.text1 " +
+		"grid.uuid " +
 		"FROM rows rel1 " +
 		"INNER JOIN rows col " +
 		"ON rel1.text4 = col.gridUuid " +
@@ -149,6 +139,5 @@ func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
 	output = append(output, &column.GridPromptUuid)
-	output = append(output, &column.GridPromptUri)
 	return output
 }

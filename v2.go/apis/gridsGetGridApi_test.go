@@ -17,9 +17,9 @@ func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
 	db, _ := database.GetDbByName(dbName)
-	gridUri := "_users"
+	gridUuid := model.UuidUsers
 	user := "root"
-	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUri)
+	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUuid)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 		return
@@ -30,15 +30,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetGridQueryColumnsForGridsApi(t *testing.T) {
-	got := getGridQueryForGridsApi("_grids")
-	expect := "SELECT uuid, gridUuid, text1, text2, text3, text4, enabled, created, createdBy, updated, updatedBy, version FROM rows WHERE gridUuid = $1 AND text1 = $2"
-	if got != expect {
-		t.Errorf(`Got %v instead of %v.`, got, expect)
-	}
-}
-
-func TestGetGridQueryColumnsForGridsApi2(t *testing.T) {
-	got := getGridQueryForGridsApi(model.UuidColumns)
+	got := getGridQueryForGridsApi()
 	expect := "SELECT uuid, gridUuid, text1, text2, text3, text4, enabled, created, createdBy, updated, updatedBy, version FROM rows WHERE gridUuid = $1 AND uuid = $2"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)

@@ -105,8 +105,8 @@ func setAndStartHttpServer() error {
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
 	router.GET("/", getIndexHtml)
 	router.GET("/:dbName", getIndexHtml)
-	router.GET("/:dbName/:gridUri", getIndexHtml)
-	router.GET("/:dbName/:gridUri/:uuid", getIndexHtml)
+	router.GET("/:dbName/:gridUuid", getIndexHtml)
+	router.GET("/:dbName/:gridUuid/:uuid", getIndexHtml)
 	apis.SetApiRoutes(router)
 	srv = &http.Server{
 		Addr:         fmt.Sprintf(":%d", configuration.GetConfiguration().HttpServer.Port),
@@ -124,10 +124,10 @@ func setAndStartHttpServer() error {
 
 func getIndexHtml(c *gin.Context) {
 	c.HTML(http.StatusOK, "index.html", gin.H{
-		"appName": configuration.GetConfiguration().AppName,
-		"appTag":  configuration.GetConfiguration().AppTag,
-		"dbName":  c.Param("dbName"),
-		"gridUri": c.Param("gridUri"),
-		"uuid":    c.Param("uuid"),
+		"appName":  configuration.GetConfiguration().AppName,
+		"appTag":   configuration.GetConfiguration().AppTag,
+		"dbName":   c.Param("dbName"),
+		"gridUuid": c.Param("gridUuid"),
+		"uuid":     c.Param("uuid"),
 	})
 }

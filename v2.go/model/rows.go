@@ -47,8 +47,8 @@ func (row Row) String() string {
 	return row.Uuid
 }
 
-func (row *Row) SetPathAndDisplayString(dbName, gridUri string) {
-	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, gridUri, row.Uuid)
+func (row *Row) SetPathAndDisplayString(dbName string) {
+	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, *row.GridUuid, row.Uuid)
 	if row.Text1 != nil {
 		row.DisplayString = fmt.Sprintf("%s", *row.Text1)
 	}

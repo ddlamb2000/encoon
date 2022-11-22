@@ -11,7 +11,6 @@ type Column struct {
 	Type           string  `json:"type,omitempty" yaml:"type,omitempty"`
 	TypeUuid       string  `json:"typeUuid,omitempty" yaml:"typeUuid,omitempty"`
 	GridPromptUuid *string `json:"gridPromptUuid,omitempty" yaml:"gridPromptUuid,omitempty"`
-	GridPromptUri  *string `json:"gridPromptUri,omitempty" yaml:"gridPromptUri,omitempty"`
 }
 
 func (column Column) String() string {

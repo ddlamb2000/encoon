@@ -37,7 +37,7 @@ func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Insert row error on %q: %v.", insertStatement, err)
 	}
-	configuration.Log(dbName, user, "Row [%s] inserted into %q.", row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] inserted into %q.", row, grid.Uuid)
 	return err
 }
 
@@ -141,7 +141,7 @@ func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Update row error on %q: %v.", updateStatement, err)
 	}
-	configuration.Log(dbName, user, "Row [%s] updated in %q.", row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] updated in %q.", row, grid.Uuid)
 	return err
 }
 
@@ -182,7 +182,7 @@ func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Delete row error: %v.", err)
 	}
-	configuration.Log(dbName, user, "Row [%s] deleted in %q.", row, grid.GetUri())
+	configuration.Log(dbName, user, "Row [%s] deleted in %q.", row, grid.Uuid)
 	return err
 }
 

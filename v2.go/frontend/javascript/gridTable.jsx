@@ -66,7 +66,6 @@ class GridRow extends React.Component {
 										value={column.value}
 										values={column.values}
 										gridPromptUuid={column.gridPromptUuid}
-										gridPromptUri={column.gridPromptUri}
 										readonly={column.readonly}
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
@@ -112,7 +111,6 @@ class GridCell extends React.Component {
 										dbName={this.props.dbName}
 										token={this.props.token}
 										gridPromptUuid={this.props.gridPromptUuid}
-										gridPromptUri={this.props.gridPromptUri}
 										referencedValuesAdded={this.props.referencedValuesAdded}
 										referencedValuesRemoved={this.props.referencedValuesRemoved}
 										onAddReferencedValueClick={(fromUuid, columnName, toGridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(fromUuid, columnName, toGridUuid, uuid, displayString, path)}
@@ -178,7 +176,7 @@ class GridCellDropDown extends React.Component {
 
 	render() {
 		const { isLoading, isLoaded, error, rows } = this.state
-		const { values, gridPromptUri, referencedValuesAdded, referencedValuesRemoved } = this.props
+		const { gridPromptUuid, values, referencedValuesAdded, referencedValuesRemoved } = this.props
 		const referencedValuesIncluded = values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).
@@ -207,7 +205,7 @@ class GridCellDropDown extends React.Component {
 							className="form-control form-control-sm rounded-2 shadow gap-2 p-1"
 							autoComplete="false"
 							placeholder="Search..."
-							onInput={(e) => this.loadDropDownData(gridPromptUri, e.target.value)} />
+							onInput={(e) => this.loadDropDownData(gridPromptUuid, e.target.value)} />
 				</li>
 				{isLoading && <li><Spinner /></li>}
 				{error && !isLoading && !isLoaded && <li className="alert alert-danger" role="alert">{error}</li>}
@@ -228,10 +226,10 @@ class GridCellDropDown extends React.Component {
 		)
 	}
 
-	loadDropDownData(gridPromptUri, value) {
+	loadDropDownData(gridPromptUuid, value) {
 		this.setState({isLoading: true})
 		if(value.length > 0) {
-			const uri = `/${this.props.dbName}/api/v1/${gridPromptUri}`
+			const uri = `/${this.props.dbName}/api/v1/${gridPromptUuid}`
 			fetch(uri, {
 				headers: {
 					'Accept': 'application/json',

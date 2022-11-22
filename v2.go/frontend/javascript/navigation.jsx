@@ -33,7 +33,7 @@ class Navigation extends React.Component {
 					<ul className="nav flex-column mb-2">
 						{isLoaded && rows && rows.map(row => 
 							<li className="nav-item" key={row.uuid}>
-								<a className="nav-link" href={`/${this.props.dbName}/${row.text1}`}>
+								<a className="nav-link" href={`/${this.props.dbName}/${row.uuid}`}>
 									{row.text2} {row.text4 && <i className={`bi bi-${row.text4}`}></i>}
 								</a>
 							</li>
@@ -46,7 +46,7 @@ class Navigation extends React.Component {
 
 	loadData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/_grids`
+		const uri = `/${this.props.dbName}/api/v1/${UuidGrids}`
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',

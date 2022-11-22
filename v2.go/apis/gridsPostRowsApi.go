@@ -31,7 +31,7 @@ type gridPost struct {
 
 func PostGridsRowsApi(c *gin.Context) {
 	dbName := c.Param("dbName")
-	gridUri := c.Param("gridUri")
+	gridUuid := c.Param("gridUuid")
 	userUuid, user, err := getUserUui(c, dbName)
 	if err != nil {
 		c.Abort()
@@ -42,7 +42,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	c.ShouldBindJSON(&payload)
 	configuration.Trace(dbName, user, "PostGridsRowsApi() - ReferenceValuesAdded=%v", payload.ReferenceValuesAdded)
 	configuration.Trace(dbName, user, "PostGridsRowsApi() - payload.RowsAdded=%v", payload.RowsAdded)
-	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUri, payload)
+	timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, user, gridUuid, payload)
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -54,7 +54,7 @@ func PostGridsRowsApi(c *gin.Context) {
 		}
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUri, "", user)
+	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUuid, "", user)
 	if err != nil {
 		c.Abort()
 		if timeOut {
@@ -74,7 +74,7 @@ type apiPostResponse struct {
 	err error
 }
 
-func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, payload gridPost) (bool, error) {
+func postGridsRows(ct context.Context, dbName, userUuid, user, gridUuid string, payload gridPost) (bool, error) {
 	configuration.Trace(dbName, user, "postGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
@@ -88,7 +88,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUri string, p
 			ctxChan <- apiPostResponse{configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
 			return
 		}
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUri)
+		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUuid)
 		if err != nil {
 			ctxChan <- apiPostResponse{err}
 			return

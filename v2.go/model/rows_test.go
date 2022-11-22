@@ -9,12 +9,14 @@ import (
 
 func TestSetPath(t *testing.T) {
 	text1 := "xxx"
+	gridUuid := "56789"
 	row := Row{
-		Uuid:  "12345",
-		Text1: &text1,
+		Uuid:     "12345",
+		GridUuid: &gridUuid,
+		Text1:    &text1,
 	}
-	row.SetPathAndDisplayString("test", "users")
-	expect := "/test/users/12345"
+	row.SetPathAndDisplayString("test")
+	expect := "/test/56789/12345"
 	if row.Path != expect {
 		t.Errorf(`Got %v instead of %v.`, row.Path, expect)
 	}
