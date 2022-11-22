@@ -117,7 +117,7 @@ func getRowsQueryColumnsForGridsApi(grid *model.Grid) string {
 		"createdBy, " +
 		"updated, " +
 		"updatedBy, " +
-		"version "
+		"revision "
 }
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
@@ -178,7 +178,7 @@ func getRowsQueryOutputForGridsApi(grid *model.Grid, row *model.Row) []any {
 	output = append(output, &row.CreatedBy)
 	output = append(output, &row.Updated)
 	output = append(output, &row.UpdatedBy)
-	output = append(output, &row.Version)
+	output = append(output, &row.Revision)
 	return output
 }
 

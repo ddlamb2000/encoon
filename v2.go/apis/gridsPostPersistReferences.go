@@ -51,7 +51,7 @@ func getUuidFromRowsForTmpUuid(addedRows []*model.Row, tmpUuid string) string {
 
 func getInsertStatementForRefereceRow() string {
 	return "INSERT INTO rows (uuid, " +
-		"version, " +
+		"revision, " +
 		"created, " +
 		"updated, " +
 		"createdBy, " +

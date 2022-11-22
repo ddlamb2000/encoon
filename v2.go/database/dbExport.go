@@ -87,7 +87,7 @@ func getRowsQueryColumnsForExportDb() string {
 		"int9, " +
 		"int10, " +
 		"enabled, " +
-		"version "
+		"revision "
 }
 
 func getRowsQueryOutputForExportDb(row *model.Row) []any {
@@ -119,6 +119,6 @@ func getRowsQueryOutputForExportDb(row *model.Row) []any {
 	output = append(output, &row.Int9)
 	output = append(output, &row.Int10)
 	output = append(output, &row.Enabled)
-	output = append(output, &row.Version)
+	output = append(output, &row.Revision)
 	return output
 }

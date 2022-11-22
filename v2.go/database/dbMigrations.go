@@ -62,7 +62,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"enabled boolean, " +
 				"gridUuid text, " +
 				getRowsColumnDefinitions() +
-				"version integer)",
+				"revision integer)",
 
 			2: "CREATE EXTENSION pgcrypto",
 			4: "CREATE INDEX gridUuid ON rows(gridUuid);",
@@ -71,7 +71,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			7: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -95,7 +95,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			8: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -119,7 +119,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			9: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -145,7 +145,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			10: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -169,7 +169,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			11: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -193,7 +193,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			12: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -217,7 +217,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			13: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -241,7 +241,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			14: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -263,7 +263,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			15: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -285,7 +285,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			16: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -307,7 +307,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			17: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -331,7 +331,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			18: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -353,7 +353,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			19: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -375,7 +375,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			20: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -397,7 +397,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			21: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -419,7 +419,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			22: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -447,7 +447,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			23: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -475,7 +475,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			24: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -503,7 +503,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			25: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -531,7 +531,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			27: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -553,7 +553,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			28: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -575,7 +575,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			29: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -597,7 +597,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			31: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -625,7 +625,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			32: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -653,7 +653,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			33: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -681,7 +681,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			34: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -703,7 +703,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			35: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -725,7 +725,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			36: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -753,7 +753,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			37: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -781,7 +781,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			38: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -803,7 +803,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			39: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -825,7 +825,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			40: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -853,7 +853,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			41: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -881,7 +881,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			42: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -903,7 +903,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			43: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -925,7 +925,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			44: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -953,7 +953,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			45: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -981,7 +981,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			46: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1003,7 +1003,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			47: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1025,7 +1025,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			50: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1053,7 +1053,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			51: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1081,7 +1081,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			52: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1109,7 +1109,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			53: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1131,7 +1131,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			54: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1159,7 +1159,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			56: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1187,7 +1187,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			57: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1215,7 +1215,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			58: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1243,7 +1243,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			59: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1271,7 +1271,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			60: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1299,7 +1299,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			62: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1327,7 +1327,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			63: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1355,7 +1355,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			64: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1383,7 +1383,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			65: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1411,7 +1411,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			66: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1439,7 +1439,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			67: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1467,7 +1467,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			68: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1495,7 +1495,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			69: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1523,7 +1523,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			70: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1545,7 +1545,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			71: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1567,7 +1567,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			72: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1595,7 +1595,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			73: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1623,7 +1623,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			74: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1645,7 +1645,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			75: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1673,7 +1673,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			76: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1701,7 +1701,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			77: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1723,7 +1723,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			78: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1751,7 +1751,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			79: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1779,7 +1779,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			80: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1801,7 +1801,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			81: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1829,7 +1829,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			82: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1857,7 +1857,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			83: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1879,7 +1879,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			84: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1907,7 +1907,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			85: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1935,7 +1935,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			86: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1957,7 +1957,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			87: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -1985,7 +1985,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			88: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -2013,7 +2013,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			89: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -2041,7 +2041,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			90: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -2069,7 +2069,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 
 			91: "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +
@@ -2124,7 +2124,7 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 		} else {
 			insertMigrationStatement := "INSERT INTO rows " +
 				"(uuid, " +
-				"version, " +
+				"revision, " +
 				"created, " +
 				"updated, " +
 				"createdBy, " +

@@ -172,9 +172,9 @@ func RunSystemTestPost(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"uuid":"`+uuid+`"`)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
-		var version int
-		db.QueryRow("SELECT version FROM rows WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&version)
-		intEqual(t, version, 2)
+		var revision int
+		db.QueryRow("SELECT revision FROM rows WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&revision)
+		intEqual(t, revision, 2)
 	})
 
 	t.Run("CreateNewandUpdateRowsInSingleGrid", func(t *testing.T) {

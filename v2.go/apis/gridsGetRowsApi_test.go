@@ -65,7 +65,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 		&row.CreatedBy,
 		&row.Updated,
 		&row.UpdatedBy,
-		&row.Version,
+		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
@@ -107,7 +107,7 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 		&row.CreatedBy,
 		&row.Updated,
 		&row.UpdatedBy,
-		&row.Version,
+		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
@@ -133,7 +133,7 @@ func TestGetRowsQueryOutputForGridsApi3(t *testing.T) {
 		&row.CreatedBy,
 		&row.Updated,
 		&row.UpdatedBy,
-		&row.Version,
+		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)

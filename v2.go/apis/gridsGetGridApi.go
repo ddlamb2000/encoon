@@ -42,7 +42,7 @@ func getGridQueryForGridsApi() string {
 		"createdBy, " +
 		"updated, " +
 		"updatedBy, " +
-		"version " +
+		"revision " +
 		"FROM rows " +
 		"WHERE gridUuid = $1 AND uuid = $2"
 }
@@ -60,7 +60,7 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output = append(output, &grid.CreatedBy)
 	output = append(output, &grid.Updated)
 	output = append(output, &grid.UpdatedBy)
-	output = append(output, &grid.Version)
+	output = append(output, &grid.Revision)
 	return output
 }
 

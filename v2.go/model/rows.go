@@ -10,7 +10,7 @@ import (
 
 type Row struct {
 	Uuid          string       `json:"uuid" yaml:"uuid"`
-	Version       int8         `json:"version" yaml:"version"`
+	Revision      int8         `json:"revision" yaml:"revision"`
 	Enabled       bool         `json:"enabled" yaml:"enabled"`
 	GridUuid      *string      `json:"gridUuid" yaml:"gridUuid"`
 	Created       *time.Time   `json:"created" yaml:"created"`

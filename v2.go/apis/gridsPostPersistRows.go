@@ -52,7 +52,7 @@ func getInsertStatementForGridsApi(grid *model.Grid) string {
 		}
 	}
 	insertStr := "INSERT INTO rows (uuid, " +
-		"version, " +
+		"revision, " +
 		"created, " +
 		"updated, " +
 		"createdBy, " +
@@ -155,7 +155,7 @@ func getUpdateStatementForGridsApi(grid *model.Grid) string {
 		}
 	}
 	updateStr := "UPDATE rows SET " +
-		"version = version + 1, " +
+		"revision = revision + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3" +
 		columns
