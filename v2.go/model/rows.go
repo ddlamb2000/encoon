@@ -40,7 +40,7 @@ type Row struct {
 	Path          string       `json:"path,omitempty" yaml:"path,omitempty"`
 	DisplayString string       `json:"displayString,omitempty" yaml:"displayString,omitempty"`
 	References    []*Reference `json:"references,omitempty" yaml:"references,omitempty"`
-	TmpUuid       string
+	TmpUuid       string       `json:"-"`
 }
 
 func (row Row) String() string {

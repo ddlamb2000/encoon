@@ -14,19 +14,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type gridReferencePost struct {
-	ColumnName string `json:"columnName"`
-	FromUuid   string `json:"fromUuid"`
-	ToGridUuid string `json:"toGridUuid"`
-	ToUuid     string `json:"uuid"`
-}
-
 type gridPost struct {
 	RowsAdded              []*model.Row        `json:"rowsAdded"`
 	RowsEdited             []*model.Row        `json:"rowsEdited"`
 	RowsDeleted            []*model.Row        `json:"rowsDeleted"`
 	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded"`
 	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved"`
+}
+
+type gridReferencePost struct {
+	ColumnName string `json:"columnName"`
+	FromUuid   string `json:"fromUuid"`
+	ToGridUuid string `json:"toGridUuid"`
+	ToUuid     string `json:"uuid"`
 }
 
 func PostGridsRowsApi(c *gin.Context) {
@@ -101,7 +101,6 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUuid string, 
 			ctxChan <- apiPostResponse{err}
 			return
 		}
-		configuration.Trace(dbName, user, "postGridsRows() - payload.RowsAdded=%v", payload.RowsAdded)
 		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsEdited, postUpdateGridRow); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return

@@ -60,7 +60,7 @@ func getNewToken(dbName string, user string, userUuid string, firstName string, 
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	configuration.Log(dbName, user, "Token generated for %v, expiration: %v", expiration)
+	configuration.Log(dbName, user, "Token generated, expiration: %v", expiration)
 	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
