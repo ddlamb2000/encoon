@@ -12,6 +12,10 @@ import (
 )
 
 func RunSystemTestPostRelationships(t *testing.T) {
+	var user01Uuid string
+	db, _ := database.GetDbByName("test")
+	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidUsers, "test01").Scan(&user01Uuid)
+
 	t.Run("CreateNewColumnsFor3rdGrid", func(t *testing.T) {
 		db, _ := database.GetDbByName("test")
 		var gridUuid1, gridUuid2 string
@@ -52,7 +56,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"columnName":"relationship2","fromUuid":"k","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidColumns, postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"Test Column 09","text2":"text1"`)
@@ -92,7 +96,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidColumns, postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"Test Column 09","text2":"text1"`)
@@ -123,7 +127,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column15Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
@@ -147,7 +151,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
@@ -183,7 +187,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+grid3Uuid, postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":3`)
