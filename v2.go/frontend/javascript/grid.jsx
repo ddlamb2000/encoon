@@ -55,7 +55,7 @@ class Grid extends React.Component {
 					}
 					{isLoaded && rows && grid && grid.text2 && uuid == "" && <div className="card-subtitle mb-2 text-muted">{grid.text2}</div>}
 					{error && !isLoading && !isLoaded && <div className="alert alert-danger" role="alert">{error}</div>}
-					{error && !isLoading && isLoaded && <div className="alert alert-primary" role="alert">{error}</div>}
+					{error && !isLoading && isLoaded && <div className="alert alert-warning" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
 						<GridTable rows={rows}
 									rowsSelected={rowsSelected}

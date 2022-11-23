@@ -213,7 +213,7 @@ class GridCellDropDown extends React.Component {
 				}
 				{isLoading && <li><Spinner /></li>}
 				{error && !isLoading && !isLoaded && <li className="alert alert-danger" role="alert">{error}</li>}
-				{error && !isLoading && isLoaded && <li className="alert alert-primary" role="alert">{error}</li>}
+				{error && !isLoading && isLoaded && <li className="alert alert-warning" role="alert">{error}</li>}
 				{referencedValuesNotIncluded && countRows > 0 && referencedValuesNotIncluded.map(ref => (
 					<li key={ref.uuid}>
 						<span>
