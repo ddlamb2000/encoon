@@ -368,10 +368,6 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 	if(withTimeStamps) {
 		cols.push({name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 		cols.push({name: "revision", label: "Revision", value: row.revision, type: "number", readonly: true})
-		cols.push({name: "created", label: "Created", value: row.created, type: "text", readonly: true})
-		cols.push({name: "createdBy", label: "Created by", value: row.createdBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
-		cols.push({name: "updated", label: "Updated", value: row.updated, type: "text", readonly: true})
-		cols.push({name: "updatedBy", label: "Updated by", value: row.updatedBy, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
 	}
 	return cols
 }

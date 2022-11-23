@@ -30,6 +30,14 @@ class GridView extends React.Component {
 														inputRef={this.props.inputRef} />
 									</tr>
 						)}
+						<tr>
+							<td>Created</td>
+							<td>{this.props.row.created} by {this.props.row.createdBy}</td>
+						</tr>
+						<tr>
+							<td>Updated</td>
+							<td>{this.props.row.updated} by {this.props.row.updatedBy}</td>
+						</tr>
 					</tbody>
 				</table>
 			</div>
