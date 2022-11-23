@@ -23,9 +23,7 @@ func CalculateFileHash(fileName string) (string, error) {
 	}
 	defer f.Close()
 	hash := sha256.New()
-	if _, err := io.Copy(hash, f); err != nil {
-		return "", errors.New(fmt.Sprintf("Can't read file %v: %v", fileName, err))
-	}
+	io.Copy(hash, f)
 	sum := fmt.Sprintf("%x", hash.Sum(nil))
 	return sum, nil
 }

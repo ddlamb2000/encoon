@@ -65,10 +65,7 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbNam
 		dbConfiguration.User,
 		dbConfiguration.Name,
 	)
-	db, err := sql.Open("postgres", psqlInfo)
-	if err != nil {
-		return nil, configuration.LogAndReturnError(dbName, "", "Can't connect to database with %q: %v", psqlInfo, err)
-	}
+	db, _ := sql.Open("postgres", psqlInfo)
 	ctx, stop := context.WithCancel(context.Background())
 	defer stop()
 	if err := db.PingContext(ctx); err != nil {
@@ -79,18 +76,16 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbNam
 	return db, nil
 }
 
-func TestSleep(ctx context.Context, dbName, user string, db *sql.DB) error {
+func Sleep(ctx context.Context, dbName, user string, db *sql.DB) {
 	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
-		configuration.Log(dbName, user, "*** START SLEEP *** It's now %v.", time.Now())
+		configuration.Trace(dbName, user, "*** START SLEEP *** It's now %v.", time.Now())
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
 		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
-		_, err := db.QueryContext(ctx, st)
-		configuration.Log(dbName, user, "*** STOP SLEEP *** It's now %v.", time.Now())
-		return err
+		db.QueryContext(ctx, st)
+		configuration.Trace(dbName, user, "*** STOP SLEEP *** It's now %v.", time.Now())
 	}
-	return nil
 }
 
 func ForceTestSleepTimeAndTimeOutThreshold(dbName string, sleepTime, threshold int) {

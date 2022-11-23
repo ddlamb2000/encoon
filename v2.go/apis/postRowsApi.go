@@ -18,10 +18,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 	}
 	go func() {
 		r.trace("postGridsRows()")
-		if err := database.TestSleep(r.ctx, dbName, userName, r.db); err != nil {
-			r.ctxChan <- apiResponse{err: r.logAndReturnError("Sleep interrupted: %v.", err)}
-			return
-		}
+		database.Sleep(r.ctx, dbName, userName, r.db)
 		grid, err := getGridForGridsApi(r, gridUuid)
 		if err != nil {
 			r.ctxChan <- apiResponse{err: err}

@@ -241,7 +241,12 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 }
 
 func TestLog(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	previous := appConfiguration.Trace
+	appConfiguration.Log = true
 	Log("x", "y", "Test: %v", "test")
+	appConfiguration.Log = previous
 }
 
 func TestLogError(t *testing.T) {
@@ -257,5 +262,40 @@ func TestLogAndReturnError(t *testing.T) {
 }
 
 func TestTrace(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	previous := appConfiguration.Trace
+	appConfiguration.Trace = true
 	Trace("x", "y", "Test: %v", "test")
+	appConfiguration.Trace = previous
+}
+
+func TestGetLogPrefix(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	got := getLogPrefix("test", "root")
+	expect := "[valid 1] [test] [root] "
+	if got != expect {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestGetLogPrefix2(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	got := getLogPrefix("test", "")
+	expect := "[valid 1] [test] "
+	if got != expect {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
+}
+
+func TestGetLogPrefix3(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	got := getLogPrefix("", "")
+	expect := "[valid 1] "
+	if got != expect {
+		t.Errorf("Got %q instead of %q.", got, expect)
+	}
 }

@@ -49,7 +49,15 @@ var (
 	configurationHash     string
 )
 
+func GetConfiguration() Configuration {
+	appConfigurationMutex.RLock()
+	defer appConfigurationMutex.RUnlock()
+	return appConfiguration
+}
+
 func LoadConfiguration(fileName string) error {
+	appConfigurationMutex.Lock()
+	defer appConfigurationMutex.Unlock()
 	configurationFileName = fileName
 	return loadConfigurationFromFile()
 }
@@ -60,6 +68,7 @@ func loadConfigurationFromFile() error {
 	if err != nil {
 		return LogAndReturnError("", "", "Error loading configuration from file %q: %v.", configurationFileName, err)
 	}
+	hash, _ := utils.CalculateFileHash(configurationFileName)
 	newConfiguration := new(Configuration)
 	if err = yaml.Unmarshal(f, &newConfiguration); err != nil {
 		return LogAndReturnError("", "", "Error parsing configuration from file %q: %v.", configurationFileName, err)
@@ -67,14 +76,8 @@ func loadConfigurationFromFile() error {
 	if err = validateConfiguration(newConfiguration); err != nil {
 		return err
 	}
-	hash, err := utils.CalculateFileHash(configurationFileName)
-	if err != nil {
-		return err
-	}
-	appConfigurationMutex.Lock()
 	appConfiguration = *newConfiguration
 	configurationHash = hash
-	appConfigurationMutex.Unlock()
 	Log("", "", "Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
@@ -94,12 +97,6 @@ func validateConfiguration(conf *Configuration) error {
 	}
 	Log("", "", "Configuration from %v is valid.", configurationFileName)
 	return nil
-}
-
-func GetConfiguration() Configuration {
-	appConfigurationMutex.RLock()
-	defer appConfigurationMutex.RUnlock()
-	return appConfiguration
 }
 
 func IsDatabaseEnabled(dbName string) bool {
