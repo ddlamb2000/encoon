@@ -5,85 +5,42 @@ package apis
 
 import (
 	"context"
-	"database/sql"
-	"net/http"
 
-	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
-	"github.com/gin-gonic/gin"
 )
 
-func GetGridsRowsApi(c *gin.Context) {
-	dbName := c.Param("dbName")
-	gridUuid := c.Param("gridUuid")
-	uuid := c.Param("uuid")
-	_, user, err := getUserUuid(c, dbName)
-	if err != nil {
-		c.Abort()
-		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
-		return
-	}
-	configuration.Trace(dbName, user, "GetGridsRowsApi()")
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, user)
-	if err != nil {
-		c.Abort()
-		if timeOut {
-			c.JSON(http.StatusRequestTimeout, gin.H{"error": err.Error()})
-		} else {
-			c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
-		}
-		return
-	}
-	configuration.Trace(dbName, user, "GetGridsRowsApi() - OK")
-	if uuid != "" {
-		c.JSON(http.StatusOK, gin.H{"uuid": uuid, "grid": grid, "rows": rowSet})
-	} else {
-		c.JSON(http.StatusOK, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
-	}
-}
-
-func getUserUuid(c *gin.Context, dbName string) (string, string, error) {
-	userUuid, user := c.GetString("userUuid"), c.GetString("user")
-	auth, exists := c.Get("authorized")
-	if len(userUuid) != len(model.UuidUsers) || user == "" || !exists || auth == false {
-		return "", "", configuration.LogAndReturnError(dbName, user, "User not authorized.")
-	}
-	return userUuid, user, nil
-}
-
-func getGridsRows(ct context.Context, dbName, gridUuid, uuid, user string) (*model.Grid, []model.Row, int, bool, error) {
-	configuration.Trace(dbName, user, "getGridsRows()")
-	db, err := database.GetDbByName(dbName)
+func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) (*model.Grid, []model.Row, int, bool, error) {
+	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
+	defer cancel()
 	if err != nil {
 		return nil, nil, 0, false, err
 	}
-	ctxChan := make(chan apiResponse, 1)
-	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
-	defer cancel()
 	go func() {
-		if err := database.TestSleep(ctx, dbName, user, db); err != nil {
-			ctxChan <- apiResponse{err: configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
+		r.trace("getGridsRows()")
+		if err := database.TestSleep(r.ctx, dbName, userName, r.db); err != nil {
+			r.ctxChan <- apiResponse{err: r.logAndReturnError("Sleep interrupted: %v.", err)}
 			return
 		}
-		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUuid)
+		grid, err := getGridForGridsApi(r, gridUuid)
 		if err != nil {
-			ctxChan <- apiResponse{err: err}
+			r.ctxChan <- apiResponse{err: err}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, true)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, uuid, grid, true)
 		if uuid != "" && rowSetCount == 0 {
-			ctxChan <- apiResponse{grid: grid, err: configuration.LogAndReturnError(dbName, user, "Data not found.")}
+			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount}
+		r.ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount}
+		r.trace("getGridsRows() - Done")
 	}()
 	select {
-	case <-ctx.Done():
-		configuration.Trace(dbName, user, "getGridsRows() - Cancelled")
-		return nil, nil, 0, true, configuration.LogAndReturnError(dbName, user, "Get request has been cancelled: %v.", ctx.Err())
-	case response := <-ctxChan:
-		configuration.Trace(dbName, user, "getGridsRows() - OK")
+	case <-r.ctx.Done():
+		r.trace("getGridsRows() - Cancelled")
+		return nil, nil, 0, true, r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err())
+	case response := <-r.ctxChan:
+		r.trace("getGridsRows() - OK")
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}
 }
@@ -130,31 +87,31 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowSetForGridsApi(ctx context.Context, db *sql.DB, dbName, user, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
-	configuration.Trace(dbName, user, "getRowSetForGridsApi()")
-	rows, err := db.QueryContext(ctx, getRowsQueryForGridsApi(grid, uuid), getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
+func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
+	r.trace("getRowSetForGridsApi()")
+	rows, err := r.db.QueryContext(r.ctx, getRowsQueryForGridsApi(grid, uuid), getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
 	if err != nil {
-		return nil, 0, configuration.LogAndReturnError(dbName, user, "Error when querying rows: %v.", err)
+		return nil, 0, r.logAndReturnError("Error when querying rows: %v.", err)
 	}
 	defer rows.Close()
 	var rowSet = make([]model.Row, 0)
 	for rows.Next() {
 		var row = new(model.Row)
 		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
-			return nil, 0, configuration.LogAndReturnError(dbName, user, "Error when scanning rows for %q: %v.", grid.Uuid, err)
+			return nil, 0, r.logAndReturnError("Error when scanning rows for %q: %v.", grid.Uuid, err)
 		}
-		row.SetPathAndDisplayString(dbName)
+		row.SetPathAndDisplayString(r.dbName)
 		if getReferences {
-			if err := getRelationshipsForRow(ctx, db, dbName, user, grid, row); err != nil {
+			if err := getRelationshipsForRow(r, grid, row); err != nil {
 				return nil, 0, err
 			}
 		}
 		rowSet = append(rowSet, *row)
 	}
 	if err := rows.Err(); err != nil {
-		return nil, 0, configuration.LogAndReturnError(dbName, user, "Error when scanning rows for %q: %v.", grid.Uuid, err)
+		return nil, 0, r.logAndReturnError("Error when scanning rows for %q: %v.", grid.Uuid, err)
 	}
-	configuration.Trace(dbName, user, "Got %d rows from %q.", len(rowSet), grid.Uuid)
+	r.trace("Got %d rows from %q.", len(rowSet), grid.Uuid)
 	return rowSet, len(rowSet), nil
 }
 

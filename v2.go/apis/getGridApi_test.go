@@ -9,17 +9,17 @@ import (
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
-	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
 )
 
 func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "test"
-	db, _ := database.GetDbByName(dbName)
 	gridUuid := model.UuidUsers
-	user := "root"
-	grid, err := getGridForGridsApi(context.Background(), db, dbName, user, gridUuid)
+	userName := "root"
+	r, cancel, _ := createContextAndApiRequestParameters(context.Background(), dbName, model.UuidRootUser, userName)
+	defer cancel()
+	grid, err := getGridForGridsApi(r, gridUuid)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 		return

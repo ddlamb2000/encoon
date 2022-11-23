@@ -4,39 +4,36 @@
 package apis
 
 import (
-	"context"
-	"database/sql"
 	"fmt"
 
-	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
 )
 
-type persistGridRowDataFunc func(context.Context, string, *sql.DB, string, string, *model.Grid, *model.Row) error
+type persistGridRowDataFunc func(apiRequestParameters, *model.Grid, *model.Row) error
 
-func persistGridRowData(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
+func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
 	for _, row := range rows {
-		err := f(ctx, dbName, db, userUuid, user, grid, row)
+		err := f(r, grid, row)
 		if err != nil {
-			_ = RollbackTransaction(ctx, dbName, db, userUuid, user)
+			_ = RollbackTransaction(r)
 			return err
 		}
 	}
 	return nil
 }
 
-func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace(dbName, user, "postInsertGridRow()")
+func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	r.trace("postInsertGridRow()")
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
-	configuration.Trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
+	r.trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
 	insertStatement := getInsertStatementForGridsApi(grid)
-	insertValues := getInsertValuesForGridsApi(userUuid, grid, row)
-	if _, err := db.ExecContext(ctx, insertStatement, insertValues...); err != nil {
-		return configuration.LogAndReturnError(dbName, user, "Insert row error on %q: %v.", insertStatement, err)
+	insertValues := getInsertValuesForGridsApi(r.userUuid, grid, row)
+	if _, err := r.db.ExecContext(r.ctx, insertStatement, insertValues...); err != nil {
+		return r.logAndReturnError("Insert row error on %q: %v.", insertStatement, err)
 	}
-	configuration.Log(dbName, user, "Row [%s] inserted into %q.", row, grid.Uuid)
+	r.log("Row [%s] inserted into %q.", row, grid.Uuid)
 	return nil
 }
 
@@ -132,15 +129,15 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 	return output
 }
 
-func postUpdateGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace(dbName, user, "postUpdateGridRow()")
+func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	r.trace("postUpdateGridRow()")
 	updateStatement := getUpdateStatementForGridsApi(grid)
-	updateValues := getUpdateValuesForGridsApi(userUuid, grid, row)
-	_, err := db.ExecContext(ctx, updateStatement, updateValues...)
+	updateValues := getUpdateValuesForGridsApi(r.userUuid, grid, row)
+	_, err := r.db.ExecContext(r.ctx, updateStatement, updateValues...)
 	if err != nil {
-		return configuration.LogAndReturnError(dbName, user, "Update row error on %q: %v.", updateStatement, err)
+		return r.logAndReturnError("Update row error on %q: %v.", updateStatement, err)
 	}
-	configuration.Log(dbName, user, "Row [%s] updated in %q.", row, grid.Uuid)
+	r.log("Row [%s] updated in %q.", row, grid.Uuid)
 	return err
 }
 
@@ -175,13 +172,13 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	return values
 }
 
-func postDeleteGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, row *model.Row) error {
-	configuration.Trace(dbName, user, "postDeleteGridRow()")
-	_, err := db.ExecContext(ctx, getDeleteRowStatement(), row.Uuid, grid.Uuid)
+func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	r.trace("postDeleteGridRow()")
+	_, err := r.db.ExecContext(r.ctx, getDeleteRowStatement(), row.Uuid, grid.Uuid)
 	if err != nil {
-		return configuration.LogAndReturnError(dbName, user, "Delete row error: %v.", err)
+		return r.logAndReturnError("Delete row error: %v.", err)
 	}
-	configuration.Log(dbName, user, "Row [%s] deleted in %q.", row, grid.Uuid)
+	r.log("Row [%s] deleted in %q.", row, grid.Uuid)
 	return err
 }
 

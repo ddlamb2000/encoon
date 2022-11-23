@@ -4,25 +4,21 @@
 package apis
 
 import (
-	"context"
-	"database/sql"
-
-	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridForGridsApi(ctx context.Context, db *sql.DB, dbName, user, gridUuid string) (*model.Grid, error) {
+func getGridForGridsApi(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
 	statement := getGridQueryForGridsApi()
-	if err := db.QueryRowContext(ctx, statement, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
-		return nil, configuration.LogAndReturnError(dbName, user, "Error when retrieving grid definition %q using %q: %v.", gridUuid, statement, err)
+	if err := r.db.QueryRowContext(r.ctx, statement, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+		return nil, r.logAndReturnError("Error when retrieving grid definition %q using %q: %v.", gridUuid, statement, err)
 	}
-	grid.SetPath(dbName)
-	err := getColumnsForGridsApi(ctx, db, dbName, user, grid)
+	grid.SetPath(r.dbName)
+	err := getColumnsForGridsApi(r, grid)
 	if err != nil {
 		return nil, err
 	}
-	configuration.Trace(dbName, user, "Got grid %q: [%s].", gridUuid, grid)
+	r.trace("Got grid %q: [%s].", gridUuid, grid)
 	return grid, nil
 }
 
@@ -60,12 +56,12 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	return output
 }
 
-func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string, grid *model.Grid) error {
+func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	grid.Columns = make([]*model.Column, 0)
 	statement := getGridColumsQueryForGridsApi()
-	configuration.Trace(dbName, user, "getColumnsForGridsApi() - statement=%s", statement)
-	rows, err := db.QueryContext(
-		ctx,
+	r.trace("getColumnsForGridsApi() - statement=%s", statement)
+	rows, err := r.db.QueryContext(
+		r.ctx,
 		statement,
 		model.UuidRelationships,
 		"relationship1",
@@ -79,15 +75,15 @@ func getColumnsForGridsApi(ctx context.Context, db *sql.DB, dbName, user string,
 		"relationship2",
 	)
 	if err != nil {
-		return configuration.LogAndReturnError(dbName, user, "Error when querying columns from %q using %q: %v.", grid.Uuid, statement, err)
+		return r.logAndReturnError("Error when querying columns from %q using %q: %v.", grid.Uuid, statement, err)
 	}
 	defer rows.Close()
 	for rows.Next() {
 		var column = new(model.Column)
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
-			return configuration.LogAndReturnError(dbName, user, "Error when scanning columns for %q using %q: %v.", grid.Uuid, statement, err)
+			return r.logAndReturnError("Error when scanning columns for %q using %q: %v.", grid.Uuid, statement, err)
 		}
-		configuration.Trace(dbName, user, "Got column for %q: [%s].", grid.Uuid, column)
+		r.trace("Got column for %q: [%s].", grid.Uuid, column)
 		grid.Columns = append(grid.Columns, *&column)
 	}
 	return nil
