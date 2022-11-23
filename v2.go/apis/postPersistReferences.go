@@ -14,7 +14,7 @@ func persistGridReferenceData(r apiRequestParameters, grid *model.Grid, addedRow
 	for _, ref := range refs {
 		err := f(r, grid, addedRows, ref)
 		if err != nil {
-			_ = RollbackTransaction(r)
+			_ = r.rollbackTransaction()
 			return err
 		}
 	}
@@ -25,12 +25,11 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	r.trace("postInsertReferenceRow()")
 	insertStatement := getInsertStatementForRefereceRow()
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
-	_, err := r.db.ExecContext(r.ctx, insertStatement, utils.GetNewUUID(), r.userUuid, model.UuidRelationships, ref.ColumnName, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid)
-	if err != nil {
+	if err := r.execContext(insertStatement, utils.GetNewUUID(), r.userUuid, model.UuidRelationships, ref.ColumnName, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid); err != nil {
 		return r.logAndReturnError("Insert referenced row error on %q: %v.", insertStatement, err)
 	}
 	r.log("Referenced row [%v] inserted into %q.", ref, grid.Uuid)
-	return err
+	return nil
 }
 
 func postGridSetOwnership(r apiRequestParameters, grid *model.Grid, addedRows []*model.Row) error {
@@ -45,7 +44,7 @@ func postGridSetOwnership(r apiRequestParameters, grid *model.Grid, addedRows []
 			}
 			err := postInsertReferenceRow(r, grid, addedRows, ref)
 			if err != nil {
-				_ = RollbackTransaction(r)
+				_ = r.rollbackTransaction()
 				return err
 			}
 		}
@@ -95,12 +94,11 @@ func getInsertStatementForRefereceRow() string {
 func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	r.trace("postDeleteReferenceRow()")
 	deleteStatement := getDeleteReferenceRowStatement()
-	_, err := r.db.ExecContext(r.ctx, deleteStatement, model.UuidRelationships, ref.ColumnName, grid.Uuid, ref.FromUuid, ref.ToGridUuid, ref.ToUuid)
-	if err != nil {
+	if err := r.execContext(deleteStatement, model.UuidRelationships, ref.ColumnName, grid.Uuid, ref.FromUuid, ref.ToGridUuid, ref.ToUuid); err != nil {
 		return r.logAndReturnError("Delete referenced row error on %q: %v.", deleteStatement, err)
 	}
 	r.log("Referenced row [%v] delete into %q.", ref, grid.Uuid)
-	return err
+	return nil
 }
 
 func getDeleteReferenceRowStatement() string {

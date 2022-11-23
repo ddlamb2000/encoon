@@ -56,6 +56,38 @@ func (r apiRequestParameters) logAndReturnError(format string, a ...any) error {
 	return configuration.LogAndReturnError(r.dbName, r.userName, format, a...)
 }
 
+func (r apiRequestParameters) execContext(query string, args ...any) error {
+	_, err := r.db.ExecContext(r.ctx, query, args...)
+	return err
+}
+
+func (r apiRequestParameters) beginTransaction() error {
+	r.trace("beginTransaction()")
+	if err := r.execContext("BEGIN"); err != nil {
+		return r.logAndReturnError("Begin transaction error: %v.", err)
+	}
+	r.log("Begin transaction.")
+	return nil
+}
+
+func (r apiRequestParameters) commitTransaction() error {
+	r.trace("commitTransaction()")
+	if err := r.execContext("COMMIT"); err != nil {
+		return r.logAndReturnError("Commit transaction error: %v.", err)
+	}
+	r.log("Commit transaction.")
+	return nil
+}
+
+func (r apiRequestParameters) rollbackTransaction() error {
+	r.trace("rollbackTransaction()")
+	if err := r.execContext("ROLLBACK"); err != nil {
+		return r.logAndReturnError("Rollback transaction error: %v.", err)
+	}
+	r.log("ROLLBACK transaction.")
+	return nil
+}
+
 type apiResponse struct {
 	grid     *model.Grid
 	rows     []model.Row

@@ -27,7 +27,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{err: err}
 			return
 		}
-		if err := BeginTransaction(r); err != nil {
+		if err := r.beginTransaction(); err != nil {
 			r.ctxChan <- apiResponse{err: err}
 			return
 		}
@@ -55,7 +55,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{err: err}
 			return
 		}
-		if err := CommitTransaction(r); err != nil {
+		if err := r.commitTransaction(); err != nil {
 			r.ctxChan <- apiResponse{err: err}
 			return
 		}
@@ -70,40 +70,10 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 	select {
 	case <-r.ctx.Done():
 		r.trace("postGridsRows() - Cancelled")
-		_ = RollbackTransaction(r)
+		_ = r.rollbackTransaction()
 		return nil, nil, 0, true, r.logAndReturnError("Post request has been cancelled: %v.", r.ctx.Err())
 	case response := <-r.ctxChan:
 		r.trace("postGridsRows() - OK")
 		return response.grid, response.rows, response.rowCount, false, response.err
 	}
-}
-
-func BeginTransaction(r apiRequestParameters) error {
-	r.trace("beginTransaction()")
-	_, err := r.db.ExecContext(r.ctx, "BEGIN")
-	if err != nil {
-		return r.logAndReturnError("Begin transaction error: %v.", err)
-	}
-	r.log("Begin transaction.")
-	return err
-}
-
-func CommitTransaction(r apiRequestParameters) error {
-	r.trace("commitTransaction()")
-	_, err := r.db.ExecContext(r.ctx, "COMMIT")
-	if err != nil {
-		return r.logAndReturnError("Commit transaction error: %v.", err)
-	}
-	r.log("Commit transaction.")
-	return err
-}
-
-func RollbackTransaction(r apiRequestParameters) error {
-	r.trace("rollbackTransaction()")
-	_, err := r.db.ExecContext(r.ctx, "ROLLBACK")
-	if err != nil {
-		return r.logAndReturnError("Rollback transaction error: %v.", err)
-	}
-	r.log("ROLLBACK transaction.")
-	return err
 }

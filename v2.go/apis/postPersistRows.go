@@ -16,7 +16,7 @@ func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.
 	for _, row := range rows {
 		err := f(r, grid, row)
 		if err != nil {
-			_ = RollbackTransaction(r)
+			_ = r.rollbackTransaction()
 			return err
 		}
 	}
@@ -30,7 +30,7 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	r.trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
 	insertStatement := getInsertStatementForGridsApi(grid)
 	insertValues := getInsertValuesForGridsApi(r.userUuid, grid, row)
-	if _, err := r.db.ExecContext(r.ctx, insertStatement, insertValues...); err != nil {
+	if err := r.execContext(insertStatement, insertValues...); err != nil {
 		return r.logAndReturnError("Insert row error on %q: %v.", insertStatement, err)
 	}
 	r.log("Row [%s] inserted into %q.", row, grid.Uuid)
@@ -133,12 +133,11 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	r.trace("postUpdateGridRow()")
 	updateStatement := getUpdateStatementForGridsApi(grid)
 	updateValues := getUpdateValuesForGridsApi(r.userUuid, grid, row)
-	_, err := r.db.ExecContext(r.ctx, updateStatement, updateValues...)
-	if err != nil {
+	if err := r.execContext(updateStatement, updateValues...); err != nil {
 		return r.logAndReturnError("Update row error on %q: %v.", updateStatement, err)
 	}
 	r.log("Row [%s] updated in %q.", row, grid.Uuid)
-	return err
+	return nil
 }
 
 func getUpdateStatementForGridsApi(grid *model.Grid) string {
@@ -174,12 +173,11 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
 	r.trace("postDeleteGridRow()")
-	_, err := r.db.ExecContext(r.ctx, getDeleteRowStatement(), row.Uuid, grid.Uuid)
-	if err != nil {
+	if err := r.execContext(getDeleteRowStatement(), row.Uuid, grid.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	r.log("Row [%s] deleted in %q.", row, grid.Uuid)
-	return err
+	return nil
 }
 
 func getDeleteRowStatement() string {
