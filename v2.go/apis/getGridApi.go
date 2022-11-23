@@ -4,14 +4,20 @@
 package apis
 
 import (
+	"database/sql"
+
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridForGridsApi(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
+// function is available for mocking
+var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
 	query := getGridQueryForGridsApi()
 	r.trace("getGridForGridsApi(%s) - query=%s", gridUuid, query)
 	if err := r.db.QueryRowContext(r.ctx, query, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+		if err == sql.ErrNoRows {
+			return nil, nil
+		}
 		return nil, r.logAndReturnError("Error when retrieving grid definition: %v.", err)
 	}
 	grid.SetPathAndDisplayString(r.dbName)
@@ -22,7 +28,8 @@ func getGridForGridsApi(r apiRequestParameters, gridUuid string) (*model.Grid, e
 	return grid, nil
 }
 
-func getGridQueryForGridsApi() string {
+// function is available for mocking
+var getGridQueryForGridsApi = func() string {
 	return "SELECT uuid, " +
 		"gridUuid, " +
 		"text1, " +
@@ -77,7 +84,8 @@ func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	return nil
 }
 
-func getGridColumsQueryForGridsApi() string {
+// function is available for mocking
+var getGridColumsQueryForGridsApi = func() string {
 	return "SELECT col.text1, " +
 		"col.text2, " +
 		"coltype.uuid, " +
@@ -127,7 +135,8 @@ func getGridColumsQueryParametersForGridsApi(grid *model.Grid) []any {
 	return parameters
 }
 
-func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {
+// function is available for mocking
+var getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any {
 	output := make([]any, 0)
 	output = append(output, &column.Label)
 	output = append(output, &column.Name)

@@ -22,7 +22,7 @@ func persistGridReferenceData(r apiRequestParameters, grid *model.Grid, addedRow
 }
 
 func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
-	query := getInsertStatementForRefereceRow()
+	query := getInsertStatementForReferenceRow()
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
 	parms := getInsertStatementParametersForRefereceRow(r, grid, ref, rowUuid)
 	r.trace("postInsertReferenceRow(%s, %v, %v) - query=%s ; parms=%s", grid, addedRows, ref, query, parms)
@@ -33,7 +33,8 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	return nil
 }
 
-func getInsertStatementForRefereceRow() string {
+// function is available for mocking
+var getInsertStatementForReferenceRow = func() string {
 	return "INSERT INTO rows (uuid, " +
 		"revision, " +
 		"created, " +
@@ -116,7 +117,8 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	return nil
 }
 
-func getDeleteReferenceRowStatement() string {
+// function is available for mocking
+var getDeleteReferenceRowStatement = func() string {
 	return "DELETE FROM rows WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
 }
 

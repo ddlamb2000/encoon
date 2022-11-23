@@ -67,36 +67,47 @@ func (r apiRequestParameters) queryContext(query string, args ...any) (*sql.Rows
 
 func (r apiRequestParameters) beginTransaction() error {
 	r.trace("beginTransaction()")
-	if err := r.execContext("BEGIN"); err != nil {
+	if err := r.execContext(getBeginTransactionQuery()); err != nil {
 		return r.logAndReturnError("Begin transaction error: %v.", err)
 	}
 	r.log("Begin transaction.")
 	return nil
 }
 
+// function is available for mocking
+var getBeginTransactionQuery = func() string { return "BEGIN" }
+
 func (r apiRequestParameters) commitTransaction() error {
 	r.trace("commitTransaction()")
-	if err := r.execContext("COMMIT"); err != nil {
+	if err := r.execContext(getCommitTransactionQuery()); err != nil {
 		return r.logAndReturnError("Commit transaction error: %v.", err)
 	}
 	r.log("Commit transaction.")
 	return nil
 }
 
+// function is available for mocking
+var getCommitTransactionQuery = func() string { return "COMMIT" }
+
 func (r apiRequestParameters) rollbackTransaction() error {
 	r.trace("rollbackTransaction()")
-	if err := r.execContext("ROLLBACK"); err != nil {
+	if err := r.execContext(getRollbackTransactionQuery()); err != nil {
 		return r.logAndReturnError("Rollback transaction error: %v.", err)
 	}
 	r.log("ROLLBACK transaction.")
 	return nil
 }
 
+// function is available for mocking
+var getRollbackTransactionQuery = func() string { return "ROLLBACK" }
+
 type apiResponse struct {
 	grid     *model.Grid
 	rows     []model.Row
 	rowCount int
 	err      error
+	timeOut  bool
+	system   bool
 }
 
 func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user string) (apiRequestParameters, context.CancelFunc, error) {
@@ -113,8 +124,10 @@ func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, 
 	return r, cancel, err
 }
 
-func getHttpErrorCode(timeOut bool) int {
-	if timeOut {
+func getHttpErrorCode(response apiResponse) int {
+	if response.system {
+		return http.StatusInternalServerError
+	} else if response.timeOut {
 		return http.StatusRequestTimeout
 	} else {
 		return http.StatusNotFound
@@ -128,10 +141,10 @@ func GetGridsRowsApi(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	grid, rowSet, rowSetCount, timeOut, err := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, userUuid, userName)
-	if err != nil {
+	grid, rowSet, rowSetCount, response := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, userUuid, userName)
+	if response.err != nil {
 		c.Abort()
-		c.JSON(getHttpErrorCode(timeOut), gin.H{"error": err.Error()})
+		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"grid": grid, "uuid": uuid, "rows": rowSet, "countRows": rowSetCount})
@@ -160,10 +173,10 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	grid, rowSet, rowSetCount, timeOut, err := postGridsRows(c.Request.Context(), dbName, userUuid, userName, gridUuid, uuid, payload)
-	if err != nil {
+	grid, rowSet, rowSetCount, response := postGridsRows(c.Request.Context(), dbName, userUuid, userName, gridUuid, uuid, payload)
+	if response.err != nil {
 		c.Abort()
-		c.JSON(getHttpErrorCode(timeOut), gin.H{"error": err.Error()})
+		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
 		return
 	}
 	c.JSON(http.StatusCreated, gin.H{"grid": grid, "uuid": uuid, "rows": rowSet, "countRows": rowSetCount})

@@ -4,6 +4,7 @@
 package apis
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
@@ -36,7 +37,7 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `Error when retrieving grid definition`)
+		jsonStringContains(t, responseData, `"error":"Data not found."`)
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
@@ -82,5 +83,77 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
+	})
+
+	t.Run("VerifyActualRowsWithDefect1", func(t *testing.T) {
+		getRowsQueryForGridsApiImpl := getRowsQueryForGridsApi
+		getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string { return "xxx" } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying rows: pq: syntax error`)
+		getRowsQueryForGridsApi = getRowsQueryForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect2", func(t *testing.T) {
+		getGridQueryForGridsApiImpl := getGridQueryForGridsApi
+		getGridQueryForGridsApi = func() string { return "xxx" } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when retrieving grid definition: pq: syntax error`)
+		getGridQueryForGridsApi = getGridQueryForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect3", func(t *testing.T) {
+		getGridColumsQueryForGridsApiImpl := getGridColumsQueryForGridsApi
+		getGridColumsQueryForGridsApi = func() string { return "xxx" } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying columns: pq: syntax error`)
+		getGridColumsQueryForGridsApi = getGridColumsQueryForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect4", func(t *testing.T) {
+		getGridColumnQueryOutputForGridsApiImpl := getGridColumnQueryOutputForGridsApi
+		getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any { return nil } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when scanning columns for: sql`)
+		getGridColumnQueryOutputForGridsApi = getGridColumnQueryOutputForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect5", func(t *testing.T) {
+		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
+		getQueryReferencedRowsForRow = func() string { return "xxx" } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying referenced rows: pq: syntax error`)
+		getQueryReferencedRowsForRow = getQueryReferencedRowsForRowImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect6", func(t *testing.T) {
+		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
+		getQueryReferencedRowsForRow = func() string {
+			return "SELECT NULL, NULL FROM rows WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4"
+		} // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when scanning referenced rows: sql`)
+		getQueryReferencedRowsForRow = getQueryReferencedRowsForRowImpl
+	})
+
+	t.Run("VerifyActualRowsWithDefect7", func(t *testing.T) {
+		getGridForGridsApiImpl := getGridForGridsApi
+		getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) { return nil, errors.New("xxx") } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `"error":"xxx"`)
+		getGridForGridsApi = getGridForGridsApiImpl
 	})
 }

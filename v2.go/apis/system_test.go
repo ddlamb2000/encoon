@@ -19,9 +19,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	testRouter = gin.Default()
-)
+var testRouter = gin.Default()
 
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)

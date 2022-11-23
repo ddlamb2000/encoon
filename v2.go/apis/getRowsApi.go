@@ -10,21 +10,28 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) (*model.Grid, []model.Row, int, bool, error) {
+func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) (*model.Grid, []model.Row, int, apiResponse) {
 	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
 	defer cancel()
 	if err != nil {
-		return nil, nil, 0, false, err
+		return nil, nil, 0, apiResponse{err: err}
 	}
 	go func() {
 		r.trace("getGridsRows()")
 		database.Sleep(r.ctx, dbName, userName, r.db)
 		grid, err := getGridForGridsApi(r, gridUuid)
 		if err != nil {
-			r.ctxChan <- apiResponse{err: err}
+			r.ctxChan <- apiResponse{err: err, system: true}
+			return
+		} else if grid == nil {
+			r.ctxChan <- apiResponse{err: r.logAndReturnError("Data not found.")}
 			return
 		}
 		rowSet, rowSetCount, err := getRowSetForGridsApi(r, uuid, grid, true)
+		if err != nil {
+			r.ctxChan <- apiResponse{err: err, system: true}
+			return
+		}
 		if uuid != "" && rowSetCount == 0 {
 			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return
@@ -35,10 +42,10 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 	select {
 	case <-r.ctx.Done():
 		r.trace("getGridsRows() - Cancelled")
-		return nil, nil, 0, true, r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err())
+		return nil, nil, 0, apiResponse{err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), timeOut: true}
 	case response := <-r.ctxChan:
 		r.trace("getGridsRows() - OK")
-		return response.grid, response.rows, response.rowCount, false, response.err
+		return response.grid, response.rows, response.rowCount, response
 	}
 }
 
@@ -65,13 +72,11 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 		}
 		rowSet = append(rowSet, *row)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, 0, r.logAndReturnError("Error after scanning rows: %v.", err)
-	}
 	return rowSet, len(rowSet), nil
 }
 
-func getRowsQueryForGridsApi(grid *model.Grid, uuid string) string {
+// function is available for mocking
+var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string {
 	selectStr := getRowsQueryColumnsForGridsApi(grid)
 	fromStr := "FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)

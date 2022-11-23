@@ -36,7 +36,8 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	return nil
 }
 
-func getInsertStatementForGridsApi(grid *model.Grid) string {
+// function is available for mocking
+var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 	var parameterIndex = 4
 	var columns, parameters = "", ""
 	for _, col := range grid.Columns {
@@ -139,7 +140,8 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	return nil
 }
 
-func getUpdateStatementForGridsApi(grid *model.Grid) string {
+// function is available for mocking
+var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 	var parameterIndex = 4
 	var columns = ""
 	for _, col := range grid.Columns {
@@ -171,11 +173,16 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	query := "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
+	query := getDeleteGridRowQuery()
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
 	if err := r.execContext(query, row.Uuid, grid.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	r.log("Row [%s] deleted.", row)
 	return nil
+}
+
+// function is available for mocking
+var getDeleteGridRowQuery = func() string {
+	return "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
 }

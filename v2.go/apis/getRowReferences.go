@@ -48,19 +48,20 @@ func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, refer
 		if err != nil {
 			return nil, r.logAndReturnError("Error when retrieving grid for referenced rows: %v.", err)
 		}
+		if grid == nil {
+			return nil, r.logAndReturnError("Grid not found for referenced rows: %v.", err)
+		}
 		rows, _, err := getRowSetForGridsApi(r, referencedUuid, grid, false)
 		if err != nil {
 			return nil, r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
 		}
 		rowSet = append(rowSet, rows...)
 	}
-	if err := rows.Err(); err != nil {
-		return nil, r.logAndReturnError("Error when scanning referenced rows: %v.", err)
-	}
 	return rowSet, nil
 }
 
-func getQueryReferencedRowsForRow() string {
+// function is available for mocking
+var getQueryReferencedRowsForRow = func() string {
 	return "SELECT text4, " +
 		"text5 " +
 		"FROM rows " +

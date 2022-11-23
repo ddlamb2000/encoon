@@ -10,6 +10,9 @@ httpServer:
   port: 8080
   jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
 
+log: true
+trace: true
+
 # Database configuration
 database:
 
