@@ -33,12 +33,11 @@ func postInsertGridRow(ctx context.Context, dbName string, db *sql.DB, userUuid,
 	configuration.Trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
 	insertStatement := getInsertStatementForGridsApi(grid)
 	insertValues := getInsertValuesForGridsApi(userUuid, grid, row)
-	_, err := db.ExecContext(ctx, insertStatement, insertValues...)
-	if err != nil {
+	if _, err := db.ExecContext(ctx, insertStatement, insertValues...); err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Insert row error on %q: %v.", insertStatement, err)
 	}
 	configuration.Log(dbName, user, "Row [%s] inserted into %q.", row, grid.Uuid)
-	return err
+	return nil
 }
 
 func getInsertStatementForGridsApi(grid *model.Grid) string {

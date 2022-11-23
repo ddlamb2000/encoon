@@ -28,15 +28,33 @@ func persistGridReferenceData(ctx context.Context, dbName string, db *sql.DB, us
 func postInsertReferenceRow(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	configuration.Trace(dbName, user, "postInsertReferenceRow()")
 	insertStatement := getInsertStatementForRefereceRow()
-	configuration.Trace(dbName, user, "postInsertReferenceRow() - ref.FromUuid=%v, addedRows=%v", ref.FromUuid, addedRows)
 	rowUuid := getUuidFromRowsForTmpUuid(addedRows, ref.FromUuid)
-	configuration.Trace(dbName, user, "postInsertReferenceRow() - rowUuid=%v", rowUuid)
 	_, err := db.ExecContext(ctx, insertStatement, utils.GetNewUUID(), userUuid, model.UuidRelationships, ref.ColumnName, grid.Uuid, rowUuid, ref.ToGridUuid, ref.ToUuid)
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, user, "Insert referenced row error on %q: %v.", insertStatement, err)
 	}
 	configuration.Log(dbName, user, "Referenced row [%v] inserted into %q.", ref, grid.Uuid)
 	return err
+}
+
+func postGridSetOwnership(ctx context.Context, dbName string, db *sql.DB, userUuid, user string, grid *model.Grid, addedRows []*model.Row) error {
+	configuration.Trace(dbName, user, "postGridSetOwnership()")
+	if grid.Uuid == model.UuidGrids {
+		for _, row := range addedRows {
+			ref := gridReferencePost{
+				ColumnName: "relationship3",
+				FromUuid:   row.Uuid,
+				ToGridUuid: model.UuidUsers,
+				ToUuid:     userUuid,
+			}
+			err := postInsertReferenceRow(ctx, dbName, db, userUuid, user, grid, addedRows, ref)
+			if err != nil {
+				_ = RollbackTransaction(ctx, dbName, db, userUuid, user)
+				return err
+			}
+		}
+	}
+	return nil
 }
 
 func getUuidFromRowsForTmpUuid(addedRows []*model.Row, tmpUuid string) string {

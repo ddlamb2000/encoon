@@ -117,6 +117,10 @@ func postGridsRows(ct context.Context, dbName, userUuid, user, gridUuid string, 
 			ctxChan <- apiPostResponse{err}
 			return
 		}
+		if err := postGridSetOwnership(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded); err != nil {
+			ctxChan <- apiPostResponse{err}
+			return
+		}
 		if err := CommitTransaction(ctx, dbName, db, userUuid, user); err != nil {
 			ctxChan <- apiPostResponse{err}
 			return
