@@ -57,31 +57,19 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 }
 
 func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
-	grid.Columns = make([]*model.Column, 0)
-	statement := getGridColumsQueryForGridsApi()
-	r.trace("getColumnsForGridsApi() - statement=%s", statement)
-	rows, err := r.db.QueryContext(
-		r.ctx,
-		statement,
-		model.UuidRelationships,
-		"relationship1",
-		model.UuidGrids,
-		grid.Uuid,
-		model.UuidColumns,
-		model.UuidRelationships,
-		"relationship1",
-		model.UuidColumnTypes,
-		model.UuidRelationships,
-		"relationship2",
-	)
+	query := getGridColumsQueryForGridsApi()
+	parms := getGridColumsQueryParametersForGridsApi(grid)
+	r.trace("getColumnsForGridsApi(%v) - statement=%s, parameters=%v", grid, query, parms)
+	rows, err := r.queryContext(query, parms...)
 	if err != nil {
-		return r.logAndReturnError("Error when querying columns from %q using %q: %v.", grid.Uuid, statement, err)
+		return r.logAndReturnError("Error when querying columns from %q: %v.", grid.Uuid, err)
 	}
 	defer rows.Close()
+	grid.Columns = make([]*model.Column, 0)
 	for rows.Next() {
 		var column = new(model.Column)
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
-			return r.logAndReturnError("Error when scanning columns for %q using %q: %v.", grid.Uuid, statement, err)
+			return r.logAndReturnError("Error when scanning columns for %q: %v.", grid.Uuid, err)
 		}
 		r.trace("Got column for %q: [%s].", grid.Uuid, column)
 		grid.Columns = append(grid.Columns, *&column)
@@ -122,6 +110,21 @@ func getGridColumsQueryForGridsApi() string {
 		"ON grid.gridUuid = rel3.text4 " +
 		"AND grid.Uuid = rel3.text5 " +
 		"ORDER BY col.text1 "
+}
+
+func getGridColumsQueryParametersForGridsApi(grid *model.Grid) []any {
+	parameters := make([]any, 0)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship1")
+	parameters = append(parameters, model.UuidGrids)
+	parameters = append(parameters, grid.Uuid)
+	parameters = append(parameters, model.UuidColumns)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship1")
+	parameters = append(parameters, model.UuidColumnTypes)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship2")
+	return parameters
 }
 
 func getGridColumnQueryOutputForGridsApi(column *model.Column) []any {

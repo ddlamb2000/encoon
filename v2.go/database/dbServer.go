@@ -8,19 +8,25 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"sync"
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
 	_ "github.com/lib/pq"
 )
 
-var dbs = make(map[string]*sql.DB)
+var dbs = struct {
+	sync.RWMutex
+	m map[string]*sql.DB
+}{m: make(map[string]*sql.DB)}
 
 func GetDbByName(dbName string) (*sql.DB, error) {
 	if dbName == "" {
 		return nil, configuration.LogAndReturnError("", "", "Missing database name parameter.")
 	}
-	db := dbs[dbName]
+	dbs.RLock()
+	db := dbs.m[dbName]
+	dbs.RUnlock()
 	if db != nil {
 		return db, nil
 	}
@@ -32,7 +38,9 @@ func GetDbByName(dbName string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbs[dbName] = db
+	dbs.Lock()
+	dbs.m[dbName] = db
+	dbs.Unlock()
 	return db, nil
 }
 

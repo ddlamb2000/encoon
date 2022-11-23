@@ -61,6 +61,10 @@ func (r apiRequestParameters) execContext(query string, args ...any) error {
 	return err
 }
 
+func (r apiRequestParameters) queryContext(query string, args ...any) (*sql.Rows, error) {
+	return r.db.QueryContext(r.ctx, query, args...)
+}
+
 func (r apiRequestParameters) beginTransaction() error {
 	r.trace("beginTransaction()")
 	if err := r.execContext("BEGIN"); err != nil {
