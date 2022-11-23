@@ -4,13 +4,14 @@
 class GridTable extends React.Component {
 	render() {
 		return (
-			<table className="table table-hover table-sm table-responsive">
+			<table className="table table-hover table-sm table-responsive align-middle">
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
 						{this.props.columns && this.props.columns.map(
 							column => <th scope="col" key={column.name}>{column.label}<br/><small>{column.name}</small></th>
 						)}
+						<th className="text-end" scope="col">Revision<br/><small>revision</small></th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -80,6 +81,7 @@ class GridRow extends React.Component {
 										dbName={this.props.dbName}
 										token={this.props.token} />
 				)}
+				<td className="text-end">{this.props.row.revision}</td>
 			</tr>
 		)
 	}
