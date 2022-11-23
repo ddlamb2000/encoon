@@ -21,7 +21,6 @@ func RunSystemTestPost(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":8`)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
 	})
 
@@ -29,7 +28,6 @@ func RunSystemTestPost(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"countRows":8`)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
 	})
 
@@ -276,7 +274,6 @@ func RunSystemTestPost(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":9`)
 		jsonStringContains(t, responseData, `"text1":"Grid02","text2":"Test grid 02","text3":"journal"`)
 	})
 

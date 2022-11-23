@@ -1,3 +1,6 @@
+// εncooη : data structuration, presentation and navigation.
+// Copyright David Lambert 2022
+
 package apis
 
 import (
@@ -123,7 +126,6 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":10`)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
 	})
 
@@ -148,7 +150,6 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":10`)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
 	})
 

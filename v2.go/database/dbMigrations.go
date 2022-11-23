@@ -2226,7 +2226,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidAccessLevel + "', " +
-				"'Read access')",
+				"'View access')",
 
 			104: "INSERT INTO rows " +
 				"(uuid, " +
@@ -2246,7 +2246,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidRootUser + "', " +
 				"true, " +
 				"'" + model.UuidAccessLevel + "', " +
-				"'Write access')",
+				"'Edit access')",
 
 			105: "INSERT INTO rows " +
 				"(uuid, " +
@@ -2459,6 +2459,518 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 				"'" + model.UuidGridColumnOwner + "', " +
 				"'" + model.UuidGrids + "', " +
 				"'" + model.UuidUsers + "')",
+
+			113: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2) " +
+				"VALUES ('" + model.UuidGridColumnReadAccessUsers + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidColumns + "', " +
+				"'View access', " +
+				"'relationship4')",
+
+			114: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnReadAccessUsers + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidReferenceColumnType + "')",
+
+			115: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnReadAccessUsers + "')",
+
+			116: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship2', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnReadAccessUsers + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidUsers + "')",
+
+			117: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2) " +
+				"VALUES ('" + model.UuidGridColumnWriteAccessUsers + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidColumns + "', " +
+				"'Edit access', " +
+				"'relationship5')",
+
+			118: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnWriteAccessUsers + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidReferenceColumnType + "')",
+
+			119: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship1', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnWriteAccessUsers + "')",
+
+			120: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship2', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidGridColumnWriteAccessUsers + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidUsers + "')",
+
+			121: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			122: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			123: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			124: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidMigrations + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			125: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidTransactions + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			126: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumnTypes + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			127: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidRelationships + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			128: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship3', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidAccessLevel + "', " +
+				"'" + model.UuidUsers + "', " +
+				"'" + model.UuidRootUser + "')",
+
+			129: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship2', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidAccessLevel + "', " +
+				"'" + model.UuidAccessLevelSpecialAccess + "')",
+
+			130: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1, " +
+				"text2, " +
+				"text3, " +
+				"text4, " +
+				"text5) " +
+				"VALUES ('" + utils.GetNewUUID() + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidRelationships + "', " +
+				"'relationship2', " +
+				"'" + model.UuidGrids + "', " +
+				"'" + model.UuidColumns + "', " +
+				"'" + model.UuidAccessLevel + "', " +
+				"'" + model.UuidAccessLevelSpecialAccess + "')",
+
+			132: "INSERT INTO rows " +
+				"(uuid, " +
+				"revision, " +
+				"created, " +
+				"updated, " +
+				"createdBy, " +
+				"updatedBy, " +
+				"enabled, " +
+				"gridUuid, " +
+				"text1) " +
+				"VALUES ('" + model.UuidAccessLevelSpecialAccess + "', " +
+				"1, " +
+				"NOW(), " +
+				"NOW(), " +
+				"'" + model.UuidRootUser + "', " +
+				"'" + model.UuidRootUser + "', " +
+				"true, " +
+				"'" + model.UuidAccessLevel + "', " +
+				"'Special access')",
 		})
 	if err != nil {
 		return err
