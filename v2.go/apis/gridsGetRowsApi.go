@@ -52,38 +52,31 @@ func getUserUuid(c *gin.Context, dbName string) (string, string, error) {
 	return userUuid, user, nil
 }
 
-type apiGetResponse struct {
-	grid     *model.Grid
-	rows     []model.Row
-	rowCount int
-	err      error
-}
-
 func getGridsRows(ct context.Context, dbName, gridUuid, uuid, user string) (*model.Grid, []model.Row, int, bool, error) {
 	configuration.Trace(dbName, user, "getGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return nil, nil, 0, false, err
 	}
-	ctxChan := make(chan apiGetResponse, 1)
+	ctxChan := make(chan apiResponse, 1)
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, user, db); err != nil {
-			ctxChan <- apiGetResponse{nil, nil, 0, configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
+			ctxChan <- apiResponse{err: configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
 			return
 		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUuid)
 		if err != nil {
-			ctxChan <- apiGetResponse{nil, nil, 0, err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		rowSet, rowSetCount, err := getRowSetForGridsApi(ctx, db, dbName, user, uuid, grid, true)
 		if uuid != "" && rowSetCount == 0 {
-			ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, configuration.LogAndReturnError(dbName, user, "Data not found.")}
+			ctxChan <- apiResponse{grid: grid, err: configuration.LogAndReturnError(dbName, user, "Data not found.")}
 			return
 		}
-		ctxChan <- apiGetResponse{grid, rowSet, rowSetCount, err}
+		ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount}
 	}()
 	select {
 	case <-ctx.Done():

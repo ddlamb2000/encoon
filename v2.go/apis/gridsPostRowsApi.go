@@ -70,62 +70,58 @@ func PostGridsRowsApi(c *gin.Context) {
 	c.JSON(http.StatusCreated, gin.H{"grid": grid, "rows": rowSet, "countRows": rowSetCount})
 }
 
-type apiPostResponse struct {
-	err error
-}
-
 func postGridsRows(ct context.Context, dbName, userUuid, user, gridUuid string, payload gridPost) (bool, error) {
 	configuration.Trace(dbName, user, "postGridsRows()")
 	db, err := database.GetDbByName(dbName)
 	if err != nil {
 		return false, err
 	}
-	ctxChan := make(chan apiPostResponse, 1)
+	ctxChan := make(chan apiResponse, 1)
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 	defer cancel()
 	go func() {
 		if err := database.TestSleep(ctx, dbName, user, db); err != nil {
-			ctxChan <- apiPostResponse{configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
+			ctxChan <- apiResponse{err: configuration.LogAndReturnError(dbName, user, "Sleep interrupted: %v.", err)}
 			return
 		}
 		grid, err := getGridForGridsApi(ctx, db, dbName, user, gridUuid)
 		if err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := BeginTransaction(ctx, dbName, db, userUuid, user); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, postInsertGridRow); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsEdited, postUpdateGridRow); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := persistGridRowData(ctx, dbName, db, userUuid, user, grid, payload.RowsDeleted, postDeleteGridRow); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesAdded, postInsertReferenceRow); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := persistGridReferenceData(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded, payload.ReferenceValuesRemoved, postDeleteReferenceRow); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := postGridSetOwnership(ctx, dbName, db, userUuid, user, grid, payload.RowsAdded); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
 		if err := CommitTransaction(ctx, dbName, db, userUuid, user); err != nil {
-			ctxChan <- apiPostResponse{err}
+			ctxChan <- apiResponse{err: err}
 			return
 		}
-		ctxChan <- apiPostResponse{nil}
+		ctxChan <- apiResponse{}
 	}()
 	configuration.Trace(dbName, user, "postGridsRows() - Started")
 	select {
