@@ -27,10 +27,11 @@ func TestSetPath(t *testing.T) {
 
 func TestRowAsString(t *testing.T) {
 	row := Row{
-		Uuid: "12345",
+		Uuid:          "12345",
+		DisplayString: "xyz",
 	}
 	got := row.String()
-	expect := "12345"
+	expect := "xyz [12345]"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}

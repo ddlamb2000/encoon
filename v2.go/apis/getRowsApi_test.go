@@ -15,8 +15,8 @@ func TestGetRowsWhereQueryForGridsApi(t *testing.T) {
 	var tests = []struct {
 		testName, uuid, expect string
 	}{
-		{"withUuid", "1234", " WHERE uuid = $2 AND griduuid = $1 "},
-		{"withoutUuid", "", " WHERE griduuid = $1 "},
+		{"withUuid", "1234", "WHERE griduuid = $1 AND uuid = $2 "},
+		{"withoutUuid", "", "WHERE griduuid = $1 "},
 	}
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {

@@ -3024,8 +3024,6 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migr
 			_, err = db.Exec(insertMigrationStatement, newUuid, migration, command)
 			if err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Can't insert into migrations: %v", err)
-			} else {
-				configuration.Log(dbName, "", "Migration %v executed.", migration)
 			}
 		}
 	}

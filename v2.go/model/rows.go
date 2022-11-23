@@ -44,7 +44,7 @@ type Row struct {
 }
 
 func (row Row) String() string {
-	return row.Uuid
+	return row.DisplayString + " [" + row.Uuid + "]"
 }
 
 func (row *Row) SetPathAndDisplayString(dbName string) {

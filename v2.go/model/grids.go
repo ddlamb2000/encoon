@@ -10,6 +10,9 @@ type Grid struct {
 	Columns []*Column `json:"columns,omitempty" yaml:"columns,omitempty"`
 }
 
-func (grid *Grid) SetPath(dbName string) {
+func (grid *Grid) SetPathAndDisplayString(dbName string) {
 	grid.Path = fmt.Sprintf("/%s/%s", dbName, grid.Uuid)
+	if grid.Text1 != nil {
+		grid.DisplayString = fmt.Sprintf("%s", *grid.Text1)
+	}
 }

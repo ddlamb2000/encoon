@@ -45,11 +45,40 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 	}
 }
 
+func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
+	query := getRowsQueryForGridsApi(grid, uuid)
+	parms := getRowsQueryParametersForGridsApi(grid.Uuid, uuid)
+	r.trace("getRowSetForGridsApi(%s, %s, %v) - query=%s ; parms=%s", uuid, grid, getReferences, query, parms)
+	rows, err := r.db.QueryContext(r.ctx, query, parms...)
+	if err != nil {
+		return nil, 0, r.logAndReturnError("Error when querying rows: %v.", err)
+	}
+	defer rows.Close()
+	var rowSet = make([]model.Row, 0)
+	for rows.Next() {
+		var row = new(model.Row)
+		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
+			return nil, 0, r.logAndReturnError("Error when scanning rows: %v.", err)
+		}
+		row.SetPathAndDisplayString(r.dbName)
+		if getReferences {
+			if err := getRelationshipsForRow(r, grid, row); err != nil {
+				return nil, 0, err
+			}
+		}
+		rowSet = append(rowSet, *row)
+	}
+	if err := rows.Err(); err != nil {
+		return nil, 0, r.logAndReturnError("Error after scanning rows: %v.", err)
+	}
+	return rowSet, len(rowSet), nil
+}
+
 func getRowsQueryForGridsApi(grid *model.Grid, uuid string) string {
 	selectStr := getRowsQueryColumnsForGridsApi(grid)
-	fromStr := " FROM rows "
+	fromStr := "FROM rows "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	orderByStr := " ORDER BY text1, text2, text3, text4 "
+	orderByStr := "ORDER BY text1, text2, text3, text4 "
 	return selectStr + fromStr + whereStr + orderByStr
 }
 
@@ -73,9 +102,9 @@ func getRowsQueryColumnsForGridsApi(grid *model.Grid) string {
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
 	if uuid == "" {
-		return " WHERE griduuid = $1 "
+		return "WHERE griduuid = $1 "
 	}
-	return " WHERE uuid = $2 AND griduuid = $1 "
+	return "WHERE griduuid = $1 AND uuid = $2 "
 }
 
 func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
@@ -85,34 +114,6 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 		parameters = append(parameters, uuid)
 	}
 	return parameters
-}
-
-func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
-	r.trace("getRowSetForGridsApi()")
-	rows, err := r.db.QueryContext(r.ctx, getRowsQueryForGridsApi(grid, uuid), getRowsQueryParametersForGridsApi(grid.Uuid, uuid)...)
-	if err != nil {
-		return nil, 0, r.logAndReturnError("Error when querying rows: %v.", err)
-	}
-	defer rows.Close()
-	var rowSet = make([]model.Row, 0)
-	for rows.Next() {
-		var row = new(model.Row)
-		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
-			return nil, 0, r.logAndReturnError("Error when scanning rows for %q: %v.", grid.Uuid, err)
-		}
-		row.SetPathAndDisplayString(r.dbName)
-		if getReferences {
-			if err := getRelationshipsForRow(r, grid, row); err != nil {
-				return nil, 0, err
-			}
-		}
-		rowSet = append(rowSet, *row)
-	}
-	if err := rows.Err(); err != nil {
-		return nil, 0, r.logAndReturnError("Error when scanning rows for %q: %v.", grid.Uuid, err)
-	}
-	r.trace("Got %d rows from %q.", len(rowSet), grid.Uuid)
-	return rowSet, len(rowSet), nil
 }
 
 func getRowsQueryOutputForGridsApi(grid *model.Grid, row *model.Row) []any {

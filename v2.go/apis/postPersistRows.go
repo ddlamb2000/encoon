@@ -24,16 +24,15 @@ func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.
 }
 
 func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	r.trace("postInsertGridRow()")
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
-	r.trace("postInsertGridRow() - row.TmpUuid=%v, row.Uuid=%v, row=%v", row.TmpUuid, row.Uuid, row)
-	insertStatement := getInsertStatementForGridsApi(grid)
-	insertValues := getInsertValuesForGridsApi(r.userUuid, grid, row)
-	if err := r.execContext(insertStatement, insertValues...); err != nil {
-		return r.logAndReturnError("Insert row error on %q: %v.", insertStatement, err)
+	query := getInsertStatementForGridsApi(grid)
+	parms := getInsertValuesForGridsApi(r.userUuid, grid, row)
+	r.trace("postInsertGridRow(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
+	if err := r.execContext(query, parms...); err != nil {
+		return r.logAndReturnError("Insert row error: %v.", err)
 	}
-	r.log("Row [%s] inserted into %q.", row, grid.Uuid)
+	r.log("Row [%s] inserted.", row)
 	return nil
 }
 
@@ -130,13 +129,13 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 }
 
 func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	r.trace("postUpdateGridRow()")
-	updateStatement := getUpdateStatementForGridsApi(grid)
-	updateValues := getUpdateValuesForGridsApi(r.userUuid, grid, row)
-	if err := r.execContext(updateStatement, updateValues...); err != nil {
-		return r.logAndReturnError("Update row error on %q: %v.", updateStatement, err)
+	query := getUpdateStatementForGridsApi(grid)
+	parms := getUpdateValuesForGridsApi(r.userUuid, grid, row)
+	r.trace("postUpdateGridRow(%s, %s) - query=%s ; parms=%s", grid, row, query, parms)
+	if err := r.execContext(query, parms...); err != nil {
+		return r.logAndReturnError("Update row error: %v.", err)
 	}
-	r.log("Row [%s] updated in %q.", row, grid.Uuid)
+	r.log("Row [%s] updated.", row)
 	return nil
 }
 
@@ -172,14 +171,11 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	r.trace("postDeleteGridRow()")
-	if err := r.execContext(getDeleteRowStatement(), row.Uuid, grid.Uuid); err != nil {
+	query := "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
+	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
+	if err := r.execContext(query, row.Uuid, grid.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
-	r.log("Row [%s] deleted in %q.", row, grid.Uuid)
+	r.log("Row [%s] deleted.", row)
 	return nil
-}
-
-func getDeleteRowStatement() string {
-	return "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
 }

@@ -9,16 +9,16 @@ import (
 
 func getGridForGridsApi(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
-	statement := getGridQueryForGridsApi()
-	if err := r.db.QueryRowContext(r.ctx, statement, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
-		return nil, r.logAndReturnError("Error when retrieving grid definition %q using %q: %v.", gridUuid, statement, err)
+	query := getGridQueryForGridsApi()
+	r.trace("getGridForGridsApi(%s) - query=%s", gridUuid, query)
+	if err := r.db.QueryRowContext(r.ctx, query, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+		return nil, r.logAndReturnError("Error when retrieving grid definition: %v.", err)
 	}
-	grid.SetPath(r.dbName)
+	grid.SetPathAndDisplayString(r.dbName)
 	err := getColumnsForGridsApi(r, grid)
 	if err != nil {
 		return nil, err
 	}
-	r.trace("Got grid %q: [%s].", gridUuid, grid)
 	return grid, nil
 }
 
@@ -59,19 +59,19 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	query := getGridColumsQueryForGridsApi()
 	parms := getGridColumsQueryParametersForGridsApi(grid)
-	r.trace("getColumnsForGridsApi(%v) - statement=%s, parameters=%v", grid, query, parms)
+	r.trace("getColumnsForGridsApi(%s) - query=%s ; parms=%v", grid, query, parms)
 	rows, err := r.queryContext(query, parms...)
 	if err != nil {
-		return r.logAndReturnError("Error when querying columns from %q: %v.", grid.Uuid, err)
+		return r.logAndReturnError("Error when querying columns: %v.", err)
 	}
 	defer rows.Close()
 	grid.Columns = make([]*model.Column, 0)
 	for rows.Next() {
 		var column = new(model.Column)
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
-			return r.logAndReturnError("Error when scanning columns for %q: %v.", grid.Uuid, err)
+			return r.logAndReturnError("Error when scanning columns for: %v.", err)
 		}
-		r.trace("Got column for %q: [%s].", grid.Uuid, column)
+		r.trace("Got column for %s: %s.", grid, column)
 		grid.Columns = append(grid.Columns, *&column)
 	}
 	return nil

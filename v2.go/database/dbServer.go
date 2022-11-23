@@ -30,6 +30,8 @@ func GetDbByName(dbName string) (*sql.DB, error) {
 	if db != nil {
 		return db, nil
 	}
+	dbs.Lock()
+	defer dbs.Unlock()
 	dbConfiguration, err := findDbConfiguration(dbName)
 	if err != nil {
 		return nil, err
@@ -38,9 +40,7 @@ func GetDbByName(dbName string) (*sql.DB, error) {
 	if err != nil {
 		return nil, err
 	}
-	dbs.Lock()
 	dbs.m[dbName] = db
-	dbs.Unlock()
 	return db, nil
 }
 
@@ -83,14 +83,12 @@ func TestSleep(ctx context.Context, dbName, user string, db *sql.DB) error {
 	dbConfiguration := configuration.GetDatabaseConfiguration(dbName)
 	sleepTime := dbConfiguration.TestSleepTime
 	if sleepTime > 0 {
+		configuration.Log(dbName, user, "*** START SLEEP *** It's now %v.", time.Now())
 		wait := float32(sleepTime) * (1.0 + rand.Float32()) / 2.0 / 1000.0
 		st := fmt.Sprintf("SELECT pg_sleep(%.2f)", wait)
-		configuration.Log(dbName, user, "*** BEFORE SLEEP It's now %v.", time.Now())
 		_, err := db.QueryContext(ctx, st)
-		configuration.Log(dbName, user, "*** AFTER SLEEP It's now %v.", time.Now())
-		if err != nil {
-			return err
-		}
+		configuration.Log(dbName, user, "*** STOP SLEEP *** It's now %v.", time.Now())
+		return err
 	}
 	return nil
 }

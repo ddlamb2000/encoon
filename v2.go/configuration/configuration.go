@@ -19,6 +19,7 @@ import (
 type Configuration struct {
 	AppName    string                   `yaml:"appName"`
 	AppTag     string                   `yaml:"appTag"`
+	Log        bool                     `yaml:"log"`
 	Trace      bool                     `yaml:"trace"`
 	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
 	Databases  []*DatabaseConfiguration `yaml:"database"`
@@ -42,10 +43,10 @@ type DatabaseConfiguration struct {
 }
 
 var (
+	appConfigurationMutex sync.RWMutex
 	appConfiguration      Configuration
 	configurationFileName string
 	configurationHash     string
-	appConfigurationMutex sync.Mutex
 )
 
 func LoadConfiguration(fileName string) error {
@@ -55,8 +56,6 @@ func LoadConfiguration(fileName string) error {
 
 func loadConfigurationFromFile() error {
 	Log("", "", "Loading configuration from %v.", configurationFileName)
-	appConfigurationMutex.Lock()
-	defer appConfigurationMutex.Unlock()
 	f, err := ioutil.ReadFile(configurationFileName)
 	if err != nil {
 		return LogAndReturnError("", "", "Error loading configuration from file %q: %v.", configurationFileName, err)
@@ -72,8 +71,10 @@ func loadConfigurationFromFile() error {
 	if err != nil {
 		return err
 	}
+	appConfigurationMutex.Lock()
 	appConfiguration = *newConfiguration
 	configurationHash = hash
+	appConfigurationMutex.Unlock()
 	Log("", "", "Configuration loaded from file %q.", configurationFileName)
 	return nil
 }
@@ -96,6 +97,8 @@ func validateConfiguration(conf *Configuration) error {
 }
 
 func GetConfiguration() Configuration {
+	appConfigurationMutex.RLock()
+	defer appConfigurationMutex.RUnlock()
 	return appConfiguration
 }
 
@@ -154,7 +157,9 @@ func WatchConfigurationChanges(fileName string) {
 }
 
 func Log(dbName, userName, format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+format+"\n", a...)
+	if appConfiguration.Log {
+		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+format+"\n", a...)
+	}
 }
 
 func LogError(dbName, userName, format string, a ...any) {
@@ -174,5 +179,12 @@ func Trace(dbName, userName, format string, a ...any) {
 }
 
 func getLogPrefix(dbName, userName string) string {
-	return "[" + appConfiguration.AppName + "] [" + dbName + "] [" + userName + "] "
+	if userName != "" {
+		return "[" + appConfiguration.AppName + "] [" + dbName + "] [" + userName + "] "
+	} else if dbName != "" {
+		return "[" + appConfiguration.AppName + "] [" + dbName + "] "
+	} else if appConfiguration.AppName != "" {
+		return "[" + appConfiguration.AppName + "] "
+	}
+	return ""
 }
