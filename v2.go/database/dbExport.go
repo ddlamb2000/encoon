@@ -24,7 +24,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	if err != nil {
 		return err
 	}
-	configuration.Trace(dbName, "", "ExportDb()")
+	configuration.Log(dbName, "", "ExportDb()")
 
 	rows, err := db.QueryContext(ct, getRowsQueryForExportDb())
 	if err != nil {
@@ -40,23 +40,31 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		rowSet = append(rowSet, *row)
 	}
 	configuration.Trace(dbName, "", "ExportDb() - end of fetching rows.")
-	out, err := yaml.Marshal(rowSet)
+	out, err := convertYaml(rowSet)
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when marshalling rows: %v.", err)
 	}
-	_, err = f.Write(out)
-	if err != nil {
+	if err = exportToFile(f, out); err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when writing file: %v.", err)
 	}
-	configuration.Trace(dbName, "", "ExportDb() - done.")
+	configuration.Log(dbName, "", "ExportDb() - done.")
 	return nil
 }
 
-func getRowsQueryForExportDb() string {
-	selectStr := getRowsQueryColumnsForExportDb()
-	fromStr := " FROM rows "
-	orderByStr := " ORDER BY griduuid, uuid "
-	return selectStr + fromStr + orderByStr
+// function is available for mocking
+var convertYaml = func(rowSet []model.Row) ([]byte, error) {
+	return yaml.Marshal(rowSet)
+}
+
+// function is available for mocking
+var exportToFile = func(f *os.File, out []byte) error {
+	_, err := f.Write(out)
+	return err
+}
+
+// function is available for mocking
+var getRowsQueryForExportDb = func() string {
+	return getRowsQueryColumnsForExportDb() + "FROM rows ORDER BY created"
 }
 
 func getRowsQueryColumnsForExportDb() string {
@@ -90,7 +98,8 @@ func getRowsQueryColumnsForExportDb() string {
 		"revision "
 }
 
-func getRowsQueryOutputForExportDb(row *model.Row) []any {
+// function is available for mocking
+var getRowsQueryOutputForExportDb = func(row *model.Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
 	output = append(output, &row.GridUuid)
