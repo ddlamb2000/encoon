@@ -44,18 +44,13 @@ func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, refer
 		if err := rows.Scan(&referencedGridUuid, &referencedUuid); err != nil {
 			return nil, r.logAndReturnError("Error when scanning referenced rows: %v.", err)
 		}
-		grid, err := getGridForGridsApi(r, referencedGridUuid)
-		if err != nil {
-			return nil, r.logAndReturnError("Error when retrieving grid for referenced rows: %v.", err)
+		grid, _ := getGridForGridsApi(r, referencedGridUuid)
+		if grid != nil {
+			rows, _, err := getRowSetForGridsApi(r, referencedUuid, grid, false)
+			if err == nil {
+				rowSet = append(rowSet, rows...)
+			}
 		}
-		if grid == nil {
-			return nil, r.logAndReturnError("Grid not found for referenced rows: %v.", err)
-		}
-		rows, _, err := getRowSetForGridsApi(r, referencedUuid, grid, false)
-		if err != nil {
-			return nil, r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
-		}
-		rowSet = append(rowSet, rows...)
 	}
 	return rowSet, nil
 }

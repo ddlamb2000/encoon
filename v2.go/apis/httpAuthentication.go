@@ -25,7 +25,7 @@ type JWTtoken struct {
 
 func authentication(c *gin.Context) {
 	dbName := c.Param("dbName")
-	if dbName == "" {
+	if dbName == "" || dbName == "undefined" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "No database parameter"})
 		return
 	}
@@ -45,22 +45,23 @@ func authentication(c *gin.Context) {
 	tokenString, err := getNewToken(dbName, login.Id, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		c.Abort()
-		c.JSON(http.StatusServiceUnavailable, gin.H{"error": err.Error()})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
 	logUri(c, dbName, login.Id)
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-func getNewToken(dbName string, user string, userUuid string, firstName string, lastName string, expiration time.Time) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
+// function is available for mocking
+var getNewToken = func(dbName, user, userUuid, firstName, lastName string, expiration time.Time) (string, error) {
+	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
 		"user":          user,
 		"userUuid":      userUuid,
 		"userFirstName": firstName,
 		"userLastName":  lastName,
 		"expires":       expiration,
 	})
-	configuration.Log(dbName, user, "Token generated, expiration: %v", expiration)
+	configuration.Trace(dbName, user, "Token generated, expiration: %v", expiration)
 	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
 }
@@ -68,7 +69,7 @@ func getNewToken(dbName string, user string, userUuid string, firstName string, 
 func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbName := c.Param("dbName")
-		if dbName == "" {
+		if dbName == "" || dbName == "undefined" {
 			c.Abort()
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "No database parameter."})
 			return

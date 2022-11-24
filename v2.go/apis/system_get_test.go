@@ -52,6 +52,20 @@ func RunSystemTestGet(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Description","name":"text2","type":"Text"`)
 	})
 
+	t.Run("VerifyDbNotConfigured", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("baddb", "root", model.UuidRootUser, "/baddb/api/v1/xxx")
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `Unable to connect to database: dial tcp`)
+	})
+
+	t.Run("VerifyDbNotConfigured2", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/undefined/api/v1/xxx")
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusUnauthorized)
+		jsonStringContains(t, responseData, `{"error":"No database parameter."}`)
+	})
+
 	t.Run("VerifyMissingRow", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidRootUser)
 		errorIsNil(t, err)
@@ -155,5 +169,26 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusInternalServerError)
 		jsonStringContains(t, responseData, `"error":"xxx"`)
 		getGridForGridsApi = getGridForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
+		getRowsQueryParametersForGridsApiImpl := getRowsQueryParametersForGridsApi
+		getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any { return nil }
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying rows: pq`)
+		getRowsQueryParametersForGridsApi = getRowsQueryParametersForGridsApiImpl
+	})
+
+	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
+		getRowsQueryOutputForGridsApiImpl := getRowsQueryOutputForGridsApi
+		getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any { return nil }
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when scanning rows: sql
+		`)
+		getRowsQueryOutputForGridsApi = getRowsQueryOutputForGridsApiImpl
 	})
 }

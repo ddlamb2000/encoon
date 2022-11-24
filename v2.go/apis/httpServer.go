@@ -22,6 +22,7 @@ func SetApiRoutes(r *gin.Engine) {
 		v1.GET("/:gridUuid", authMiddleware(), GetGridsRowsApi)
 		v1.GET("/:gridUuid/:uuid", authMiddleware(), GetGridsRowsApi)
 		v1.POST("/:gridUuid", authMiddleware(), PostGridsRowsApi)
+		v1.POST("/:gridUuid/:uuid", authMiddleware(), PostGridsRowsApi)
 	}
 }
 

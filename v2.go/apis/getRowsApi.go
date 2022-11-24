@@ -109,7 +109,8 @@ func getRowsWhereQueryForGridsApi(uuid string) string {
 	return "WHERE griduuid = $1 AND uuid = $2 "
 }
 
-func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
+// function is available for mocking
+var getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, gridUuid)
 	if uuid != "" {
@@ -118,7 +119,8 @@ func getRowsQueryParametersForGridsApi(gridUuid, uuid string) []any {
 	return parameters
 }
 
-func getRowsQueryOutputForGridsApi(grid *model.Grid, row *model.Row) []any {
+// function is available for mocking
+var getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any {
 	output := make([]any, 0)
 	output = append(output, &row.Uuid)
 	output = append(output, &row.GridUuid)

@@ -21,7 +21,7 @@ var dbs = struct {
 }{m: make(map[string]*sql.DB)}
 
 func GetDbByName(dbName string) (*sql.DB, error) {
-	if dbName == "" {
+	if dbName == "" || dbName == "undefined" {
 		return nil, configuration.LogAndReturnError("", "", "Missing database name parameter.")
 	}
 	dbs.RLock()

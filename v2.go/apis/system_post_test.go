@@ -447,4 +447,21 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `Delete row error: pq: syntax error`)
 		getDeleteGridRowQuery = getDeleteGridRowQueryImpl
 	})
+
+	t.Run("CreateSingleGridDefect7", func(t *testing.T) {
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + uuidRow + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `"error":"Data not found."`)
+	})
 }

@@ -4,6 +4,7 @@
 package apis
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -44,6 +45,24 @@ func RunSystemTestAuth(t *testing.T) {
 		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
 
 		expect := utils.CleanupStrings(`{"error":"Invalid username or passphrase: sql: no rows in result set."}`)
+		response := utils.CleanupStrings(string(responseData))
+
+		if err != nil {
+			t.Errorf(`Response %v for %v: %v.`, response, w, err)
+		}
+		if response != expect {
+			t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
+		}
+	})
+
+	t.Run("AuthInvalid3", func(t *testing.T) {
+		req, _ := http.NewRequest("POST", "/undefined/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "======"}`))
+		w := httptest.NewRecorder()
+		testRouter.ServeHTTP(w, req)
+		responseData, err := io.ReadAll(w.Body)
+		httpCodeEqual(t, w.Code, http.StatusBadRequest)
+
+		expect := utils.CleanupStrings(`{"error":"No database parameter"}`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {
@@ -228,6 +247,29 @@ func RunSystemTestAuth(t *testing.T) {
 		if !strings.Contains(response, expect) {
 			t.Errorf(`Response %v incorrect.`, response)
 		}
+	})
+
+	t.Run("ApiUsersIncorrectToken3", func(t *testing.T) {
+		getNewTokenImpl := getNewToken
+		getNewToken = func(dbName, user, userUuid, firstName, lastName string, expiration time.Time) (string, error) {
+			return "", errors.New("xxx")
+		} // mock function
+		req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
+		w := httptest.NewRecorder()
+		testRouter.ServeHTTP(w, req)
+		responseData, err := io.ReadAll(w.Body)
+		httpCodeEqual(t, w.Code, http.StatusInternalServerError)
+
+		expect := utils.CleanupStrings(`{"error":"xxx"}`)
+		response := utils.CleanupStrings(string(responseData))
+
+		if err != nil {
+			t.Errorf(`Response %v for %v: %v.`, response, w, err)
+		}
+		if !strings.Contains(response, expect) {
+			t.Errorf(`Response %v incorrect.`, response)
+		}
+		getNewToken = getNewTokenImpl
 	})
 
 	t.Run("ApiUsersNotFound", func(t *testing.T) {
