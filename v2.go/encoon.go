@@ -59,11 +59,10 @@ func main() {
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
-		configuration.Log("", "", "Starting, log into %v.", logFileName)
 		if exportDb != "" && exportFileName != "" {
 			database.ExportDb(context.Background(), exportDb, exportFileName)
-			configuration.Log("Exported database %s into %s.", exportDb, exportFileName)
 		} else {
+			configuration.Log("", "", "Starting, log into %v.", logFileName)
 			configuration.WatchConfigurationChanges(configurationFileName)
 			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)

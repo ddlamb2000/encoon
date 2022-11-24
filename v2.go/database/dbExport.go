@@ -24,7 +24,6 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	if err != nil {
 		return err
 	}
-	configuration.Log(dbName, "", "ExportDb()")
 
 	rows, err := db.QueryContext(ct, getRowsQueryForExportDb())
 	if err != nil {
@@ -47,7 +46,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	if err = exportToFile(f, out); err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when writing file: %v.", err)
 	}
-	configuration.Log(dbName, "", "ExportDb() - done.")
+	configuration.Log(dbName, "", "Export of database (%d rows) into %s completed.", len(rowSet), exportFileName)
 	return nil
 }
 

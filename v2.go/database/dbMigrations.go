@@ -63,22 +63,22 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 		if err != nil {
 			return err
 		}
-		configuration.Log(dbName, "", "Migration %d executed.", step)
 	}
 	return nil
 }
 
-func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, migration int, command string, dbName string) error {
-	if migration > latestMigration {
+func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, step int, command string, dbName string) error {
+	if step > latestMigration {
 		_, err := db.Exec(command)
 		if err != nil {
-			return configuration.LogAndReturnError(dbName, "", "%d %q: %v", migration, command, err)
+			return configuration.LogAndReturnError(dbName, "", "%d %q: %v", step, command, err)
 		} else {
 			newUuid := utils.GetNewUUID()
-			_, err = db.Exec(getMigrationInsertStatement(), newUuid, migration, command)
+			_, err = db.Exec(getMigrationInsertStatement(), newUuid, step, command)
 			if err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Can't insert into migrations: %v", err)
 			}
+			configuration.Log(dbName, "", "Migration %d executed.", step)
 		}
 	}
 	return nil
