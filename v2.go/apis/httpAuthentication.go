@@ -48,7 +48,7 @@ func authentication(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return
 	}
-	logUri(c, dbName, login.Id)
+	configuration.Log(dbName, login.Id, "%v", c.Request.RequestURI)
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
@@ -91,13 +91,7 @@ func authMiddleware() gin.HandlerFunc {
 		}
 		var tokenString = header[7:]
 
-		jwtSecret := configuration.GetJWTSecret(dbName)
-		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
-			if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-				return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
-			}
-			return []byte(jwtSecret), nil
-		})
+		token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 		if token == nil {
 			return
 		}
@@ -120,7 +114,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.Set("authorized", true)
 			c.Set("user", user)
 			c.Set("userUuid", userUuid)
-			logUri(c, dbName, user)
+			configuration.Log(dbName, userName, "%v", c.Request.RequestURI)
 		} else {
 			configuration.LogError(dbName, "", "Invalid request: %v.", err)
 			c.Set("authorized", false)
@@ -132,7 +126,17 @@ func authMiddleware() gin.HandlerFunc {
 	}
 }
 
-func logUri(c *gin.Context, dbName string, user any) {
-	userName := fmt.Sprintf("%v", user)
-	configuration.Log(dbName, userName, "%v", c.Request.RequestURI)
+func getTokenParsingHandler(dbName string) jwt.Keyfunc {
+	return func(token *jwt.Token) (interface{}, error) {
+		if ok := verifyToken(token); !ok {
+			return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
+		}
+		return []byte(configuration.GetJWTSecret(dbName)), nil
+	}
+}
+
+// function is available for mocking
+var verifyToken = func(token *jwt.Token) bool {
+	_, ok := token.Method.(*jwt.SigningMethodHMAC)
+	return ok
 }

@@ -16,6 +16,7 @@ import (
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
+	"github.com/golang-jwt/jwt"
 )
 
 func RunSystemTestAuth(t *testing.T) {
@@ -389,5 +390,29 @@ func RunSystemTestAuth(t *testing.T) {
 		_, code, err := runPOSTRequestForUser("test", "root", "xxyyzz", "/test/api/v1/"+model.UuidUsers, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusUnauthorized)
+	})
+
+	t.Run("ApiUsersDefectToken", func(t *testing.T) {
+		verifyTokenImpl := verifyToken
+		verifyToken = func(*jwt.Token) bool { return false } // mock function
+		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
+		req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
+		req.Header.Add("Authorization", "Bearer "+token)
+		w := httptest.NewRecorder()
+		testRouter.ServeHTTP(w, req)
+		responseData, err := io.ReadAll(w.Body)
+		httpCodeEqual(t, w.Code, http.StatusUnauthorized)
+
+		expect := utils.CleanupStrings(`Invalid request or unauthorized database access: Unexpect signing method`)
+		response := utils.CleanupStrings(string(responseData))
+
+		if err != nil {
+			t.Errorf(`Response %v for %v: %v.`, response, w, err)
+		}
+		if !strings.Contains(response, expect) {
+			t.Errorf(`Response %v incorrect.`, response)
+		}
+		verifyToken = verifyTokenImpl
 	})
 }
