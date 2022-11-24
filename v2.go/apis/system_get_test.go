@@ -84,7 +84,7 @@ func RunSystemTestGet(t *testing.T) {
 
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
-		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids+"/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)

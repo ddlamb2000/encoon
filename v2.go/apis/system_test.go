@@ -24,7 +24,7 @@ var testRouter = gin.Default()
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
-	database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+	setDefaultTestSleepTimeAndTimeOutThreshold()
 	t.Run("IncorrectDb", func(t *testing.T) { RunTestConnectDbServersIncorrect(t) })
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
@@ -106,6 +106,10 @@ func jsonStringDoesntContain(t *testing.T, got []byte, expect string) {
 	if strings.Contains(gotJson, expectJson) {
 		t.Errorf(`Response %v includes %v.`, gotJson, expectJson)
 	}
+}
+
+func setDefaultTestSleepTimeAndTimeOutThreshold() {
+	database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 500)
 }
 
 func RunTestConnectDbServersIncorrect(t *testing.T) {

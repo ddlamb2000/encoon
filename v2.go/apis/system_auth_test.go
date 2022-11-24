@@ -93,7 +93,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("ApiUsersWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
-		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		req, _ := http.NewRequest("POST", "/test/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "dGVzdA=="}`))
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)

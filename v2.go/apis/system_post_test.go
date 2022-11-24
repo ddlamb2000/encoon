@@ -132,7 +132,7 @@ func RunSystemTestPost(t *testing.T) {
 			`]` +
 			`}`
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
-		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
@@ -249,7 +249,7 @@ func RunSystemTestPost(t *testing.T) {
 			`]` +
 			`}`
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 10, 500)
-		defer database.ForceTestSleepTimeAndTimeOutThreshold("test", 0, 200)
+		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
