@@ -36,3 +36,15 @@ func TestRowAsString(t *testing.T) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }
+
+func TestGetRowsQueryOutput(t *testing.T) {
+	row := Row{
+		Uuid:          "12345",
+		DisplayString: "xyz",
+	}
+	got := len(row.GetRowsQueryOutput())
+	expect := 28
+	if got != expect {
+		t.Errorf(`Got %d instead of %d.`, got, expect)
+	}
+}
