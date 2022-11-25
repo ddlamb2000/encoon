@@ -177,13 +177,13 @@ class GridCellDropDown extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, rows } = this.state
+		const { isLoading, error, rows } = this.state
 		const { gridPromptUuid, values, referencedValuesAdded, referencedValuesRemoved } = this.props
-		const referencedValuesIncluded = values.
+		const referencedValuesIncluded = error ? [] : values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).
 			filter((value, index, self) => index === self.findIndex((t) => (t.uuid === value.uuid)))
-		const referencedValuesNotIncluded = rows.
+		const referencedValuesNotIncluded = error ? [] : rows.
 			concat(referencedValuesRemoved).
 			filter(ref => !referencedValuesAdded.map(ref => ref.uuid).includes(ref.uuid)).
 			filter(ref => !referencedValuesIncluded.map(ref => ref.uuid).includes(ref.uuid)).
@@ -274,7 +274,8 @@ class GridCellDropDown extends React.Component {
 			this.setState({
 				isLoading: false,
 				isLoaded: false,
-				rows: []
+				rows: [],
+				error: ""
 			})
 		}
 	}
