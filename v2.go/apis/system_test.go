@@ -122,7 +122,7 @@ func RunTestConnectDbServersIncorrect(t *testing.T) {
 }
 
 func RunTestConnectDbServers(t *testing.T) {
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+	configuration.LoadConfiguration("../testData/systemTest.yml")
 	dbName := "test"
 	_, err := database.GetDbByName(dbName)
 	if err != nil {
