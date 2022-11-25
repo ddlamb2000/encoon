@@ -23,7 +23,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 		return configuration.LogAndReturnError(dbName, "", "Only test database can be recreated.")
 	}
 	var rowsCount int
-	if err := db.QueryRow("SELECT COUNT(uuid) FROM rows").Scan(&rowsCount); err == nil && rowsCount >= 0 {
+	if err := db.QueryRow("SELECT COUNT(uuid) FROM migrations").Scan(&rowsCount); err == nil && rowsCount >= 0 {
 		configuration.Log(dbName, "", "Found %d rows in table.", rowsCount)
 		commands := getDeletionSteps()
 		keys := make([]int, 0)
@@ -31,11 +31,16 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 			keys = append(keys, k)
 		}
 		sort.Ints(keys)
+		var anyError error
 		for _, step := range keys {
 			if _, err := db.Exec(commands[step]); err != nil {
-				return configuration.LogAndReturnError(dbName, "", "%d %q: %v", step, commands[step], err)
+				configuration.LogError(dbName, "", "%d %q: %v", step, commands[step], err)
+				anyError = err
 			}
 			configuration.Log(dbName, "", "Deletion %d executed.", step)
+		}
+		if anyError != nil {
+			return anyError
 		}
 	}
 	return migrateDb(ctx, db, dbName)
@@ -43,7 +48,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 
 func getLatestMigration(ctx context.Context, db *sql.DB, dbName string) int {
 	var latestMigration int = 0
-	if err := db.QueryRow("SELECT MAX(int1) FROM rows WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
+	if err := db.QueryRow("SELECT MAX(int1) FROM migrations WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
 		configuration.Log(dbName, "", "No latest migration found: %v.", err)
 		return 0
 	}
@@ -86,7 +91,7 @@ func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, step
 
 // function is available for mocking
 var getMigrationInsertStatement = func() string {
-	return "INSERT INTO rows " +
+	return "INSERT INTO migrations " +
 		"(uuid, " +
 		"revision, " +
 		"created, " +

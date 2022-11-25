@@ -59,7 +59,7 @@ func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, refer
 var getQueryReferencedRowsForRow = func() string {
 	return "SELECT text4, " +
 		"text5 " +
-		"FROM rows " +
+		"FROM relationships " +
 		"WHERE gridUuid = $1 " +
 		"AND text1 = $2 " +
 		"AND text2 = $3 " +

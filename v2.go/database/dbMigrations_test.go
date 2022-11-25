@@ -31,81 +31,60 @@ func TestRecreateDb(t *testing.T) {
 	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
-	err = RecreateDb(context.Background(), db, "xxx")
-	expect := "Only test database can be recreated."
-	if err.Error() != expect {
-		t.Errorf(`expect %v and found %v.`, expect, err)
-	}
-}
 
-func TestRecreateDb3(t *testing.T) {
-	getRowsColumnDefinitionsImpl := getRowsColumnDefinitions
-	getRowsColumnDefinitions = func() string { return "x x x" } // mock function
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	db, err := GetDbByName(dbName)
-	if err != nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := RecreateDb(context.Background(), db, dbName); err == nil {
-		t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
-	}
-	getRowsColumnDefinitions = getRowsColumnDefinitionsImpl
-}
+	t.Run("RecreateDb1", func(t *testing.T) {
+		err = RecreateDb(context.Background(), db, "xxx")
+		expect := "Only test database can be recreated."
+		if err.Error() != expect {
+			t.Errorf(`expect %v and found %v.`, expect, err)
+		}
+	})
 
-func TestRecreateDb4(t *testing.T) {
-	getMigrationInsertStatementImpl := getMigrationInsertStatement
-	getMigrationInsertStatement = func() string { return "x x x" } // mock function
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	db, err := GetDbByName(dbName)
-	if err != nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := RecreateDb(context.Background(), db, dbName); err == nil {
-		t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
-	}
-	getMigrationInsertStatement = getMigrationInsertStatementImpl
-}
+	t.Run("RecreateDb2", func(t *testing.T) {
+		getRowsColumnDefinitionsImpl := getRowsColumnDefinitions
+		getRowsColumnDefinitions = func() string { return "x x x" } // mock function
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
+		}
+		getRowsColumnDefinitions = getRowsColumnDefinitionsImpl
+	})
 
-func TestRecreateDb5(t *testing.T) {
-	getMigrationStepsImpl := getMigrationSteps
-	getMigrationSteps = func(string) map[int]string { return map[int]string{1: "x x x"} } // mock function
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	db, err := GetDbByName(dbName)
-	if err != nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := RecreateDb(context.Background(), db, dbName); err == nil {
-		t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
-	}
-	getMigrationSteps = getMigrationStepsImpl
-}
+	t.Run("RecreateDb3", func(t *testing.T) {
+		getMigrationInsertStatementImpl := getMigrationInsertStatement
+		getMigrationInsertStatement = func() string { return "x x x" } // mock function
+		if err := migrateDbCommand(context.Background(), db, 0, 1, "SELECT pg_sleep(0.1)", dbName); err == nil {
+			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
+		}
+		getMigrationInsertStatement = getMigrationInsertStatementImpl
+	})
 
-func TestRecreateDb2(t *testing.T) {
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	db, err := GetDbByName(dbName)
-	if err != nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := RecreateDb(context.Background(), db, dbName); err != nil {
-		t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
-	}
-}
+	t.Run("RecreateDb4", func(t *testing.T) {
+		getMigrationStepsImpl := getMigrationSteps
+		getMigrationSteps = func(string) map[int]string { return map[int]string{1: "x x x"} } // mock function
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
+		}
+		getMigrationSteps = getMigrationStepsImpl
+	})
 
-func TestRecreateDb6(t *testing.T) {
-	getDeletionStepsImpl := getDeletionSteps
-	getDeletionSteps = func() map[int]string { return map[int]string{1: "x x x"} } // mock function
-	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	db, err := GetDbByName(dbName)
-	if err != nil {
-		t.Errorf(`Database %q not found.`, dbName)
-	}
-	if err := RecreateDb(context.Background(), db, dbName); err == nil {
-		t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
-	}
-	getDeletionSteps = getDeletionStepsImpl
+	t.Run("RecreateDb5", func(t *testing.T) {
+		if err := RecreateDb(context.Background(), db, dbName); err != nil {
+			t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
+		}
+	})
+
+	t.Run("RecreateDb6", func(t *testing.T) {
+		getDeletionStepsImpl := getDeletionSteps
+		getDeletionSteps = func() map[int]string { return map[int]string{1: "x x x"} } // mock function
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
+		}
+		getDeletionSteps = getDeletionStepsImpl
+	})
+
+	t.Run("MigrateDb", func(t *testing.T) {
+		if err := migrateDb(context.Background(), db, dbName); err != nil {
+			t.Errorf(`Error for migrating an up-to-date database: %v.`, err)
+		}
+	})
 }

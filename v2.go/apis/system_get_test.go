@@ -32,12 +32,21 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/xxx")
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/d7c004ff-cccc-dddd-eeee-cd42b2847508")
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
 		jsonStringContains(t, responseData, `"error":"Data not found."`)
+	})
+
+	t.Run("VerifyGridNotFound2", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/xxx")
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringDoesntContain(t, responseData, `"countRows":`)
+		jsonStringDoesntContain(t, responseData, `"rows":`)
+		jsonStringContains(t, responseData, `Error when retrieving grid definition: pq: invalid input syntax for type uuid`)
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
@@ -152,7 +161,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect6", func(t *testing.T) {
 		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
 		getQueryReferencedRowsForRow = func() string {
-			return "SELECT NULL, NULL FROM rows WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4"
+			return "SELECT NULL, NULL FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4"
 		} // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)

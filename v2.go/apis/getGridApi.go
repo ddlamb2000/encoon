@@ -35,14 +35,13 @@ var getGridQueryForGridsApi = func() string {
 		"text1, " +
 		"text2, " +
 		"text3, " +
-		"text4, " +
 		"enabled, " +
 		"created, " +
 		"createdBy, " +
 		"updated, " +
 		"updatedBy, " +
 		"revision " +
-		"FROM rows " +
+		"FROM grids " +
 		"WHERE gridUuid = $1 AND uuid = $2"
 }
 
@@ -53,7 +52,6 @@ func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
 	output = append(output, &grid.Text1)
 	output = append(output, &grid.Text2)
 	output = append(output, &grid.Text3)
-	output = append(output, &grid.Text4)
 	output = append(output, &grid.Enabled)
 	output = append(output, &grid.Created)
 	output = append(output, &grid.CreatedBy)
@@ -91,8 +89,8 @@ var getGridColumsQueryForGridsApi = func() string {
 		"coltype.uuid, " +
 		"coltype.text1, " +
 		"grid.uuid " +
-		"FROM rows rel1 " +
-		"INNER JOIN rows col " +
+		"FROM relationships rel1 " +
+		"INNER JOIN columns col " +
 		"ON rel1.text4 = col.gridUuid " +
 		"AND rel1.text5 = col.uuid " +
 		"AND rel1.gridUuid = $1 " +
@@ -100,7 +98,7 @@ var getGridColumsQueryForGridsApi = func() string {
 		"AND rel1.text2 = $3 " +
 		"AND rel1.text3 = $4 " +
 		"AND rel1.text4 = $5 " +
-		"INNER JOIN rows rel2 " +
+		"INNER JOIN relationships rel2 " +
 		"ON rel2.text2 = col.gridUuid " +
 		"AND rel2.text3 = col.uuid " +
 		"AND rel2.gridUuid = $6 " +
@@ -109,12 +107,12 @@ var getGridColumsQueryForGridsApi = func() string {
 		"INNER JOIN rows coltype " +
 		"ON rel2.text4 = coltype.gridUuid " +
 		"AND rel2.text5 = coltype.Uuid " +
-		"LEFT OUTER JOIN rows rel3 " +
+		"LEFT OUTER JOIN relationships rel3 " +
 		"ON rel3.text2 = col.gridUuid " +
 		"AND rel3.text3 = col.uuid " +
 		"AND rel3.gridUuid = $9 " +
 		"AND rel3.text1 = $10 " +
-		"LEFT OUTER JOIN rows grid " +
+		"LEFT OUTER JOIN grids grid " +
 		"ON grid.gridUuid = rel3.text4 " +
 		"AND grid.Uuid = rel3.text5 " +
 		"ORDER BY col.text1 "

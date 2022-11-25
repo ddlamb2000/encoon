@@ -14,9 +14,39 @@ var getMigrationSteps = func(dbName string) map[int]string {
 	root, password := configuration.GetRootAndPassword(dbName)
 	return map[int]string{
 
-		1: "CREATE TABLE rows (" +
-			"gridUuid text NOT NULL, " +
-			"uuid text NOT NULL, " +
+		1: "CREATE TABLE migrations (" +
+			"gridUuid uuid NOT NULL, " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy text NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy text NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"int1 integer," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid)" +
+			")",
+
+		5: "CREATE TABLE grids (" +
+			"gridUuid uuid NOT NULL, " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy text NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy text NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"text2 text," +
+			"text3 text," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid), " +
+			"UNIQUE (uuid)" +
+			")",
+
+		10: "CREATE TABLE rows (" +
+			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
+			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
 			"createdBy text NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
@@ -27,20 +57,47 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"PRIMARY KEY (gridUuid, uuid)" +
 			")",
 
-		2:  "CREATE INDEX rowsText1 ON rows(text1);",
-		3:  "CREATE INDEX rowsText2 ON rows(text2);",
-		4:  "CREATE INDEX rowsText3 ON rows(text3);",
-		5:  "CREATE INDEX rowsText4 ON rows(text4);",
-		6:  "CREATE INDEX rowsText5 ON rows(text5);",
-		7:  "CREATE INDEX rowsText6 ON rows(text6);",
-		8:  "CREATE INDEX rowsText7 ON rows(text7);",
-		9:  "CREATE INDEX rowsText8 ON rows(text8);",
-		10: "CREATE INDEX rowsText9 ON rows(text9);",
-		11: "CREATE INDEX rowsText10 ON rows(text10);",
+		30: "CREATE TABLE columns (" +
+			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy text NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy text NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"text2 text," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid), " +
+			"UNIQUE (uuid)" +
+			")",
+
+		40: "CREATE TABLE relationships (" +
+			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy text NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy text NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"text2 uuid REFERENCES grids (uuid)," +
+			"text3 uuid," +
+			"text4 uuid REFERENCES grids (uuid)," +
+			"text5 uuid," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid), " +
+			"UNIQUE (uuid)" +
+			")",
+		41: "CREATE INDEX relationships_text1 ON relationships (text1)",
+		42: "CREATE INDEX relationships_text2 ON relationships (text2)",
+		43: "CREATE INDEX relationships_text3 ON relationships (text3)",
+		44: "CREATE INDEX relationships_text4 ON relationships (text4)",
+		45: "CREATE INDEX relationships_text5 ON relationships (text5)",
 
 		100: "CREATE EXTENSION pgcrypto",
 
-		107: "INSERT INTO rows " +
+		107: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -57,7 +114,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Data organized in rows and columns.', " +
 			"'grid-3x3')",
 
-		108: "INSERT INTO rows " +
+		108: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -93,7 +150,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + root + "', " +
 			"'" + password + "')",
 
-		110: "INSERT INTO rows " +
+		110: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -110,7 +167,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Columns of data grids.', " +
 			"'columns')",
 
-		111: "INSERT INTO rows " +
+		111: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -127,7 +184,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Statements run to create database.', " +
 			"'file-earmark-text')",
 
-		112: "INSERT INTO rows " +
+		112: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -144,7 +201,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Log of data changes.', " +
 			"'journal')",
 
-		113: "INSERT INTO rows " +
+		113: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -206,7 +263,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Reference', " +
 			"'Reference to another data grid row column type.')",
 
-		117: "INSERT INTO rows " +
+		117: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -223,7 +280,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Relationships between grid rows.', " +
 			"'file-code')",
 
-		118: "INSERT INTO rows " +
+		118: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -238,7 +295,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Username', " +
 			"'text1')",
 
-		119: "INSERT INTO rows " +
+		119: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -253,7 +310,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'First name', " +
 			"'text2')",
 
-		120: "INSERT INTO rows " +
+		120: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -268,7 +325,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Last name', " +
 			"'text3')",
 
-		121: "INSERT INTO rows " +
+		121: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -283,7 +340,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Password', " +
 			"'text4')",
 
-		122: "INSERT INTO rows " +
+		122: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -304,7 +361,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidUserColumnId + "')",
 
-		123: "INSERT INTO rows " +
+		123: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -325,7 +382,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidUserColumnFirstName + "')",
 
-		124: "INSERT INTO rows " +
+		124: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -346,7 +403,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidUserColumnLastName + "')",
 
-		125: "INSERT INTO rows " +
+		125: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -367,7 +424,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidUserColumnPassword + "')",
 
-		127: "INSERT INTO rows " +
+		127: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -382,7 +439,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Name', " +
 			"'text1')",
 
-		128: "INSERT INTO rows " +
+		128: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -397,7 +454,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Description', " +
 			"'text2')",
 
-		129: "INSERT INTO rows " +
+		129: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -412,7 +469,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Icon', " +
 			"'text3')",
 
-		131: "INSERT INTO rows " +
+		131: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -433,7 +490,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnName + "')",
 
-		132: "INSERT INTO rows " +
+		132: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -454,7 +511,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnDesc + "')",
 
-		133: "INSERT INTO rows " +
+		133: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -475,7 +532,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnIcon + "')",
 
-		134: "INSERT INTO rows " +
+		134: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -490,7 +547,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Label', " +
 			"'text1')",
 
-		135: "INSERT INTO rows " +
+		135: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -505,7 +562,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Name', " +
 			"'text2')",
 
-		136: "INSERT INTO rows " +
+		136: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -526,7 +583,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnColumnLabel + "')",
 
-		137: "INSERT INTO rows " +
+		137: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -547,7 +604,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnColumnName + "')",
 
-		138: "INSERT INTO rows " +
+		138: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -562,7 +619,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Name', " +
 			"'text1')",
 
-		139: "INSERT INTO rows " +
+		139: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -577,7 +634,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Description', " +
 			"'text2')",
 
-		140: "INSERT INTO rows " +
+		140: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -598,7 +655,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnTypeColumnName + "')",
 
-		141: "INSERT INTO rows " +
+		141: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -619,7 +676,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnTypeColumnDesc + "')",
 
-		142: "INSERT INTO rows " +
+		142: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -634,7 +691,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Sequence', " +
 			"'int1')",
 
-		143: "INSERT INTO rows " +
+		143: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -649,7 +706,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Command', " +
 			"'text1')",
 
-		144: "INSERT INTO rows " +
+		144: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -670,7 +727,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidMigrationsColumnSeq + "')",
 
-		145: "INSERT INTO rows " +
+		145: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -691,7 +748,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidMigrationsColumnCommand + "')",
 
-		146: "INSERT INTO rows " +
+		146: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -706,7 +763,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Type', " +
 			"'relationship1')",
 
-		147: "INSERT INTO rows " +
+		147: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -721,7 +778,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Columns', " +
 			"'relationship1')",
 
-		150: "INSERT INTO rows " +
+		150: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -742,7 +799,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		151: "INSERT INTO rows " +
+		151: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -763,7 +820,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		152: "INSERT INTO rows " +
+		152: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -799,7 +856,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Password', " +
 			"'Password or passphrase.')",
 
-		154: "INSERT INTO rows " +
+		154: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -820,7 +877,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidPasswordColumnType + "')",
 
-		156: "INSERT INTO rows " +
+		156: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -841,7 +898,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		157: "INSERT INTO rows " +
+		157: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -862,7 +919,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		158: "INSERT INTO rows " +
+		158: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -883,7 +940,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		159: "INSERT INTO rows " +
+		159: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -904,7 +961,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		160: "INSERT INTO rows " +
+		160: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -925,7 +982,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		162: "INSERT INTO rows " +
+		162: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -946,7 +1003,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		163: "INSERT INTO rows " +
+		163: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -967,7 +1024,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		164: "INSERT INTO rows " +
+		164: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -988,7 +1045,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		165: "INSERT INTO rows " +
+		165: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1009,7 +1066,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidIntColumnType + "')",
 
-		166: "INSERT INTO rows " +
+		166: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1030,7 +1087,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		167: "INSERT INTO rows " +
+		167: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1051,7 +1108,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnColumnColumnType + "')",
 
-		168: "INSERT INTO rows " +
+		168: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1072,7 +1129,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		169: "INSERT INTO rows " +
+		169: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1108,7 +1165,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Uuid', " +
 			"'Universally unique identifier.')",
 
-		171: "INSERT INTO rows " +
+		171: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1123,7 +1180,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Name', " +
 			"'text1')",
 
-		172: "INSERT INTO rows " +
+		172: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1144,7 +1201,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidRelationshipColumnName + "')",
 
-		173: "INSERT INTO rows " +
+		173: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1165,7 +1222,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidTextColumnType + "')",
 
-		174: "INSERT INTO rows " +
+		174: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1180,7 +1237,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'From grid', " +
 			"'text2')",
 
-		175: "INSERT INTO rows " +
+		175: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1201,7 +1258,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidRelationshipColumnFromGridUuid + "')",
 
-		176: "INSERT INTO rows " +
+		176: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1222,7 +1279,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidUuidColumnType + "')",
 
-		177: "INSERT INTO rows " +
+		177: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1237,7 +1294,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'From row', " +
 			"'text3')",
 
-		178: "INSERT INTO rows " +
+		178: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1258,7 +1315,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidRelationshipColumnFromUuid + "')",
 
-		179: "INSERT INTO rows " +
+		179: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1279,7 +1336,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidUuidColumnType + "')",
 
-		180: "INSERT INTO rows " +
+		180: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1294,7 +1351,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'To grid', " +
 			"'text4')",
 
-		181: "INSERT INTO rows " +
+		181: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1315,7 +1372,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidRelationshipColumnToGridUuid + "')",
 
-		182: "INSERT INTO rows " +
+		182: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1336,7 +1393,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidUuidColumnType + "')",
 
-		183: "INSERT INTO rows " +
+		183: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1351,7 +1408,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'To row', " +
 			"'text5')",
 
-		184: "INSERT INTO rows " +
+		184: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1372,7 +1429,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidRelationshipColumnToUuid + "')",
 
-		185: "INSERT INTO rows " +
+		185: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1393,7 +1450,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidUuidColumnType + "')",
 
-		186: "INSERT INTO rows " +
+		186: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1408,7 +1465,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Grid for prompt', " +
 			"'relationship2')",
 
-		187: "INSERT INTO rows " +
+		187: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1429,7 +1486,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnTypeColumnGridPrompt + "')",
 
-		188: "INSERT INTO rows " +
+		188: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1450,7 +1507,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		189: "INSERT INTO rows " +
+		189: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1471,7 +1528,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidColumnTypes + "')",
 
-		190: "INSERT INTO rows " +
+		190: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1492,7 +1549,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidColumns + "')",
 
-		191: "INSERT INTO rows " +
+		191: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1513,7 +1570,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidGrids + "')",
 
-		199: "INSERT INTO rows " +
+		199: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1530,7 +1587,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Defines security access to data.', " +
 			"'file-lock')",
 
-		200: "INSERT INTO rows " +
+		200: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1545,7 +1602,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Level', " +
 			"'text1')",
 
-		201: "INSERT INTO rows " +
+		201: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1566,7 +1623,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidAccessLevelColumnLevel + "')",
 
-		202: "INSERT INTO rows " +
+		202: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1613,7 +1670,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidAccessLevel + "', " +
 			"'Edit access')",
 
-		205: "INSERT INTO rows " +
+		205: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1628,7 +1685,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Default access', " +
 			"'relationship2')",
 
-		206: "INSERT INTO rows " +
+		206: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1649,7 +1706,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		207: "INSERT INTO rows " +
+		207: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1670,7 +1727,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnAccessLevel + "')",
 
-		208: "INSERT INTO rows " +
+		208: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1691,7 +1748,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidAccessLevel + "')",
 
-		209: "INSERT INTO rows " +
+		209: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1706,7 +1763,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Owner', " +
 			"'relationship3')",
 
-		210: "INSERT INTO rows " +
+		210: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1727,7 +1784,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		211: "INSERT INTO rows " +
+		211: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1748,7 +1805,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnOwner + "')",
 
-		212: "INSERT INTO rows " +
+		212: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1769,7 +1826,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidUsers + "')",
 
-		213: "INSERT INTO rows " +
+		213: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1784,7 +1841,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'View access', " +
 			"'relationship4')",
 
-		214: "INSERT INTO rows " +
+		214: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1805,7 +1862,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		215: "INSERT INTO rows " +
+		215: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1826,7 +1883,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnReadAccessUsers + "')",
 
-		216: "INSERT INTO rows " +
+		216: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1847,7 +1904,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidUsers + "')",
 
-		217: "INSERT INTO rows " +
+		217: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2) " +
@@ -1862,7 +1919,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Edit access', " +
 			"'relationship5')",
 
-		218: "INSERT INTO rows " +
+		218: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1883,7 +1940,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'" + model.UuidReferenceColumnType + "')",
 
-		219: "INSERT INTO rows " +
+		219: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1904,7 +1961,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnWriteAccessUsers + "')",
 
-		220: "INSERT INTO rows " +
+		220: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1925,7 +1982,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidGrids + "', " +
 			"'" + model.UuidUsers + "')",
 
-		221: "INSERT INTO rows " +
+		221: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1946,7 +2003,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		222: "INSERT INTO rows " +
+		222: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1967,7 +2024,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		223: "INSERT INTO rows " +
+		223: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -1988,7 +2045,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		224: "INSERT INTO rows " +
+		224: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2009,7 +2066,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		225: "INSERT INTO rows " +
+		225: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2030,7 +2087,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		226: "INSERT INTO rows " +
+		226: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2051,7 +2108,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		227: "INSERT INTO rows " +
+		227: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2072,7 +2129,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		228: "INSERT INTO rows " +
+		228: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2093,7 +2150,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		229: "INSERT INTO rows " +
+		229: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2114,7 +2171,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidAccessLevel + "', " +
 			"'" + model.UuidAccessLevelSpecialAccess + "')",
 
-		230: "INSERT INTO rows " +
+		230: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2153,7 +2210,11 @@ var getMigrationSteps = func(dbName string) map[int]string {
 // function is available for mocking
 var getDeletionSteps = func() map[int]string {
 	return map[int]string{
-		1: "DROP TABLE rows",
-		2: "DROP EXTENSION pgcrypto",
+		6: "DROP TABLE migrations",
+		5: "DROP TABLE grids",
+		4: "DROP TABLE rows",
+		3: "DROP TABLE columns",
+		2: "DROP TABLE relationships",
+		1: "DROP EXTENSION pgcrypto",
 	}
 }

@@ -297,7 +297,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersNotFound2", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
-		req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
+		req, _ := http.NewRequest("GET", "/test/api/v1/d7c004ff-cccc-dddd-eeee-cd42b2847508", nil)
 		req.Header.Add("Authorization", "Bearer "+token)
 		w := httptest.NewRecorder()
 		testRouter.ServeHTTP(w, req)
@@ -305,6 +305,27 @@ func RunSystemTestAuth(t *testing.T) {
 		httpCodeEqual(t, w.Code, http.StatusNotFound)
 
 		expect := utils.CleanupStrings(`"error":"Data not found."`)
+		response := utils.CleanupStrings(string(responseData))
+
+		if err != nil {
+			t.Errorf(`Response %v for %v: %v.`, response, w, err)
+		}
+		if !strings.Contains(response, expect) {
+			t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
+		}
+	})
+
+	t.Run("ApiUsersNotFound3", func(t *testing.T) {
+		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
+		req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
+		req.Header.Add("Authorization", "Bearer "+token)
+		w := httptest.NewRecorder()
+		testRouter.ServeHTTP(w, req)
+		responseData, err := io.ReadAll(w.Body)
+		httpCodeEqual(t, w.Code, http.StatusInternalServerError)
+
+		expect := utils.CleanupStrings(`Error when retrieving grid definition: pq: invalid input syntax for type uuid`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {

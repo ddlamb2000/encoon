@@ -18,8 +18,8 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("CreateNewColumnsFor3rdGrid", func(t *testing.T) {
 		var gridUuid1, gridUuid2 string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid1)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid2)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid1)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid2)
 
 		postStr := `{"rowsAdded":` +
 			`[` +
@@ -76,11 +76,11 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("UpdateAndDeleteColumnRelationshipsFor3rdGrid", func(t *testing.T) {
 		var gridUuid1, gridUuid2, column13Uuid, column19Uuid, column20Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid1)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid2)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 13").Scan(&column13Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid1)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid2)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 13").Scan(&column13Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
 
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
@@ -102,13 +102,13 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("Create3rdSingleGrid", func(t *testing.T) {
 		var column09Uuid, column10Uuid, column11Uuid, column12Uuid, column13Uuid, column14Uuid, column15Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 09").Scan(&column09Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 10").Scan(&column10Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 11").Scan(&column11Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 12").Scan(&column12Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 13").Scan(&column13Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 14").Scan(&column14Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 15").Scan(&column15Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 09").Scan(&column09Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 10").Scan(&column10Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 11").Scan(&column11Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 12").Scan(&column12Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 13").Scan(&column13Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 14").Scan(&column14Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 15").Scan(&column15Uuid)
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Grid03","text2":"Test grid 03","text3":"journal"}` +
@@ -132,12 +132,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("AddColumnsTo3rdSingleGrid", func(t *testing.T) {
 		var gridUuid, column16Uuid, column17Uuid, column18Uuid, column19Uuid, column20Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 16").Scan(&column16Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 17").Scan(&column17Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 18").Scan(&column18Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 16").Scan(&column16Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 17").Scan(&column17Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 18").Scan(&column18Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
 			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column16Uuid + `"},` +
@@ -155,8 +155,8 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("CreateNewRowsIn3rdSingleGrid", func(t *testing.T) {
 		var grid1Uuid, grid3Uuid, row01Uuid, row05Uuid, row17Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-17").Scan(&row17Uuid)
@@ -195,8 +195,8 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		getInsertStatementForReferenceRowImpl := getInsertStatementForReferenceRow
 		getInsertStatementForReferenceRow = func() string { return "xxx" } // mock function
 		var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
 		postStr := `{"referencedValuesAdded":` +
@@ -215,8 +215,8 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		getDeleteReferenceRowStatementImpl := getDeleteReferenceRowStatement
 		getDeleteReferenceRowStatement = func() string { return "xxx" } // mock function
 		var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
 

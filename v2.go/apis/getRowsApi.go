@@ -78,9 +78,9 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 // function is available for mocking
 var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string {
 	selectStr := getRowsQueryColumnsForGridsApi(grid)
-	fromStr := "FROM rows "
+	fromStr := "FROM " + grid.GetTableName() + " "
 	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	orderByStr := "ORDER BY text1, text2, text3, text4 "
+	orderByStr := "ORDER BY text1"
 	return selectStr + fromStr + whereStr + orderByStr
 }
 

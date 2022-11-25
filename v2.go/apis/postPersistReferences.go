@@ -35,7 +35,7 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 
 // function is available for mocking
 var getInsertStatementForReferenceRow = func() string {
-	return "INSERT INTO rows (uuid, " +
+	return "INSERT INTO relationships (uuid, " +
 		"revision, " +
 		"created, " +
 		"updated, " +
@@ -119,7 +119,7 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 
 // function is available for mocking
 var getDeleteReferenceRowStatement = func() string {
-	return "DELETE FROM rows WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
+	return "DELETE FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
 }
 
 func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost) []any {

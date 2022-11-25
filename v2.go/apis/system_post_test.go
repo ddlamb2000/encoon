@@ -37,7 +37,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("VerifyNoRowInSingleGrid", func(t *testing.T) {
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
@@ -63,11 +63,11 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"Test Column 04","text2":"text4"`)
 
 		var gridUuid, uuidCol1, uuidCol2, uuidCol3, uuidCol4 string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 01").Scan(&uuidCol1)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 02").Scan(&uuidCol2)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 03").Scan(&uuidCol3)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 04").Scan(&uuidCol4)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 01").Scan(&uuidCol1)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 02").Scan(&uuidCol2)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 03").Scan(&uuidCol3)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 04").Scan(&uuidCol4)
 
 		postStr = `{"rowsAdded":` +
 			`[` +
@@ -93,7 +93,7 @@ func RunSystemTestPost(t *testing.T) {
 			`]` +
 			`}`
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
@@ -107,7 +107,7 @@ func RunSystemTestPost(t *testing.T) {
 	t.Run("CreateRowIncorrectPayload", func(t *testing.T) {
 		postStr := `{"xxxxx"}`
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
@@ -117,7 +117,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("VerifyNewRowInSingleGrid", func(t *testing.T) {
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
@@ -134,7 +134,7 @@ func RunSystemTestPost(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusRequestTimeout)
@@ -143,7 +143,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("VerifyNoNewRowInSingleGrid", func(t *testing.T) {
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
@@ -154,7 +154,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("UpdateNewRow", func(t *testing.T) {
 		var uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
 		stringNotEqual(t, uuid, "")
 		postStr := `{"rowsEdited":` +
 			`[` +
@@ -167,13 +167,13 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"uuid":"`+uuid+`"`)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
 		var revision int
-		db.QueryRow("SELECT revision FROM rows WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&revision)
+		db.QueryRow("SELECT revision FROM grids WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&revision)
 		intEqual(t, revision, 2)
 	})
 
 	t.Run("CreateNewandUpdateRowsInSingleGrid", func(t *testing.T) {
 		var uuidGrid, uuidRow string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test01").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
@@ -199,7 +199,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("CreateDeleteRowsInSingleGrid", func(t *testing.T) {
 		var uuidGrid, uuidRow string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-13").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
@@ -224,7 +224,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("DeleteRowInSingleGrid", func(t *testing.T) {
 		var uuidGrid, uuidRow string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-09").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
@@ -242,7 +242,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("CreateNewRowInSingleGridWithTimeOut2", func(t *testing.T) {
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"text1":"test-29","text2":"test-30","text3":"test-31","text4":"test-32"}` +
@@ -287,11 +287,11 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"Test Column 08","text2":"int4"`)
 
 		var gridUuid, uuidCol1, uuidCol2, uuidCol3, uuidCol4 string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 05").Scan(&uuidCol1)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 06").Scan(&uuidCol2)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 07").Scan(&uuidCol3)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 08").Scan(&uuidCol4)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 05").Scan(&uuidCol1)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 06").Scan(&uuidCol2)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 07").Scan(&uuidCol3)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 08").Scan(&uuidCol4)
 
 		postStr = `{"rowsAdded":` +
 			`[` +
@@ -312,7 +312,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("CreateNewRowsIn2ndSingleGrid", func(t *testing.T) {
 		var gridUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&gridUuid)
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
@@ -344,10 +344,22 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", model.UuidRootUser, "/test/api/v1/xxx", postStr)
+		responseData, code, err := runPOSTRequestForUser("test", "test01", model.UuidRootUser, "/test/api/v1/d7c004ff-cccc-dddd-eeee-cd42b2847508", postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringContains(t, responseData, `"error":"Data not found."`)
+	})
+
+	t.Run("InvalidCreateGrid2", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", model.UuidRootUser, "/test/api/v1/xxx", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when retrieving grid definition: pq: invalid input syntax for type uuid`)
 	})
 
 	t.Run("CreateSingleGridDefect", func(t *testing.T) {
@@ -414,7 +426,7 @@ func RunSystemTestPost(t *testing.T) {
 		getUpdateStatementForGridsApiImpl := getUpdateStatementForGridsApi
 		getUpdateStatementForGridsApi = func(grid *model.Grid) string { return "xxx" } // mock function
 		var uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
 		stringNotEqual(t, uuid, "")
 		postStr := `{"rowsEdited":` +
 			`[` +
@@ -430,9 +442,9 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("CreateSingleGridDefect6", func(t *testing.T) {
 		getDeleteGridRowQueryImpl := getDeleteGridRowQuery
-		getDeleteGridRowQuery = func() string { return "xxx" } // mock function
+		getDeleteGridRowQuery = func(*model.Grid) string { return "xxx" } // mock function
 		var uuidGrid, uuidRow string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-01").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
@@ -450,7 +462,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("CreateSingleGridDefect7", func(t *testing.T) {
 		var uuidGrid, uuidRow string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")

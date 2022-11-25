@@ -47,7 +47,8 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 			parameterIndex += 1
 		}
 	}
-	insertStr := "INSERT INTO rows (uuid, " +
+	insertStr := "INSERT INTO " + grid.GetTableName() +
+		" (uuid, " +
 		"revision, " +
 		"created, " +
 		"updated, " +
@@ -150,8 +151,8 @@ var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 			parameterIndex += 1
 		}
 	}
-	updateStr := "UPDATE rows SET " +
-		"revision = revision + 1, " +
+	updateStr := "UPDATE " + grid.GetTableName() +
+		" SET revision = revision + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3" +
 		columns
@@ -173,7 +174,7 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	query := getDeleteGridRowQuery()
+	query := getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
 	if err := r.execContext(query, row.Uuid, grid.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
@@ -183,6 +184,6 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 }
 
 // function is available for mocking
-var getDeleteGridRowQuery = func() string {
-	return "DELETE FROM rows WHERE uuid = $1 and gridUuid = $2"
+var getDeleteGridRowQuery = func(grid *model.Grid) string {
+	return "DELETE FROM " + grid.GetTableName() + " WHERE uuid = $1 and gridUuid = $2"
 }
