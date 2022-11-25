@@ -77,36 +77,31 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 
 // function is available for mocking
 var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string {
-	selectStr := getRowsQueryColumnsForGridsApi(grid)
-	fromStr := "FROM " + grid.GetTableName() + " "
-	whereStr := getRowsWhereQueryForGridsApi(uuid)
-	orderByStr := "ORDER BY text1"
-	return selectStr + fromStr + whereStr + orderByStr
-}
-
-func getRowsQueryColumnsForGridsApi(grid *model.Grid) string {
 	var columns = ""
 	for _, col := range grid.Columns {
 		if col.IsAttribute() {
-			columns += col.Name + ", "
+			columns += "rows." + col.Name + ", "
 		}
 	}
-	return "SELECT uuid, " +
-		"gridUuid, " +
+	return "SELECT rows.uuid, " +
+		"rows.gridUuid, " +
 		columns +
-		"enabled, " +
-		"created, " +
-		"createdBy, " +
-		"updated, " +
-		"updatedBy, " +
-		"revision "
+		"rows.enabled, " +
+		"rows.created, " +
+		"rows.createdBy, " +
+		"rows.updated, " +
+		"rows.updatedBy, " +
+		"rows.revision " +
+		"FROM " + grid.GetTableName() + " rows " +
+		getRowsWhereQueryForGridsApi(uuid) +
+		"ORDER BY rows.text1"
 }
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
 	if uuid == "" {
-		return "WHERE griduuid = $1 "
+		return "WHERE rows.griduuid = $1 "
 	}
-	return "WHERE griduuid = $1 AND uuid = $2 "
+	return "WHERE rows.griduuid = $1 AND rows.uuid = $2 "
 }
 
 // function is available for mocking

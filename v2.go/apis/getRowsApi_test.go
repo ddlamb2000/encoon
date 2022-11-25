@@ -11,41 +11,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func TestGetRowsWhereQueryForGridsApi(t *testing.T) {
-	var tests = []struct {
-		testName, uuid, expect string
-	}{
-		{"withUuid", "1234", "WHERE griduuid = $1 AND uuid = $2 "},
-		{"withoutUuid", "", "WHERE griduuid = $1 "},
-	}
-	for _, tt := range tests {
-		t.Run(tt.testName, func(t *testing.T) {
-			got := getRowsWhereQueryForGridsApi(tt.uuid)
-			if got != tt.expect {
-				t.Errorf(`Got %v instead of %v.`, got, tt.expect)
-			}
-		})
-	}
-}
-
-func TestGetRowsQueryParametersForGridsApi(t *testing.T) {
-	var tests = []struct {
-		testName, griduuid, uuid string
-		expect                   []any
-	}{
-		{"withUuid", "1", "1234", []any{"1", "1234"}},
-		{"withoutUuid", "2", "", []any{"2"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.testName, func(t *testing.T) {
-			got := getRowsQueryParametersForGridsApi(tt.griduuid, tt.uuid)
-			if !reflect.DeepEqual(got, tt.expect) {
-				t.Errorf(`Got %v instead of %v.`, got, tt.expect)
-			}
-		})
-	}
-}
-
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	row := model.Row{}
 	grid := model.Grid{}

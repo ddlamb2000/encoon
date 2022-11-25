@@ -13,8 +13,9 @@ import (
 var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
 	grid := new(model.Grid)
 	query := getGridQueryForGridsApi()
-	r.trace("getGridForGridsApi(%s) - query=%s", gridUuid, query)
-	if err := r.db.QueryRowContext(r.ctx, query, model.UuidGrids, gridUuid).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
+	r.trace("getGridForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
+	if err := r.db.QueryRowContext(r.ctx, query, parms...).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 		if err == sql.ErrNoRows {
 			return nil, nil
 		}
@@ -30,19 +31,27 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 
 // function is available for mocking
 var getGridQueryForGridsApi = func() string {
-	return "SELECT uuid, " +
-		"gridUuid, " +
-		"text1, " +
-		"text2, " +
-		"text3, " +
-		"enabled, " +
-		"created, " +
-		"createdBy, " +
-		"updated, " +
-		"updatedBy, " +
-		"revision " +
+	return "SELECT grids.uuid, " +
+		"grids.gridUuid, " +
+		"grids.text1, " +
+		"grids.text2, " +
+		"grids.text3, " +
+		"grids.enabled, " +
+		"grids.created, " +
+		"grids.createdBy, " +
+		"grids.updated, " +
+		"grids.updatedBy, " +
+		"grids.revision " +
 		"FROM grids " +
-		"WHERE gridUuid = $1 AND uuid = $2"
+		"WHERE grids.gridUuid = $1 " +
+		"AND grids.uuid = $2 "
+}
+
+func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
+	parameters := make([]any, 0)
+	parameters = append(parameters, model.UuidGrids)
+	parameters = append(parameters, gridUuid)
+	return parameters
 }
 
 func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
