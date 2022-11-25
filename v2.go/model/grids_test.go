@@ -32,6 +32,7 @@ func TestGetTableName(t *testing.T) {
 		{UuidColumns, "columns"},
 		{UuidRelationships, "relationships"},
 		{UuidMigrations, "migrations"},
+		{UuidUsers, "users"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.expect, func(t *testing.T) {

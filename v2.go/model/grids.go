@@ -27,6 +27,8 @@ func (grid *Grid) GetTableName() string {
 		return "relationships"
 	case UuidMigrations:
 		return "migrations"
+	case UuidUsers:
+		return "users"
 	default:
 		return "rows"
 	}

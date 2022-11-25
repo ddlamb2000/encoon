@@ -18,7 +18,7 @@ func TestGetInsertStatementForGridsApi(t *testing.T) {
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
 	got := getInsertStatementForGridsApi(&grid)
-	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text2, text5, int8)  VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6)"
+	expect := "INSERT INTO users (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text2, text5, int8)  VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6)"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
@@ -135,7 +135,7 @@ func TestGetUpdateStatementForGridsApi(t *testing.T) {
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
 	got := getUpdateStatementForGridsApi(&grid)
-	expect := "UPDATE rows SET revision = revision + 1, updated = NOW(), updatedBy = $3, text2 = $4, text5 = $5, int8 = $6 WHERE uuid = $1 and gridUuid = $2"
+	expect := "UPDATE users SET revision = revision + 1, updated = NOW(), updatedBy = $3, text2 = $4, text5 = $5, int8 = $6 WHERE uuid = $1 and gridUuid = $2"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}

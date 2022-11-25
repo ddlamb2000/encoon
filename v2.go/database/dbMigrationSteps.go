@@ -95,6 +95,23 @@ var getMigrationSteps = func(dbName string) map[int]string {
 		44: "CREATE INDEX relationships_text4 ON relationships (text4)",
 		45: "CREATE INDEX relationships_text5 ON relationships (text5)",
 
+		50: "CREATE TABLE users (" +
+			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy text NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy text NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"text2 text," +
+			"text3 text," +
+			"text4 text," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid), " +
+			"UNIQUE (uuid)" +
+			")",
+
 		100: "CREATE EXTENSION pgcrypto",
 
 		107: "INSERT INTO grids " +
@@ -131,7 +148,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'Users who has access to the system.', " +
 			"'person')",
 
-		109: "INSERT INTO rows " +
+		109: "INSERT INTO users " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
 			"text2, " +
@@ -2210,11 +2227,12 @@ var getMigrationSteps = func(dbName string) map[int]string {
 // function is available for mocking
 var getDeletionSteps = func() map[int]string {
 	return map[int]string{
-		6: "DROP TABLE migrations",
-		5: "DROP TABLE grids",
-		4: "DROP TABLE rows",
-		3: "DROP TABLE columns",
-		2: "DROP TABLE relationships",
+		7: "DROP TABLE migrations",
+		6: "DROP TABLE grids",
+		5: "DROP TABLE rows",
+		4: "DROP TABLE columns",
+		3: "DROP TABLE relationships",
+		2: "DROP TABLE users",
 		1: "DROP EXTENSION pgcrypto",
 	}
 }

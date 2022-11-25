@@ -14,7 +14,7 @@ import (
 func RunSystemTestPostRelationships(t *testing.T) {
 	var user01Uuid string
 	db, _ := database.GetDbByName("test")
-	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", model.UuidUsers, "test01").Scan(&user01Uuid)
+	db.QueryRow("SELECT uuid FROM users WHERE gridUuid = $1 and text1= $2", model.UuidUsers, "test01").Scan(&user01Uuid)
 
 	t.Run("CreateNewColumnsFor3rdGrid", func(t *testing.T) {
 		var gridUuid1, gridUuid2 string
