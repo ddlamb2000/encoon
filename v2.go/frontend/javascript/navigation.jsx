@@ -29,7 +29,7 @@ class Navigation extends React.Component {
 						</li>
 					</ul>
 					{isLoading && <Spinner />}
-					{error && !isLoading && <div className="alert alert-primary" role="alert">{error}</div>}
+					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					<ul className="nav flex-column mb-2">
 						{isLoaded && rows && rows.map(row => 
 							<li className="nav-item" key={row.uuid}>
