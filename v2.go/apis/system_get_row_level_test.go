@@ -44,8 +44,8 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("RootCannotGetGrid01", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+grid01Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":false`)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User01CanGetGrid01", func(t *testing.T) {
@@ -65,22 +65,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User02CannotGetGrid01", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid01Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":false`)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotGetGrid02", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":false`)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotGetGrid03", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":false`)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User01SetAccessForGrid02", func(t *testing.T) {
@@ -122,8 +122,8 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User03CannotGetGrid03", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":false`)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User01SetEditAccessForUser3Grid03", func(t *testing.T) {
@@ -333,17 +333,16 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"text1":"test-17"`)
 	})
 
 	t.Run("User02CanGetRowGrid02", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"int1":100,"int2":100,"int3":100,"int4":100`)
+		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
 	t.Run("User02CannotUpdateRowGrid02", func(t *testing.T) {
@@ -352,10 +351,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":102,"int2":102,"int3":102,"int4":102}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"int1":102`)
 	})
 
 	t.Run("User02CannotAddRowsGrid02", func(t *testing.T) {
@@ -365,10 +363,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":500,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"int1":400`)
 	})
 
 	t.Run("User02CannotDeleteRowsGrid02", func(t *testing.T) {
@@ -377,17 +374,16 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"int1":101`)
 	})
 
 	t.Run("User02CanGetRowGrid03", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"text1":"test-23"`)
+		jsonStringContains(t, responseData, `"text1":"test-23 {2}"`)
 	})
 
 	t.Run("User02CannotUpdateRowGrid03", func(t *testing.T) {
@@ -396,10 +392,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `","text1":"test-23 {4}","text2":"test-24 {4}","text3":"test-25 {3}","text4":"test-26 {3}","int1":27,"int2":28,"int3":29,"int4":30}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"text1":"test-23 {4}"`)
 	})
 
 	t.Run("User02CannotAddRowsGrid03", func(t *testing.T) {
@@ -413,10 +408,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user01", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user01", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"text1":"test-40"`)
 	})
 
 	t.Run("User02CannotDeleteRowsGrid03", func(t *testing.T) {
@@ -425,17 +419,15 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"text1":"test-39"`)
 	})
 
 	t.Run("User03CannotGetRow17Grid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
+		_, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"text1":"test-17"`)
 	})
 
 	t.Run("User02CannotUpdateRow17Grid01", func(t *testing.T) {
@@ -444,10 +436,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {6}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"text1":"test-17 {6}"`)
 	})
 
 	t.Run("User03CannotAddRowsGrid01", func(t *testing.T) {
@@ -457,10 +448,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"text1":"test-28"`)
 	})
 
 	t.Run("User03CannotDeleteRowsGrid01", func(t *testing.T) {
@@ -469,17 +459,16 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"text1":"test-17`)
 	})
 
 	t.Run("User03CanGetRowGrid02", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"int1":100,"int2":100,"int3":100,"int4":100`)
+		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
 	t.Run("User03CannotUpdateRowGrid02", func(t *testing.T) {
@@ -488,10 +477,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":601,"int2":101,"int3":101,"int4":101}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"int1":601`)
 	})
 
 	t.Run("User03CannotAddRowsGrid02", func(t *testing.T) {
@@ -501,10 +489,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringDoesntContain(t, responseData, `"int1":800`)
 	})
 
 	t.Run("User03CannotDeleteRowsGrid02", func(t *testing.T) {
@@ -513,17 +500,16 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		_, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusForbidden)
-		jsonStringContains(t, responseData, `"int1":100`)
 	})
 
 	t.Run("User03CanGetRowGrid03", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"text1":"test-23"`)
+		jsonStringContains(t, responseData, `"text1":"test-23 {2}"`)
 	})
 
 	t.Run("User03CanUpdateRowGrid03", func(t *testing.T) {

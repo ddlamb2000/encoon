@@ -73,3 +73,15 @@ func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
 		grid.SpecialAccess = false
 	}
 }
+
+func (grid *Grid) GetCanView() bool {
+	return grid.CanView || grid.SpecialAccess && grid.isSpecial()
+}
+
+func (grid *Grid) GetCanEdit() bool {
+	return grid.CanEdit || grid.SpecialAccess && grid.isSpecial()
+}
+
+func (grid *Grid) isSpecial() bool {
+	return grid.Uuid == UuidGrids || grid.Uuid == UuidColumns
+}

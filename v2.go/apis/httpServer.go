@@ -103,12 +103,13 @@ func (r apiRequestParameters) rollbackTransaction() error {
 var getRollbackTransactionQuery = func() string { return "ROLLBACK" }
 
 type apiResponse struct {
-	grid     *model.Grid
-	rows     []model.Row
-	rowCount int
-	err      error
-	timeOut  bool
-	system   bool
+	grid      *model.Grid
+	rows      []model.Row
+	rowCount  int
+	err       error
+	timeOut   bool
+	system    bool
+	forbidden bool
 }
 
 func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user string) (apiRequestParameters, context.CancelFunc, error) {
@@ -126,11 +127,14 @@ func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, 
 }
 
 func getHttpErrorCode(response apiResponse) int {
-	if response.system {
+	switch {
+	case response.system:
 		return http.StatusInternalServerError
-	} else if response.timeOut {
+	case response.forbidden:
+		return http.StatusForbidden
+	case response.timeOut:
 		return http.StatusRequestTimeout
-	} else {
+	default:
 		return http.StatusNotFound
 	}
 }

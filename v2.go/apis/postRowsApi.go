@@ -26,6 +26,9 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 		} else if grid == nil {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Data not found.")}
 			return
+		} else if !grid.GetCanEdit() {
+			r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
+			return
 		}
 		if err := r.beginTransaction(); err != nil {
 			r.ctxChan <- apiResponse{err: err, system: true}

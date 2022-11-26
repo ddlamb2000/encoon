@@ -57,16 +57,18 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 		expectCanView       bool
 		expectCanEdit       bool
 		expectSpecialAccess bool
+		expectGetCanView    bool
+		expectGetCanEdit    bool
 	}{
-		{"1", "user1", "", "", "", "user1", true, true, false},
-		{"2", "user1", "", "", "", "user2", false, false, false},
-		{"3", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false},
-		{"4", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, false},
-		{"5", "user1", "", "user2", "", "user2", true, false, false},
-		{"6", "user1", "", "", "user2", "user2", true, true, false},
-		{"7", "user1", UuidAccessLevelSpecialAccess, "", "", "user2", false, false, true},
-		{"8", "user1", UuidAccessLevelSpecialAccess, "user2", "", "user2", true, false, false},
-		{"9", "user1", UuidAccessLevelSpecialAccess, "", "user2", "user2", true, true, false},
+		{"1", "user1", "", "", "", "user1", true, true, false, true, true},
+		{"2", "user1", "", "", "", "user2", false, false, false, false, false},
+		{"3", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false, true, false},
+		{"4", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, false, true, true},
+		{"5", "user1", "", "user2", "", "user2", true, false, false, true, false},
+		{"6", "user1", "", "", "user2", "user2", true, true, false, true, true},
+		{"7", "user1", UuidAccessLevelSpecialAccess, "", "", "user2", false, false, true, false, false},
+		{"8", "user1", UuidAccessLevelSpecialAccess, "user2", "", "user2", true, false, false, true, false},
+		{"9", "user1", UuidAccessLevelSpecialAccess, "", "user2", "user2", true, true, false, true, true},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -84,6 +86,12 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 			}
 			if grid.SpecialAccess != tt.expectSpecialAccess {
 				t.Errorf(`Got grid.SpecialAccess=%v instead of %v.`, grid.SpecialAccess, tt.expectSpecialAccess)
+			}
+			if grid.GetCanView() != tt.expectGetCanView {
+				t.Errorf(`Got grid.GetCanView()=%v instead of %v.`, grid.GetCanView(), tt.expectCanView)
+			}
+			if grid.GetCanEdit() != tt.expectGetCanEdit {
+				t.Errorf(`Got grid.GetCanEdit()=%v instead of %v.`, grid.GetCanEdit(), tt.expectCanEdit)
 			}
 		})
 	}
