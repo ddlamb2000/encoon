@@ -321,7 +321,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
-			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
+			`{"int1":100,"int2":100,"int3":100,"int4":100},` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +
 			`{"int1":1,"int2":2,"int3":3,"int4":4},` +

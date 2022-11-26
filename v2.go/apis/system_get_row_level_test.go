@@ -22,6 +22,10 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid01Uuid)
 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid02Uuid)
 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid03Uuid)
+	var row17Uuid, rowIntUuid, row23Uuid string
+	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", grid01Uuid, "test-17").Scan(&row17Uuid)
+	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and int1= $2", grid02Uuid, 100).Scan(&rowIntUuid)
+	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("RootCanGetGrid", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
@@ -135,6 +139,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 
 	t.Run("User03CanGetGrid03", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+	})
+
+	t.Run("User01CanGetGrid01", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)

@@ -11,9 +11,9 @@ type Grid struct {
 	DefaultAccessUuid *string   `json:"-"`
 	ViewAccessUuid    *string   `json:"-"`
 	EditAccessUuid    *string   `json:"-"`
-	CanView           bool      `json:"canViewGrid,omitempty"`
-	CanEdit           bool      `json:"canEditGrid,omitempty"`
-	SpecialAccess     bool      `json:"gridSpecialAccess,omitempty"`
+	CanView           bool      `json:"canViewGrid"`
+	CanEdit           bool      `json:"canEditGrid"`
+	SpecialAccess     bool      `json:"gridSpecialAccess"`
 	Columns           []*Column `json:"columns,omitempty"`
 }
 
