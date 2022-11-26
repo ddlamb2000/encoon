@@ -430,4 +430,143 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusForbidden)
 		jsonStringContains(t, responseData, `"text1":"test-39"`)
 	})
+
+	t.Run("User03CannotGetRow17Grid01", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringDoesntContain(t, responseData, `"text1":"test-17"`)
+	})
+
+	t.Run("User02CannotUpdateRow17Grid01", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + row17Uuid + `","text1":"test-17 {6}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `"text1":"test-17 {6}"`)
+	})
+
+	t.Run("User03CannotAddRowsGrid01", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test-28","text2":"test-21","text3":"test-22","text4":"test-23"},` +
+			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `"text1":"test-28"`)
+	})
+
+	t.Run("User03CannotDeleteRowsGrid01", func(t *testing.T) {
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + row17Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringDoesntContain(t, responseData, `"text1":"test-17`)
+	})
+
+	t.Run("User03CanGetRowGrid02", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"int1":100,"int2":100,"int3":100,"int4":100`)
+	})
+
+	t.Run("User03CannotUpdateRowGrid02", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + rowInt100Uuid + `","int1":601,"int2":101,"int3":101,"int4":101}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringDoesntContain(t, responseData, `"int1":601`)
+	})
+
+	t.Run("User03CannotAddRowsGrid02", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"int1":800,"int2":200,"int3":200,"int4":200},` +
+			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringDoesntContain(t, responseData, `"int1":800`)
+	})
+
+	t.Run("User03CannotDeleteRowsGrid02", func(t *testing.T) {
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + rowInt100Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusForbidden)
+		jsonStringContains(t, responseData, `"int1":100`)
+	})
+
+	t.Run("User03CanGetRowGrid03", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"test-23"`)
+	})
+
+	t.Run("User03CanUpdateRowGrid03", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + row23Uuid + `","text1":"test-23 {7}","text2":"test-24 {7}","text3":"test-25 {7}","text4":"test-26 {7}","int1":27,"int2":28,"int3":29,"int4":30}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"test-23 {7}","text2":"test-24 {7}"`)
+	})
+
+	t.Run("User03CanAddRowsGrid03", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a", "text1":"test-47","text2":"test-48","text3":"test-49","text4":"test-50","int1":51,"int2":52,"int3":53,"int4":54},` +
+			`{"uuid":"b", "text1":"test-55","text2":"test-56","text3":"test-57","text4":"test-58","int1":59,"int2":60,"int3":61,"int4":62}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"test-47","text2":"test-48","text3":"test-49","text4":"test-50","int1":51,"int2":52,"int3":53,"int4":54`)
+		jsonStringContains(t, responseData, `"text1":"test-55","text2":"test-56","text3":"test-57","text4":"test-58","int1":59,"int2":60,"int3":61,"int4":62`)
+	})
+
+	t.Run("User03CanDeleteRowsGrid03", func(t *testing.T) {
+		var row55Uuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-55").Scan(&row55Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + row55Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringDoesntContain(t, responseData, `"text1":"test-55"`)
+	})
 }
