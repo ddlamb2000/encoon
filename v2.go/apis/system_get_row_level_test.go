@@ -23,9 +23,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid02Uuid)
 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid03Uuid)
 	var row17Uuid, rowIntUuid, row23Uuid string
-	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", grid01Uuid, "test-17").Scan(&row17Uuid)
-	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and int1= $2", grid02Uuid, 100).Scan(&rowIntUuid)
-	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
+	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid01Uuid, "test-17").Scan(&row17Uuid)
+	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and int1= $2", grid02Uuid, 100).Scan(&rowIntUuid)
+	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("RootCanGetGrid", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
@@ -144,10 +144,154 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
 	})
 
-	t.Run("User01CanGetGrid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid)
+	t.Run("User01CanGetRow17Grid01", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"test-17"`)
+	})
+
+	t.Run("User01CanUpdateRow17Grid01", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + row17Uuid + `","text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"`)
+	})
+
+	t.Run("User01CanAddRowsGrid01", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"test-20","text2":"test-21","text3":"test-22","text4":"test-23"},` +
+			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"text1":"test-20","text2":"test-21","text3":"test-22","text4":"test-23"`)
+		jsonStringContains(t, responseData, `"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"`)
+	})
+
+	t.Run("User01CanDeleteRowsGrid01", func(t *testing.T) {
+		var row24Uuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid01Uuid, "test-24").Scan(&row24Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + row24Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringDoesntContain(t, responseData, `"text1":"test-24"`)
+	})
+
+	t.Run("User01CanGetRowGrid02", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowIntUuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"int1":100,"int2":100,"int3":100,"int4":100`)
+	})
+
+	t.Run("User01CanUpdateRowGrid02", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + rowIntUuid + `","int1":101,"int2":101,"int3":101,"int4":101}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
+	})
+
+	t.Run("User01CanAddRowsGrid02", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"int1":200,"int2":200,"int3":200,"int4":200},` +
+			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"int1":200,"int2":200,"int3":200,"int4":200`)
+		jsonStringContains(t, responseData, `"int1":300,"int2":300,"int3":300,"int4":300`)
+	})
+
+	t.Run("User01CanDeleteRowsGrid02", func(t *testing.T) {
+		var rowInt300Uuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and int1= $2", grid02Uuid, 300).Scan(&rowInt300Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + rowInt300Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringDoesntContain(t, responseData, `"int1":300`)
+	})
+
+	t.Run("User01CanGetRowGrid03", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"test-23"`)
+	})
+
+	t.Run("User01CanUpdateRowGrid03", func(t *testing.T) {
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + row23Uuid + `","text1":"test-23 {2}","text2":"test-24 {2}","text3":"test-25 {2}","text4":"test-26 {2}","int1":27,"int2":28,"int3":29,"int4":30}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"test-23 {2}","text2":"test-24 {2}","text3":"test-25 {2}","text4":"test-26 {2}","int1":27,"int2":28,"int3":29,"int4":30`)
+	})
+
+	t.Run("User01CanAddRowsGrid03", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a", "text1":"test-31","text2":"test-32","text3":"test-33","text4":"test-34","int1":35,"int2":36,"int3":37,"int4":38},` +
+			`{"uuid":"b", "text1":"test-39","text2":"test-40","text3":"test-41","text4":"test-42","int1":43,"int2":44,"int3":45,"int4":46}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"test-31","text2":"test-32","text3":"test-33","text4":"test-34","int1":35,"int2":36,"int3":37,"int4":38`)
+		jsonStringContains(t, responseData, `"text1":"test-39","text2":"test-40","text3":"test-41","text4":"test-42","int1":43,"int2":44,"int3":45,"int4":46`)
+	})
+
+	t.Run("User01CanDeleteRowsGrid03", func(t *testing.T) {
+		var row39Uuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-39").Scan(&row39Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + row39Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringDoesntContain(t, responseData, `"text1":"test-39"`)
 	})
 }
