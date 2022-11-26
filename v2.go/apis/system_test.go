@@ -32,6 +32,7 @@ func TestSystem(t *testing.T) {
 	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
 	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
+	t.Run("GetRowLevel", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {

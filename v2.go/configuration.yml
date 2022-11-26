@@ -4,8 +4,8 @@
 appName: "εncooη" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
-log: true
-trace: true
+log: false
+trace: false
 
 # Http Server configuration
 httpServer:

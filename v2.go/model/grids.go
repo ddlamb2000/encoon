@@ -7,7 +7,14 @@ import "fmt"
 
 type Grid struct {
 	Row
-	Columns []*Column `json:"columns,omitempty" yaml:"columns,omitempty"`
+	OwnerUuid         *string   `json:"-"`
+	DefaultAccessUuid *string   `json:"-"`
+	ViewAccessUuid    *string   `json:"-"`
+	EditAccessUuid    *string   `json:"-"`
+	CanView           bool      `json:"canViewGrid,omitempty"`
+	CanEdit           bool      `json:"canEditGrid,omitempty"`
+	SpecialAccess     bool      `json:"gridSpecialAccess,omitempty"`
+	Columns           []*Column `json:"columns,omitempty"`
 }
 
 func (grid *Grid) SetPathAndDisplayString(dbName string) {
@@ -31,5 +38,38 @@ func (grid *Grid) GetTableName() string {
 		return "users"
 	default:
 		return "rows"
+	}
+}
+
+func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
+	switch {
+	case grid.OwnerUuid != nil && *grid.OwnerUuid == userUuid:
+		grid.CanView = true
+		grid.CanEdit = true
+		grid.SpecialAccess = false
+	case grid.EditAccessUuid != nil && *grid.EditAccessUuid == userUuid:
+		grid.CanView = true
+		grid.CanEdit = true
+		grid.SpecialAccess = false
+	case grid.ViewAccessUuid != nil && *grid.ViewAccessUuid == userUuid:
+		grid.CanView = true
+		grid.CanEdit = false
+		grid.SpecialAccess = false
+	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelWriteAccess:
+		grid.CanView = true
+		grid.CanEdit = true
+		grid.SpecialAccess = false
+	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelReadAccess:
+		grid.CanView = true
+		grid.CanEdit = false
+		grid.SpecialAccess = false
+	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelSpecialAccess:
+		grid.CanView = false
+		grid.CanEdit = false
+		grid.SpecialAccess = true
+	default:
+		grid.CanView = false
+		grid.CanEdit = false
+		grid.SpecialAccess = false
 	}
 }

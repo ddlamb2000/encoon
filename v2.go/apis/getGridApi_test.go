@@ -44,6 +44,10 @@ func TestGetGridQueryOutputForGridsApi(t *testing.T) {
 		&grid.Updated,
 		&grid.UpdatedBy,
 		&grid.Revision,
+		&grid.OwnerUuid,
+		&grid.DefaultAccessUuid,
+		&grid.ViewAccessUuid,
+		&grid.EditAccessUuid,
 	}
 	if !reflect.DeepEqual(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)

@@ -44,5 +44,47 @@ func TestGetTableName(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestSetViewEditAccessFlags(t *testing.T) {
+	var tests = []struct {
+		test                string
+		ownerUuid           string
+		defaultAccessUuid   string
+		viewAccessUuid      string
+		editAccessUuid      string
+		userUuid            string
+		expectCanView       bool
+		expectCanEdit       bool
+		expectSpecialAccess bool
+	}{
+		{"1", "user1", "", "", "", "user1", true, true, false},
+		{"2", "user1", "", "", "", "user2", false, false, false},
+		{"3", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false},
+		{"4", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, false},
+		{"5", "user1", "", "user2", "", "user2", true, false, false},
+		{"6", "user1", "", "", "user2", "user2", true, true, false},
+		{"7", "user1", UuidAccessLevelSpecialAccess, "", "", "user2", false, false, true},
+		{"8", "user1", UuidAccessLevelSpecialAccess, "user2", "", "user2", true, false, false},
+		{"9", "user1", UuidAccessLevelSpecialAccess, "", "user2", "user2", true, true, false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			grid := Grid{}
+			grid.OwnerUuid = &tt.ownerUuid
+			grid.DefaultAccessUuid = &tt.defaultAccessUuid
+			grid.ViewAccessUuid = &tt.viewAccessUuid
+			grid.EditAccessUuid = &tt.editAccessUuid
+			grid.SetViewEditAccessFlags(tt.userUuid)
+			if grid.CanView != tt.expectCanView {
+				t.Errorf(`Got grid.CanView=%v instead of %v.`, grid.CanView, tt.expectCanView)
+			}
+			if grid.CanEdit != tt.expectCanEdit {
+				t.Errorf(`Got grid.CanEdit=%v instead of %v.`, grid.CanEdit, tt.expectCanEdit)
+			}
+			if grid.SpecialAccess != tt.expectSpecialAccess {
+				t.Errorf(`Got grid.SpecialAccess=%v instead of %v.`, grid.SpecialAccess, tt.expectSpecialAccess)
+			}
+		})
+	}
 }
