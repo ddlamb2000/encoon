@@ -12,13 +12,13 @@ import (
 )
 
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
-	row := model.Row{}
-	grid := model.Grid{}
+	row := model.GetNewRow()
+	grid := model.GetNewGrid()
 	grid.Uuid = model.UuidUsers
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
-	got := getRowsQueryOutputForGridsApi(&grid, &row)
+	got := getRowsQueryOutputForGridsApi(grid, row)
 	expect := []any{
 		&row.Uuid,
 		&row.GridUuid,
@@ -38,8 +38,8 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 }
 
 func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
-	row := model.Row{}
-	grid := model.Grid{}
+	row := model.GetNewRow()
+	grid := model.GetNewGrid()
 	grid.Uuid = model.UuidUsers
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text6"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text7"})
@@ -52,7 +52,7 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int4"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int6"})
-	got := getRowsQueryOutputForGridsApi(&grid, &row)
+	got := getRowsQueryOutputForGridsApi(grid, row)
 	expect := []any{
 		&row.Uuid,
 		&row.GridUuid,
@@ -80,13 +80,13 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 }
 
 func TestGetRowsQueryOutputForGridsApi3(t *testing.T) {
-	row := model.Row{}
-	grid := model.Grid{}
+	row := model.GetNewRow()
+	grid := model.GetNewGrid()
 	grid.Uuid = model.UuidUsers
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int7"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int9"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int10"})
-	got := getRowsQueryOutputForGridsApi(&grid, &row)
+	got := getRowsQueryOutputForGridsApi(grid, row)
 	expect := []any{
 		&row.Uuid,
 		&row.GridUuid,

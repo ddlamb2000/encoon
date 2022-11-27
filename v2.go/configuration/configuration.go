@@ -128,7 +128,7 @@ func GetRootAndPassword(dbName string) (string, string) {
 }
 
 func GetContextWithTimeOut(ct context.Context, dbName string) (context.Context, context.CancelFunc) {
-	var threshold = 0
+	threshold := 0
 	dbConfiguration := GetDatabaseConfiguration(dbName)
 	if dbConfiguration != nil {
 		threshold = dbConfiguration.TimeOutThreshold

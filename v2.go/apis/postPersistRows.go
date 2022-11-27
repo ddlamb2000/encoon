@@ -38,8 +38,8 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 
 // function is available for mocking
 var getInsertStatementForGridsApi = func(grid *model.Grid) string {
-	var parameterIndex = 4
-	var columns, parameters = "", ""
+	parameterIndex := 4
+	columns, parameters := "", ""
 	for _, col := range grid.Columns {
 		if col.IsAttribute() {
 			columns += ", " + col.Name
@@ -143,8 +143,8 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 
 // function is available for mocking
 var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
-	var parameterIndex = 4
-	var columns = ""
+	parameterIndex := 4
+	columns := ""
 	for _, col := range grid.Columns {
 		if col.IsAttribute() {
 			columns += fmt.Sprintf(", %s = $%d", col.Name, parameterIndex)

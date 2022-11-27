@@ -13,6 +13,11 @@ type Column struct {
 	GridPromptUuid *string `json:"gridPromptUuid,omitempty" yaml:"gridPromptUuid,omitempty"`
 }
 
+func GetNewColumn() *Column {
+	column := new(Column)
+	return column
+}
+
 func (column Column) String() string {
 	return fmt.Sprintf("%s %q", column.Name, column.Label)
 }

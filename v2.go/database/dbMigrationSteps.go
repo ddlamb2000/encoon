@@ -1777,7 +1777,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRootUser + "', " +
 			"true, " +
 			"'" + model.UuidColumns + "', " +
-			"'Owner', " +
+			"'Owners', " +
 			"'relationship3')",
 
 		210: "INSERT INTO relationships " +

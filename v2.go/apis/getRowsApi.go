@@ -56,15 +56,15 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 	query := getRowsQueryForGridsApi(grid, uuid)
 	parms := getRowsQueryParametersForGridsApi(grid.Uuid, uuid)
 	r.trace("getRowSetForGridsApi(%s, %s, %v) - query=%s ; parms=%s", uuid, grid, getReferences, query, parms)
-	rows, err := r.db.QueryContext(r.ctx, query, parms...)
+	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
 		return nil, 0, r.logAndReturnError("Error when querying rows: %v.", err)
 	}
-	defer rows.Close()
-	var rowSet = make([]model.Row, 0)
-	for rows.Next() {
-		var row = new(model.Row)
-		if err := rows.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
+	defer set.Close()
+	rows := make([]model.Row, 0)
+	for set.Next() {
+		row := model.GetNewRow()
+		if err := set.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
 			return nil, 0, r.logAndReturnError("Error when scanning rows: %v.", err)
 		}
 		row.SetPathAndDisplayString(r.dbName)
@@ -73,14 +73,14 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 				return nil, 0, err
 			}
 		}
-		rowSet = append(rowSet, *row)
+		rows = append(rows, *row)
 	}
-	return rowSet, len(rowSet), nil
+	return rows, len(rows), nil
 }
 
 // function is available for mocking
 var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string {
-	var columns = ""
+	columns := ""
 	for _, col := range grid.Columns {
 		if col.IsAttribute() {
 			columns += "rows." + col.Name + ", "

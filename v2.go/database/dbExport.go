@@ -30,9 +30,9 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		return configuration.LogAndReturnError(dbName, "", "Error when querying rows: %v.", err)
 	}
 	defer rows.Close()
-	var rowSet = make([]model.Row, 0)
+	rowSet := make([]model.Row, 0)
 	for rows.Next() {
-		var row = new(model.Row)
+		row := model.GetNewRow()
 		if err := rows.Scan(getRowsQueryOutputForExportDb(row)...); err != nil {
 			return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 		}

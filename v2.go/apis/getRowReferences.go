@@ -17,7 +17,7 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 				return r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
 			}
 			if len(referencedRows) > 0 {
-				var reference = new(model.Reference)
+				reference := model.GetNewReference()
 				reference.Name = col.Name
 				reference.Label = col.Label
 				reference.Rows = referencedRows
@@ -37,7 +37,7 @@ func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, refer
 		return nil, r.logAndReturnError("Error when querying referenced rows: %v.", err)
 	}
 	defer rows.Close()
-	var rowSet = make([]model.Row, 0)
+	rowSet := make([]model.Row, 0)
 	for rows.Next() {
 		var referencedUuid string
 		var referencedGridUuid string

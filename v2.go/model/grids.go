@@ -7,13 +7,27 @@ import "fmt"
 
 type Grid struct {
 	Row
-	OwnerUuid         *string   `json:"-"`
-	DefaultAccessUuid *string   `json:"-"`
-	ViewAccessUuid    *string   `json:"-"`
-	EditAccessUuid    *string   `json:"-"`
-	CanView           bool      `json:"canViewGrid"`
-	CanEdit           bool      `json:"canEditGrid"`
-	Columns           []*Column `json:"columns,omitempty"`
+	CanView bool      `json:"canViewGrid"`
+	CanEdit bool      `json:"canEditGrid"`
+	Columns []*Column `json:"columns,omitempty"`
+
+	OwnerUuid         *string         `json:"-"`
+	DefaultAccessUuid *string         `json:"-"`
+	ViewAccessUuid    *string         `json:"-"`
+	EditAccessUuid    *string         `json:"-"`
+	Owners            map[string]bool `json:"-"`
+	DefaultAccess     map[string]bool `json:"-"`
+	ViewAccess        map[string]bool `json:"-"`
+	EditAccess        map[string]bool `json:"-"`
+}
+
+func GetNewGrid() *Grid {
+	grid := new(Grid)
+	grid.Owners = make(map[string]bool)
+	grid.DefaultAccess = make(map[string]bool)
+	grid.ViewAccess = make(map[string]bool)
+	grid.EditAccess = make(map[string]bool)
+	return grid
 }
 
 func (grid *Grid) SetPathAndDisplayString(dbName string) {
@@ -42,19 +56,19 @@ func (grid *Grid) GetTableName() string {
 
 func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
 	switch {
-	case grid.OwnerUuid != nil && *grid.OwnerUuid == userUuid:
+	case grid.Owners[userUuid]:
 		grid.CanView = true
 		grid.CanEdit = true
-	case grid.EditAccessUuid != nil && *grid.EditAccessUuid == userUuid:
+	case grid.EditAccess[userUuid]:
 		grid.CanView = true
 		grid.CanEdit = true
-	case grid.ViewAccessUuid != nil && *grid.ViewAccessUuid == userUuid:
+	case grid.ViewAccess[userUuid]:
 		grid.CanView = true
 		grid.CanEdit = false
-	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelWriteAccess:
+	case grid.DefaultAccess[UuidAccessLevelWriteAccess]:
 		grid.CanView = true
 		grid.CanEdit = true
-	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelReadAccess:
+	case grid.DefaultAccess[UuidAccessLevelReadAccess]:
 		grid.CanView = true
 		grid.CanEdit = false
 	default:

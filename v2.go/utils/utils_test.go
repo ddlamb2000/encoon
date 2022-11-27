@@ -10,7 +10,7 @@ import (
 )
 
 func TestCleanupStrings(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		id     int
 		given  string
 		expect string

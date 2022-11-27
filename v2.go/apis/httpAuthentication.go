@@ -75,7 +75,7 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		var header = c.Request.Header.Get("Authorization")
+		header := c.Request.Header.Get("Authorization")
 		if header == "" {
 			c.Set("authorized", false)
 			c.Abort()
@@ -89,8 +89,7 @@ func authMiddleware() gin.HandlerFunc {
 			c.JSON(http.StatusUnauthorized, gin.H{"error": "Incorrect header."})
 			return
 		}
-		var tokenString = header[7:]
-
+		tokenString := header[7:]
 		token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 		if token == nil {
 			return

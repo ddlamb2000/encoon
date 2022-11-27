@@ -30,8 +30,8 @@ func TestGetGridForGridsApi(t *testing.T) {
 }
 
 func TestGetGridQueryOutputForGridsApi(t *testing.T) {
-	grid := model.Grid{}
-	got := getGridQueryOutputForGridsApi(&grid)
+	grid := model.GetNewGrid()
+	got := getGridQueryOutputForGridsApi(grid)
 	expect := []any{
 		&grid.Uuid,
 		&grid.GridUuid,

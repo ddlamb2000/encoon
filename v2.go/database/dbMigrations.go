@@ -22,7 +22,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	if dbName != "test" {
 		return configuration.LogAndReturnError(dbName, "", "Only test database can be recreated.")
 	}
-	var rowsCount int
+	rowsCount := 0
 	if err := db.QueryRow("SELECT COUNT(uuid) FROM migrations").Scan(&rowsCount); err == nil && rowsCount >= 0 {
 		configuration.Log(dbName, "", "Found %d rows in table.", rowsCount)
 		commands := getDeletionSteps()
@@ -47,7 +47,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 }
 
 func getLatestMigration(ctx context.Context, db *sql.DB, dbName string) int {
-	var latestMigration int = 0
+	latestMigration := 0
 	if err := db.QueryRow("SELECT MAX(int1) FROM migrations WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
 		configuration.Log(dbName, "", "No latest migration found: %v.", err)
 		return 0
@@ -116,7 +116,7 @@ var getMigrationInsertStatement = func() string {
 
 // function is available for mocking
 var getRowsColumnDefinitions = func() string {
-	var columnDefinitions = ""
+	columnDefinitions := ""
 	for i := 1; i <= model.NumberOfTextFields; i++ {
 		columnDefinitions += fmt.Sprintf("text%d text, ", i)
 	}

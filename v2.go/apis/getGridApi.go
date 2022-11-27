@@ -4,30 +4,49 @@
 package apis
 
 import (
-	"database/sql"
-
 	"d.lambert.fr/encoon/model"
 )
 
 // function is available for mocking
 var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
-	grid := new(model.Grid)
 	query := getGridQueryForGridsApi()
 	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
 	r.trace("getGridForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
-	if err := r.db.QueryRowContext(r.ctx, query, parms...).Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
-		if err == sql.ErrNoRows {
-			return nil, nil
-		}
+	set, err := r.db.QueryContext(r.ctx, query, parms...)
+	if err != nil {
 		return nil, r.logAndReturnError("Error when retrieving grid definition: %v.", err)
 	}
-	grid.SetPathAndDisplayString(r.dbName)
-	grid.SetViewEditAccessFlags(r.userUuid)
-	err := getColumnsForGridsApi(r, grid)
+	defer set.Close()
+	grids := make([]model.Grid, 0)
+	for set.Next() {
+		grid := model.GetNewGrid()
+		if err := set.Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
+			return nil, r.logAndReturnError("Error when scanning grid definition: %v.", err)
+		}
+		grids = append(grids, *grid)
+		if grid.OwnerUuid != nil {
+			grids[0].Owners[*grid.OwnerUuid] = true
+		}
+		if grid.DefaultAccessUuid != nil {
+			grids[0].DefaultAccess[*grid.DefaultAccessUuid] = true
+		}
+		if grid.ViewAccessUuid != nil {
+			grids[0].ViewAccess[*grid.ViewAccessUuid] = true
+		}
+		if grid.EditAccessUuid != nil {
+			grids[0].EditAccess[*grid.EditAccessUuid] = true
+		}
+	}
+	if len(grids) == 0 {
+		return nil, nil
+	}
+	grids[0].SetPathAndDisplayString(r.dbName)
+	grids[0].SetViewEditAccessFlags(r.userUuid)
+	err = getColumnsForGridsApi(r, &grids[0])
 	if err != nil {
 		return nil, err
 	}
-	return grid, nil
+	return &grids[0], nil
 }
 
 // function is available for mocking
@@ -55,30 +74,27 @@ var getGridQueryForGridsApi = func() string {
 		"AND owner.text2 = $1 " +
 		"AND owner.text3 = grids.uuid " +
 		"AND owner.text4 = $5 " +
-		"AND owner.text5 = $6 " +
 
 		"LEFT OUTER JOIN relationships defAccess " +
 		"ON defAccess.gridUuid = $3 " +
-		"AND defAccess.text1 = $7 " +
+		"AND defAccess.text1 = $6 " +
 		"AND defAccess.text2 = $1 " +
 		"AND defAccess.text3 = grids.uuid " +
-		"AND defAccess.text4 = $8 " +
+		"AND defAccess.text4 = $7 " +
 
 		"LEFT OUTER JOIN relationships viewAccess " +
 		"ON viewAccess.gridUuid = $3 " +
-		"AND viewAccess.text1 = $9 " +
+		"AND viewAccess.text1 = $8 " +
 		"AND viewAccess.text2 = $1 " +
 		"AND viewAccess.text3 = grids.uuid " +
 		"AND viewAccess.text4 = $5 " +
-		"AND viewAccess.text5 = $6 " +
 
 		"LEFT OUTER JOIN relationships editAccess " +
 		"ON editAccess.gridUuid = $3 " +
-		"AND editAccess.text1 = $10 " +
+		"AND editAccess.text1 = $9 " +
 		"AND editAccess.text2 = $1 " +
 		"AND editAccess.text3 = grids.uuid " +
 		"AND editAccess.text4 = $5 " +
-		"AND editAccess.text5 = $6 " +
 
 		"WHERE grids.gridUuid = $1 " +
 		"AND grids.uuid = $2 "
@@ -91,7 +107,6 @@ func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, "relationship3")
 	parameters = append(parameters, model.UuidUsers)
-	parameters = append(parameters, userUuid)
 	parameters = append(parameters, "relationship2")
 	parameters = append(parameters, model.UuidAccessLevel)
 	parameters = append(parameters, "relationship4")
@@ -130,7 +145,7 @@ func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	defer rows.Close()
 	grid.Columns = make([]*model.Column, 0)
 	for rows.Next() {
-		var column = new(model.Column)
+		column := model.GetNewColumn()
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
 			return r.logAndReturnError("Error when scanning columns for: %v.", err)
 		}

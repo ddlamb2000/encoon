@@ -8,3 +8,8 @@ type Reference struct {
 	Name  string `json:"name,omitempty" yaml:"name,omitempty"`
 	Rows  []Row  `json:"rows,omitempty" yaml:"rows,omitempty"`
 }
+
+func GetNewReference() *Reference {
+	reference := new(Reference)
+	return reference
+}

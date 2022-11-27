@@ -8,7 +8,7 @@ import (
 )
 
 func TestGridSetPath(t *testing.T) {
-	grid := Grid{}
+	grid := GetNewGrid()
 	grid.Uuid = "xxx"
 	text1 := "aaa"
 	grid.Text1 = &text1
@@ -24,7 +24,7 @@ func TestGridSetPath(t *testing.T) {
 }
 
 func TestGetTableName(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		uuid, expect string
 	}{
 		{"1234", "rows"},
@@ -36,7 +36,7 @@ func TestGetTableName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.expect, func(t *testing.T) {
-			grid := Grid{}
+			grid := GetNewGrid()
 			grid.Uuid = tt.uuid
 			got := grid.GetTableName()
 			if got != tt.expect {
@@ -47,7 +47,7 @@ func TestGetTableName(t *testing.T) {
 }
 
 func TestSetViewEditAccessFlags(t *testing.T) {
-	var tests = []struct {
+	tests := []struct {
 		test              string
 		ownerUuid         string
 		defaultAccessUuid string
@@ -68,11 +68,11 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			grid := Grid{}
-			grid.OwnerUuid = &tt.ownerUuid
-			grid.DefaultAccessUuid = &tt.defaultAccessUuid
-			grid.ViewAccessUuid = &tt.viewAccessUuid
-			grid.EditAccessUuid = &tt.editAccessUuid
+			grid := GetNewGrid()
+			grid.Owners[tt.ownerUuid] = true
+			grid.DefaultAccess[tt.defaultAccessUuid] = true
+			grid.ViewAccess[tt.viewAccessUuid] = true
+			grid.EditAccess[tt.editAccessUuid] = true
 			grid.SetViewEditAccessFlags(tt.userUuid)
 			if grid.CanView != tt.expectCanView {
 				t.Errorf(`Got grid.CanView=%v instead of %v.`, grid.CanView, tt.expectCanView)

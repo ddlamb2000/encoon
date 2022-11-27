@@ -43,6 +43,11 @@ type Row struct {
 	TmpUuid       string       `json:"-"`
 }
 
+func GetNewRow() *Row {
+	row := new(Row)
+	return row
+}
+
 func (row Row) String() string {
 	return row.DisplayString + " [" + row.Uuid + "]"
 }
