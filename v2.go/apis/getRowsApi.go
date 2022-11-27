@@ -5,6 +5,7 @@ package apis
 
 import (
 	"context"
+	"database/sql"
 
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
@@ -71,6 +72,7 @@ func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string,
 		if err != nil {
 			return nil, 0, err
 		}
+		r.trace("getRowSetForGridsApi(%s, %s, %v) - gridForOwnership=%v", uuid, grid, getReferences, gridForOwnership)
 		row.SetPathAndDisplayString(r.dbName)
 		row.SetViewEditAccessFlags(gridForOwnership, r.userUuid)
 		if getReferences {
@@ -84,10 +86,20 @@ func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string,
 }
 
 func getGridForOwnership(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+	r.trace("getGridForOwnership(%v, %v)", grid, row)
 	if row.GridUuid == model.UuidGrids {
 		return getGridForGridsApi(r, row.Uuid)
 	} else if row.GridUuid == model.UuidRelationships && row.Text2 != nil {
 		return getGridForGridsApi(r, *row.Text2)
+	} else if row.GridUuid == model.UuidColumns {
+		gridUuid, err := getGridUuidAttachedToColumn(r, row.Uuid)
+		if err != nil {
+			return nil, err
+		}
+		if gridUuid == "" {
+			return nil, nil
+		}
+		return getGridForGridsApi(r, gridUuid)
 	}
 	return grid, nil
 }
@@ -194,4 +206,36 @@ func appendRowAttribute(output []any, row *model.Row, attributeName string) []an
 		output = append(output, &row.Int10)
 	}
 	return output
+}
+
+func getGridUuidAttachedToColumn(r apiRequestParameters, uuid string) (string, error) {
+	var gridUuuid string
+	query := getRowsQueryForGridUuidAttachedToColumn()
+	parms := getRowsQueryParametersGridUuidAttachedToColumn(uuid)
+	r.trace("getGridUuidAttachedToColumn(%s) - query=%s ; parms=%s", uuid, query, parms)
+	if err := r.db.QueryRowContext(r.ctx, query, parms...).Scan(&gridUuuid); err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", r.logAndReturnError("Error when retrieving grid uuid for column %q: %v.", uuid, err)
+	}
+	return gridUuuid, nil
+}
+
+func getRowsQueryForGridUuidAttachedToColumn() string {
+	return "SELECT text3 " +
+		"FROM relationships " +
+		"WHERE gridUuid = $1 " +
+		"AND text2 = $2 " +
+		"AND text4 = $3 " +
+		"AND text5 = $4"
+
+}
+func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {
+	parameters := make([]any, 0)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, model.UuidGrids)
+	parameters = append(parameters, model.UuidColumns)
+	parameters = append(parameters, uuid)
+	return parameters
 }

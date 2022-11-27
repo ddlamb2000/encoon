@@ -137,7 +137,7 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
 	if err != nil || rowCount != 1 {
-		return r.logAndReturnError("Error retreving row %q before update: %v.", row.Uuid, err)
+		return r.logAndReturnError("Error retrieving row %q from grid %q before update: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
 		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
@@ -188,7 +188,7 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
 	if err != nil || rowCount != 1 {
-		return r.logAndReturnError("Error retreving row %q before delete: %v.", row.Uuid, err)
+		return r.logAndReturnError("Error retrieving row %q from grid %q before delete: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
 		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}

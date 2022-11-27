@@ -52,11 +52,18 @@ func GetNewRow() *Row {
 }
 
 func (row *Row) SetViewEditAccessFlags(grid *Grid, userUuid string) {
-	row.CanViewRow = grid.CanViewRows
-	if grid.CanEditRows {
-		row.CanEditRow = true
-	} else if grid.CanEditOwnedRows {
-		row.CanEditRow = grid.HasOwnership(userUuid)
+	if grid == nil {
+		if *row.CreatedBy == userUuid {
+			row.CanViewRow = true
+			row.CanEditRow = true
+		}
+	} else {
+		row.CanViewRow = grid.CanViewRows
+		if grid.CanEditRows {
+			row.CanEditRow = true
+		} else if grid.CanEditOwnedRows {
+			row.CanEditRow = grid.HasOwnership(userUuid)
+		}
 	}
 }
 

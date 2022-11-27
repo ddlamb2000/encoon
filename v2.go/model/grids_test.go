@@ -53,7 +53,7 @@ func TestGetTableName(t *testing.T) {
 	}
 }
 
-func TestSetViewEditAccessFlags(t *testing.T) {
+func TestGridSetViewEditAccessFlags(t *testing.T) {
 	tests := []struct {
 		test                   string
 		uuid                   string
@@ -74,7 +74,7 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 		{"5", "aaaa", "user1", "", "user2", "", "user2", true, false, false, false},
 		{"6", "aaaa", "user1", "", "", "user2", "user2", true, true, true, true},
 		{"7", UuidGrids, "", "", "", "", "user1", true, false, true, true},
-		{"8", UuidColumns, "", "", "", "", "user1", true, true, true, true},
+		{"8", UuidColumns, "", "", "", "", "user1", true, false, true, true},
 		{"9", UuidUsers, "", "", "", "", "user1", true, false, false, false},
 		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false, false},
 		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false, false},
@@ -127,5 +127,27 @@ func TestCopyAccessToOtherGrid(t *testing.T) {
 	}
 	if !grid2.EditAccess[uuid4] {
 		t.Errorf(`Can't find edit access.`)
+	}
+}
+
+func TestHasOwnership(t *testing.T) {
+	grid := GetNewGrid()
+	grid.Owners["aaaa"] = true
+	grid.Owners["bbbb"] = true
+	tests := []struct {
+		test   string
+		uuid   string
+		expect bool
+	}{
+		{"1", "aaaa", true},
+		{"2", "bbbb", true},
+		{"3", "cccc", false},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			if grid.HasOwnership(tt.uuid) != tt.expect {
+				t.Errorf(`Got grid.HasOwnership=%v instead of %v.`, grid.HasOwnership(tt.uuid), tt.expect)
+			}
+		})
 	}
 }
