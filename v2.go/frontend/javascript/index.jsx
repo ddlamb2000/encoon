@@ -46,14 +46,7 @@ class App extends React.Component {
 						userLastName={this.userLastName} />
 				<div className="container-fluid">
 					<div className="row">
-						<Navigation appName={this.props.appName} 
-									appTag={this.props.appTag}
-									dbName={this.props.dbName} 
-									user={this.user}
-									userFirstName={this.userFirstName}
-									userLastName={this.userLastName}
-									token={this.token} />
-						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+						<main className="col-md-12 ms-sm-auto col-lg-12 px-md-2">
 							<Grid token={this.token} dbName={this.props.dbName} gridUuid={this.props.gridUuid} uuid={this.props.uuid} />
 						</main>
 					</div>
@@ -70,13 +63,15 @@ class App extends React.Component {
 						userLastName={this.userLastName} />
 				<div className="container-fluid">
 					<div className="row">
-						<Navigation appName={this.props.appName} 
-									appTag={this.props.appTag}
-									dbName={this.props.dbName} 
-									user={this.user}
-									userFirstName={this.userFirstName}
-									userLastName={this.userLastName}
-									token={this.token} />
+						<nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+							<Navigation appName={this.props.appName} 
+										appTag={this.props.appTag}
+										dbName={this.props.dbName} 
+										user={this.user}
+										userFirstName={this.userFirstName}
+										userLastName={this.userLastName}
+										token={this.token} />
+						</nav>
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} />
 							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} />
@@ -246,7 +241,7 @@ class Header extends React.Component {
 	render() {
 		return (
             <header className="navbar sticky-top bg-light flex-md-nowrap p-0 shadow">
-                <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="#">{this.props.appName} / {this.props.dbName}</a>
+                <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href={"/" + this.props.dbName}>{this.props.appName} / {this.props.dbName}</a>
                 <div className="navbar-text">
                     <small className="nav-item text-nowrap px-4 text-muted">{this.props.appTag}</small>
                 </div>
@@ -272,6 +267,83 @@ class Header extends React.Component {
                 </div>
             </header>
 		)
+	}
+}
+
+class Navigation extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			error: "",
+			isLoaded: false,
+			isLoading: false,
+			rows: []
+		}
+	}
+
+	componentDidMount() {
+		this.loadData()
+	}
+
+	render() {
+		const { isLoading, isLoaded, error, rows } = this.state
+		return (
+			<div className="position-sticky pt-4 sidebar-sticky">
+				{isLoading && <Spinner />}
+				{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
+				<ul className="nav flex-column mb-2">
+					{isLoaded && rows && rows.map(row => 
+						<li className="nav-item" key={row.uuid}>
+							<a className="nav-link" href={`/${this.props.dbName}/${row.uuid}`}>
+								{row.text1} {row.text3 && <i className={`bi bi-${row.text3}`}></i>}
+							</a>
+						</li>
+					)}
+				</ul>
+			</div>
+		)
+	}
+
+	loadData() {
+		this.setState({isLoading: true})
+		const uri = `/${this.props.dbName}/api/v1/${UuidGrids}`
+		fetch(uri, {
+			headers: {
+				'Accept': 'application/json',
+				'Content-Type': 'application/json',
+				'Authorization': 'Bearer ' + this.props.token
+			}
+		})
+		.then(response => {
+			const contentType = response.headers.get("content-type")
+			if(contentType && contentType.indexOf("application/json") !== -1) {
+				return response.json().then(	
+					(result) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: true,
+							rows: result.rows,
+							error: result.error
+						})
+					},
+					(error) => {
+						this.setState({
+							isLoading: false,
+							isLoaded: false,
+							rows: [],
+							error: error.message
+						})
+					}
+				)
+			} else {
+				this.setState({
+					isLoading: false,
+					isLoaded: false,
+					rows: [],
+					error: `[${response.status}] Internal server issue.`
+				})
+			}
+		})
 	}
 }
 
