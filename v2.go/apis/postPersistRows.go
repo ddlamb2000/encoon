@@ -33,7 +33,7 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	query := getInsertStatementForGridsApi(grid)
 	parms := getInsertValuesForGridsApi(r.userUuid, grid, row)
 	r.trace("postInsertGridRow(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
-	if err := r.execContext(query, parms...); err != nil {
+	if err := r.execContext(false, query, parms...); err != nil {
 		return r.logAndReturnError("Insert row error: %v.", err)
 	}
 	r.log("Row [%s] inserted.", row.Uuid)
@@ -142,7 +142,7 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	query := getUpdateStatementForGridsApi(grid)
 	parms := getUpdateValuesForGridsApi(r.userUuid, grid, row)
 	r.trace("postUpdateGridRow(%s, %s) - query=%s ; parms=%s", grid, row, query, parms)
-	if err := r.execContext(query, parms...); err != nil {
+	if err := r.execContext(false, query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
 	}
 	r.log("Row [%s] updated.", row.Uuid)
@@ -164,14 +164,14 @@ var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 		"updated = NOW(), " +
 		"updatedBy = $3" +
 		columns
-	whereStr := " WHERE uuid = $1 and gridUuid = $2"
+	whereStr := " WHERE gridUuid = $1 AND uuid = $2"
 	return updateStr + whereStr
 }
 
 func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Row) []any {
 	values := make([]any, 0)
-	values = append(values, row.Uuid)
 	values = append(values, grid.Uuid)
+	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	for _, col := range grid.Columns {
 		if col.IsAttribute() {
@@ -188,13 +188,13 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	}
 	query := getDeleteGridReferencedRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, model.UuidRelationships, grid.Uuid, row.Uuid); err != nil {
+	if err := r.execContext(true, query, model.UuidRelationships, grid.Uuid, row.Uuid); err != nil {
 		return r.logAndReturnError("Delete referenced row error: %v.", err)
 	}
 
 	query = getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, grid.Uuid, row.Uuid); err != nil {
+	if err := r.execContext(false, query, grid.Uuid, row.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	r.log("Row [%s] deleted.", row.Uuid)

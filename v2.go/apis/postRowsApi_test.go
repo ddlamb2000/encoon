@@ -135,7 +135,7 @@ func TestGetUpdateStatementForGridsApi(t *testing.T) {
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
 	got := getUpdateStatementForGridsApi(grid)
-	expect := "UPDATE users SET revision = revision + 1, updated = NOW(), updatedBy = $3, text2 = $4, text5 = $5, int8 = $6 WHERE uuid = $1 and gridUuid = $2"
+	expect := "UPDATE users SET revision = revision + 1, updated = NOW(), updatedBy = $3, text2 = $4, text5 = $5, int8 = $6 WHERE gridUuid = $1 AND uuid = $2"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
@@ -159,8 +159,8 @@ func TestGetUpdateValuesForGridsApi(t *testing.T) {
 	}
 	got := getUpdateValuesForGridsApi("xxx", grid, &row)
 	expect := []any{
-		uuid,
 		model.UuidUsers,
+		uuid,
 		"xxx",
 		&text2,
 		&text5,

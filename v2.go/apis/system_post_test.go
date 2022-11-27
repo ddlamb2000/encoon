@@ -152,6 +152,24 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringDoesntContain(t, responseData, `"text1":"test05"`)
 	})
 
+	t.Run("UpdateWrongRow", func(t *testing.T) {
+		var uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
+		stringNotEqual(t, uuid, "")
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + model.UuidUserColumnId + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Update row error: No row affected`)
+		var revision int
+		db.QueryRow("SELECT revision FROM grids WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&revision)
+		intEqual(t, revision, 1)
+	})
+
 	t.Run("UpdateNewRow", func(t *testing.T) {
 		var uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
@@ -195,6 +213,21 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringContains(t, responseData, `"text1":"test-01","text2":"test-02","text3":"test-03","text4":"test-04"`)
 		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
+	})
+
+	t.Run("CreateDeleteWrongRowInSingleGrid", func(t *testing.T) {
+		var uuidGrid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + model.UuidGridColumnName + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Delete row error: No row affected`)
 	})
 
 	t.Run("CreateDeleteRowsInSingleGrid", func(t *testing.T) {
