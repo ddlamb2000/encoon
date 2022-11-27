@@ -2167,61 +2167,6 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
-		229: "INSERT INTO relationships " +
-			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
-			"text1, " +
-			"text2, " +
-			"text3, " +
-			"text4, " +
-			"text5) " +
-			"VALUES ('" + utils.GetNewUUID() + "', " +
-			"1, " +
-			"NOW(), " +
-			"NOW(), " +
-			"'" + model.UuidRootUser + "', " +
-			"'" + model.UuidRootUser + "', " +
-			"true, " +
-			"'" + model.UuidRelationships + "', " +
-			"'relationship2', " +
-			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidAccessLevel + "', " +
-			"'" + model.UuidAccessLevelSpecialAccess + "')",
-
-		230: "INSERT INTO relationships " +
-			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
-			"text1, " +
-			"text2, " +
-			"text3, " +
-			"text4, " +
-			"text5) " +
-			"VALUES ('" + utils.GetNewUUID() + "', " +
-			"1, " +
-			"NOW(), " +
-			"NOW(), " +
-			"'" + model.UuidRootUser + "', " +
-			"'" + model.UuidRootUser + "', " +
-			"true, " +
-			"'" + model.UuidRelationships + "', " +
-			"'relationship2', " +
-			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidColumns + "', " +
-			"'" + model.UuidAccessLevel + "', " +
-			"'" + model.UuidAccessLevelSpecialAccess + "')",
-
-		232: "INSERT INTO rows " +
-			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
-			"text1) " +
-			"VALUES ('" + model.UuidAccessLevelSpecialAccess + "', " +
-			"1, " +
-			"NOW(), " +
-			"NOW(), " +
-			"'" + model.UuidRootUser + "', " +
-			"'" + model.UuidRootUser + "', " +
-			"true, " +
-			"'" + model.UuidAccessLevel + "', " +
-			"'Special access')",
-
 		233: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +

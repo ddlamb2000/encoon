@@ -31,14 +31,14 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 	})
 
 	t.Run("User01CanGetGrid", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false,"gridSpecialAccess":true`)
+		jsonStringContains(t, responseData, `"canViewGrid":false,"canEditGrid":false`)
 	})
 
 	t.Run("RootCannotGetGrid01", func(t *testing.T) {
@@ -52,14 +52,14 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 	})
 
 	t.Run("User01CanGetGrid02", func(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 	})
 
 	t.Run("User02CannotGetGrid01", func(t *testing.T) {
@@ -98,7 +98,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid02Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":false,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":false`)
 	})
 
 	t.Run("User01SetViewAccessForUser2Grid02", func(t *testing.T) {
@@ -116,7 +116,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user02", user02Uuid, "/test/api/v1/"+grid03Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":false,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":false`)
 	})
 
 	t.Run("User03CannotGetGrid03", func(t *testing.T) {
@@ -141,7 +141,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "user03", user03Uuid, "/test/api/v1/"+grid03Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 	})
 
 	t.Run("User01CanGetRow17Grid01", func(t *testing.T) {
@@ -160,7 +160,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringContains(t, responseData, `"text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"`)
 	})
 
@@ -174,7 +174,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringContains(t, responseData, `"text1":"test-20","text2":"test-21","text3":"test-22","text4":"test-23"`)
 		jsonStringContains(t, responseData, `"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"`)
 	})
@@ -190,7 +190,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-24"`)
 	})
 
@@ -210,7 +210,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
@@ -224,7 +224,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringContains(t, responseData, `"int1":200,"int2":200,"int3":200,"int4":200`)
 		jsonStringContains(t, responseData, `"int1":300,"int2":300,"int3":300,"int4":300`)
 	})
@@ -240,7 +240,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runPOSTRequestForUser("test", "user01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true,"gridSpecialAccess":false`)
+		jsonStringContains(t, responseData, `"canViewGrid":true,"canEditGrid":true`)
 		jsonStringDoesntContain(t, responseData, `"int1":300`)
 	})
 

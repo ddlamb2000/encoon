@@ -54,9 +54,8 @@ const (
 	UuidRelationshipColumnToGridUuid   = "06818ac2-9090-4840-903e-d427b120436e"
 	UuidRelationshipColumnToUuid       = "68190afe-b8ff-4e51-b341-7238b124c741"
 
-	UuidAccessLevel              = "263cb4d8-ddde-4555-a514-853a4b271973"
-	UuidAccessLevelColumnLevel   = "8410d75d-7e71-4004-9a6f-544fca4e686e"
-	UuidAccessLevelReadAccess    = "07f4d6ee-4d0e-4862-8030-b982b3d64a49"
-	UuidAccessLevelWriteAccess   = "807ef79d-8004-4be2-a3e2-f873c72906cc"
-	UuidAccessLevelSpecialAccess = "b9aa2a63-011b-4f45-af91-6b7ed9b1319f"
+	UuidAccessLevel            = "263cb4d8-ddde-4555-a514-853a4b271973"
+	UuidAccessLevelColumnLevel = "8410d75d-7e71-4004-9a6f-544fca4e686e"
+	UuidAccessLevelReadAccess  = "07f4d6ee-4d0e-4862-8030-b982b3d64a49"
+	UuidAccessLevelWriteAccess = "807ef79d-8004-4be2-a3e2-f873c72906cc"
 )

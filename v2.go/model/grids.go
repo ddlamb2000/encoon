@@ -13,7 +13,6 @@ type Grid struct {
 	EditAccessUuid    *string   `json:"-"`
 	CanView           bool      `json:"canViewGrid"`
 	CanEdit           bool      `json:"canEditGrid"`
-	SpecialAccess     bool      `json:"gridSpecialAccess"`
 	Columns           []*Column `json:"columns,omitempty"`
 }
 
@@ -46,40 +45,30 @@ func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
 	case grid.OwnerUuid != nil && *grid.OwnerUuid == userUuid:
 		grid.CanView = true
 		grid.CanEdit = true
-		grid.SpecialAccess = false
 	case grid.EditAccessUuid != nil && *grid.EditAccessUuid == userUuid:
 		grid.CanView = true
 		grid.CanEdit = true
-		grid.SpecialAccess = false
 	case grid.ViewAccessUuid != nil && *grid.ViewAccessUuid == userUuid:
 		grid.CanView = true
 		grid.CanEdit = false
-		grid.SpecialAccess = false
 	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelWriteAccess:
 		grid.CanView = true
 		grid.CanEdit = true
-		grid.SpecialAccess = false
 	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelReadAccess:
 		grid.CanView = true
 		grid.CanEdit = false
-		grid.SpecialAccess = false
-	case grid.DefaultAccessUuid != nil && *grid.DefaultAccessUuid == UuidAccessLevelSpecialAccess:
-		grid.CanView = false
-		grid.CanEdit = false
-		grid.SpecialAccess = true
 	default:
 		grid.CanView = false
 		grid.CanEdit = false
-		grid.SpecialAccess = false
 	}
 }
 
 func (grid *Grid) GetCanView() bool {
-	return grid.CanView || grid.SpecialAccess && grid.isSpecial()
+	return grid.CanView || grid.isSpecial()
 }
 
 func (grid *Grid) GetCanEdit() bool {
-	return grid.CanEdit || grid.SpecialAccess && grid.isSpecial()
+	return grid.CanEdit || grid.isSpecial()
 }
 
 func (grid *Grid) isSpecial() bool {
