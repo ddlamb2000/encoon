@@ -78,7 +78,7 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false},
 		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false},
 		{"12", UuidMigrations, "", "", "", "", "user1", false, false, false},
-		{"13", UuidRelationships, "", "", "", "", "user1", false, false, false},
+		{"13", UuidRelationships, "", "", "", "", "user1", true, true, true},
 		{"14", UuidTransactions, "", "", "", "", "user1", false, false, false},
 	}
 	for _, tt := range tests {

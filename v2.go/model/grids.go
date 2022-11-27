@@ -92,7 +92,7 @@ func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
 		grid.CanViewRows = true
 		grid.CanEditRows = false
 		grid.CanAddRows = false
-	case grid.Uuid == UuidGrids || grid.Uuid == UuidColumns:
+	case grid.Uuid == UuidGrids || grid.Uuid == UuidColumns || grid.Uuid == UuidRelationships:
 		grid.CanViewRows = true
 		grid.CanEditRows = true
 		grid.CanAddRows = true
