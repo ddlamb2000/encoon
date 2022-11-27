@@ -76,7 +76,9 @@ func (r apiRequestParameters) beginTransaction() error {
 }
 
 // function is available for mocking
-var getBeginTransactionQuery = func() string { return "BEGIN" }
+var getBeginTransactionQuery = func() string {
+	return "BEGIN"
+}
 
 func (r apiRequestParameters) commitTransaction() error {
 	r.trace("commitTransaction()")
@@ -88,7 +90,9 @@ func (r apiRequestParameters) commitTransaction() error {
 }
 
 // function is available for mocking
-var getCommitTransactionQuery = func() string { return "COMMIT" }
+var getCommitTransactionQuery = func() string {
+	return "COMMIT"
+}
 
 func (r apiRequestParameters) rollbackTransaction() error {
 	r.trace("rollbackTransaction()")
@@ -100,7 +104,9 @@ func (r apiRequestParameters) rollbackTransaction() error {
 }
 
 // function is available for mocking
-var getRollbackTransactionQuery = func() string { return "ROLLBACK" }
+var getRollbackTransactionQuery = func() string {
+	return "ROLLBACK"
+}
 
 type apiResponse struct {
 	grid      *model.Grid

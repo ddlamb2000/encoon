@@ -24,18 +24,7 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 			return nil, r.logAndReturnError("Error when scanning grid definition: %v.", err)
 		}
 		grids = append(grids, *grid)
-		if grid.OwnerUuid != nil {
-			grids[0].Owners[*grid.OwnerUuid] = true
-		}
-		if grid.DefaultAccessUuid != nil {
-			grids[0].DefaultAccess[*grid.DefaultAccessUuid] = true
-		}
-		if grid.ViewAccessUuid != nil {
-			grids[0].ViewAccess[*grid.ViewAccessUuid] = true
-		}
-		if grid.EditAccessUuid != nil {
-			grids[0].EditAccess[*grid.EditAccessUuid] = true
-		}
+		grid.CopyAccessToOtherGrid(&grids[0])
 	}
 	if len(grids) == 0 {
 		return nil, nil
@@ -114,7 +103,8 @@ func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
 	return parameters
 }
 
-func getGridQueryOutputForGridsApi(grid *model.Grid) []any {
+// function is available for mocking
+var getGridQueryOutputForGridsApi = func(grid *model.Grid) []any {
 	output := make([]any, 0)
 	output = append(output, &grid.Uuid)
 	output = append(output, &grid.GridUuid)

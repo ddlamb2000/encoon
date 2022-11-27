@@ -7,9 +7,10 @@ import "fmt"
 
 type Grid struct {
 	Row
-	CanView bool      `json:"canViewGrid"`
-	CanEdit bool      `json:"canEditGrid"`
-	Columns []*Column `json:"columns,omitempty"`
+	CanViewRows bool      `json:"canViewRows"`
+	CanEditRows bool      `json:"canEditRows"`
+	CanAddRows  bool      `json:"canAddRows"`
+	Columns     []*Column `json:"columns,omitempty"`
 
 	OwnerUuid         *string         `json:"-"`
 	DefaultAccessUuid *string         `json:"-"`
@@ -54,37 +55,53 @@ func (grid *Grid) GetTableName() string {
 	}
 }
 
-func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
-	switch {
-	case grid.Owners[userUuid]:
-		grid.CanView = true
-		grid.CanEdit = true
-	case grid.EditAccess[userUuid]:
-		grid.CanView = true
-		grid.CanEdit = true
-	case grid.ViewAccess[userUuid]:
-		grid.CanView = true
-		grid.CanEdit = false
-	case grid.DefaultAccess[UuidAccessLevelWriteAccess]:
-		grid.CanView = true
-		grid.CanEdit = true
-	case grid.DefaultAccess[UuidAccessLevelReadAccess]:
-		grid.CanView = true
-		grid.CanEdit = false
-	default:
-		grid.CanView = false
-		grid.CanEdit = false
+func (grid *Grid) CopyAccessToOtherGrid(otherGrid *Grid) {
+	if grid.OwnerUuid != nil {
+		otherGrid.Owners[*grid.OwnerUuid] = true
+	}
+	if grid.DefaultAccessUuid != nil {
+		otherGrid.DefaultAccess[*grid.DefaultAccessUuid] = true
+	}
+	if grid.ViewAccessUuid != nil {
+		otherGrid.ViewAccess[*grid.ViewAccessUuid] = true
+	}
+	if grid.EditAccessUuid != nil {
+		otherGrid.EditAccess[*grid.EditAccessUuid] = true
 	}
 }
 
-func (grid *Grid) GetCanView() bool {
-	return grid.CanView || grid.isSpecial()
-}
-
-func (grid *Grid) GetCanEdit() bool {
-	return grid.CanEdit || grid.isSpecial()
-}
-
-func (grid *Grid) isSpecial() bool {
-	return grid.Uuid == UuidGrids || grid.Uuid == UuidColumns
+func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
+	switch {
+	case grid.Owners[userUuid]:
+		grid.CanViewRows = true
+		grid.CanEditRows = true
+		grid.CanAddRows = true
+	case grid.EditAccess[userUuid]:
+		grid.CanViewRows = true
+		grid.CanEditRows = true
+		grid.CanAddRows = true
+	case grid.ViewAccess[userUuid]:
+		grid.CanViewRows = true
+		grid.CanEditRows = false
+		grid.CanAddRows = false
+	case grid.DefaultAccess[UuidAccessLevelWriteAccess]:
+		grid.CanViewRows = true
+		grid.CanEditRows = true
+		grid.CanAddRows = true
+	case grid.DefaultAccess[UuidAccessLevelReadAccess]:
+		grid.CanViewRows = true
+		grid.CanEditRows = false
+		grid.CanAddRows = false
+	case grid.Uuid == UuidGrids || grid.Uuid == UuidColumns:
+		grid.CanViewRows = true
+		grid.CanEditRows = true
+		grid.CanAddRows = true
+	case grid.Uuid == UuidAccessLevel || grid.Uuid == UuidUsers || grid.Uuid == UuidColumnTypes:
+		grid.CanViewRows = true
+		grid.CanEditRows = false
+		grid.CanAddRows = false
+	default:
+		grid.CanViewRows = false
+		grid.CanEditRows = false
+	}
 }

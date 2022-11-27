@@ -7,6 +7,13 @@ import (
 	"testing"
 )
 
+func TestGetNewGrid(t *testing.T) {
+	grid := GetNewGrid()
+	if grid == nil {
+		t.Errorf(`Isse when creating grid.`)
+	}
+}
+
 func TestGridSetPath(t *testing.T) {
 	grid := GetNewGrid()
 	grid.Uuid = "xxx"
@@ -49,43 +56,72 @@ func TestGetTableName(t *testing.T) {
 func TestSetViewEditAccessFlags(t *testing.T) {
 	tests := []struct {
 		test              string
+		uuid              string
 		ownerUuid         string
 		defaultAccessUuid string
 		viewAccessUuid    string
 		editAccessUuid    string
 		userUuid          string
-		expectCanView     bool
-		expectCanEdit     bool
-		expectGetCanView  bool
-		expectGetCanEdit  bool
+		expectCanViewRows bool
+		expectCanEditRows bool
+		expectCanAddRows  bool
 	}{
-		{"1", "user1", "", "", "", "user1", true, true, true, true},
-		{"2", "user1", "", "", "", "user2", false, false, false, false},
-		{"3", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, true, false},
-		{"4", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, true, true},
-		{"5", "user1", "", "user2", "", "user2", true, false, true, false},
-		{"6", "user1", "", "", "user2", "user2", true, true, true, true},
+		{"1", "aaaa", "user1", "", "", "", "user1", true, true, true},
+		{"2", "aaaa", "user1", "", "", "", "user2", false, false, false},
+		{"3", "aaaa", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false},
+		{"4", "aaaa", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, true},
+		{"5", "aaaa", "user1", "", "user2", "", "user2", true, false, false},
+		{"6", "aaaa", "user1", "", "", "user2", "user2", true, true, true},
+		{"7", UuidGrids, "", "", "", "", "user1", true, true, true},
+		{"8", UuidColumns, "", "", "", "", "user1", true, true, true},
+		{"9", UuidUsers, "", "", "", "", "user1", true, false, false},
+		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false},
+		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false},
+		{"12", UuidMigrations, "", "", "", "", "user1", false, false, false},
+		{"13", UuidRelationships, "", "", "", "", "user1", false, false, false},
+		{"14", UuidTransactions, "", "", "", "", "user1", false, false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			grid := GetNewGrid()
+			grid.Uuid = tt.uuid
 			grid.Owners[tt.ownerUuid] = true
 			grid.DefaultAccess[tt.defaultAccessUuid] = true
 			grid.ViewAccess[tt.viewAccessUuid] = true
 			grid.EditAccess[tt.editAccessUuid] = true
 			grid.SetViewEditAccessFlags(tt.userUuid)
-			if grid.CanView != tt.expectCanView {
-				t.Errorf(`Got grid.CanView=%v instead of %v.`, grid.CanView, tt.expectCanView)
+			if grid.CanViewRows != tt.expectCanViewRows {
+				t.Errorf(`Got grid.CanViewRowsRows=%v instead of %v.`, grid.CanViewRows, tt.expectCanViewRows)
 			}
-			if grid.CanEdit != tt.expectCanEdit {
-				t.Errorf(`Got grid.CanEdit=%v instead of %v.`, grid.CanEdit, tt.expectCanEdit)
+			if grid.CanEditRows != tt.expectCanEditRows {
+				t.Errorf(`Got grid.CanEditRowsRows=%v instead of %v.`, grid.CanEditRows, tt.expectCanEditRows)
 			}
-			if grid.GetCanView() != tt.expectGetCanView {
-				t.Errorf(`Got grid.GetCanView()=%v instead of %v.`, grid.GetCanView(), tt.expectCanView)
-			}
-			if grid.GetCanEdit() != tt.expectGetCanEdit {
-				t.Errorf(`Got grid.GetCanEdit()=%v instead of %v.`, grid.GetCanEdit(), tt.expectCanEdit)
+			if grid.CanAddRows != tt.expectCanAddRows {
+				t.Errorf(`Got grid.CanAddRowsRows=%v instead of %v.`, grid.CanAddRows, tt.expectCanAddRows)
 			}
 		})
+	}
+}
+
+func TestCopyAccessToOtherGrid(t *testing.T) {
+	uuid1, uuid2, uuid3, uuid4 := "aaa", "bbb", "ccc", "ddd"
+	grid1 := GetNewGrid()
+	grid1.OwnerUuid = &uuid1
+	grid1.DefaultAccessUuid = &uuid2
+	grid1.ViewAccessUuid = &uuid3
+	grid1.EditAccessUuid = &uuid4
+	grid2 := GetNewGrid()
+	grid1.CopyAccessToOtherGrid(grid2)
+	if !grid2.Owners[uuid1] {
+		t.Errorf(`Can't find owner.`)
+	}
+	if !grid2.DefaultAccess[uuid2] {
+		t.Errorf(`Can't find default access.`)
+	}
+	if !grid2.ViewAccess[uuid3] {
+		t.Errorf(`Can't find view access.`)
+	}
+	if !grid2.EditAccess[uuid4] {
+		t.Errorf(`Can't find edit access.`)
 	}
 }

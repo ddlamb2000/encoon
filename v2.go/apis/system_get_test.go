@@ -180,6 +180,16 @@ func RunSystemTestGet(t *testing.T) {
 		getGridForGridsApi = getGridForGridsApiImpl
 	})
 
+	t.Run("VerifyActualRowsWithDefect8", func(t *testing.T) {
+		getGridQueryOutputForGridsApiImpl := getGridQueryOutputForGridsApi
+		getGridQueryOutputForGridsApi = func(grid *model.Grid) []any { return nil } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when scanning grid definition: sql`)
+		getGridQueryOutputForGridsApi = getGridQueryOutputForGridsApiImpl
+	})
+
 	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
 		getRowsQueryParametersForGridsApiImpl := getRowsQueryParametersForGridsApi
 		getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any { return nil }

@@ -26,7 +26,7 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 		} else if grid == nil {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Data not found.")}
 			return
-		} else if !grid.GetCanView() {
+		} else if !grid.CanViewRows {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 			return
 		}

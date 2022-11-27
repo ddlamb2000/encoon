@@ -7,6 +7,13 @@ import (
 	"testing"
 )
 
+func TestGetNewRow(t *testing.T) {
+	row := GetNewRow()
+	if row == nil {
+		t.Errorf(`Isse when creating row.`)
+	}
+}
+
 func TestSetPath(t *testing.T) {
 	text1 := "xxx"
 	row := Row{

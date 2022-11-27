@@ -7,6 +7,13 @@ import (
 	"testing"
 )
 
+func TestGetNewColumn(t *testing.T) {
+	column := GetNewColumn()
+	if column == nil {
+		t.Errorf(`Isse when creating column.`)
+	}
+}
+
 func TestColumnString(t *testing.T) {
 	column := Column{Name: "text1", Label: "Label"}
 	got := column.String()

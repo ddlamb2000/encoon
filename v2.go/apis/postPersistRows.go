@@ -24,6 +24,10 @@ func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.
 }
 
 func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	if !grid.CanAddRows {
+		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
+		return r.logAndReturnError("User isn't allowed to create rows.")
+	}
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
 	query := getInsertStatementForGridsApi(grid)
@@ -131,6 +135,10 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 }
 
 func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	if !grid.CanEditRows {
+		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
+		return r.logAndReturnError("User isn't allowed to update rows.")
+	}
 	query := getUpdateStatementForGridsApi(grid)
 	parms := getUpdateValuesForGridsApi(r.userUuid, grid, row)
 	r.trace("postUpdateGridRow(%s, %s) - query=%s ; parms=%s", grid, row, query, parms)
@@ -174,6 +182,10 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	if !grid.CanEditRows {
+		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
+		return r.logAndReturnError("User isn't allowed to update rows.")
+	}
 	query := getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
 	if err := r.execContext(query, row.Uuid, grid.Uuid); err != nil {
