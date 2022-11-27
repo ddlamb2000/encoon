@@ -231,4 +231,59 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
 		getDeleteReferenceRowStatement = getDeleteReferenceRowStatementImpl
 	})
+
+	t.Run("CreateNewRowIn3rdSingleGrid", func(t *testing.T) {
+		var grid1Uuid, grid3Uuid, row01Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a", "text1":"test-xx","text2":"test-yy","text3":"test-zz"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"countRows":4`)
+		jsonStringContains(t, responseData, `"text1":"test-xx","text2":"test-yy","text3":"test-zz"`)
+		var rowXXUuid, referenceRowXXUuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
+		if rowXXUuid == "" {
+			t.Errorf(`Row "test-xx" doesn't exist.`)
+		}
+		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
+		if referenceRowXXUuid == "" {
+			t.Errorf(`Referenced row for "test-xx" doesn't exist.`)
+		}
+	})
+
+	t.Run("DeleteNewRowIn3rdSingleGrid", func(t *testing.T) {
+		var grid3Uuid, rowXXUuid, referenceRowXXUuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
+		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + rowXXUuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"countRows":3`)
+		var newRowXXUuid, newReferenceRowXXUuid string
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
+		if newRowXXUuid != "" {
+			t.Errorf(`Row "test-xx" still exists: %v.`, newRowXXUuid)
+		}
+		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&newReferenceRowXXUuid)
+		if newReferenceRowXXUuid != "" {
+			t.Errorf(`Referenced row for "test-xx" still exists: %v.`, newReferenceRowXXUuid)
+		}
+	})
 }

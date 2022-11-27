@@ -441,6 +441,26 @@ func RunSystemTestPost(t *testing.T) {
 	})
 
 	t.Run("CreateSingleGridDefect6", func(t *testing.T) {
+		getDeleteGridReferencedRowQueryImpl := getDeleteGridReferencedRowQuery
+		getDeleteGridReferencedRowQuery = func(*model.Grid) string { return "xxx" } // mock function
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-01").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + uuidRow + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
+		getDeleteGridReferencedRowQuery = getDeleteGridReferencedRowQueryImpl
+	})
+
+	t.Run("CreateSingleGridDefect7", func(t *testing.T) {
 		getDeleteGridRowQueryImpl := getDeleteGridRowQuery
 		getDeleteGridRowQuery = func(*model.Grid) string { return "xxx" } // mock function
 		var uuidGrid, uuidRow string
@@ -460,7 +480,7 @@ func RunSystemTestPost(t *testing.T) {
 		getDeleteGridRowQuery = getDeleteGridRowQueryImpl
 	})
 
-	t.Run("CreateSingleGridDefect7", func(t *testing.T) {
+	t.Run("CreateSingleGridDefect8", func(t *testing.T) {
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")

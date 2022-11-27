@@ -36,7 +36,7 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert row error: %v.", err)
 	}
-	r.log("Row [%s] inserted.", row)
+	r.log("Row [%s] inserted.", row.Uuid)
 	return nil
 }
 
@@ -145,7 +145,7 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
 	}
-	r.log("Row [%s] updated.", row)
+	r.log("Row [%s] updated.", row.Uuid)
 	return nil
 }
 
@@ -186,16 +186,27 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
-	query := getDeleteGridRowQuery(grid)
+	query := getDeleteGridReferencedRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, row.Uuid, grid.Uuid); err != nil {
+	if err := r.execContext(query, model.UuidRelationships, grid.Uuid, row.Uuid); err != nil {
+		return r.logAndReturnError("Delete referenced row error: %v.", err)
+	}
+
+	query = getDeleteGridRowQuery(grid)
+	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
+	if err := r.execContext(query, grid.Uuid, row.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
-	r.log("Row [%s] deleted.", row)
+	r.log("Row [%s] deleted.", row.Uuid)
 	return nil
 }
 
 // function is available for mocking
+var getDeleteGridReferencedRowQuery = func(grid *model.Grid) string {
+	return "DELETE FROM relationships WHERE gridUuid = $1 AND text2 = $2 AND text3 = $3"
+}
+
+// function is available for mocking
 var getDeleteGridRowQuery = func(grid *model.Grid) string {
-	return "DELETE FROM " + grid.GetTableName() + " WHERE uuid = $1 and gridUuid = $2"
+	return "DELETE FROM " + grid.GetTableName() + " WHERE gridUuid = $1 AND uuid = $2"
 }
