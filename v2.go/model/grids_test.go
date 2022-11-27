@@ -55,31 +55,32 @@ func TestGetTableName(t *testing.T) {
 
 func TestSetViewEditAccessFlags(t *testing.T) {
 	tests := []struct {
-		test              string
-		uuid              string
-		ownerUuid         string
-		defaultAccessUuid string
-		viewAccessUuid    string
-		editAccessUuid    string
-		userUuid          string
-		expectCanViewRows bool
-		expectCanEditRows bool
-		expectCanAddRows  bool
+		test                   string
+		uuid                   string
+		ownerUuid              string
+		defaultAccessUuid      string
+		viewAccessUuid         string
+		editAccessUuid         string
+		userUuid               string
+		expectCanViewRows      bool
+		expectCanEditRows      bool
+		expectCanEditOwnedRows bool
+		expectCanAddRows       bool
 	}{
-		{"1", "aaaa", "user1", "", "", "", "user1", true, true, true},
-		{"2", "aaaa", "user1", "", "", "", "user2", false, false, false},
-		{"3", "aaaa", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false},
-		{"4", "aaaa", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, true},
-		{"5", "aaaa", "user1", "", "user2", "", "user2", true, false, false},
-		{"6", "aaaa", "user1", "", "", "user2", "user2", true, true, true},
-		{"7", UuidGrids, "", "", "", "", "user1", true, true, true},
-		{"8", UuidColumns, "", "", "", "", "user1", true, true, true},
-		{"9", UuidUsers, "", "", "", "", "user1", true, false, false},
-		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false},
-		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false},
-		{"12", UuidMigrations, "", "", "", "", "user1", false, false, false},
-		{"13", UuidRelationships, "", "", "", "", "user1", true, true, true},
-		{"14", UuidTransactions, "", "", "", "", "user1", false, false, false},
+		{"1", "aaaa", "user1", "", "", "", "user1", true, true, true, true},
+		{"2", "aaaa", "user1", "", "", "", "user2", false, false, false, false},
+		{"3", "aaaa", "user1", UuidAccessLevelReadAccess, "", "", "user2", true, false, false, false},
+		{"4", "aaaa", "user1", UuidAccessLevelWriteAccess, "", "", "user2", true, true, true, true},
+		{"5", "aaaa", "user1", "", "user2", "", "user2", true, false, false, false},
+		{"6", "aaaa", "user1", "", "", "user2", "user2", true, true, true, true},
+		{"7", UuidGrids, "", "", "", "", "user1", true, false, true, true},
+		{"8", UuidColumns, "", "", "", "", "user1", true, true, true, true},
+		{"9", UuidUsers, "", "", "", "", "user1", true, false, false, false},
+		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false, false},
+		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false, false},
+		{"12", UuidMigrations, "", "", "", "", "user1", false, false, false, false},
+		{"13", UuidRelationships, "", "", "", "", "user1", true, false, true, true},
+		{"14", UuidTransactions, "", "", "", "", "user1", false, false, false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -95,6 +96,9 @@ func TestSetViewEditAccessFlags(t *testing.T) {
 			}
 			if grid.CanEditRows != tt.expectCanEditRows {
 				t.Errorf(`Got grid.CanEditRowsRows=%v instead of %v.`, grid.CanEditRows, tt.expectCanEditRows)
+			}
+			if grid.CanEditOwnedRows != tt.expectCanEditOwnedRows {
+				t.Errorf(`Got grid.CanEditOwnedRows=%v instead of %v.`, grid.CanEditOwnedRows, tt.expectCanEditOwnedRows)
 			}
 			if grid.CanAddRows != tt.expectCanAddRows {
 				t.Errorf(`Got grid.CanAddRowsRows=%v instead of %v.`, grid.CanAddRows, tt.expectCanAddRows)

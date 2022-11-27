@@ -63,7 +63,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(r, uuid, grid, true)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, uuid, true)
 		if uuid != "" && rowSetCount == 0 {
 			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return

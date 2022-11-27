@@ -39,13 +39,25 @@ type Row struct {
 	Int10         *int64       `json:"int10,omitempty" yaml:"int10,omitempty"`
 	Path          string       `json:"path,omitempty" yaml:"path,omitempty"`
 	DisplayString string       `json:"displayString,omitempty" yaml:"displayString,omitempty"`
+	CanViewRow    bool         `json:"canViewRow"`
+	CanEditRow    bool         `json:"canEditRow"`
 	References    []*Reference `json:"references,omitempty" yaml:"references,omitempty"`
-	TmpUuid       string       `json:"-"`
+
+	TmpUuid string `json:"-"`
 }
 
 func GetNewRow() *Row {
 	row := new(Row)
 	return row
+}
+
+func (row *Row) SetViewEditAccessFlags(grid *Grid, userUuid string) {
+	row.CanViewRow = grid.CanViewRows
+	if grid.CanEditRows {
+		row.CanEditRow = true
+	} else if grid.CanEditOwnedRows {
+		row.CanEditRow = grid.HasOwnership(userUuid)
+	}
 }
 
 func (row Row) String() string {

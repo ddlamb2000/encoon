@@ -46,7 +46,7 @@ func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, refer
 		}
 		grid, _ := getGridForGridsApi(r, referencedGridUuid)
 		if grid != nil {
-			rows, _, err := getRowSetForGridsApi(r, referencedUuid, grid, false)
+			rows, _, err := getRowSetForGridsApi(r, grid, referencedUuid, false)
 			if err == nil {
 				rowSet = append(rowSet, rows...)
 			}

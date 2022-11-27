@@ -30,7 +30,7 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(r, uuid, grid, true)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, uuid, true)
 		if err != nil {
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
@@ -52,7 +52,7 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 	}
 }
 
-func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid, getReferences bool) ([]model.Row, int, error) {
+func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string, getReferences bool) ([]model.Row, int, error) {
 	query := getRowsQueryForGridsApi(grid, uuid)
 	parms := getRowsQueryParametersForGridsApi(grid.Uuid, uuid)
 	r.trace("getRowSetForGridsApi(%s, %s, %v) - query=%s ; parms=%s", uuid, grid, getReferences, query, parms)
@@ -67,7 +67,12 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 		if err := set.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
 			return nil, 0, r.logAndReturnError("Error when scanning rows: %v.", err)
 		}
+		gridForOwnership, err := getGridForOwnership(r, grid, row)
+		if err != nil {
+			return nil, 0, err
+		}
 		row.SetPathAndDisplayString(r.dbName)
+		row.SetViewEditAccessFlags(gridForOwnership, r.userUuid)
 		if getReferences {
 			if err := getRelationshipsForRow(r, grid, row); err != nil {
 				return nil, 0, err
@@ -76,6 +81,15 @@ func getRowSetForGridsApi(r apiRequestParameters, uuid string, grid *model.Grid,
 		rows = append(rows, *row)
 	}
 	return rows, len(rows), nil
+}
+
+func getGridForOwnership(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+	if row.GridUuid == model.UuidGrids {
+		return getGridForGridsApi(r, row.Uuid)
+	} else if row.GridUuid == model.UuidRelationships && row.Text2 != nil {
+		return getGridForGridsApi(r, *row.Text2)
+	}
+	return grid, nil
 }
 
 // function is available for mocking

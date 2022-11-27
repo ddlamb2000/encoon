@@ -135,7 +135,11 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 }
 
 func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	if !grid.CanEditRows {
+	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
+	if err != nil || rowCount != 1 {
+		return r.logAndReturnError("Error retreving row %q before update: %v.", row.Uuid, err)
+	}
+	if !rows[0].CanEditRow {
 		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
@@ -182,7 +186,11 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	if !grid.CanEditRows {
+	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
+	if err != nil || rowCount != 1 {
+		return r.logAndReturnError("Error retreving row %q before delete: %v.", row.Uuid, err)
+	}
+	if !rows[0].CanEditRow {
 		r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}

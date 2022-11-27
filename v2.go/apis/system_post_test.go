@@ -215,7 +215,7 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
 	})
 
-	t.Run("CreateDeleteWrongRowInSingleGrid", func(t *testing.T) {
+	t.Run("DeleteWrongRowInSingleGrid", func(t *testing.T) {
 		var uuidGrid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")

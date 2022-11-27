@@ -41,7 +41,8 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":true`)
+		jsonStringContains(t, responseData, `"canEditOwnedRows":true`)
+		jsonStringContains(t, responseData, `"canEditRows":false`)
 	})
 
 	t.Run("RootCannotGetGrid01", func(t *testing.T) {
