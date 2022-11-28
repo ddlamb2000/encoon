@@ -11,11 +11,11 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) (*model.Grid, []model.Row, int, apiResponse) {
+func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) apiResponse {
 	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
 	defer cancel()
 	if err != nil {
-		return nil, nil, 0, apiResponse{err: err}
+		return apiResponse{err: err}
 	}
 	go func() {
 		r.trace("getGridsRows()")
@@ -27,7 +27,9 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 		} else if grid == nil {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Data not found.")}
 			return
-		} else if !grid.CanViewRows {
+		}
+		canViewRows, canEditRows, canEditOwnedRows, canAddRows := grid.GetViewEditAccessFlags(r.userUuid)
+		if !canViewRows {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 			return
 		}
@@ -40,16 +42,16 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount}
+		r.ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount, canViewRows: canViewRows, canEditRows: canEditRows, canEditOwnedRows: canEditOwnedRows, canAddRows: canAddRows}
 		r.trace("getGridsRows() - Done")
 	}()
 	select {
 	case <-r.ctx.Done():
 		r.trace("getGridsRows() - Cancelled")
-		return nil, nil, 0, apiResponse{err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), timeOut: true}
+		return apiResponse{err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), timeOut: true}
 	case response := <-r.ctxChan:
 		r.trace("getGridsRows() - OK")
-		return response.grid, response.rows, response.rowCount, response
+		return response
 	}
 }
 

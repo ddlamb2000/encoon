@@ -7,11 +7,7 @@ import "fmt"
 
 type Grid struct {
 	Row
-	CanViewRows      bool      `json:"canViewRows"`
-	CanEditRows      bool      `json:"canEditRows"`
-	CanEditOwnedRows bool      `json:"canEditOwnedRows"`
-	CanAddRows       bool      `json:"canAddRows"`
-	Columns          []*Column `json:"columns,omitempty"`
+	Columns []*Column `json:"columns,omitempty"`
 
 	Owners            map[string]bool `json:"-"`
 	DefaultAccess     map[string]bool `json:"-"`
@@ -71,17 +67,18 @@ func (grid *Grid) CopyAccessToOtherGrid(otherGrid *Grid) {
 	}
 }
 
-func (grid *Grid) SetViewEditAccessFlags(userUuid string) {
+func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditRows, canEditOwnedRows, canAddRows bool) {
 	switch {
 	case grid.Owners[userUuid] || grid.EditAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelWriteAccess]:
-		grid.CanViewRows, grid.CanEditRows, grid.CanEditOwnedRows, grid.CanAddRows = true, true, true, true
+		return true, true, true, true
 	case grid.ViewAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelReadAccess]:
-		grid.CanViewRows, grid.CanEditRows, grid.CanEditOwnedRows, grid.CanAddRows = true, false, false, false
+		return true, false, false, false
 	case grid.Uuid == UuidGrids || grid.Uuid == UuidRelationships || grid.Uuid == UuidColumns:
-		grid.CanViewRows, grid.CanEditRows, grid.CanEditOwnedRows, grid.CanAddRows = true, false, true, true
+		return true, false, true, true
 	case grid.Uuid == UuidAccessLevel || grid.Uuid == UuidUsers || grid.Uuid == UuidColumnTypes:
-		grid.CanViewRows, grid.CanEditRows, grid.CanEditOwnedRows, grid.CanAddRows = true, false, false, false
+		return true, false, false, false
 	}
+	return false, false, false, false
 }
 
 func (grid *Grid) HasOwnership(userUuid string) bool {

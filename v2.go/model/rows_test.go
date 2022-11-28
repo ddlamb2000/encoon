@@ -60,12 +60,12 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	user1 := "aaaa"
 	grid1 := GetNewGrid()
 	grid2 := GetNewGrid()
-	grid2.CanViewRows = true
+	grid2.ViewAccess[user1] = true
 	grid3 := GetNewGrid()
-	grid3.CanEditRows = true
+	grid3.EditAccess[user1] = true
 	grid4 := GetNewGrid()
-	grid4.CanEditOwnedRows = true
-	grid4.Owners["aaaa"] = true
+	grid4.Uuid = UuidColumns
+	grid4.Owners[user1] = true
 	tests := []struct {
 		test             string
 		grid             *Grid
@@ -75,9 +75,9 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	}{
 		{"1", grid1, "aaaa", false, false},
 		{"2", grid2, "aaaa", true, false},
-		{"3", grid3, "aaaa", false, true},
-		{"4", grid4, "aaaa", false, true},
-		{"5", grid4, "bbbb", false, false},
+		{"3", grid3, "aaaa", true, true},
+		{"4", grid4, "aaaa", true, true},
+		{"5", grid4, "bbbb", true, false},
 		{"6", nil, "aaaa", true, true},
 		{"7", nil, "bbbb", false, false},
 	}
@@ -87,10 +87,10 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 			row.CreatedBy = &user1
 			row.SetViewEditAccessFlags(tt.grid, tt.uuid)
 			if row.CanViewRow != tt.expectCanViewRow {
-				t.Errorf(`Got row.CanViewRowsRow=%v instead of %v.`, row.CanViewRow, tt.expectCanViewRow)
+				t.Errorf(`Got row.CanViewRow=%v instead of %v.`, row.CanViewRow, tt.expectCanViewRow)
 			}
 			if row.CanEditRow != tt.expectCanEditRow {
-				t.Errorf(`Got row.CanEditRowsRow=%v instead of %v.`, row.CanEditRow, tt.expectCanEditRow)
+				t.Errorf(`Got row.CanEditRow=%v instead of %v.`, row.CanEditRow, tt.expectCanEditRow)
 			}
 		})
 	}

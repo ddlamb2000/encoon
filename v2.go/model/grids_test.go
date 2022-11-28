@@ -90,18 +90,18 @@ func TestGridSetViewEditAccessFlags(t *testing.T) {
 			grid.DefaultAccess[tt.defaultAccessUuid] = true
 			grid.ViewAccess[tt.viewAccessUuid] = true
 			grid.EditAccess[tt.editAccessUuid] = true
-			grid.SetViewEditAccessFlags(tt.userUuid)
-			if grid.CanViewRows != tt.expectCanViewRows {
-				t.Errorf(`Got grid.CanViewRowsRows=%v instead of %v.`, grid.CanViewRows, tt.expectCanViewRows)
+			canViewRows, canEditRows, canEditOwnedRows, canAddRows := grid.GetViewEditAccessFlags(tt.userUuid)
+			if canViewRows != tt.expectCanViewRows {
+				t.Errorf(`Got canViewRowsRows=%v instead of %v.`, canViewRows, tt.expectCanViewRows)
 			}
-			if grid.CanEditRows != tt.expectCanEditRows {
-				t.Errorf(`Got grid.CanEditRowsRows=%v instead of %v.`, grid.CanEditRows, tt.expectCanEditRows)
+			if canEditRows != tt.expectCanEditRows {
+				t.Errorf(`Got canEditRowsRows=%v instead of %v.`, canEditRows, tt.expectCanEditRows)
 			}
-			if grid.CanEditOwnedRows != tt.expectCanEditOwnedRows {
-				t.Errorf(`Got grid.CanEditOwnedRows=%v instead of %v.`, grid.CanEditOwnedRows, tt.expectCanEditOwnedRows)
+			if canEditOwnedRows != tt.expectCanEditOwnedRows {
+				t.Errorf(`Got canEditOwnedRows=%v instead of %v.`, canEditOwnedRows, tt.expectCanEditOwnedRows)
 			}
-			if grid.CanAddRows != tt.expectCanAddRows {
-				t.Errorf(`Got grid.CanAddRowsRows=%v instead of %v.`, grid.CanAddRows, tt.expectCanAddRows)
+			if canAddRows != tt.expectCanAddRows {
+				t.Errorf(`Got canAddRowsRows=%v instead of %v.`, canAddRows, tt.expectCanAddRows)
 			}
 		})
 	}

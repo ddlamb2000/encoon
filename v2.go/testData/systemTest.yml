@@ -23,8 +23,8 @@ database:
   jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
   root: "root"
   password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  testSleepTime: 500
-  timeOutThreshold: 1000
+  testSleepTime: 200
+  timeOutThreshold: 2000
 
 - name: "baddb"
   host: "testhost"

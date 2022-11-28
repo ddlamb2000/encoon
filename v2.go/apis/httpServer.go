@@ -109,13 +109,17 @@ var getRollbackTransactionQuery = func() string {
 }
 
 type apiResponse struct {
-	grid      *model.Grid
-	rows      []model.Row
-	rowCount  int
-	err       error
-	timeOut   bool
-	system    bool
-	forbidden bool
+	grid             *model.Grid
+	rows             []model.Row
+	rowCount         int
+	err              error
+	timeOut          bool
+	system           bool
+	forbidden        bool
+	canViewRows      bool
+	canEditRows      bool
+	canEditOwnedRows bool
+	canAddRows       bool
 }
 
 func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user string) (apiRequestParameters, context.CancelFunc, error) {
@@ -152,13 +156,22 @@ func GetGridsRowsApi(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	grid, rowSet, rowSetCount, response := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, userUuid, userName)
+	response := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, userUuid, userName)
 	if response.err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"grid": grid, "uuid": uuid, "rows": rowSet, "countRows": rowSetCount})
+	c.JSON(http.StatusOK,
+		gin.H{
+			"grid":             response.grid,
+			"canViewRows":      response.canViewRows,
+			"canEditRows":      response.canEditRows,
+			"canEditOwnedRows": response.canEditOwnedRows,
+			"canAddRows":       response.canAddRows,
+			"uuid":             uuid,
+			"rows":             response.rows,
+			"countRows":        response.rowCount})
 }
 
 type gridPost struct {
@@ -184,11 +197,20 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	grid, rowSet, rowSetCount, response := postGridsRows(c.Request.Context(), dbName, userUuid, userName, gridUuid, uuid, payload)
+	response := postGridsRows(c.Request.Context(), dbName, userUuid, userName, gridUuid, uuid, payload)
 	if response.err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated, gin.H{"grid": grid, "uuid": uuid, "rows": rowSet, "countRows": rowSetCount})
+	c.JSON(http.StatusCreated,
+		gin.H{
+			"grid":             response.grid,
+			"canViewRows":      response.canViewRows,
+			"canEditRows":      response.canEditRows,
+			"canEditOwnedRows": response.canEditOwnedRows,
+			"canAddRows":       response.canAddRows,
+			"uuid":             uuid,
+			"rows":             response.rows,
+			"countRows":        response.rowCount})
 }

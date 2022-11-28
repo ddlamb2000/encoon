@@ -30,7 +30,6 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 		return nil, nil
 	}
 	grids[0].SetPathAndDisplayString(r.dbName)
-	grids[0].SetViewEditAccessFlags(r.userUuid)
 	err = getColumnsForGridsApi(r, &grids[0])
 	if err != nil {
 		return nil, err

@@ -7,14 +7,13 @@ import (
 	"context"
 
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/model"
 )
 
-func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uuid string, payload gridPost) (*model.Grid, []model.Row, int, apiResponse) {
+func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uuid string, payload gridPost) apiResponse {
 	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
 	defer cancel()
 	if err != nil {
-		return nil, nil, 0, apiResponse{err: err}
+		return apiResponse{err: err}
 	}
 	go func() {
 		r.trace("postGridsRows()")
@@ -26,7 +25,9 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 		} else if grid == nil {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Data not found.")}
 			return
-		} else if !grid.CanViewRows {
+		}
+		canViewRows, canEditRows, canEditOwnedRows, canAddRows := grid.GetViewEditAccessFlags(r.userUuid)
+		if !canViewRows {
 			r.ctxChan <- apiResponse{err: r.logAndReturnError("Access forbidden."), forbidden: true}
 			return
 		}
@@ -68,16 +69,16 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount}
+		r.ctxChan <- apiResponse{grid: grid, rows: rowSet, rowCount: rowSetCount, canViewRows: canViewRows, canEditRows: canEditRows, canEditOwnedRows: canEditOwnedRows, canAddRows: canAddRows}
 		r.trace("postGridsRows() - Done")
 	}()
 	select {
 	case <-r.ctx.Done():
 		r.trace("postGridsRows() - Cancelled")
 		_ = r.rollbackTransaction()
-		return nil, nil, 0, apiResponse{err: r.logAndReturnError("Post request has been cancelled: %v.", r.ctx.Err()), timeOut: true}
+		return apiResponse{err: r.logAndReturnError("Post request has been cancelled: %v.", r.ctx.Err()), timeOut: true}
 	case response := <-r.ctxChan:
 		r.trace("postGridsRows() - OK")
-		return response.grid, response.rows, response.rowCount, response
+		return response
 	}
 }
