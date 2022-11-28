@@ -93,7 +93,8 @@ func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string,
 	return rows, len(rows), nil
 }
 
-func getGridForOwnership(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+// function is available for mocking
+var getGridForOwnership = func(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
 	r.trace("getGridForOwnership(%v, %v)", grid, row)
 	if row.GridUuid == model.UuidGrids {
 		return getGridForGridsApi(r, row.Uuid)
@@ -233,7 +234,8 @@ func getGridUuidAttachedToColumn(r apiRequestParameters, uuid string) (string, e
 	return gridUuuid, nil
 }
 
-func getRowsQueryForGridUuidAttachedToColumn() string {
+// function is available for mocking
+var getRowsQueryForGridUuidAttachedToColumn = func() string {
 	return "SELECT text3 " +
 		"FROM relationships " +
 		"WHERE gridUuid = $1 " +
@@ -243,6 +245,7 @@ func getRowsQueryForGridUuidAttachedToColumn() string {
 		"AND enabled = true"
 
 }
+
 func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidRelationships)

@@ -4,6 +4,7 @@
 package apis
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
@@ -528,5 +529,32 @@ func RunSystemTestPost(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringContains(t, responseData, `"error":"Data not found."`)
+	})
+
+	t.Run("GetSingleGridDefect9", func(t *testing.T) {
+		getGridForOwnershipImpl := getGridForOwnership
+		getGridForOwnership = func(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+			return nil, errors.New("xxx")
+		}
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		getGridForOwnership = getGridForOwnershipImpl
+	})
+
+	t.Run("GetSingleGridDefect10", func(t *testing.T) {
+		getRowsQueryForGridUuidAttachedToColumnImpl := getRowsQueryForGridUuidAttachedToColumn
+		getRowsQueryForGridUuidAttachedToColumn = func() string { return "x x x" }
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when retrieving grid uuid for column`)
+		getRowsQueryForGridUuidAttachedToColumn = getRowsQueryForGridUuidAttachedToColumnImpl
 	})
 }
