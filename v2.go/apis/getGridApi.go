@@ -9,6 +9,8 @@ import (
 
 // function is available for mocking
 var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getGridForGridsApi()", t)
 	query := getGridQueryForGridsApi()
 	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
 	r.trace("getGridForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
@@ -129,6 +131,8 @@ var getGridQueryOutputForGridsApi = func(grid *model.Grid) []any {
 }
 
 func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
+	t := r.startTiming()
+	defer r.stopTiming("getColumnsForGridsApi()", t)
 	query := getGridColumsQueryForGridsApi()
 	parms := getGridColumsQueryParametersForGridsApi(grid)
 	r.trace("getColumnsForGridsApi(%s) - query=%s ; parms=%v", grid, query, parms)

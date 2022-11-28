@@ -21,6 +21,7 @@ type Configuration struct {
 	AppTag     string                   `yaml:"appTag"`
 	Log        bool                     `yaml:"log"`
 	Trace      bool                     `yaml:"trace"`
+	ShowTiming bool                     `yaml:"showTiming"`
 	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
 	Databases  []*DatabaseConfiguration `yaml:"database"`
 }
@@ -184,4 +185,15 @@ func getLogPrefix(dbName, userName string) string {
 		return "[" + appConfiguration.AppName + "] "
 	}
 	return ""
+}
+
+func StartTiming() time.Time {
+	return time.Now()
+}
+
+func StopTiming(dbName, userName, funcName string, start time.Time) {
+	if appConfiguration.ShowTiming {
+		duration := time.Since(start)
+		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[TIMING] "+funcName+" - %v\n", duration)
+	}
 }

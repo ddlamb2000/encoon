@@ -8,6 +8,8 @@ import (
 )
 
 func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+	t := r.startTiming()
+	defer r.stopTiming("getRelationshipsForRow()", t)
 	r.trace("getRelationshipsForRow(%s, %s)", grid, row)
 	for _, col := range grid.Columns {
 		if col.IsReference() {
@@ -29,6 +31,8 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 }
 
 func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, referenceName string) ([]model.Row, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getReferencedRowsForRow()", t)
 	query := getQueryReferencedRowsForRow()
 	parms := getQueryParametersReferencedRowsForRow(referenceName, parentRow)
 	r.trace("getReferencedRowsForRow(%s, %s) - query=%s ; parms=%s", parentRow, referenceName, query, parms)

@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"net/http"
+	"time"
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
@@ -51,6 +52,14 @@ func (r apiRequestParameters) log(format string, a ...any) {
 
 func (r apiRequestParameters) trace(format string, a ...any) {
 	configuration.Trace(r.dbName, r.userName, format, a...)
+}
+
+func (r apiRequestParameters) startTiming() time.Time {
+	return configuration.StartTiming()
+}
+
+func (r apiRequestParameters) stopTiming(funcName string, start time.Time) {
+	configuration.StopTiming(r.dbName, r.userName, funcName, start)
 }
 
 func (r apiRequestParameters) logAndReturnError(format string, a ...any) error {

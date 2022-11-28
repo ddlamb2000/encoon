@@ -14,6 +14,8 @@ import (
 func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName string) apiResponse {
 	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
 	defer cancel()
+	t := r.startTiming()
+	defer r.stopTiming("getGridsRows()", t)
 	if err != nil {
 		return apiResponse{err: err}
 	}
@@ -56,6 +58,8 @@ func getGridsRows(ct context.Context, dbName, gridUuid, uuid, userUuid, userName
 }
 
 func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string, getReferences bool) ([]model.Row, int, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getRowSetForGridsApi()", t)
 	query := getRowsQueryForGridsApi(grid, uuid)
 	parms := getRowsQueryParametersForGridsApi(grid.Uuid, uuid)
 	r.trace("getRowSetForGridsApi(%s, %s, %v) - query=%s ; parms=%s", uuid, grid, getReferences, query, parms)
@@ -212,6 +216,8 @@ func appendRowAttribute(output []any, row *model.Row, attributeName string) []an
 }
 
 func getGridUuidAttachedToColumn(r apiRequestParameters, uuid string) (string, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getGridUuidAttachedToColumn()", t)
 	var gridUuuid string
 	query := getRowsQueryForGridUuidAttachedToColumn()
 	parms := getRowsQueryParametersGridUuidAttachedToColumn(uuid)
