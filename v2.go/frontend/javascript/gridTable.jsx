@@ -49,7 +49,7 @@ class GridRow extends React.Component {
 					{!(this.props.rowAdded || this.props.rowSelected) && 
 						<a href={this.props.row.path}><i className="bi bi-card-text"></i></a>
 					}
-					{(this.props.rowAdded || this.props.rowSelected) && 
+					{this.props.row.canEditRow && (this.props.rowAdded || this.props.rowSelected) && 
 						<button
 							type="button"
 							className="btn text-danger btn-sm mx-0 p-0"
@@ -68,6 +68,7 @@ class GridRow extends React.Component {
 										values={column.values}
 										gridPromptUuid={column.gridPromptUuid}
 										readonly={column.readonly}
+										canEditRow={this.props.row.canEditRow}
 										rowAdded={this.props.rowAdded}
 										rowSelected={this.props.rowSelected}
 										rowEdited={this.props.rowEdited}
@@ -92,7 +93,7 @@ class GridCell extends React.Component {
 		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
-			<td onClick={() => this.props.onSelectRowClick(this.props.uuid)}>
+			<td onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && 
 					<GridCellInput type={this.props.type}
 									variantReadOnly={variantReadOnly}

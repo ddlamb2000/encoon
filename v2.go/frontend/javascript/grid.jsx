@@ -9,6 +9,7 @@ class Grid extends React.Component {
 			isLoaded: false,
 			isLoading: false,
 			grid: [],
+			canAddRows: false,
 			rows: [],
 			rowsSelected: [],
 			rowsEdited: [],
@@ -42,7 +43,7 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted, referencedValuesAdded, referencedValuesRemoved } = this.state
+		const { isLoading, isLoaded, error, grid, canAddRows, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted, referencedValuesAdded, referencedValuesRemoved } = this.state
 		const { uuid, dbName, token } = this.props
 		const countRows = rows ? rows.length : 0
 		return (
@@ -82,6 +83,7 @@ class Grid extends React.Component {
 								grid={grid}
 								rows={rows}
 								uuid={uuid}
+								canAddRows={canAddRows}
 								rowsSelected={rowsSelected}
 								rowsAdded={rowsAdded}
 								rowsEdited={rowsEdited}
@@ -180,6 +182,7 @@ class Grid extends React.Component {
 							isLoading: false,
 							isLoaded: true,
 							grid: result.grid,
+							canAddRows: result.canAddRows,
 							rows: result.rows,
 							error: result.error
 						})
@@ -188,6 +191,7 @@ class Grid extends React.Component {
 						this.setState({
 							isLoading: false,
 							isLoaded: false,
+							canAddRows: false,							
 							rows: [],
 							error: error.message
 						})
@@ -197,6 +201,7 @@ class Grid extends React.Component {
 				this.setState({
 					isLoading: false,
 					isLoaded: false,
+					canAddRows: false,							
 					rows: [],
 					error: `[${response.status}] Internal server issue.`
 				})
@@ -292,7 +297,7 @@ Grid.defaultProps = {
 
 class GridFooter extends React.Component {
 	render() {
-		const { isLoading, grid, rows, uuid, rowsEdited, rowsAdded, rowsDeleted } = this.props
+		const { isLoading, grid, rows, uuid, canAddRows, rowsEdited, rowsAdded, rowsDeleted } = this.props
 		const countRows = rows ? rows.length : 0
 		const countRowsAdded = rowsAdded ? rowsAdded.length : 0
 		const countRowsEdited = rowsEdited ? rowsEdited.length : 0
@@ -306,7 +311,7 @@ class GridFooter extends React.Component {
 				{countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
 				{countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
 				{!isLoading && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right mx-1"></i></a>}
-				{!isLoading && grid && uuid == "" &&
+				{!isLoading && grid && uuid == "" && canAddRows &&
 					<button type="button" className="btn btn-outline-success btn-sm mx-1"
 							onClick={this.props.onAddRowClick}>
 						Add <i className="bi bi-plus-circle"></i>
