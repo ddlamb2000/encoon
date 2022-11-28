@@ -86,7 +86,9 @@ func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string,
 				return nil, 0, err
 			}
 		}
-		rows = append(rows, *row)
+		if row.CanViewRow {
+			rows = append(rows, *row)
+		}
 	}
 	return rows, len(rows), nil
 }

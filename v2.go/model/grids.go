@@ -69,8 +69,10 @@ func (grid *Grid) CopyAccessToOtherGrid(otherGrid *Grid) {
 
 func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditRows, canEditOwnedRows, canAddRows bool) {
 	switch {
-	case grid.Owners[userUuid] || grid.EditAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelWriteAccess]:
+	case grid.Owners[userUuid]:
 		return true, true, true, true
+	case grid.EditAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelWriteAccess]:
+		return true, false, true, true
 	case grid.ViewAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelReadAccess]:
 		return true, false, false, false
 	case grid.Uuid == UuidGrids || grid.Uuid == UuidRelationships || grid.Uuid == UuidColumns:

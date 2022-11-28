@@ -75,7 +75,7 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	}{
 		{"1", grid1, "aaaa", false, false},
 		{"2", grid2, "aaaa", true, false},
-		{"3", grid3, "aaaa", true, true},
+		{"3", grid3, "aaaa", true, false},
 		{"4", grid4, "aaaa", true, true},
 		{"5", grid4, "bbbb", true, false},
 		{"6", nil, "aaaa", true, true},
