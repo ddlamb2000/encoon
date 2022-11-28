@@ -169,7 +169,6 @@ func GetGridsRowsApi(c *gin.Context) {
 			"canEditRows":      response.canEditRows,
 			"canEditOwnedRows": response.canEditOwnedRows,
 			"canAddRows":       response.canAddRows,
-			"uuid":             uuid,
 			"rows":             response.rows,
 			"countRows":        response.rowCount})
 }
@@ -210,7 +209,6 @@ func PostGridsRowsApi(c *gin.Context) {
 			"canEditRows":      response.canEditRows,
 			"canEditOwnedRows": response.canEditOwnedRows,
 			"canAddRows":       response.canAddRows,
-			"uuid":             uuid,
 			"rows":             response.rows,
 			"countRows":        response.rowCount})
 }
