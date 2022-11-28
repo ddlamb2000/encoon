@@ -63,6 +63,7 @@ var getGridQueryForGridsApi = func() string {
 		"AND owner.text2 = $1 " +
 		"AND owner.text3 = grids.uuid " +
 		"AND owner.text4 = $5 " +
+		"AND owner.enabled = true " +
 
 		"LEFT OUTER JOIN relationships defAccess " +
 		"ON defAccess.gridUuid = $3 " +
@@ -70,6 +71,7 @@ var getGridQueryForGridsApi = func() string {
 		"AND defAccess.text2 = $1 " +
 		"AND defAccess.text3 = grids.uuid " +
 		"AND defAccess.text4 = $7 " +
+		"AND defAccess.enabled = true " +
 
 		"LEFT OUTER JOIN relationships viewAccess " +
 		"ON viewAccess.gridUuid = $3 " +
@@ -77,6 +79,7 @@ var getGridQueryForGridsApi = func() string {
 		"AND viewAccess.text2 = $1 " +
 		"AND viewAccess.text3 = grids.uuid " +
 		"AND viewAccess.text4 = $5 " +
+		"AND viewAccess.enabled = true " +
 
 		"LEFT OUTER JOIN relationships editAccess " +
 		"ON editAccess.gridUuid = $3 " +
@@ -84,9 +87,11 @@ var getGridQueryForGridsApi = func() string {
 		"AND editAccess.text2 = $1 " +
 		"AND editAccess.text3 = grids.uuid " +
 		"AND editAccess.text4 = $5 " +
+		"AND editAccess.enabled = true " +
 
 		"WHERE grids.gridUuid = $1 " +
-		"AND grids.uuid = $2 "
+		"AND grids.uuid = $2 " +
+		"AND grids.enabled = true"
 }
 
 func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
@@ -162,6 +167,7 @@ var getGridColumsQueryForGridsApi = func() string {
 		"AND rel1.text2 = $3 " +
 		"AND rel1.text3 = $4 " +
 		"AND rel1.text4 = $5 " +
+		"AND rel1.enabled = true " +
 
 		"INNER JOIN relationships rel2 " +
 		"ON rel2.text2 = col.gridUuid " +
@@ -169,19 +175,24 @@ var getGridColumsQueryForGridsApi = func() string {
 		"AND rel2.gridUuid = $6 " +
 		"AND rel2.text1 = $7 " +
 		"AND rel2.text4 = $8 " +
+		"AND rel2.enabled = true " +
 
 		"INNER JOIN rows coltype " +
 		"ON rel2.text4 = coltype.gridUuid " +
 		"AND rel2.text5 = coltype.Uuid " +
+		"AND coltype.enabled = true " +
 
 		"LEFT OUTER JOIN relationships rel3 " +
 		"ON rel3.text2 = col.gridUuid " +
 		"AND rel3.text3 = col.uuid " +
 		"AND rel3.gridUuid = $9 " +
 		"AND rel3.text1 = $10 " +
+		"AND rel3.enabled = true " +
+
 		"LEFT OUTER JOIN grids grid " +
 		"ON grid.gridUuid = rel3.text4 " +
 		"AND grid.Uuid = rel3.text5 " +
+		"AND grid.enabled = true " +
 		"ORDER BY col.text1 "
 }
 

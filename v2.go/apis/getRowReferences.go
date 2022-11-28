@@ -63,7 +63,8 @@ var getQueryReferencedRowsForRow = func() string {
 		"WHERE gridUuid = $1 " +
 		"AND text1 = $2 " +
 		"AND text2 = $3 " +
-		"AND text3 = $4"
+		"AND text3 = $4 " +
+		"AND enabled = true"
 }
 
 func getQueryParametersReferencedRowsForRow(referenceName string, parentRow *model.Row) []any {

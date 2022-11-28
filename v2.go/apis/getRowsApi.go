@@ -123,6 +123,7 @@ var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string) string {
 		"rows.revision " +
 		"FROM " + grid.GetTableName() + " rows " +
 		getRowsWhereQueryForGridsApi(uuid) +
+		"AND rows.enabled = true " +
 		"ORDER BY rows.text1"
 }
 
@@ -228,7 +229,8 @@ func getRowsQueryForGridUuidAttachedToColumn() string {
 		"WHERE gridUuid = $1 " +
 		"AND text2 = $2 " +
 		"AND text4 = $3 " +
-		"AND text5 = $4"
+		"AND text5 = $4 " +
+		"AND enabled = true"
 
 }
 func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {

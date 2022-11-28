@@ -26,7 +26,7 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
 	parms := getInsertStatementParametersForRefereceRow(r, grid, ref, rowUuid)
 	r.trace("postInsertReferenceRow(%s, %v, %v) - query=%s ; parms=%s", grid, addedRows, ref, query, parms)
-	if err := r.execContext(false, query, parms...); err != nil {
+	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert referenced row error: %v.", err)
 	}
 	r.log("Referenced row [%v] inserted into %s.", ref, grid)
@@ -110,7 +110,7 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	query := getDeleteReferenceRowStatement()
 	parms := getDeleteReferenceRowStatementParameters(r, grid, ref)
 	r.trace("postDeleteReferenceRow(%s, %v, %v) query=%s ; params=%s", grid, addedRows, ref, query, parms)
-	if err := r.execContext(false, query, parms...); err != nil {
+	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Delete referenced row error: %v.", err)
 	}
 	r.log("Referenced row [%v] deleted.", ref)
@@ -119,7 +119,7 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 
 // function is available for mocking
 var getDeleteReferenceRowStatement = func() string {
-	return "DELETE FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
+	return "UPDATE relationships SET enabled = false WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
 }
 
 func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost) []any {

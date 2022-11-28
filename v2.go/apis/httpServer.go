@@ -57,19 +57,9 @@ func (r apiRequestParameters) logAndReturnError(format string, a ...any) error {
 	return configuration.LogAndReturnError(r.dbName, r.userName, format, a...)
 }
 
-func (r apiRequestParameters) execContext(skipControlAffected bool, query string, args ...any) error {
-	result, err := r.db.ExecContext(r.ctx, query, args...)
-	if err != nil {
-		return err
-	}
-	if !skipControlAffected {
-		affected, err := result.RowsAffected()
-		if affected == 0 || err != nil {
-			return r.logAndReturnError("No row affected: %v.", err)
-		}
-		r.trace("execContext() - affected=%d", affected)
-	}
-	return nil
+func (r apiRequestParameters) execContext(query string, args ...any) error {
+	_, err := r.db.ExecContext(r.ctx, query, args...)
+	return err
 }
 
 func (r apiRequestParameters) queryContext(query string, args ...any) (*sql.Rows, error) {
@@ -78,7 +68,7 @@ func (r apiRequestParameters) queryContext(query string, args ...any) (*sql.Rows
 
 func (r apiRequestParameters) beginTransaction() error {
 	r.trace("beginTransaction()")
-	if err := r.execContext(true, getBeginTransactionQuery()); err != nil {
+	if err := r.execContext(getBeginTransactionQuery()); err != nil {
 		return r.logAndReturnError("Begin transaction error: %v.", err)
 	}
 	r.log("Begin transaction.")
@@ -92,7 +82,7 @@ var getBeginTransactionQuery = func() string {
 
 func (r apiRequestParameters) commitTransaction() error {
 	r.trace("commitTransaction()")
-	if err := r.execContext(true, getCommitTransactionQuery()); err != nil {
+	if err := r.execContext(getCommitTransactionQuery()); err != nil {
 		return r.logAndReturnError("Commit transaction error: %v.", err)
 	}
 	r.log("Commit transaction.")
@@ -106,7 +96,7 @@ var getCommitTransactionQuery = func() string {
 
 func (r apiRequestParameters) rollbackTransaction() error {
 	r.trace("rollbackTransaction()")
-	if err := r.execContext(true, getRollbackTransactionQuery()); err != nil {
+	if err := r.execContext(getRollbackTransactionQuery()); err != nil {
 		return r.logAndReturnError("Rollback transaction error: %v.", err)
 	}
 	r.log("ROLLBACK transaction.")

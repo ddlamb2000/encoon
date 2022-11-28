@@ -277,11 +277,11 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":3`)
 		var newRowXXUuid, newReferenceRowXXUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2 and enabled = true", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
 		if newRowXXUuid != "" {
 			t.Errorf(`Row "test-xx" still exists: %v.`, newRowXXUuid)
 		}
-		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&newReferenceRowXXUuid)
+		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3  and enabled = true", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&newReferenceRowXXUuid)
 		if newReferenceRowXXUuid != "" {
 			t.Errorf(`Referenced row for "test-xx" still exists: %v.`, newReferenceRowXXUuid)
 		}
