@@ -18,9 +18,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL, " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"int1 integer," +
@@ -32,9 +32,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL, " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"text2 text," +
@@ -48,9 +48,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			getRowsColumnDefinitions() +
 			"revision integer NOT NULL CHECK (revision > 0), " +
@@ -61,9 +61,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"text2 text," +
@@ -76,9 +76,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"text2 uuid REFERENCES grids (uuid)," +
@@ -99,9 +99,9 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
 			"uuid uuid NOT NULL, " +
 			"created timestamp with time zone NOT NULL, " +
-			"createdBy text NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
 			"updated timestamp with time zone NOT NULL, " +
-			"updatedBy text NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"text2 text," +

@@ -4,6 +4,8 @@
 class GridView extends React.Component {
 	render() {
 		const columns = getColumnValuesForRow(this.props.columns, this.props.row, true)
+		const createdByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.createdBy}`
+		const updatedByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.updatedBy}`
 		return (
 			<div>
 				<h4 className="card-title">{this.props.row.displayString}</h4>
@@ -32,11 +34,18 @@ class GridView extends React.Component {
 						)}
 						<tr>
 							<td>Created</td>
-							<td>{this.props.row.created} by {this.props.row.createdBy}</td>
+							<td>
+								<DateTime dateTime={this.props.row.created} />
+								&nbsp;by <a href={createdByUri}>{this.props.row.createdByName}</a>
+								
+							</td>
 						</tr>
 						<tr>
 							<td>Updated</td>
-							<td>{this.props.row.updated} by {this.props.row.updatedBy}</td>
+							<td>
+								<DateTime dateTime={this.props.row.updated} />
+								&nbsp;by <a href={updatedByUri}>{this.props.row.updatedByName}</a>
+							</td>
 						</tr>
 					</tbody>
 				</table>

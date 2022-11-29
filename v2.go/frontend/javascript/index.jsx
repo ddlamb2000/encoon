@@ -270,6 +270,51 @@ class Header extends React.Component {
 	}
 }
 
+class DateTime extends React.Component {
+	constructor(props) {
+		super(props)
+		this.state = {
+			timeAgo: this.getTimeAgo()
+		}
+	}
+
+	getTimeAgo() {
+		const localNow = new Date
+		const localDate = new Date(this.props.dateTime)
+		const localNowUTC =  Date.UTC(localNow.getUTCFullYear(),
+										localNow.getUTCMonth(),
+										localNow.getUTCDate(),
+										localNow.getUTCHours(),
+										localNow.getUTCMinutes(),
+										localNow.getUTCSeconds())
+		const localDateUTC =  Date.UTC(localDate.getUTCFullYear(),
+										localDate.getUTCMonth(),
+										localDate.getUTCDate(),
+										localDate.getUTCHours(),
+										localDate.getUTCMinutes(),
+										localDate.getUTCSeconds())
+		const seconds = (localNowUTC - localDateUTC) / 1000
+		const MINUTE = 60, HOUR = MINUTE * 60, DAY = HOUR * 24, WEEK = DAY * 7, MONTH = DAY * 30, YEAR = DAY * 365		
+		if(seconds < MINUTE) return `${Math.round(seconds)} sec ago`
+		if(seconds < HOUR) return `${Math.round(seconds / MINUTE)} min ago`
+		if(seconds < DAY) return `${Math.round(seconds / HOUR)} hour ago`
+		if(seconds < WEEK) return `${Math.round(seconds / DAY)} day ago`
+		if(seconds < MONTH) return `${Math.round(seconds / WEEK)} week ago`
+		if(seconds < YEAR) return `${Math.round(seconds / MONTH)} month ago`
+		return `${Math.round(seconds / YEAR)} year ago`
+	}
+
+	componentDidMount() {
+		setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 5000)
+	}
+
+	render() {
+		return (
+			<span>{this.props.dateTime} <small><em>{this.state.timeAgo}</em></small></span>
+		)
+	}
+}
+
 class Navigation extends React.Component {
 	constructor(props) {
 		super(props)
@@ -358,7 +403,6 @@ const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508
 const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
 const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
 const UuidColumns                        = "533b6862-add3-4fef-8f93-20a17aaaaf5a"
-
 
 root.render(
 	<App  appName={rootElement.getAttribute("appName")}

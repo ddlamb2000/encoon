@@ -28,8 +28,10 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 		&row.Enabled,
 		&row.Created,
 		&row.CreatedBy,
+		&row.CreatedByName,
 		&row.Updated,
 		&row.UpdatedBy,
+		&row.UpdatedByName,
 		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {
@@ -70,8 +72,10 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 		&row.Enabled,
 		&row.Created,
 		&row.CreatedBy,
+		&row.CreatedByName,
 		&row.Updated,
 		&row.UpdatedBy,
+		&row.UpdatedByName,
 		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {
@@ -96,8 +100,10 @@ func TestGetRowsQueryOutputForGridsApi3(t *testing.T) {
 		&row.Enabled,
 		&row.Created,
 		&row.CreatedBy,
+		&row.CreatedByName,
 		&row.Updated,
 		&row.UpdatedBy,
+		&row.UpdatedByName,
 		&row.Revision,
 	}
 	if !reflect.DeepEqual(got, expect) {

@@ -77,7 +77,8 @@ class Grid extends React.Component {
 						<GridView row={rows[0]}
 									columns={grid.columns}
 									referencedValuesAdded={referencedValuesAdded}
-									referencedValuesRemoved={referencedValuesRemoved} />
+									referencedValuesRemoved={referencedValuesRemoved}
+									dbName={dbName} />
 					}
 					<GridFooter isLoading={isLoading}
 								grid={grid}
