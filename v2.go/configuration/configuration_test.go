@@ -299,3 +299,13 @@ func TestGetLogPrefix3(t *testing.T) {
 		t.Errorf("Got %q instead of %q.", got, expect)
 	}
 }
+
+func TestTiming(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	previous := appConfiguration.ShowTiming
+	appConfiguration.ShowTiming = true
+	s := StartTiming()
+	StopTiming("test", "root", "test()", s)
+	appConfiguration.ShowTiming = previous
+}

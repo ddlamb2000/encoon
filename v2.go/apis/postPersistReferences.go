@@ -29,6 +29,9 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert referenced row error: %v.", err)
 	}
+	if grid.Uuid == model.UuidGrids {
+		removeGridFromCache(ref.FromUuid)
+	}
 	r.log("Referenced row [%v] inserted into %s.", ref, grid)
 	return nil
 }
@@ -112,6 +115,9 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	r.trace("postDeleteReferenceRow(%s, %v, %v) query=%s ; params=%s", grid, addedRows, ref, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Delete referenced row error: %v.", err)
+	}
+	if grid.Uuid == model.UuidGrids {
+		removeGridFromCache(ref.FromUuid)
 	}
 	r.log("Referenced row [%v] deleted.", ref)
 	return nil

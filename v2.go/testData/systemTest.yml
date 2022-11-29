@@ -13,6 +13,8 @@ httpServer:
 log: false
 trace: false
 
+gridCacheSize: 20
+
 # Database configuration
 database:
 
