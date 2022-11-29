@@ -11,6 +11,10 @@ import (
 var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridForGridsApi()", t)
+	grid, ok := getGridFromCache(gridUuid)
+	if ok && grid != nil {
+		return grid, nil
+	}
 	query := getGridQueryForGridsApi()
 	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
 	r.trace("getGridForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
@@ -36,6 +40,7 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 	if err != nil {
 		return nil, err
 	}
+	cacheGrid(&grids[0])
 	return &grids[0], nil
 }
 

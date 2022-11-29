@@ -4,9 +4,11 @@
 appName: "εncooη" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
-log: true
+log: false
 trace: false
 showTiming: true
+
+gridCacheSize: 500
 
 # Http Server configuration
 httpServer:

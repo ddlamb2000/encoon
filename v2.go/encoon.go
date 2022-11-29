@@ -71,6 +71,7 @@ func main() {
 				configuration.Log("", "", "Stopping.")
 				doneChan <- true
 			}()
+			go apis.InitializeCaches()
 			go setAndStartHttpServer()
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

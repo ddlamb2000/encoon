@@ -150,6 +150,9 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
 	}
+	if grid.Uuid == model.UuidGrids {
+		removeGridFromCache(row.Uuid)
+	}
 	r.log("Row [%s] updated.", row.Uuid)
 	return nil
 }
@@ -205,6 +208,9 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
 	if err := r.execContext(query, grid.Uuid, row.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
+	}
+	if grid.Uuid == model.UuidGrids {
+		removeGridFromCache(row.Uuid)
 	}
 	r.log("Row [%s] deleted.", row.Uuid)
 	return nil

@@ -17,13 +17,14 @@ import (
 )
 
 type Configuration struct {
-	AppName    string                   `yaml:"appName"`
-	AppTag     string                   `yaml:"appTag"`
-	Log        bool                     `yaml:"log"`
-	Trace      bool                     `yaml:"trace"`
-	ShowTiming bool                     `yaml:"showTiming"`
-	HttpServer HttpServerConfiguration  `yaml:"httpServer"`
-	Databases  []*DatabaseConfiguration `yaml:"database"`
+	AppName       string                   `yaml:"appName"`
+	AppTag        string                   `yaml:"appTag"`
+	Log           bool                     `yaml:"log"`
+	Trace         bool                     `yaml:"trace"`
+	ShowTiming    bool                     `yaml:"showTiming"`
+	GridCacheSize int                      `yaml:"gridCacheSize"`
+	HttpServer    HttpServerConfiguration  `yaml:"httpServer"`
+	Databases     []*DatabaseConfiguration `yaml:"database"`
 }
 
 type HttpServerConfiguration struct {

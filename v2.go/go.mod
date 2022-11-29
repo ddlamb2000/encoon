@@ -10,7 +10,10 @@ require (
 	github.com/google/uuid v1.3.0
 )
 
-require github.com/google/go-cmp v0.5.8 // indirect
+require (
+	github.com/google/go-cmp v0.5.8 // indirect
+	github.com/hashicorp/golang-lru/v2 v2.0.1 // indirect
+)
 
 require (
 	github.com/gin-contrib/sse v0.1.0 // indirect
