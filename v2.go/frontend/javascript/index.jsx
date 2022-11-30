@@ -305,12 +305,22 @@ class DateTime extends React.Component {
 	}
 
 	componentDidMount() {
-		setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 5000)
+		setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 1000)
 	}
 
 	render() {
 		return (
 			<span>{this.props.dateTime} <small><em>{this.state.timeAgo}</em></small></span>
+		)
+	}
+}
+
+class Spinner extends React.Component {
+	render() {
+		return (
+			<span className="spinner-grow spinner-grow-sm ms-1" role="status">
+				<span className="visually-hidden">Loading...</span>
+			</span>
 		)
 	}
 }

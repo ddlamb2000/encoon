@@ -6,6 +6,7 @@ class GridView extends React.Component {
 		const columns = getColumnValuesForRow(this.props.columns, this.props.row, true)
 		const createdByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.createdBy}`
 		const updatedByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.updatedBy}`
+		const audits = this.props.row ? this.props.row.audits : []
 		return (
 			<div>
 				<h4 className="card-title">{this.props.row.displayString}</h4>
@@ -33,18 +34,22 @@ class GridView extends React.Component {
 									</tr>
 						)}
 						<tr>
-							<td>Created</td>
+							<td>Audit</td>
 							<td>
-								<DateTime dateTime={this.props.row.created} />
-								&nbsp;by <a href={createdByUri}>{this.props.row.createdByName}</a>
-								
-							</td>
-						</tr>
-						<tr>
-							<td>Updated</td>
-							<td>
-								<DateTime dateTime={this.props.row.updated} />
-								&nbsp;by <a href={updatedByUri}>{this.props.row.updatedByName}</a>
+								<ul className="list-unstyled mb-0">
+									{audits && audits.map(
+										audit => {
+											const uri = `/${this.props.dbName}/${UuidUsers}/${audit.createdBy}`
+											return (
+												<li key={audit.uuid}>
+													{audit.actionName}
+													&nbsp;on <DateTime dateTime={audit.created} />
+													&nbsp;by <a href={uri}>{audit.createdByName}</a>
+												</li>
+											)
+										}
+									)}
+								</ul>
 							</td>
 						</tr>
 					</tbody>

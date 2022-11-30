@@ -58,7 +58,7 @@ func getGridsRows(ct context.Context, uri, dbName, gridUuid, uuid, userUuid, use
 }
 
 func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string, getReferences bool, enabledOnly bool) ([]model.Row, int, error) {
-	r.trace("getRowSetForGridsApi(%s, %s, %v)", uuid, grid, getReferences)
+	r.trace("getRowSetForGridsApi(%s, %s, %v)", grid, uuid, getReferences)
 	t := r.startTiming()
 	defer r.stopTiming("getRowSetForGridsApi()", t)
 	query := getRowsQueryForGridsApi(grid, uuid, enabledOnly && uuid == "")
@@ -75,21 +75,27 @@ func getRowSetForGridsApi(r apiRequestParameters, grid *model.Grid, uuid string,
 		if err := set.Scan(getRowsQueryOutputForGridsApi(grid, row)...); err != nil {
 			return nil, 0, r.logAndReturnError("Error when scanning rows: %v.", err)
 		}
-		r.trace("getRowSetForGridsApi(%s, %s, %v) - row=%v", uuid, grid, getReferences, row)
+		r.trace("getRowSetForGridsApi(%s, %s, %v) - row=%v", grid, uuid, getReferences, row)
 		gridForOwnership, err := getGridForOwnership(r, grid, row)
 		if err != nil {
 			return nil, 0, err
 		}
-		r.trace("getRowSetForGridsApi(%s, %s, %v) - gridForOwnership=%v", uuid, grid, getReferences, gridForOwnership)
+		r.trace("getRowSetForGridsApi(%s, %s, %v) - gridForOwnership=%v", grid, uuid, getReferences, gridForOwnership)
 		row.SetPathAndDisplayString(r.dbName)
-		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.DisplayString=%s", uuid, grid, getReferences, row.DisplayString)
+		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.DisplayString=%s", grid, uuid, getReferences, row.DisplayString)
 		row.SetViewEditAccessFlags(gridForOwnership, r.userUuid)
 		if getReferences {
 			if err := getRelationshipsForRow(r, grid, row); err != nil {
 				return nil, 0, err
 			}
+			if uuid != "" {
+				row.Audits, err = getAuditsForRow(r, grid, uuid)
+			}
+			if err != nil {
+				return nil, 0, err
+			}
 		}
-		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.CanViewRow=%v", uuid, grid, getReferences, row.CanViewRow)
+		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.CanViewRow=%v", grid, uuid, getReferences, row.CanViewRow)
 		if row.CanViewRow {
 			rows = append(rows, *row)
 		}

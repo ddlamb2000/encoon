@@ -46,6 +46,7 @@ type Row struct {
 	CanViewRow    bool         `json:"canViewRow"`
 	CanEditRow    bool         `json:"canEditRow"`
 	References    []*Reference `json:"references,omitempty" yaml:"references,omitempty"`
+	Audits        []*Audit     `json:"audits,omitempty" yaml:"audits,omitempty"`
 
 	TmpUuid string `json:"-"`
 }
