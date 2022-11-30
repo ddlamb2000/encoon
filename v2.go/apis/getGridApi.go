@@ -108,7 +108,7 @@ func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
 	parameters = append(parameters, "relationship3")
 	parameters = append(parameters, model.UuidUsers)
 	parameters = append(parameters, "relationship2")
-	parameters = append(parameters, model.UuidAccessLevel)
+	parameters = append(parameters, model.UuidAccessLevels)
 	parameters = append(parameters, "relationship4")
 	parameters = append(parameters, "relationship5")
 	return parameters

@@ -38,7 +38,7 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 		return r.logAndReturnError("Insert row error: %v.", err)
 	}
 	r.log("Row [%s] inserted.", row.Uuid)
-	return nil
+	return postInsertTransactionReferenceRow(r, grid, row, "relationship1")
 }
 
 // function is available for mocking
@@ -52,7 +52,7 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 			parameterIndex += 1
 		}
 	}
-	insertStr := "INSERT INTO " + grid.GetTableName() +
+	return "INSERT INTO " + grid.GetTableName() +
 		" (uuid, " +
 		"revision, " +
 		"created, " +
@@ -62,8 +62,8 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 		"enabled, " +
 		"gridUuid" +
 		columns +
-		") "
-	valueStr := " VALUES ($1, " +
+		") " +
+		"VALUES ($1, " +
 		"1, " +
 		"NOW(), " +
 		"NOW(), " +
@@ -73,7 +73,6 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 		"$3" +
 		parameters +
 		")"
-	return insertStr + valueStr
 }
 
 func getInsertValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Row) []any {
@@ -136,7 +135,7 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 }
 
 func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
+	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before update: %v.", row.Uuid, grid.Uuid, err)
 	}
@@ -154,7 +153,7 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 		removeGridFromCache(row.Uuid)
 	}
 	r.log("Row [%s] updated.", row.Uuid)
-	return nil
+	return postInsertTransactionReferenceRow(r, grid, row, "relationship2")
 }
 
 // function is available for mocking
@@ -190,7 +189,7 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 }
 
 func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false)
+	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before delete: %v.", row.Uuid, grid.Uuid, err)
 	}
@@ -213,7 +212,7 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 		removeGridFromCache(row.Uuid)
 	}
 	r.log("Row [%s] deleted.", row.Uuid)
-	return nil
+	return postInsertTransactionReferenceRow(r, grid, row, "relationship3")
 }
 
 // function is available for mocking

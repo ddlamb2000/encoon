@@ -112,6 +112,20 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"UNIQUE (uuid)" +
 			")",
 
+		55: "CREATE TABLE transactions (" +
+			"gridUuid uuid NOT NULL REFERENCES grids (uuid), " +
+			"uuid uuid NOT NULL, " +
+			"created timestamp with time zone NOT NULL, " +
+			"createdBy uuid NOT NULL, " +
+			"updated timestamp with time zone NOT NULL, " +
+			"updatedBy uuid NOT NULL, " +
+			"enabled boolean NOT NULL, " +
+			"text1 text," +
+			"revision integer NOT NULL CHECK (revision > 0), " +
+			"PRIMARY KEY (gridUuid, uuid), " +
+			"UNIQUE (uuid)" +
+			")",
+
 		100: "CREATE EXTENSION pgcrypto",
 
 		107: "INSERT INTO grids " +
@@ -1592,7 +1606,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"text1, " +
 			"text2, " +
 			"text3) " +
-			"VALUES ('" + model.UuidAccessLevel + "', " +
+			"VALUES ('" + model.UuidAccessLevels + "', " +
 			"1, " +
 			"NOW(), " +
 			"NOW(), " +
@@ -1636,7 +1650,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRelationships + "', " +
 			"'relationship1', " +
 			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidAccessLevel + "', " +
+			"'" + model.UuidAccessLevels + "', " +
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidAccessLevelColumnLevel + "')",
 
@@ -1671,7 +1685,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRootUser + "', " +
 			"'" + model.UuidRootUser + "', " +
 			"true, " +
-			"'" + model.UuidAccessLevel + "', " +
+			"'" + model.UuidAccessLevels + "', " +
 			"'View access')",
 
 		204: "INSERT INTO rows " +
@@ -1684,7 +1698,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRootUser + "', " +
 			"'" + model.UuidRootUser + "', " +
 			"true, " +
-			"'" + model.UuidAccessLevel + "', " +
+			"'" + model.UuidAccessLevels + "', " +
 			"'Edit access')",
 
 		205: "INSERT INTO columns " +
@@ -1763,7 +1777,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidGridColumnAccessLevel + "', " +
 			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidAccessLevel + "')",
+			"'" + model.UuidAccessLevels + "')",
 
 		209: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
@@ -2163,7 +2177,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRelationships + "', " +
 			"'relationship3', " +
 			"'" + model.UuidGrids + "', " +
-			"'" + model.UuidAccessLevel + "', " +
+			"'" + model.UuidAccessLevels + "', " +
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
 
@@ -2208,18 +2222,247 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidUsers + "', " +
 			"'" + model.UuidRootUser + "')",
+
+		235: "INSERT INTO columns " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidTransactionColumnUri + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumns + "', " +
+			"'Uri', " +
+			"'text1')",
+
+		236: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidGrids + "', " +
+			"'" + model.UuidTransactions + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnUri + "')",
+
+		237: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnUri + "', " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'" + model.UuidTextColumnType + "')",
+
+		238: "INSERT INTO columns " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidTransactionColumnRowAdded + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumns + "', " +
+			"'Added', " +
+			"'relationship1')",
+
+		239: "INSERT INTO columns " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidTransactionColumnRowEdited + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumns + "', " +
+			"'Edited', " +
+			"'relationship2')",
+
+		240: "INSERT INTO columns " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidTransactionColumnRowDeleted + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumns + "', " +
+			"'Deleted', " +
+			"'relationship3')",
+
+		241: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowAdded + "', " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'" + model.UuidReferenceColumnType + "')",
+
+		242: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowEdited + "', " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'" + model.UuidReferenceColumnType + "')",
+
+		243: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowDeleted + "', " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'" + model.UuidReferenceColumnType + "')",
+
+		244: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidGrids + "', " +
+			"'" + model.UuidTransactions + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowAdded + "')",
+
+		245: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidGrids + "', " +
+			"'" + model.UuidTransactions + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowEdited + "')",
+
+		246: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidGrids + "', " +
+			"'" + model.UuidTransactions + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidTransactionColumnRowDeleted + "')",
 	}
 }
 
 // function is available for mocking
 var getDeletionSteps = func() map[int]string {
 	return map[int]string{
-		7: "DROP TABLE migrations",
-		6: "DROP TABLE grids",
-		5: "DROP TABLE rows",
-		4: "DROP TABLE columns",
-		3: "DROP TABLE relationships",
-		2: "DROP TABLE users",
 		1: "DROP EXTENSION pgcrypto",
+		2: "DROP TABLE transactions",
+		3: "DROP TABLE users",
+		4: "DROP TABLE relationships",
+		5: "DROP TABLE columns",
+		6: "DROP TABLE rows",
+		7: "DROP TABLE grids",
+		8: "DROP TABLE migrations",
 	}
 }

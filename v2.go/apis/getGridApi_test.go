@@ -17,7 +17,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	dbName := "test"
 	gridUuid := model.UuidUsers
 	userName := "root"
-	r, cancel, _ := createContextAndApiRequestParameters(context.Background(), dbName, model.UuidRootUser, userName)
+	r, cancel, _ := createContextAndApiRequestParameters(context.Background(), dbName, model.UuidRootUser, userName, "test")
 	defer cancel()
 	grid, err := getGridForGridsApi(r, gridUuid)
 	if err != nil {

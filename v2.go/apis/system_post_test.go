@@ -514,7 +514,20 @@ func RunSystemTestPost(t *testing.T) {
 		getDeleteGridRowQuery = getDeleteGridRowQueryImpl
 	})
 
-	t.Run("CreateSingleGridDefect8", func(t *testing.T) {
+	t.Run("DeleteSingleGridRowDefect", func(t *testing.T) {
+		var uuidGrid, uuidRow string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
+		stringNotEqual(t, uuidGrid, "")
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
+		stringNotEqual(t, uuidRow, "")
+		postStr := `{}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/xxxx", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `"error":"Data not found."`)
+	})
+
+	t.Run("DeleteSingleGridRow", func(t *testing.T) {
 		var uuidGrid, uuidRow string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuidGrid)
 		stringNotEqual(t, uuidGrid, "")
@@ -527,13 +540,13 @@ func RunSystemTestPost(t *testing.T) {
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow, postStr)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"enabled":false`)
 	})
 
 	t.Run("GetSingleGridDefect9", func(t *testing.T) {
 		getGridForOwnershipImpl := getGridForOwnership
-		getGridForOwnership = func(r apiRequestParameters, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+		getGridForOwnership = func(apiRequestParameters, *model.Grid, *model.Row) (*model.Grid, error) {
 			return nil, errors.New("xxx")
 		}
 		var uuidGrid, uuidRow string
@@ -543,8 +556,8 @@ func RunSystemTestPost(t *testing.T) {
 		stringNotEqual(t, uuidRow, "")
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `"error":"xxx"`)
 		getGridForOwnership = getGridForOwnershipImpl
 	})
 

@@ -20,6 +20,7 @@ func TestSetPath(t *testing.T) {
 		Uuid:     "12345",
 		GridUuid: "56789",
 		Text1:    &text1,
+		Enabled:  true,
 	}
 	row.SetPathAndDisplayString("test")
 	expect := "/test/56789/12345"
@@ -29,6 +30,34 @@ func TestSetPath(t *testing.T) {
 	expect2 := "xxx"
 	if row.DisplayString != expect2 {
 		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect2)
+	}
+}
+
+func TestSetPath2(t *testing.T) {
+	text1 := "xxx"
+	row := Row{
+		Uuid:     "12345",
+		GridUuid: "56789",
+		Text1:    &text1,
+		Enabled:  false,
+	}
+	row.SetPathAndDisplayString("test")
+	expect := "xxx [DELETED]"
+	if row.DisplayString != expect {
+		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)
+	}
+}
+
+func TestSetPath3(t *testing.T) {
+	row := Row{
+		Uuid:     "12345",
+		GridUuid: "56789",
+		Enabled:  true,
+	}
+	row.SetPathAndDisplayString("test")
+	expect := "12345"
+	if row.DisplayString != expect {
+		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)
 	}
 }
 
@@ -83,7 +112,7 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			row := GetNewRow()
+			row := GetNewRowWithUuid()
 			row.CreatedBy = &user1
 			row.SetViewEditAccessFlags(tt.grid, tt.uuid)
 			if row.CanViewRow != tt.expectCanViewRow {

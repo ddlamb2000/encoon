@@ -6,6 +6,8 @@ package model
 import (
 	"fmt"
 	"time"
+
+	"d.lambert.fr/encoon/utils"
 )
 
 type Row struct {
@@ -49,7 +51,12 @@ type Row struct {
 }
 
 func GetNewRow() *Row {
-	row := new(Row)
+	return new(Row)
+}
+
+func GetNewRowWithUuid() *Row {
+	row := GetNewRow()
+	row.Uuid = utils.GetNewUUID()
 	return row
 }
 
@@ -76,8 +83,13 @@ func (row Row) String() string {
 
 func (row *Row) SetPathAndDisplayString(dbName string) {
 	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, row.GridUuid, row.Uuid)
-	if row.Text1 != nil {
-		row.DisplayString = fmt.Sprintf("%s", *row.Text1)
+	if row.Text1 != nil && *row.Text1 != "" {
+		row.DisplayString = *row.Text1
+	} else {
+		row.DisplayString = row.Uuid
+	}
+	if !row.Enabled {
+		row.DisplayString += " [DELETED]"
 	}
 }
 

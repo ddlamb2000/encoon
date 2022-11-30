@@ -9,8 +9,8 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uuid string, payload gridPost) apiResponse {
-	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName)
+func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid, uuid string, payload gridPost) apiResponse {
+	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName, uri)
 	defer cancel()
 	if err != nil {
 		return apiResponse{err: err}
@@ -35,6 +35,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
 		}
+		postInsertTransaction(r)
 		if err := persistGridRowData(r, grid, payload.RowsAdded, postInsertGridRow); err != nil {
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
@@ -64,7 +65,7 @@ func postGridsRows(ct context.Context, dbName, userUuid, userName, gridUuid, uui
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, uuid, true)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, uuid, true, true)
 		if uuid != "" && rowSetCount == 0 {
 			r.ctxChan <- apiResponse{grid: grid, err: r.logAndReturnError("Data not found.")}
 			return

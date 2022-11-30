@@ -18,7 +18,7 @@ func TestGetInsertStatementForGridsApi(t *testing.T) {
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5"})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8"})
 	got := getInsertStatementForGridsApi(grid)
-	expect := "INSERT INTO users (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text2, text5, int8)  VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6)"
+	expect := "INSERT INTO users (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text2, text5, int8) VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6)"
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}

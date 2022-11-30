@@ -38,8 +38,6 @@ const (
 	UuidMigrationsColumnSeq     = "6632e435-2cb5-414e-8a0d-8daba7b9ae76"
 	UuidMigrationsColumnCommand = "f52d522f-e90b-4f38-b9e1-0c3a616c6fd7"
 
-	UuidTransactions = "67bebc3b-7acb-4fdc-b187-bebe1efccae9"
-
 	UuidColumnTypes         = "2114a6ae-013c-4bb1-be6e-3ee875ae517f"
 	UuidTextColumnType      = "65f3c258-fb1e-4f8b-96ca-f790e70d29c1"
 	UuidIntColumnType       = "8c28d527-66f4-481c-902e-ac1e65a8abb0"
@@ -54,8 +52,14 @@ const (
 	UuidRelationshipColumnToGridUuid   = "06818ac2-9090-4840-903e-d427b120436e"
 	UuidRelationshipColumnToUuid       = "68190afe-b8ff-4e51-b341-7238b124c741"
 
-	UuidAccessLevel            = "263cb4d8-ddde-4555-a514-853a4b271973"
+	UuidAccessLevels           = "263cb4d8-ddde-4555-a514-853a4b271973"
 	UuidAccessLevelColumnLevel = "8410d75d-7e71-4004-9a6f-544fca4e686e"
 	UuidAccessLevelReadAccess  = "07f4d6ee-4d0e-4862-8030-b982b3d64a49"
 	UuidAccessLevelWriteAccess = "807ef79d-8004-4be2-a3e2-f873c72906cc"
+
+	UuidTransactions                = "67bebc3b-7acb-4fdc-b187-bebe1efccae9"
+	UuidTransactionColumnUri        = "7ff7d229-b6ff-410c-9983-d6ed3a3e16f7"
+	UuidTransactionColumnRowAdded   = "5d65b74f-9beb-4656-8db8-64a1c77d555e"
+	UuidTransactionColumnRowEdited  = "764b76ec-0d07-41ea-99f8-115f9e5b0c1d"
+	UuidTransactionColumnRowDeleted = "873898f3-7ea2-4e81-971e-c60f9d2449cf"
 )

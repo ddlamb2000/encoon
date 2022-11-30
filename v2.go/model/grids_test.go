@@ -40,6 +40,7 @@ func TestGetTableName(t *testing.T) {
 		{UuidRelationships, "relationships"},
 		{UuidMigrations, "migrations"},
 		{UuidUsers, "users"},
+		{UuidTransactions, "transactions"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.expect, func(t *testing.T) {
@@ -76,11 +77,12 @@ func TestGridSetViewEditAccessFlags(t *testing.T) {
 		{"7", UuidGrids, "", "", "", "", "user1", true, false, true, true},
 		{"8", UuidColumns, "", "", "", "", "user1", true, false, true, true},
 		{"9", UuidUsers, "", "", "", "", "user1", true, false, false, false},
-		{"10", UuidAccessLevel, "", "", "", "", "user1", true, false, false, false},
+		{"10", UuidAccessLevels, "", "", "", "", "user1", true, false, false, false},
 		{"11", UuidColumnTypes, "", "", "", "", "user1", true, false, false, false},
 		{"12", UuidMigrations, "", "", "", "", "user1", false, false, false, false},
 		{"13", UuidRelationships, "", "", "", "", "user1", true, false, true, true},
 		{"14", UuidTransactions, "", "", "", "", "user1", false, false, false, false},
+		{"15", UuidTransactions, "root", "", "", "", "root", true, false, false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {

@@ -47,6 +47,8 @@ func (grid *Grid) GetTableName() string {
 		return "migrations"
 	case UuidUsers:
 		return "users"
+	case UuidTransactions:
+		return "transactions"
 	default:
 		return "rows"
 	}
@@ -69,6 +71,8 @@ func (grid *Grid) CopyAccessToOtherGrid(otherGrid *Grid) {
 
 func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditRows, canEditOwnedRows, canAddRows bool) {
 	switch {
+	case grid.Owners[userUuid] && grid.Uuid == UuidTransactions:
+		return true, false, false, false
 	case grid.Owners[userUuid]:
 		return true, true, true, true
 	case grid.EditAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelWriteAccess]:
@@ -77,7 +81,7 @@ func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditR
 		return true, false, false, false
 	case grid.Uuid == UuidGrids || grid.Uuid == UuidRelationships || grid.Uuid == UuidColumns:
 		return true, false, true, true
-	case grid.Uuid == UuidAccessLevel || grid.Uuid == UuidUsers || grid.Uuid == UuidColumnTypes:
+	case grid.Uuid == UuidAccessLevels || grid.Uuid == UuidUsers || grid.Uuid == UuidColumnTypes:
 		return true, false, false, false
 	}
 	return false, false, false, false

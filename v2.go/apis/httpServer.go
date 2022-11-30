@@ -38,12 +38,13 @@ func getParameters(c *gin.Context) (string, string, string, string, string, erro
 }
 
 type apiRequestParameters struct {
-	ctx      context.Context
-	dbName   string
-	userName string
-	userUuid string
-	db       *sql.DB
-	ctxChan  chan apiResponse
+	ctx         context.Context
+	dbName      string
+	userName    string
+	userUuid    string
+	db          *sql.DB
+	ctxChan     chan apiResponse
+	transaction *model.Row
 }
 
 func (r apiRequestParameters) log(format string, a ...any) {
@@ -131,17 +132,19 @@ type apiResponse struct {
 	canAddRows       bool
 }
 
-func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user string) (apiRequestParameters, context.CancelFunc, error) {
+func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user, uri string) (request apiRequestParameters, cancelFunc context.CancelFunc, error error) {
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, dbName)
 	db, err := database.GetDbByName(dbName)
 	r := apiRequestParameters{
-		ctx:      ctx,
-		dbName:   dbName,
-		userName: user,
-		userUuid: userUuid,
-		db:       db,
-		ctxChan:  make(chan apiResponse, 1),
+		ctx:         ctx,
+		dbName:      dbName,
+		userName:    user,
+		userUuid:    userUuid,
+		db:          db,
+		ctxChan:     make(chan apiResponse, 1),
+		transaction: model.GetNewRowWithUuid(),
 	}
+	r.transaction.Text1 = &uri
 	return r, cancel, err
 }
 
@@ -165,7 +168,7 @@ func GetGridsRowsApi(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	response := getGridsRows(c.Request.Context(), dbName, gridUuid, uuid, userUuid, userName)
+	response := getGridsRows(c.Request.Context(), c.Request.RequestURI, dbName, gridUuid, uuid, userUuid, userName)
 	if response.err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
@@ -205,7 +208,7 @@ func PostGridsRowsApi(c *gin.Context) {
 	}
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
-	response := postGridsRows(c.Request.Context(), dbName, userUuid, userName, gridUuid, uuid, payload)
+	response := postGridsRows(c.Request.Context(), c.Request.RequestURI, dbName, userUuid, userName, gridUuid, uuid, payload)
 	if response.err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})

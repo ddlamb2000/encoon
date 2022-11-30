@@ -125,7 +125,14 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 
 // function is available for mocking
 var getDeleteReferenceRowStatement = func() string {
-	return "UPDATE relationships SET enabled = false WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text4 = $5 AND text5 = $6"
+	return "UPDATE relationships " +
+		"SET enabled = false " +
+		"WHERE gridUuid = $1 " +
+		"AND text1 = $2 " +
+		"AND text2 = $3 " +
+		"AND text3 = $4 " +
+		"AND text4 = $5 " +
+		"AND text5 = $6"
 }
 
 func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost) []any {

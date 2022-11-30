@@ -94,7 +94,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User01SetAccessForGrid02", func(t *testing.T) {
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevel + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
+			`{"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -614,7 +614,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column21Uuid + `"},` +
 			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column22Uuid + `"},` +
 			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column23Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevel + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
+			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
