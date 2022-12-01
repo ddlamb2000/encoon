@@ -35,7 +35,10 @@ func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return
 		}
-		postInsertTransaction(r)
+		if err := postInsertTransaction(r); err != nil {
+			r.ctxChan <- apiResponse{err: err, system: true}
+			return
+		}
 		if err := persistGridRowData(r, grid, payload.RowsAdded, postInsertGridRow); err != nil {
 			r.ctxChan <- apiResponse{err: err, system: true}
 			return

@@ -35,6 +35,7 @@ func TestSystem(t *testing.T) {
 	InitializeCaches()
 	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
 	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
+	t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {

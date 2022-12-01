@@ -13,7 +13,8 @@ func postInsertTransaction(r apiRequestParameters) error {
 	parms := getInsertValuesForTransaction(r.userUuid, r.transaction)
 	r.trace("postInsertTransaction() - query=%s, parms=%s", query, parms)
 	if err := r.execContext(query, parms...); err != nil {
-		return r.logAndReturnError("Insert row error: %v.", err)
+		_ = r.rollbackTransaction()
+		return r.logAndReturnError("Insert transaction error: %v.", err)
 	}
 	r.log("Transaction [%s] inserted.", r.transaction.Uuid)
 	return nil
@@ -59,7 +60,7 @@ func postInsertTransactionReferenceRow(r apiRequestParameters, grid *model.Grid,
 	parms := getInsertStatementParametersForTransactionReferenceRow(r, grid, row, relationship)
 	r.trace("postInsertTransactionReferenceRow(%s) - query=%s ; parms=%s", row, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
-		return r.logAndReturnError("Insert referenced row error: %v.", err)
+		return r.logAndReturnError("Insert transaction referenced row error: %v.", err)
 	}
 	r.log("Referenced row [%v] inserted into transaction %s.", row, r.transaction.Uuid)
 	return nil

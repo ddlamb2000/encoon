@@ -570,4 +570,75 @@ func RunSystemTestPost(t *testing.T) {
 		jsonStringContains(t, responseData, `Error when retrieving grid uuid for column`)
 		getRowsQueryForGridUuidAttachedToColumn = getRowsQueryForGridUuidAttachedToColumnImpl
 	})
+
+	t.Run("VerifyAuditInSingleGrid", func(t *testing.T) {
+		var gridUuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"audits":[`)
+		jsonStringContains(t, responseData, `"createdByName":"test01","actionName":"Updated"`)
+		jsonStringContains(t, responseData, `"createdByName":"test01","actionName":"Created"`)
+	})
+
+	t.Run("VerifyAuditInSingleGridDefect1", func(t *testing.T) {
+		getAuditsQueryForRowImpl := getAuditsQueryForRow
+		getAuditsQueryForRow = func(*model.Grid, string) string { return "x x x" }
+		var gridUuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying audits: pq: syntax error`)
+		getAuditsQueryForRow = getAuditsQueryForRowImpl
+	})
+
+	t.Run("VerifyAuditInSingleGridDefect2", func(t *testing.T) {
+		getAuditsQueryOutputForRowImpl := getAuditsQueryOutputForRow
+		getAuditsQueryOutputForRow = func(audit *model.Audit) []any { return nil }
+		var gridUuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when scanning audits: sql`)
+		getAuditsQueryOutputForRow = getAuditsQueryOutputForRowImpl
+	})
+
+	t.Run("UpdateGridTransactionDefect", func(t *testing.T) {
+		getInsertStatementForTransactionImpl := getInsertStatementForTransaction
+		getInsertStatementForTransaction = func() string { return "xxx" } // mock function
+		var uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
+		stringNotEqual(t, uuid, "")
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `"error":"Insert transaction error: pq: syntax error at or near \"xxx\".`)
+		getInsertStatementForTransaction = getInsertStatementForTransactionImpl
+	})
+
+	t.Run("UpdateGridTransactionDefect2", func(t *testing.T) {
+		getInsertStatementForTransactionReferenceRowImpl := getInsertStatementForTransactionReferenceRow
+		getInsertStatementForTransactionReferenceRow = func() string { return "xxx" } // mock function
+		var uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&uuid)
+		stringNotEqual(t, uuid, "")
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `"error":"Insert transaction referenced row error: pq: syntax error at or near \"xxx\"."`)
+		getInsertStatementForTransactionReferenceRow = getInsertStatementForTransactionReferenceRowImpl
+	})
 }

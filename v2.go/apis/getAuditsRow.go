@@ -9,8 +9,8 @@ func getAuditsForRow(r apiRequestParameters, grid *model.Grid, uuid string) ([]*
 	r.trace("getAuditsForRow(%s, %s)", grid, uuid)
 	t := r.startTiming()
 	defer r.stopTiming("getAuditsForRow()", t)
-	query := getAudtisQueryForRow(grid, uuid)
-	parms := getAudtisQueryParametersForRow(grid.Uuid, uuid)
+	query := getAuditsQueryForRow(grid, uuid)
+	parms := getAuditsQueryParametersForRow(grid.Uuid, uuid)
 	r.trace("getAuditsForRow(%s, %s) - query=%s ; parms=%s", grid, uuid, query, parms)
 	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
@@ -20,7 +20,7 @@ func getAuditsForRow(r apiRequestParameters, grid *model.Grid, uuid string) ([]*
 	audits := make([]*model.Audit, 0)
 	for set.Next() {
 		audit := model.GetNewAudit()
-		if err := set.Scan(getAudtisQueryOutputForRow(audit)...); err != nil {
+		if err := set.Scan(getAuditsQueryOutputForRow(audit)...); err != nil {
 			return nil, r.logAndReturnError("Error when scanning audits: %v.", err)
 		}
 		audit.SetActionName()
@@ -29,7 +29,8 @@ func getAuditsForRow(r apiRequestParameters, grid *model.Grid, uuid string) ([]*
 	return audits, nil
 }
 
-var getAudtisQueryForRow = func(grid *model.Grid, uuid string) string {
+// function is available for mocking
+var getAuditsQueryForRow = func(grid *model.Grid, uuid string) string {
 	return "SELECT transactions.uuid, " +
 		"transactions.created, " +
 		"transactions.createdBy, " +
@@ -54,7 +55,7 @@ var getAudtisQueryForRow = func(grid *model.Grid, uuid string) string {
 		"ORDER BY transactions.created DESC"
 }
 
-var getAudtisQueryParametersForRow = func(gridUuid, uuid string) []any {
+var getAuditsQueryParametersForRow = func(gridUuid, uuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidUsers)
 	parameters = append(parameters, model.UuidTransactions)
@@ -64,7 +65,8 @@ var getAudtisQueryParametersForRow = func(gridUuid, uuid string) []any {
 	return parameters
 }
 
-var getAudtisQueryOutputForRow = func(audit *model.Audit) []any {
+// function is available for mocking
+var getAuditsQueryOutputForRow = func(audit *model.Audit) []any {
 	output := make([]any, 0)
 	output = append(output, &audit.Uuid)
 	output = append(output, &audit.Created)
