@@ -10,7 +10,7 @@ import (
 func TestGetNewRow(t *testing.T) {
 	row := GetNewRow()
 	if row == nil {
-		t.Errorf(`Isse when creating row.`)
+		t.Errorf(`Isseu when creating row.`)
 	}
 }
 
