@@ -149,11 +149,30 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
 	}
-	if grid.Uuid == model.UuidGrids {
-		removeGridFromCache(row.Uuid)
+	if err := removeAssociatedGridFromCache(r, grid, row.Uuid); err != nil {
+		return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
 	}
 	r.log("Row [%s] updated.", row.Uuid)
 	return postInsertTransactionReferenceRow(r, grid, row, "relationship2")
+}
+
+func removeAssociatedGridFromCache(r apiRequestParameters, grid *model.Grid, uuid string) error {
+	r.trace("removeAssociatedGridFromCache(%s, %v)", grid, uuid)
+	if grid.Uuid == model.UuidGrids {
+		r.trace("removeAssociatedGridFromCache() - Grid")
+		removeGridFromCache(uuid)
+	} else if grid.Uuid == model.UuidColumns {
+		r.trace("removeAssociatedGridFromCache() - Column")
+		gridUuid, err := getGridUuidAttachedToColumn(r, uuid)
+		if err != nil {
+			return err
+		}
+		if gridUuid != "" {
+			r.log("removeAssociatedGridFromCache(%s, %v) - gridUuid=%s", grid, uuid, gridUuid)
+			removeGridFromCache(gridUuid)
+		}
+	}
+	return nil
 }
 
 // function is available for mocking
@@ -208,8 +227,8 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	if err := r.execContext(query, grid.Uuid, row.Uuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
-	if grid.Uuid == model.UuidGrids {
-		removeGridFromCache(row.Uuid)
+	if err := removeAssociatedGridFromCache(r, grid, row.Uuid); err != nil {
+		return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
 	}
 	r.log("Row [%s] deleted.", row.Uuid)
 	return postInsertTransactionReferenceRow(r, grid, row, "relationship3")

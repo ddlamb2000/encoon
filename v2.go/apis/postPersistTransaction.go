@@ -16,7 +16,7 @@ func postInsertTransaction(r apiRequestParameters) error {
 		_ = r.rollbackTransaction()
 		return r.logAndReturnError("Insert transaction error: %v.", err)
 	}
-	r.log("Transaction [%s] inserted.", r.transaction.Uuid)
+	r.log("Transaction [%s] created.", r.transaction.Uuid)
 	return nil
 }
 

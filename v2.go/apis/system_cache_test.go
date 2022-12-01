@@ -27,11 +27,200 @@ func RunSystemTestCache(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and int1= $2", grid02Uuid, 100).Scan(&rowInt100Uuid)
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
-	t.Run("RootCanGetGrid", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+	t.Run("User01VerifyActualGridsCount", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canViewRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":true`)
+		jsonStringContains(t, responseData, `"countRows":10`)
+	})
+
+	t.Run("User01CreateNewColumnsFor5thGrid", func(t *testing.T) {
+		var gridUuid3 string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid3)
+
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"Test Column 24","text2":"text1"},` +
+			`{"uuid":"b","text1":"Test Column 25","text2":"text2"},` +
+			`{"uuid":"c","text1":"Test Column 26","text2":"relationship1"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid3 + `"},` +
+			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Test Column 24","text2":"text1"`)
+		jsonStringContains(t, responseData, `"text1":"Test Column 25","text2":"text2"`)
+	})
+
+	t.Run("User01Create5thSingleGrid", func(t *testing.T) {
+		var column24Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 24").Scan(&column24Uuid)
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"Grid05","text2":"Test grid 05","text3":"journal"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column24Uuid + `"},` +
+			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
+	})
+
+	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":11`)
+	})
+
+	t.Run("User01VerifyActualGridsColumns", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
+	})
+
+	t.Run("User01AddColumnsTo5thSingleGrid", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		var column25Uuid, column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 25").Scan(&column25Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
+	})
+
+	t.Run("User01VerifyActualGridsColumns2", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01RemoveColumnFrom5thSingleGrid", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		var column25Uuid, column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 25").Scan(&column25Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"referencedValuesRemoved":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
+	})
+
+	t.Run("User01VerifyActualGridsColumns3", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
+		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01Rename5thSingleGrid", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
+	})
+
+	t.Run("User01VerifyActualGridName", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
+		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01RenameColumnFor5thSingleGrid", func(t *testing.T) {
+		var column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Test Column 26 {2}"`)
+	})
+
+	t.Run("User01VerifyActualColumnName", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
+		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
+		jsonStringContains(t, responseData, `"label":"Test Column 26 {2}","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01Remove5thSingleGrid", func(t *testing.T) {
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringDoesntContain(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
+	})
+
+	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":10`)
 	})
 }
