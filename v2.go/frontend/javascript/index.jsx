@@ -310,7 +310,7 @@ class DateTime extends React.Component {
 
 	render() {
 		return (
-			<span>{this.props.dateTime} <small><em>{this.state.timeAgo}</em></small></span>
+			<span>{this.props.dateTime} <small><em>({this.state.timeAgo})</em></small></span>
 		)
 	}
 }

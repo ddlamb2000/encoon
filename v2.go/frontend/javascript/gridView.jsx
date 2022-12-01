@@ -42,9 +42,8 @@ class GridView extends React.Component {
 											const uri = `/${this.props.dbName}/${UuidUsers}/${audit.createdBy}`
 											return (
 												<li key={audit.uuid}>
-													{audit.actionName}
-													&nbsp;on <DateTime dateTime={audit.created} />
-													&nbsp;by <a href={uri}>{audit.createdByName}</a>
+													{audit.actionName} on <DateTime dateTime={audit.created} />,
+													by <a href={uri}>{audit.createdByName}</a>
 												</li>
 											)
 										}

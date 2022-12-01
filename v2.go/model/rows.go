@@ -17,10 +17,8 @@ type Row struct {
 	Enabled       bool         `json:"enabled" yaml:"enabled"`
 	Created       *time.Time   `json:"created" yaml:"created"`
 	CreatedBy     *string      `json:"createdBy" yaml:"createdBy"`
-	CreatedByName *string      `json:"createdByName,omitempty" yaml:"createdByName,omitempty"`
 	Updated       *time.Time   `json:"updated" yaml:"updated"`
 	UpdatedBy     *string      `json:"updatedBy" yaml:"updatedBy"`
-	UpdatedByName *string      `json:"updatedByName,omitempty" yaml:"updatedByName,omitempty"`
 	Text1         *string      `json:"text1,omitempty" yaml:"text1,omitempty"`
 	Text2         *string      `json:"text2,omitempty" yaml:"text2,omitempty"`
 	Text3         *string      `json:"text3,omitempty" yaml:"text3,omitempty"`

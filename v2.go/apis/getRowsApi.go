@@ -137,27 +137,12 @@ var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string, enabledOnly bo
 		"rows.enabled, " +
 		"rows.created, " +
 		"rows.createdBy, " +
-		"createdBy.text1, " +
 		"rows.updated, " +
 		"rows.updatedBy, " +
-		"updatedBy.text1, " +
 		"rows.revision " +
-
 		"FROM " + grid.GetTableName() + " rows " +
-
-		"LEFT OUTER JOIN users createdBy " +
-		"ON createdBy.gridUuid = $1 " +
-		"AND createdBy.uuid = rows.createdBy " +
-		"AND createdBy.enabled = true " +
-
-		"LEFT OUTER JOIN users updatedBy " +
-		"ON updatedBy.gridUuid = $1 " +
-		"AND updatedBy.uuid = rows.updatedBy " +
-		"AND updatedBy.enabled = true " +
-
 		getRowsWhereQueryForGridsApi(uuid) +
 		getEnabledCondition(enabledOnly) +
-
 		"ORDER BY rows.text1"
 }
 
@@ -170,15 +155,14 @@ func getEnabledCondition(enabledOnly bool) string {
 
 func getRowsWhereQueryForGridsApi(uuid string) string {
 	if uuid == "" {
-		return "WHERE rows.griduuid = $2 "
+		return "WHERE rows.griduuid = $1 "
 	}
-	return "WHERE rows.griduuid = $2 AND rows.uuid = $3 "
+	return "WHERE rows.griduuid = $1 AND rows.uuid = $2 "
 }
 
 // function is available for mocking
 var getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any {
 	parameters := make([]any, 0)
-	parameters = append(parameters, model.UuidUsers)
 	parameters = append(parameters, gridUuid)
 	if uuid != "" {
 		parameters = append(parameters, uuid)
@@ -199,10 +183,8 @@ var getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any
 	output = append(output, &row.Enabled)
 	output = append(output, &row.Created)
 	output = append(output, &row.CreatedBy)
-	output = append(output, &row.CreatedByName)
 	output = append(output, &row.Updated)
 	output = append(output, &row.UpdatedBy)
-	output = append(output, &row.UpdatedByName)
 	output = append(output, &row.Revision)
 	return output
 }
@@ -278,7 +260,6 @@ var getRowsQueryForGridUuidAttachedToColumn = func() string {
 		"AND text4 = $3 " +
 		"AND text5 = $4 " +
 		"AND enabled = true"
-
 }
 
 func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {
