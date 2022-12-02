@@ -235,7 +235,8 @@ func appendRowAttribute(output []any, row *model.Row, attributeName string) []an
 	return output
 }
 
-func getGridUuidAttachedToColumn(r apiRequestParameters, uuid string) (string, error) {
+// function is available for mocking
+var getGridUuidAttachedToColumn = func(r apiRequestParameters, uuid string) (string, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridUuidAttachedToColumn()", t)
 	var gridUuuid string

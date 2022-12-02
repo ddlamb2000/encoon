@@ -4,6 +4,7 @@
 package apis
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
@@ -94,6 +95,26 @@ func RunSystemTestCache(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 	})
 
+	t.Run("User01AddColumnsTo5thSingleGridDefect", func(t *testing.T) {
+		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
+		removeAssociatedGridFromCache = func(apiRequestParameters, *model.Grid, string) error { return errors.New("xxx") }
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		var column25Uuid, column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 25").Scan(&column25Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"referencedValuesAdded":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
+	})
+
 	t.Run("User01AddColumnsTo5thSingleGrid", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
@@ -121,6 +142,25 @@ func RunSystemTestCache(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01RemoveColumnFrom5thSingleGridDefect", func(t *testing.T) {
+		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
+		removeAssociatedGridFromCache = func(apiRequestParameters, *model.Grid, string) error { return errors.New("xxx") }
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		var column25Uuid, column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 25").Scan(&column25Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"referencedValuesRemoved":` +
+			`[` +
+			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
 	})
 
 	t.Run("User01RemoveColumnFrom5thSingleGrid", func(t *testing.T) {
@@ -151,6 +191,22 @@ func RunSystemTestCache(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
 	})
 
+	t.Run("User01Rename5thSingleGridDefect", func(t *testing.T) {
+		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
+		removeAssociatedGridFromCache = func(apiRequestParameters, *model.Grid, string) error { return errors.New("xxx") }
+		var grid05Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
+	})
+
 	t.Run("User01Rename5thSingleGrid", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
@@ -175,6 +231,22 @@ func RunSystemTestCache(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
+	})
+
+	t.Run("User01RenameColumnFor5thSingleGridDefect", func(t *testing.T) {
+		getGridUuidAttachedToColumnImpl := getGridUuidAttachedToColumn
+		getGridUuidAttachedToColumn = func(apiRequestParameters, string) (string, error) { return "", errors.New("xxx") }
+		var column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
+		postStr := `{"rowsEdited":` +
+			`[` +
+			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		getGridUuidAttachedToColumn = getGridUuidAttachedToColumnImpl
 	})
 
 	t.Run("User01RenameColumnFor5thSingleGrid", func(t *testing.T) {
@@ -222,5 +294,35 @@ func RunSystemTestCache(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":10`)
+	})
+
+	t.Run("User01DeleteColumnFor5thSingleGridDefect", func(t *testing.T) {
+		getGridUuidAttachedToColumnForCacheImpl := getGridUuidAttachedToColumnForCache
+		getGridUuidAttachedToColumnForCache = func(apiRequestParameters, string) (string, error) { return "", errors.New("xxx") }
+		var column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26 {2}").Scan(&column26Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + column26Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `"error":"Error when getting data for cache deletion: xxx."`)
+		getGridUuidAttachedToColumnForCache = getGridUuidAttachedToColumnForCacheImpl
+	})
+
+	t.Run("User01DeleteColumnFor5thSingleGrid", func(t *testing.T) {
+		var column26Uuid string
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26 {2}").Scan(&column26Uuid)
+		postStr := `{"rowsDeleted":` +
+			`[` +
+			`{"uuid":"` + column26Uuid + `"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
 	})
 }

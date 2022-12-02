@@ -156,14 +156,15 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	return postInsertTransactionReferenceRow(r, grid, row, "relationship2")
 }
 
-func removeAssociatedGridFromCache(r apiRequestParameters, grid *model.Grid, uuid string) error {
+// function is available for mocking
+var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Grid, uuid string) error {
 	r.trace("removeAssociatedGridFromCache(%s, %v)", grid, uuid)
 	if grid.Uuid == model.UuidGrids {
 		r.trace("removeAssociatedGridFromCache() - Grid")
 		removeGridFromCache(uuid)
 	} else if grid.Uuid == model.UuidColumns {
 		r.trace("removeAssociatedGridFromCache() - Column")
-		gridUuid, err := getGridUuidAttachedToColumn(r, uuid)
+		gridUuid, err := getGridUuidAttachedToColumnForCache(r, uuid)
 		if err != nil {
 			return err
 		}
@@ -173,6 +174,11 @@ func removeAssociatedGridFromCache(r apiRequestParameters, grid *model.Grid, uui
 		}
 	}
 	return nil
+}
+
+// function is available for mocking
+var getGridUuidAttachedToColumnForCache = func(r apiRequestParameters, uuid string) (string, error) {
+	return getGridUuidAttachedToColumn(r, uuid)
 }
 
 // function is available for mocking

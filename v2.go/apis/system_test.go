@@ -32,6 +32,7 @@ func TestSystem(t *testing.T) {
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
 	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
+	InitializeCaches()
 	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
 	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
