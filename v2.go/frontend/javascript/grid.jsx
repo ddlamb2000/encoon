@@ -42,10 +42,18 @@ class Grid extends React.Component {
 		this.loadData()
 	}
 
+	componentDidUpdate(prevProps) {
+		if(trace) console.log("[Grid.componentDidUpdate()] **** prevProps=", prevProps)
+		if(this.props.gridUuid !== prevProps.gridUuid) {
+			this.loadData()
+		}
+	}
+
 	render() {
 		const { isLoading, isLoaded, error, grid, canAddRows, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted, referencedValuesAdded, referencedValuesRemoved } = this.state
-		const { uuid, dbName, token } = this.props
+		const { dbName, token, gridUuid, uuid } = this.props
 		const countRows = rows ? rows.length : 0
+		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
 			<div className="card my-4">
 				<div className="card-body">
@@ -71,7 +79,8 @@ class Grid extends React.Component {
 									onRemoveReferencedValueClick={(fromUuid, col, toGridUuid, uuid, displayString, path) => this.removeReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
-									token={token} />
+									token={token}
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}  />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
@@ -91,7 +100,8 @@ class Grid extends React.Component {
 								rowsDeleted={rowsDeleted}
 								onSelectRowClick={() => this.deselectRows()}
 								onAddRowClick={() => this.addRow()}
-								onSaveDataClick={() => this.saveData()} />
+								onSaveDataClick={() => this.saveData()}
+								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				</div>
 			</div>
 		)
@@ -166,12 +176,13 @@ class Grid extends React.Component {
 
 	loadData() {
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUuid}${this.props.uuid != "" ? '/' + this.props.uuid : ''}`
+		const { dbName, token, gridUuid, uuid } = this.props
+		const uri = `/${dbName}/api/v1/${gridUuid}${uuid != "" ? '/' + uuid : ''}`
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + this.props.token
+				'Authorization': 'Bearer ' + token
 			}
 		})
 		.then(response => {

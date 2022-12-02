@@ -5,54 +5,45 @@ class App extends React.Component {
 	constructor(props) {
 		super(props)
 		this.token = localStorage.getItem(`access_token_${this.props.dbName}`)
-		if(this.token != "") {
-			const payload = this.parseJwt(this.token)
-			this.user = payload.user
-			this.userUuid = payload.userUuid
-			this.userFirstName = payload.userFirstName
-			this.userLastName = payload.userLastName
-			if(payload.expires == "") {
-				console.log("No token expiration date.")
+		if(this.token != "") this.verifyToken()
+		else this.loggedIn = false
+		this.state = { gridUuid: "", uuid: "" }
+	}
+
+	verifyToken() {
+		const payload = this.parseJwt(this.token)
+		this.user = payload.user
+		this.userUuid = payload.userUuid
+		this.userFirstName = payload.userFirstName
+		this.userLastName = payload.userLastName
+		if(payload.expires == "") {
+			if(trace) console.log("No token expiration date.")
+			this.loggedIn = false
+		}
+		else this.verifyTokenExpiration(payload)
+	}
+
+	verifyTokenExpiration(payload) {
+		const expires = new Date(Date.parse(payload.expires))
+		if (expires == "Invalid Date") {
+			if(trace) console.log("Invalid token expiration date.")
+			this.loggedIn = false
+		}
+		else {
+			const now = new Date()
+			if(now > expires) {
+				if(trace) console.log("Token expired.")
 				this.loggedIn = false
 			}
-			else {
-				const expires = new Date(Date.parse(payload.expires))
-				if (expires == "Invalid Date") {
-					console.log("Invalid token expiration date.")
-					this.loggedIn = false
-				}
-				else {
-					const now = new Date()
-					if(now > expires) {
-						console.log("Token expired.")
-						this.loggedIn = false
-					}
-					else if(now < expires) this.loggedIn = true
-				}
-			}
+			else if(now < expires) this.loggedIn = true
 		}
-		else this.loggedIn = false
 	}
 
 	render() {
 		if(!this.loggedIn) return <Login appName={this.props.appName} appTag={this.props.appTag} dbName={this.props.dbName} />
-		if(this.props.gridUuid != "") return (
-			<div>
-				<Header appName={this.props.appName} 
-						appTag={this.props.appTag}
-						dbName={this.props.dbName} 
-						user={this.user}
-						userFirstName={this.userFirstName}
-						userLastName={this.userLastName} />
-				<div className="container-fluid">
-					<div className="row">
-						<main className="col-md-12 ms-sm-auto col-lg-12 px-md-2">
-							<Grid token={this.token} dbName={this.props.dbName} gridUuid={this.props.gridUuid} uuid={this.props.uuid} />
-						</main>
-					</div>
-				</div>
-			</div>
-		)
+		const gridUuid = this.state.gridUuid != "" ? this.state.gridUuid : this.props.gridUuid
+		const uuid = this.state.uuid != "" ? this.state.uuid : this.props.uuid
+		if(trace) console.log("[App.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
 			<div>
 				<Header appName={this.props.appName} 
@@ -70,20 +61,32 @@ class App extends React.Component {
 										user={this.user}
 										userFirstName={this.userFirstName}
 										userLastName={this.userLastName}
-										token={this.token} />
+										token={this.token}
+										navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 						</nav>
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} />
-							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} />
-							<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} />
-							<Grid token={this.token} dbName={this.props.dbName} />
-							<Grid token={this.token} />
-							<Grid />
+							{gridUuid == "" &&
+								<div>
+									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<Grid token={this.token} dbName={this.props.dbName} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<Grid token={this.token} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<Grid />
+								</div>
+							}
+							{gridUuid != "" &&
+								<Grid token={this.token}
+										dbName={this.props.dbName}
+										gridUuid={gridUuid}
+										uuid={uuid}
+										navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+							}
 						</main>
 					</div>
 				</div>
 			</div>
-		)		
+		)
 	}
 
 	parseJwt(token) {
@@ -99,6 +102,12 @@ class App extends React.Component {
 			console.error("Invalid token", error)
 		}
 		return ""
+	}
+
+	navigateToGrid(gridUuid, uuid) {
+		const url = `/${this.props.dbName}/${gridUuid}` + (uuid == "" ? "" : `/${uuid}`)
+		history.pushState({}, null, url)
+		this.setState({ gridUuid: gridUuid, uuid: uuid })
 	}
 }
 
@@ -179,6 +188,7 @@ class Login extends React.Component {
 		const variantDb = errorDb ? "form-control is-invalid" : "form-control"
 		const variantId = errorId ? "form-control is-invalid" : "form-control"
 		const variantPassword = errorPassword ? "form-control is-invalid" : "form-control"
+		if(trace) console.log("[Login.render()]")
 		return (
 			<div className="container">
 				<div className="row">
@@ -243,6 +253,7 @@ class Login extends React.Component {
 
 class Header extends React.Component {
 	render() {
+		if(trace) console.log("[Header.render()]")
 		return (
             <header className="navbar sticky-top bg-light flex-md-nowrap p-0 shadow">
                 <a className="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href={"/" + this.props.dbName}>{this.props.appName} / {this.props.dbName}</a>
@@ -309,7 +320,11 @@ class DateTime extends React.Component {
 	}
 
 	componentDidMount() {
-		setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 1000)
+		this.timerID = setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 1000)
+	}
+
+	componentWillUnmount() {
+		clearInterval(this.timerID)
 	}
 
 	render() {
@@ -346,6 +361,7 @@ class Navigation extends React.Component {
 
 	render() {
 		const { isLoading, isLoaded, error, rows } = this.state
+		if(trace) console.log("[Navigation.render()]")
 		return (
 			<div className="position-sticky pt-4 sidebar-sticky">
 				{isLoading && <Spinner />}
@@ -353,7 +369,7 @@ class Navigation extends React.Component {
 				<ul className="nav flex-column mb-2">
 					{isLoaded && rows && rows.map(row => 
 						<li className="nav-item" key={row.uuid}>
-							<a className="nav-link" href={`/${this.props.dbName}/${row.uuid}`}>
+							<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid(row.uuid, "")}>
 								{row.text1} {row.text3 && <i className={`bi bi-${row.text3}`}></i>}
 							</a>
 						</li>
@@ -417,6 +433,8 @@ const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508
 const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
 const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
 const UuidColumns                        = "533b6862-add3-4fef-8f93-20a17aaaaf5a"
+
+const trace = false
 
 root.render(
 	<App  appName={rootElement.getAttribute("appName")}

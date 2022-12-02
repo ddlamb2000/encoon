@@ -31,7 +31,8 @@ class GridTable extends React.Component {
 										onRemoveReferencedValueClick={(fromUuid, columnName, toGridUuid, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(fromUuid, columnName, toGridUuid, uuid, displayString, path)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
-										token={this.props.token} />
+										token={this.props.token}
+										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 					)}
 				</tbody>
 			</table>
@@ -80,7 +81,8 @@ class GridRow extends React.Component {
 										onRemoveReferencedValueClick={(fromUuid, columnName, toGridUuid, uuid, displayString, path) => this.props.onRemoveReferencedValueClick(fromUuid, columnName, toGridUuid, uuid, displayString, path)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
-										token={this.props.token} />
+										token={this.props.token}
+										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				)}
 				<td className="text-end">{this.props.row.revision}</td>
 			</tr>
