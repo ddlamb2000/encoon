@@ -185,13 +185,14 @@ var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 			parameterIndex += 1
 		}
 	}
-	updateStr := "UPDATE " + grid.GetTableName() +
+	return "UPDATE " +
+		grid.GetTableName() +
 		" SET revision = revision + 1, " +
 		"updated = NOW(), " +
 		"updatedBy = $3" +
-		columns
-	whereStr := " WHERE gridUuid = $1 AND uuid = $2"
-	return updateStr + whereStr
+		columns +
+		" WHERE gridUuid = $1 " +
+		"AND uuid = $2"
 }
 
 func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Row) []any {
@@ -224,7 +225,7 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 
 	query = getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, grid.Uuid, row.Uuid); err != nil {
+	if err := r.execContext(query, grid.Uuid, row.Uuid, r.userUuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	if err := removeAssociatedGridFromCache(r, grid, row.Uuid); err != nil {
@@ -241,5 +242,12 @@ var getDeleteGridReferencedRowQuery = func(grid *model.Grid) string {
 
 // function is available for mocking
 var getDeleteGridRowQuery = func(grid *model.Grid) string {
-	return "UPDATE " + grid.GetTableName() + " set enabled = false WHERE gridUuid = $1 AND uuid = $2"
+	return "UPDATE " +
+		grid.GetTableName() +
+		" SET revision = revision + 1, " +
+		"enabled = false, " +
+		"updated = NOW(), " +
+		"updatedBy = $3 " +
+		"WHERE gridUuid = $1 " +
+		"AND uuid = $2"
 }
