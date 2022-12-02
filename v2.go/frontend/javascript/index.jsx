@@ -368,6 +368,11 @@ class Navigation extends React.Component {
 				{isLoading && <Spinner />}
 				{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 				<ul className="nav flex-column mb-2">
+					<li className="nav-item">
+						<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid("", "")}>
+							Dashboard <i class="bi bi-view-stacked"></i>
+						</a>
+					</li>
 					{isLoaded && rows && rows.map(row => 
 						<li className="nav-item" key={row.uuid}>
 							<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid(row.uuid, "")}>
