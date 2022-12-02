@@ -4,8 +4,6 @@
 class GridView extends React.Component {
 	render() {
 		const columns = getColumnValuesForRow(this.props.columns, this.props.row, true)
-		const createdByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.createdBy}`
-		const updatedByUri = `/${this.props.dbName}/${UuidUsers}/${this.props.row.updatedBy}`
 		const audits = this.props.row ? this.props.row.audits : []
 		return (
 			<div>

@@ -60,7 +60,6 @@ class Grid extends React.Component {
 					{isLoaded && rows && grid  && uuid == "" && 
 						<h4 className="card-title">
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
-							{isLoading && <Spinner />}
 						</h4>
 					}
 					{isLoaded && rows && grid && grid.text2 && uuid == "" && <div className="card-subtitle mb-2 text-muted">{grid.text2}</div>}
@@ -91,19 +90,20 @@ class Grid extends React.Component {
 									referencedValuesRemoved={referencedValuesRemoved}
 									dbName={dbName} />
 					}
-					<GridFooter isLoading={isLoading}
-								grid={grid}
-								rows={rows}
-								uuid={uuid}
-								canAddRows={canAddRows}
-								rowsSelected={rowsSelected}
-								rowsAdded={rowsAdded}
-								rowsEdited={rowsEdited}
-								rowsDeleted={rowsDeleted}
-								onSelectRowClick={() => this.deselectRows()}
-								onAddRowClick={() => this.addRow()}
-								onSaveDataClick={() => this.saveData()}
-								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+					<GridFooter 
+							isLoading={isLoading}
+							grid={grid}
+							rows={rows}
+							uuid={uuid}
+							canAddRows={canAddRows}
+							rowsSelected={rowsSelected}
+							rowsAdded={rowsAdded}
+							rowsEdited={rowsEdited}
+							rowsDeleted={rowsDeleted}
+							onSelectRowClick={() => this.deselectRows()}
+							onAddRowClick={() => this.addRow()}
+							onSaveDataClick={() => this.saveData()}
+							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				</div>
 			</div>
 		)
@@ -177,7 +177,20 @@ class Grid extends React.Component {
 	}
 
 	loadData() {
-		this.setState({isLoading: true})
+		this.setState({
+			error: "",
+			isLoaded: false,
+			isLoading: true,
+			grid: [],
+			canAddRows: false,
+			rows: [],
+			rowsSelected: [],
+			rowsEdited: [],
+			rowsAdded: [],
+			rowsDeleted: [],
+			referencedValuesAdded: [],
+			referencedValuesRemoved: []
+		})
 		const { dbName, token, gridUuid, uuid } = this.props
 		const uri = `/${dbName}/api/v1/${gridUuid}${uuid != "" ? '/' + uuid : ''}`
 		fetch(uri, {
@@ -281,7 +294,7 @@ class Grid extends React.Component {
 							rowsDeleted: [],
 							referencedValuesAdded: [],
 							referencedValuesRemoved: []
-									})
+						})
 					},
 					(error) => {
 						this.setState({
@@ -311,19 +324,20 @@ Grid.defaultProps = {
 
 class GridFooter extends React.Component {
 	render() {
-		const { isLoading, grid, rows, uuid, canAddRows, rowsEdited, rowsAdded, rowsDeleted } = this.props
+		const { grid, rows, uuid, canAddRows, rowsEdited, rowsAdded, rowsDeleted, isLoading } = this.props
 		const countRows = rows ? rows.length : 0
 		const countRowsAdded = rowsAdded ? rowsAdded.length : 0
 		const countRowsEdited = rowsEdited ? rowsEdited.length : 0
 		const countRowsDeleted = rowsDeleted ? rowsDeleted.length : 0
 		return (
 			<div onClick={() => this.props.onSelectRowClick()}>
-				{countRows == 0 && <small className="text-muted px-1">No data</small>}
-				{countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
-				{countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
-				{countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
-				{countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
-				{countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
+				{isLoading && <Spinner />}
+				{!isLoading && countRows == 0 && <small className="text-muted px-1">No data</small>}
+				{!isLoading && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
+				{!isLoading && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
+				{!isLoading && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
+				{!isLoading && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
+				{!isLoading && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
 				{!isLoading && grid && uuid != "" &&
 					<a href="#" onClick={() => this.props.navigateToGrid(grid.uuid, "")}>
 						<i className="bi bi-box-arrow-up-right mx-1"></i>
