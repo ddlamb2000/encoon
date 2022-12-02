@@ -128,7 +128,7 @@ class Login extends React.Component {
 			errorPassword: "",
 			error: ""
 		})
-		const updatedDbName = this.props.dbName != '' ? this.props.dbName : this.dbNameInput.value
+		const updatedDbName = this.getUpdatedDbName()
 		if(updatedDbName == '') this.setState({ errorDb: "Please enter a database name." })
 		if(this.idInput.value == '') this.setState({ errorId: "Please enter a username." })
 		if(this.passwordInput.value == '') this.setState({ errorPassword: "Please enter a passphrase." })
@@ -141,33 +141,37 @@ class Login extends React.Component {
 			headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
 			body: JSON.stringify({ id: this.idInput.value, password: btoa(this.passwordInput.value)})
 		})
-		.then(response => {
-			this.setState({ isLoading: false })
-			const contentType = response.headers.get("content-type")
-			if(contentType && contentType.indexOf("application/json") !== -1) {
-				return response.json().then(	
-					(result) => {
-						if(response.status == 200) {
-							localStorage.setItem(`access_token_${updatedDbName}`, result.token)
-							if(this.props.dbName == '') location.href = `/${updatedDbName}/`
-							else location.reload()
-							return true
-						}
-						if(response.status == 401) {
-							this.setState({ errorPassword: "Invalid username or passphrase" })
-							return false
-						}
-						this.setState({ error: result.error })
-					},
-					(error) => {
-						this.setState({ error: error.message })
+		.then(response => this.handleAuthenticateResponse(response))
+	}
+
+	getUpdatedDbName() {
+		return this.props.dbName != '' ? this.props.dbName : this.dbNameInput.value
+	}
+
+	handleAuthenticateResponse(response) {
+		const updatedDbName = this.getUpdatedDbName()
+		this.setState({ isLoading: false })
+		const contentType = response.headers.get("content-type")
+		if(contentType && contentType.indexOf("application/json") !== -1) {
+			return response.json().then(	
+				(result) => {
+					if(response.status == 200) {
+						localStorage.setItem(`access_token_${updatedDbName}`, result.token)
+						if(this.props.dbName == '') location.href = `/${updatedDbName}/`
+						else location.reload()
+						return true
 					}
-				)
-			} else {
-				this.setState({ error: `[${response.status}] Internal server issue.` })
-			}
-			return false
-		})
+					if(response.status == 401) {
+						this.setState({ errorPassword: "Invalid username or passphrase" })
+						return false
+					}
+					this.setState({ error: result.error })
+				},
+				(error) => { this.setState({ error: error.message }) }
+			)
+		} else { this.setState({ error: `[${response.status}] Internal server issue.` }) }
+		return false
+
 	}
 
 	render() {
