@@ -43,8 +43,8 @@ class Grid extends React.Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if(trace) console.log("[Grid.componentDidUpdate()] **** prevProps=", prevProps)
-		if(this.props.gridUuid !== prevProps.gridUuid) {
+		if(trace) console.log("[Grid.componentDidUpdate()] **** this.props.gridUuid=", this.props.gridUuid, ", this.props.uuid=", this.props.uuid)
+		if(this.props.gridUuid !== prevProps.gridUuid || this.props.uuid !== prevProps.uuid) {
 			this.loadData()
 		}
 	}
@@ -60,6 +60,7 @@ class Grid extends React.Component {
 					{isLoaded && rows && grid  && uuid == "" && 
 						<h4 className="card-title">
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
+							{isLoading && <Spinner />}
 						</h4>
 					}
 					{isLoaded && rows && grid && grid.text2 && uuid == "" && <div className="card-subtitle mb-2 text-muted">{grid.text2}</div>}
@@ -80,7 +81,8 @@ class Grid extends React.Component {
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token}
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}  />
+									grid={grid}
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
@@ -322,7 +324,11 @@ class GridFooter extends React.Component {
 				{countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
 				{countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
 				{countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
-				{!isLoading && grid && <a href={grid.path}><i className="bi bi-box-arrow-up-right mx-1"></i></a>}
+				{!isLoading && grid && uuid != "" &&
+					<a href="#" onClick={() => this.props.navigateToGrid(grid.uuid, "")}>
+						<i className="bi bi-box-arrow-up-right mx-1"></i>
+					</a>
+				}
 				{!isLoading && grid && uuid == "" && canAddRows &&
 					<button type="button" className="btn btn-outline-success btn-sm mx-1"
 							onClick={this.props.onAddRowClick}>
@@ -335,7 +341,6 @@ class GridFooter extends React.Component {
 						Save <i className="bi bi-save"></i>
 					</button>
 				}
-				{isLoading && <Spinner />}
 			</div>
 		)
 	}
@@ -396,6 +401,7 @@ function getColumnValueForReferencedRow(column, row) {
 				if(ref.name == column.name && ref.rows) {
 					ref.rows.map(
 						refRow => output.push({
+							gridUuid: refRow.gridUuid,
 							uuid: refRow.uuid,
 							displayString: refRow.displayString,
 							path: refRow.path

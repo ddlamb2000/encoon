@@ -32,6 +32,7 @@ class GridTable extends React.Component {
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token}
+										grid={this.props.grid}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 					)}
 				</tbody>
@@ -42,25 +43,28 @@ class GridTable extends React.Component {
 
 class GridRow extends React.Component {
 	render() {
+		const { row, rowAdded, rowSelected, rowEdited, referencedValuesAdded, referencedValuesRemoved } = this.props
 		const variantEdited = this.props.rowEdited ? "table-warning" : ""
-		const columns = getColumnValuesForRow(this.props.columns, this.props.row)
+		const columns = getColumnValuesForRow(this.props.columns, row)
 		return (
 			<tr className={variantEdited}>
 				<td scope="row" className="vw-10">
-					{!(this.props.rowAdded || this.props.rowSelected) && 
-						<a href={this.props.row.path}><i className="bi bi-card-text"></i></a>
-					}
-					{this.props.row.canEditRow && (this.props.rowAdded || this.props.rowSelected) && 
+					{!(rowAdded || rowSelected) && 
+						<a href="#" onClick={() => this.props.navigateToGrid(row.gridUuid, row.uuid)}>
+						<i className="bi bi-card-text"></i>
+					</a>
+				}
+					{row.canEditRow && (rowAdded || rowSelected) && 
 						<button
 							type="button"
 							className="btn text-danger btn-sm mx-0 p-0"
-							onClick={() => this.props.onDeleteRowClick(this.props.row.uuid)}>
+							onClick={() => this.props.onDeleteRowClick(row.uuid)}>
 							<i className="bi bi-dash-circle"></i>
 						</button>
 					}
 				</td>
 				{columns.map(
-					column => <GridCell uuid={this.props.row.uuid}
+					column => <GridCell uuid={row.uuid}
 										key={column.name}
 										columnName={column.name}
 										type={column.type}
@@ -69,12 +73,12 @@ class GridRow extends React.Component {
 										values={column.values}
 										gridPromptUuid={column.gridPromptUuid}
 										readonly={column.readonly}
-										canEditRow={this.props.row.canEditRow}
-										rowAdded={this.props.rowAdded}
-										rowSelected={this.props.rowSelected}
-										rowEdited={this.props.rowEdited}
-										referencedValuesAdded={this.props.referencedValuesAdded.filter(ref => ref.columnName == column.name)}
-										referencedValuesRemoved={this.props.referencedValuesRemoved.filter(ref => ref.columnName == column.name)}
+										canEditRow={row.canEditRow}
+										rowAdded={rowAdded}
+										rowSelected={rowSelected}
+										rowEdited={rowEdited}
+										referencedValuesAdded={referencedValuesAdded.filter(ref => ref.columnName == column.name)}
+										referencedValuesRemoved={referencedValuesRemoved.filter(ref => ref.columnName == column.name)}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onAddReferencedValueClick={(fromUuid, columnName, toGridUuid, uuid, displayString, path) => this.props.onAddReferencedValueClick(fromUuid, columnName, toGridUuid, uuid, displayString, path)}
@@ -82,6 +86,7 @@ class GridRow extends React.Component {
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token}
+										grid={this.props.grid}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				)}
 				<td className="text-end">{this.props.row.revision}</td>
@@ -125,7 +130,8 @@ class GridCell extends React.Component {
 					<GridCellReferences uuid={this.props.uuid}
 										values={this.props.values}
 										referencedValuesAdded={this.props.referencedValuesAdded}
-										referencedValuesRemoved={this.props.referencedValuesRemoved} />
+										referencedValuesRemoved={this.props.referencedValuesRemoved}
+										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				}
 			</td>
 		)
@@ -157,9 +163,12 @@ class GridCellReferences extends React.Component {
 		if(referencedValuesIncluded.length > 0) {
 			return (
 				<ul className="list-unstyled mb-0">
-					{this.props.values.map(value => 
+					{values.map(value => 
 						<li key={value.uuid}>
-							<a className="gap-2 p-0" href={value.path}>{value.displayString}</a>
+							{/* <a className="gap-2 p-0" href={value.path}>{value.displayString}</a> */}
+							<a className="gap-2 p-0" href="#" onClick={() => this.props.navigateToGrid(value.gridUuid, value.uuid)}>
+								{value.displayString}
+							</a>
 						</li>
 					)}
 				</ul>

@@ -7,7 +7,7 @@ class App extends React.Component {
 		this.token = localStorage.getItem(`access_token_${this.props.dbName}`)
 		if(this.token != "") this.verifyToken()
 		else this.loggedIn = false
-		this.state = { gridUuid: "", uuid: "" }
+		this.state = { gridUuid: this.props.gridUuid, uuid: this.props.uuid }
 	}
 
 	verifyToken() {
@@ -41,8 +41,8 @@ class App extends React.Component {
 
 	render() {
 		if(!this.loggedIn) return <Login appName={this.props.appName} appTag={this.props.appTag} dbName={this.props.dbName} />
-		const gridUuid = this.state.gridUuid != "" ? this.state.gridUuid : this.props.gridUuid
-		const uuid = this.state.uuid != "" ? this.state.uuid : this.props.uuid
+		const gridUuid = this.state.gridUuid
+		const uuid = this.state.uuid
 		if(trace) console.log("[App.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
 			<div>
@@ -105,6 +105,7 @@ class App extends React.Component {
 	}
 
 	navigateToGrid(gridUuid, uuid) {
+		if(trace) console.log("[App.navigateToGrid()] gridUuid=", gridUuid, ", uuid=", uuid)
 		const url = `/${this.props.dbName}/${gridUuid}` + (uuid == "" ? "" : `/${uuid}`)
 		history.pushState({}, null, url)
 		this.setState({ gridUuid: gridUuid, uuid: uuid })
