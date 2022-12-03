@@ -88,7 +88,10 @@ class Grid extends React.Component {
 									columns={grid.columns}
 									referencedValuesAdded={referencedValuesAdded}
 									referencedValuesRemoved={referencedValuesRemoved}
-									dbName={dbName} />
+									onSelectRowClick={uuid => this.selectRow(uuid)}
+									onEditRowClick={uuid => this.editRow(uuid)}
+									dbName={dbName}
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 					}
 					<GridFooter 
 							isLoading={isLoading}

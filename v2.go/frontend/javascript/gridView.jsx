@@ -28,27 +28,31 @@ class GridView extends React.Component {
 														referencedValuesRemoved={this.props.referencedValuesRemoved}
 														onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 														onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-														inputRef={this.props.inputRef} />
+														inputRef={this.props.inputRef}
+														navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 									</tr>
 						)}
-						<tr>
-							<td>Audit</td>
-							<td>
-								<ul className="list-unstyled mb-0">
-									{audits && audits.map(
-										audit => {
-											const uri = `/${this.props.dbName}/${UuidUsers}/${audit.createdBy}`
-											return (
-												<li key={audit.uuid}>
-													{audit.actionName} on <DateTime dateTime={audit.created} />,
-													by <a href={uri}>{audit.createdByName}</a>
-												</li>
-											)
-										}
-									)}
-								</ul>
-							</td>
-						</tr>
+						{audits && <tr>
+								<td>Audit</td>
+								<td>
+									<ul className="list-unstyled mb-0">
+										{audits.map(
+											audit => {
+												const uri = `/${this.props.dbName}/${UuidUsers}/${audit.createdBy}`
+												return (
+													<li key={audit.uuid}>
+														{audit.actionName} on <DateTime dateTime={audit.created} />,
+														by <a href="#" onClick={() => this.props.navigateToGrid(UuidUsers, audit.createdBy)}>
+															{audit.createdByName}
+														</a>
+													</li>
+												)
+											}
+										)}
+									</ul>
+								</td>
+							</tr>
+						}
 					</tbody>
 				</table>
 			</div>

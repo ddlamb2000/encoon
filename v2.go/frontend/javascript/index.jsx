@@ -107,8 +107,18 @@ class App extends React.Component {
 	navigateToGrid(gridUuid, uuid) {
 		if(trace) console.log("[App.navigateToGrid()] gridUuid=", gridUuid, ", uuid=", uuid)
 		const url = `/${this.props.dbName}/${gridUuid}` + (uuid == "" ? "" : `/${uuid}`)
-		history.pushState({}, null, url)
+		history.pushState({ gridUuid: gridUuid, uuid: uuid }, null, url)
 		this.setState({ gridUuid: gridUuid, uuid: uuid })
+	}
+
+	componentDidMount() {
+		window.addEventListener('popstate', (e) => {
+			e.preventDefault()
+			if(e && e.isTrusted && e.state != null && e.state.gridUuid) {
+				if(trace) console.log("popstate", e)
+				this.setState({ gridUuid: e.state.gridUuid, uuid: e.state.uuid })
+			}
+		})
 	}
 }
 
@@ -321,7 +331,7 @@ class DateTime extends React.Component {
 	}
 
 	componentDidMount() {
-		this.timerID = setInterval(() => {  this.setState(state => ({ timeAgo: this.getTimeAgo() })) }, 1000)
+		this.timerID = setInterval(() => { this.setState({ timeAgo: this.getTimeAgo() }) }, 1000)
 	}
 
 	componentWillUnmount() {
@@ -370,7 +380,7 @@ class Navigation extends React.Component {
 				<ul className="nav flex-column mb-2">
 					<li className="nav-item">
 						<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid("", "")}>
-							Dashboard <i class="bi bi-view-stacked"></i>
+							Dashboard <i className="bi bi-view-stacked"></i>
 						</a>
 					</li>
 					{isLoaded && rows && rows.map(row => 

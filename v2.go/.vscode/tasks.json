@@ -53,5 +53,15 @@
             },
             "problemMatcher": []
         },
+        {
+            "label": "Cleanup logs",
+            "type": "shell",
+            "command": "rm ./logs/*.*",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
     ]
 }
