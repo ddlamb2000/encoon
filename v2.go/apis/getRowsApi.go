@@ -44,7 +44,14 @@ func getGridsRows(ct context.Context, uri, dbName, gridUuid, uuid, userUuid, use
 			r.ctxChan <- apiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- apiResponse{Grid: grid, Rows: rowSet, CountRows: rowSetCount, CanViewRows: canViewRows, CanEditRows: canEditRows, CanEditOwnedRows: canEditOwnedRows, CanAddRows: canAddRows}
+		r.ctxChan <- apiResponse{
+			Grid:             grid,
+			Rows:             rowSet,
+			CountRows:        rowSetCount,
+			CanViewRows:      canViewRows,
+			CanEditRows:      canEditRows,
+			CanEditOwnedRows: canEditOwnedRows,
+			CanAddRows:       canAddRows}
 		r.trace("getGridsRows() - Done")
 	}()
 	select {

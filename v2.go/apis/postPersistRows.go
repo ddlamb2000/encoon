@@ -14,6 +14,7 @@ type persistGridRowDataFunc func(apiRequestParameters, *model.Grid, *model.Row) 
 
 func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
 	for _, row := range rows {
+		row.GridUuid = grid.Uuid
 		err := f(r, grid, row)
 		if err != nil {
 			_ = r.rollbackTransaction()

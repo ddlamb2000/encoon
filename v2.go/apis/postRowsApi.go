@@ -73,7 +73,19 @@ func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid
 			r.ctxChan <- apiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- apiResponse{Grid: grid, Rows: rowSet, CountRows: rowSetCount, CanViewRows: canViewRows, CanEditRows: canEditRows, CanEditOwnedRows: canEditOwnedRows, CanAddRows: canAddRows}
+		r.ctxChan <- apiResponse{
+			Grid:                   grid,
+			Rows:                   rowSet,
+			CountRows:              rowSetCount,
+			CanViewRows:            canViewRows,
+			CanEditRows:            canEditRows,
+			CanEditOwnedRows:       canEditOwnedRows,
+			CanAddRows:             canAddRows,
+			RowsAdded:              payload.RowsAdded,
+			RowsEdited:             payload.RowsEdited,
+			RowsDeleted:            payload.RowsDeleted,
+			ReferenceValuesAdded:   payload.ReferenceValuesAdded,
+			ReferenceValuesRemoved: payload.ReferenceValuesRemoved}
 		r.trace("postGridsRows() - Done")
 	}()
 	select {

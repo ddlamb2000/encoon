@@ -119,17 +119,22 @@ var getRollbackTransactionQuery = func() string {
 }
 
 type apiResponse struct {
-	Grid             *model.Grid `json:"grid"`
-	CountRows        int         `json:"countRows"`
-	Rows             []model.Row `json:"rows,omitempty"`
-	Err              error       `json:"err,omitempty"`
-	TimeOut          bool        `json:"timeOut,omitempty"`
-	System           bool        `json:"system,omitempty"`
-	Forbidden        bool        `json:"forbidden,omitempty"`
-	CanViewRows      bool        `json:"canViewRows"`
-	CanEditRows      bool        `json:"canEditRows"`
-	CanEditOwnedRows bool        `json:"canEditOwnedRows"`
-	CanAddRows       bool        `json:"canAddRows"`
+	Grid                   *model.Grid         `json:"grid"`
+	CountRows              int                 `json:"countRows"`
+	Rows                   []model.Row         `json:"rows"`
+	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
+	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
+	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
+	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded,omitempty"`
+	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved,omitempty"`
+	Err                    error               `json:"err,omitempty"`
+	TimeOut                bool                `json:"timeOut,omitempty"`
+	System                 bool                `json:"system,omitempty"`
+	Forbidden              bool                `json:"forbidden,omitempty"`
+	CanViewRows            bool                `json:"canViewRows"`
+	CanEditRows            bool                `json:"canEditRows"`
+	CanEditOwnedRows       bool                `json:"canEditOwnedRows"`
+	CanAddRows             bool                `json:"canAddRows"`
 }
 
 func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user, uri string) (request apiRequestParameters, cancelFunc context.CancelFunc, error error) {
