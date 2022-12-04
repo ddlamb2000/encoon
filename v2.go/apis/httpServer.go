@@ -119,17 +119,17 @@ var getRollbackTransactionQuery = func() string {
 }
 
 type apiResponse struct {
-	grid             *model.Grid
-	rows             []model.Row
-	rowCount         int
-	err              error
-	timeOut          bool
-	system           bool
-	forbidden        bool
-	canViewRows      bool
-	canEditRows      bool
-	canEditOwnedRows bool
-	canAddRows       bool
+	Grid             *model.Grid `json:"grid"`
+	CountRows        int         `json:"countRows"`
+	Rows             []model.Row `json:"rows,omitempty"`
+	Err              error       `json:"err,omitempty"`
+	TimeOut          bool        `json:"timeOut,omitempty"`
+	System           bool        `json:"system,omitempty"`
+	Forbidden        bool        `json:"forbidden,omitempty"`
+	CanViewRows      bool        `json:"canViewRows"`
+	CanEditRows      bool        `json:"canEditRows"`
+	CanEditOwnedRows bool        `json:"canEditOwnedRows"`
+	CanAddRows       bool        `json:"canAddRows"`
 }
 
 func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, user, uri string) (request apiRequestParameters, cancelFunc context.CancelFunc, error error) {
@@ -150,11 +150,11 @@ func createContextAndApiRequestParameters(ct context.Context, dbName, userUuid, 
 
 func getHttpErrorCode(response apiResponse) int {
 	switch {
-	case response.system:
+	case response.System:
 		return http.StatusInternalServerError
-	case response.forbidden:
+	case response.Forbidden:
 		return http.StatusForbidden
-	case response.timeOut:
+	case response.TimeOut:
 		return http.StatusRequestTimeout
 	default:
 		return http.StatusNotFound
@@ -169,20 +169,12 @@ func GetGridsRowsApi(c *gin.Context) {
 		return
 	}
 	response := getGridsRows(c.Request.Context(), c.Request.RequestURI, dbName, gridUuid, uuid, userUuid, userName)
-	if response.err != nil {
+	if response.Err != nil {
 		c.Abort()
-		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
+		c.JSON(getHttpErrorCode(response), gin.H{"error": response.Err.Error()})
 		return
 	}
-	c.JSON(http.StatusOK,
-		gin.H{
-			"grid":             response.grid,
-			"canViewRows":      response.canViewRows,
-			"canEditRows":      response.canEditRows,
-			"canEditOwnedRows": response.canEditOwnedRows,
-			"canAddRows":       response.canAddRows,
-			"rows":             response.rows,
-			"countRows":        response.rowCount})
+	c.JSON(http.StatusOK, gin.H{"response": response})
 }
 
 type gridPost struct {
@@ -209,18 +201,10 @@ func PostGridsRowsApi(c *gin.Context) {
 	var payload gridPost
 	c.ShouldBindJSON(&payload)
 	response := postGridsRows(c.Request.Context(), c.Request.RequestURI, dbName, userUuid, userName, gridUuid, uuid, payload)
-	if response.err != nil {
+	if response.Err != nil {
 		c.Abort()
-		c.JSON(getHttpErrorCode(response), gin.H{"error": response.err.Error()})
+		c.JSON(getHttpErrorCode(response), gin.H{"error": response.Err.Error()})
 		return
 	}
-	c.JSON(http.StatusCreated,
-		gin.H{
-			"grid":             response.grid,
-			"canViewRows":      response.canViewRows,
-			"canEditRows":      response.canEditRows,
-			"canEditOwnedRows": response.canEditOwnedRows,
-			"canAddRows":       response.canAddRows,
-			"rows":             response.rows,
-			"countRows":        response.rowCount})
+	c.JSON(http.StatusCreated, gin.H{"response": response})
 }

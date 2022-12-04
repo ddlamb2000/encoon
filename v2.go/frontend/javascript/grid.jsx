@@ -211,10 +211,10 @@ class Grid extends React.Component {
 						this.setState({
 							isLoading: false,
 							isLoaded: true,
-							grid: result.grid,
-							canAddRows: result.canAddRows,
-							rows: result.rows,
-							error: result.error
+							grid: result.response.grid,
+							canAddRows: result.response.canAddRows,
+							rows: result.response.rows,
+							error: result.response.error
 						})
 					},
 					(error) => {
@@ -288,9 +288,9 @@ class Grid extends React.Component {
 						this.setState({
 							isLoading: false,
 							isLoaded: true,
-							grid: result.grid,
-							rows: result.rows,
-							error: result.error,
+							grid: result.response.grid,
+							rows: result.response.rows,
+							error: result.response.error,
 							rowsEdited: [],
 							rowsSelected: [],
 							rowsAdded: [],
