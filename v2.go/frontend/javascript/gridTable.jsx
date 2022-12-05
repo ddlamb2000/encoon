@@ -260,8 +260,8 @@ class GridCellDropDown extends React.Component {
 							this.setState({
 								isLoading: false,
 								isLoaded: true,
-								rows: result.rows,
-								error: result.error
+								rows: result.response.rows,
+								error: result.response.error
 							})
 						},
 						(error) => {
