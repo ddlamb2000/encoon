@@ -257,12 +257,20 @@ class GridCellDropDown extends React.Component {
 				if(contentType && contentType.indexOf("application/json") !== -1) {
 					return response.json().then(	
 						(result) => {
-							this.setState({
-								isLoading: false,
-								isLoaded: true,
-								rows: result.response.rows,
-								error: result.response.error
-							})
+							if(result.response != undefined) {
+								this.setState({
+									isLoading: false,
+									isLoaded: true,
+									rows: result.response.rows,
+									error: result.response.error
+								})
+							} else {
+								this.setState({
+									isLoading: false,
+									isLoaded: true,
+									error: result.error
+								})
+							}
 						},
 						(error) => {
 							this.setState({

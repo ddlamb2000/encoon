@@ -208,14 +208,22 @@ class Grid extends React.Component {
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
-						this.setState({
-							isLoading: false,
-							isLoaded: true,
-							grid: result.response.grid,
-							canAddRows: result.response.canAddRows,
-							rows: result.response.rows,
-							error: result.response.error
-						})
+						if(result.response != undefined) {
+							this.setState({
+								isLoading: false,
+								isLoaded: true,
+								grid: result.response.grid,
+								canAddRows: result.response.canAddRows,
+								rows: result.response.rows,
+								error: result.response.error
+							})
+						} else {
+							this.setState({
+								isLoading: false,
+								isLoaded: true,
+								error: result.error
+							})
+						}
 					},
 					(error) => {
 						this.setState({
@@ -285,19 +293,33 @@ class Grid extends React.Component {
 			if(contentType && contentType.indexOf("application/json") !== -1) {
 				return response.json().then(	
 					(result) => {
-						this.setState({
-							isLoading: false,
-							isLoaded: true,
-							grid: result.response.grid,
-							rows: result.response.rows,
-							error: result.response.error,
-							rowsEdited: [],
-							rowsSelected: [],
-							rowsAdded: [],
-							rowsDeleted: [],
-							referencedValuesAdded: [],
-							referencedValuesRemoved: []
-						})
+						if(result.response != undefined) {
+							this.setState({
+								isLoading: false,
+								isLoaded: true,
+								grid: result.response.grid,
+								rows: result.response.rows,
+								error: result.response.error,
+								rowsEdited: [],
+								rowsSelected: [],
+								rowsAdded: [],
+								rowsDeleted: [],
+								referencedValuesAdded: [],
+								referencedValuesRemoved: []
+							})
+						} else {
+							this.setState({
+								isLoading: false,
+								isLoaded: true,
+								error: result.error,
+								rowsEdited: [],
+								rowsSelected: [],
+								rowsAdded: [],
+								rowsDeleted: [],
+								referencedValuesAdded: [],
+								referencedValuesRemoved: []
+							})
+						}
 					},
 					(error) => {
 						this.setState({
