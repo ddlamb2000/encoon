@@ -4,11 +4,6 @@
 package model
 
 const (
-	NumberOfTextFields = 10
-	NumberOfIntFields  = 10
-)
-
-const (
 	UuidGrids                      = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
 	UuidGridColumnName             = "e9e4a415-c31e-4383-ae70-18949d6ec692"
 	UuidGridColumnDesc             = "bc1c489d-40c3-441c-9257-c8717be290cd"

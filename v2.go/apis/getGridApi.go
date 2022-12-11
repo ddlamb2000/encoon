@@ -15,9 +15,24 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 	if ok && grid != nil {
 		return grid, nil
 	}
+	grid, err := getGridInstanceForGridsApi(r, gridUuid)
+	if err != nil {
+		return nil, err
+	}
+	err = getColumnsForGridsApi(r, grid)
+	if err != nil {
+		return nil, err
+	}
+	cacheGrid(grid)
+	return grid, nil
+}
+
+var getGridInstanceForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getGridInstanceForGridsApi()", t)
 	query := getGridQueryForGridsApi()
 	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
-	r.trace("getGridForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
+	r.trace("getGridInstanceForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
 	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
 		return nil, r.logAndReturnError("Error when retrieving grid definition: %v.", err)
@@ -36,11 +51,6 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 		return nil, nil
 	}
 	grids[0].SetPathAndDisplayString(r.dbName)
-	err = getColumnsForGridsApi(r, &grids[0])
-	if err != nil {
-		return nil, err
-	}
-	cacheGrid(&grids[0])
 	return &grids[0], nil
 }
 
@@ -138,19 +148,32 @@ var getGridQueryOutputForGridsApi = func(grid *model.Grid) []any {
 func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	t := r.startTiming()
 	defer r.stopTiming("getColumnsForGridsApi()", t)
-	query := getGridColumsQueryForGridsApi()
-	parms := getGridColumsQueryParametersForGridsApi(grid)
-	r.trace("getColumnsForGridsApi(%s) - query=%s ; parms=%v", grid, query, parms)
+	grid.Columns = make([]*model.Column, 0)
+	queryOwned := getGridColumsOwnedQueryForGridsApi()
+	parmsOwned := getGridColumsOwnedQueryParametersForGridsApi(grid)
+	r.trace("getColumnsForGridsApi(%s) - queryOwned=%s ; parmsOwned=%v", grid, queryOwned, parmsOwned)
+	if err := getColumnsRowsForGridsApi(r, grid, queryOwned, parmsOwned); err != nil {
+		return err
+	}
+	queryNotOwned := getGridColumsNotOwnedQueryForGridsApi()
+	parmsNotOwned := getGridColumsNotOwnedQueryParametersForGridsApi(grid)
+	r.trace("getColumnsForGridsApi(%s) - queryNotOwned=%s ; parmsNotOwned=%v", grid, queryNotOwned, parmsNotOwned)
+	return getColumnsRowsForGridsApi(r, grid, queryNotOwned, parmsNotOwned)
+}
+
+func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, query string, parms []any) error {
 	rows, err := r.queryContext(query, parms...)
 	if err != nil {
 		return r.logAndReturnError("Error when querying columns: %v.", err)
 	}
 	defer rows.Close()
-	grid.Columns = make([]*model.Column, 0)
 	for rows.Next() {
 		column := model.GetNewColumn()
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
 			return r.logAndReturnError("Error when scanning columns for: %v.", err)
+		}
+		if !column.Owned {
+			column.Grid, _ = getGridInstanceForGridsApi(r, column.GridUuid)
 		}
 		r.trace("Got column for %s: %s.", grid, column)
 		grid.Columns = append(grid.Columns, *&column)
@@ -159,12 +182,15 @@ func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 }
 
 // function is available for mocking
-var getGridColumsQueryForGridsApi = func() string {
-	return "SELECT col.text1, " +
+var getGridColumsOwnedQueryForGridsApi = func() string {
+	return "SELECT col.uuid, " +
+		"col.text1, " +
 		"col.text2, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
-		"grid.uuid " +
+		"grid.uuid, " +
+		"rel1.text3, " +
+		"true " +
 		"FROM relationships rel1 " +
 
 		"INNER JOIN columns col " +
@@ -201,10 +227,76 @@ var getGridColumsQueryForGridsApi = func() string {
 		"ON grid.gridUuid = rel3.text4 " +
 		"AND grid.Uuid = rel3.text5 " +
 		"AND grid.enabled = true " +
+
 		"ORDER BY col.text1 "
 }
 
-func getGridColumsQueryParametersForGridsApi(grid *model.Grid) []any {
+func getGridColumsOwnedQueryParametersForGridsApi(grid *model.Grid) []any {
+	parameters := make([]any, 0)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship1")
+	parameters = append(parameters, model.UuidGrids)
+	parameters = append(parameters, grid.Uuid)
+	parameters = append(parameters, model.UuidColumns)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship1")
+	parameters = append(parameters, model.UuidColumnTypes)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship2")
+	return parameters
+}
+
+// function is available for mocking
+var getGridColumsNotOwnedQueryForGridsApi = func() string {
+	return "SELECT col.uuid, " +
+		"col.text1, " +
+		"col.text2, " +
+		"coltype.uuid, " +
+		"coltype.text1, " +
+		"grid.uuid, " +
+		"rel1.text3, " +
+		"false " +
+		"FROM relationships rel1 " +
+
+		"INNER JOIN columns col " +
+		"ON rel1.text4 = col.gridUuid " +
+		"AND rel1.text5 = col.uuid " +
+		"AND rel1.gridUuid = $1 " +
+		"AND rel1.text1 = $2 " +
+		"AND rel1.text2 = $3 " +
+		"AND rel1.text4 = $5 " +
+		"AND rel1.enabled = true " +
+
+		"INNER JOIN relationships rel2 " +
+		"ON rel2.text2 = col.gridUuid " +
+		"AND rel2.text3 = col.uuid " +
+		"AND rel2.gridUuid = $6 " +
+		"AND rel2.text1 = $7 " +
+		"AND rel2.text4 = $8 " +
+		"AND rel2.enabled = true " +
+
+		"INNER JOIN rows coltype " +
+		"ON rel2.text4 = coltype.gridUuid " +
+		"AND rel2.text5 = coltype.Uuid " +
+		"AND coltype.enabled = true " +
+
+		"INNER JOIN relationships rel3 " +
+		"ON rel3.text2 = col.gridUuid " +
+		"AND rel3.text3 = col.uuid " +
+		"AND rel3.gridUuid = $9 " +
+		"AND rel3.text1 = $10 " +
+		"AND rel3.text5 = $4 " +
+		"AND rel3.enabled = true " +
+
+		"INNER JOIN grids grid " +
+		"ON grid.gridUuid = rel3.text4 " +
+		"AND grid.Uuid = rel3.text5 " +
+		"AND grid.enabled = true " +
+
+		"ORDER BY col.text1 "
+}
+
+func getGridColumsNotOwnedQueryParametersForGridsApi(grid *model.Grid) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, "relationship1")
@@ -222,10 +314,13 @@ func getGridColumsQueryParametersForGridsApi(grid *model.Grid) []any {
 // function is available for mocking
 var getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any {
 	output := make([]any, 0)
+	output = append(output, &column.Uuid)
 	output = append(output, &column.Label)
 	output = append(output, &column.Name)
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
 	output = append(output, &column.GridPromptUuid)
+	output = append(output, &column.GridUuid)
+	output = append(output, &column.Owned)
 	return output
 }

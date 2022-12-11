@@ -129,13 +129,13 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowsWithDefect3", func(t *testing.T) {
-		getGridColumsQueryForGridsApiImpl := getGridColumsQueryForGridsApi
-		getGridColumsQueryForGridsApi = func() string { return "xxx" } // mock function
+		getGridColumsOwnedQueryForGridsApiImpl := getGridColumsOwnedQueryForGridsApi
+		getGridColumsOwnedQueryForGridsApi = func() string { return "xxx" } // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusInternalServerError)
 		jsonStringContains(t, responseData, `Error when querying columns: pq: syntax error`)
-		getGridColumsQueryForGridsApi = getGridColumsQueryForGridsApiImpl
+		getGridColumsOwnedQueryForGridsApi = getGridColumsOwnedQueryForGridsApiImpl
 	})
 
 	t.Run("VerifyActualRowsWithDefect4", func(t *testing.T) {
@@ -150,7 +150,7 @@ func RunSystemTestGet(t *testing.T) {
 
 	t.Run("VerifyActualRowsWithDefect5", func(t *testing.T) {
 		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
-		getQueryReferencedRowsForRow = func() string { return "xxx" } // mock function
+		getQueryReferencedRowsForRow = func(bool) string { return "xxx" } // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusInternalServerError)
@@ -160,7 +160,7 @@ func RunSystemTestGet(t *testing.T) {
 
 	t.Run("VerifyActualRowsWithDefect6", func(t *testing.T) {
 		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
-		getQueryReferencedRowsForRow = func() string {
+		getQueryReferencedRowsForRow = func(bool) string {
 			return "SELECT NULL, NULL FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4"
 		} // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)

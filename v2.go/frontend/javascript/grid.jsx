@@ -405,20 +405,28 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 			let type = getColumnType(column.typeUuid)
 			if(type == "reference") {
 				cols.push({
+					uuid: column.uuid,
+					owned: column.owned,
 					name: column.name,
 					label: column.label,
 					values: getColumnValueForReferencedRow(column, row),
 					typeUuid: column.typeUuid,
 					gridPromptUuid: column.gridPromptUuid,
+					gridUuid: column.gridUuid,
+					grid: column.grid,
 					type: type,
 					readonly: false
 				})
 			} else {
 				cols.push({
+					uuid: column.uuid,
+					owned: column.owned,
 					name: column.name,
 					label: column.label,
 					value: row[column.name],
 					typeUuid: column.typeUuid,
+					gridUuid: column.gridUuid,
+					grid: column.grid,
 					type: type,
 					readonly: false
 				})	
@@ -426,8 +434,8 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 		}
 	)}
 	if(withTimeStamps) {
-		cols.push({name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", readonly: true})
-		cols.push({name: "revision", label: "Revision", value: row.revision, type: "number", readonly: true})
+		cols.push({uuid: "a", name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", owned: true, readonly: true})
+		cols.push({uuid: "b", name: "revision", label: "Revision", value: row.revision, type: "number", owned: true, readonly: true})
 	}
 	return cols
 }
@@ -437,7 +445,7 @@ function getColumnValueForReferencedRow(column, row) {
 	if(row.references) {
 		row.references.map(
 			ref => {
-				if(ref.name == column.name && ref.rows) {
+				if(ref.gridUuid == column.gridUuid && ref.name == column.name && ref.rows) {
 					ref.rows.map(
 						refRow => output.push({
 							gridUuid: refRow.gridUuid,

@@ -47,7 +47,7 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 	parameterIndex := 4
 	columns, parameters := "", ""
 	for _, col := range grid.Columns {
-		if col.IsAttribute() {
+		if col.IsOwned() && col.IsAttribute() {
 			columns += ", " + col.Name
 			parameters += fmt.Sprintf(", $%d", parameterIndex)
 			parameterIndex += 1
@@ -82,7 +82,7 @@ func getInsertValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	values = append(values, userUuid)
 	values = append(values, grid.Uuid)
 	for _, col := range grid.Columns {
-		if col.IsAttribute() {
+		if col.IsOwned() && col.IsAttribute() {
 			values = appendRowParameter(values, row, col.Name)
 		}
 	}
@@ -187,7 +187,7 @@ var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 	parameterIndex := 4
 	columns := ""
 	for _, col := range grid.Columns {
-		if col.IsAttribute() {
+		if col.IsOwned() && col.IsAttribute() {
 			columns += fmt.Sprintf(", %s = $%d", col.Name, parameterIndex)
 			parameterIndex += 1
 		}
@@ -208,7 +208,7 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	for _, col := range grid.Columns {
-		if col.IsAttribute() {
+		if col.IsOwned() && col.IsAttribute() {
 			values = appendRowParameter(values, row, col.Name)
 		}
 	}

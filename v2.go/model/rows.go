@@ -10,6 +10,11 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
+const (
+	NumberOfTextFields = 10
+	NumberOfIntFields  = 10
+)
+
 type Row struct {
 	GridUuid      string       `json:"gridUuid" yaml:"gridUuid"`
 	Uuid          string       `json:"uuid" yaml:"uuid"`

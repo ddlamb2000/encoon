@@ -9,9 +9,13 @@ class GridTable extends React.Component {
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
 						{this.props.columns && this.props.columns.map(
-							column => <th scope="col" key={column.name}>{column.label}<br/><small>{column.name}</small></th>
+							column =>
+								<th scope="col" key={column.uuid}>
+									{column.label}
+									{!column.owned && <small><br />{column.grid.displayString}</small>}
+								</th>
 						)}
-						<th className="text-end" scope="col">Revision<br/><small>revision</small></th>
+						<th className="text-end" scope="col">Revision</th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -53,7 +57,7 @@ class GridRow extends React.Component {
 						<a href="#" onClick={() => this.props.navigateToGrid(row.gridUuid, row.uuid)}>
 						<i className="bi bi-card-text"></i>
 					</a>
-				}
+					}
 					{row.canEditRow && (rowAdded || rowSelected) && 
 						<button
 							type="button"
@@ -65,7 +69,7 @@ class GridRow extends React.Component {
 				</td>
 				{columns.map(
 					column => <GridCell uuid={row.uuid}
-										key={column.name}
+										key={column.uuid}
 										columnName={column.name}
 										type={column.type}
 										typeUuid={column.typeUuid}
@@ -159,13 +163,12 @@ class GridCellReferences extends React.Component {
 		const referencedValuesIncluded = values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).
-			filter((value, index, self) => index === self.findIndex((t) => (t.uuid === value.uuid)))
+			filter((value, index, self) => index == self.findIndex((t) => (t.uuid == value.uuid)))
 		if(referencedValuesIncluded.length > 0) {
 			return (
 				<ul className="list-unstyled mb-0">
 					{values.map(value => 
 						<li key={value.uuid}>
-							{/* <a className="gap-2 p-0" href={value.path}>{value.displayString}</a> */}
 							<a className="gap-2 p-0" href="#" onClick={() => this.props.navigateToGrid(value.gridUuid, value.uuid)}>
 								{value.displayString}
 							</a>
@@ -194,12 +197,12 @@ class GridCellDropDown extends React.Component {
 		const referencedValuesIncluded = error ? [] : values.
 			concat(referencedValuesAdded).
 			filter(ref => !referencedValuesRemoved.map(ref => ref.uuid).includes(ref.uuid)).
-			filter((value, index, self) => index === self.findIndex((t) => (t.uuid === value.uuid)))
+			filter((value, index, self) => index == self.findIndex((t) => (t.uuid == value.uuid)))
 		const referencedValuesNotIncluded = error ? [] : rows.
 			concat(referencedValuesRemoved).
 			filter(ref => !referencedValuesAdded.map(ref => ref.uuid).includes(ref.uuid)).
 			filter(ref => !referencedValuesIncluded.map(ref => ref.uuid).includes(ref.uuid)).
-			filter((value, index, self) => index === self.findIndex((t) => (t.uuid === value.uuid)))
+			filter((value, index, self) => index == self.findIndex((t) => (t.uuid == value.uuid)))
 		const countRows = referencedValuesNotIncluded ? referencedValuesNotIncluded.length : 0
 		return (
 			<ul className="list-unstyled mb-0">
