@@ -253,7 +253,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func() string {
 		"col.text2, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
-		"grid.uuid, " +
+		"rel1.text3, " +
 		"rel1.text3, " +
 		"false " +
 		"FROM relationships rel1 " +
@@ -287,11 +287,6 @@ var getGridColumsNotOwnedQueryForGridsApi = func() string {
 		"AND rel3.text1 = $10 " +
 		"AND rel3.text5 = $4 " +
 		"AND rel3.enabled = true " +
-
-		"INNER JOIN grids grid " +
-		"ON grid.gridUuid = rel3.text4 " +
-		"AND grid.Uuid = rel3.text5 " +
-		"AND grid.enabled = true " +
 
 		"ORDER BY col.text1 "
 }
