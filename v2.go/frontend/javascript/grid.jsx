@@ -50,7 +50,18 @@ class Grid extends React.Component {
 	}
 
 	render() {
-		const { isLoading, isLoaded, error, grid, canAddRows, rows, rowsSelected, rowsEdited, rowsAdded, rowsDeleted, referencedValuesAdded, referencedValuesRemoved } = this.state
+		const { isLoading, 
+				isLoaded, 
+				error, 
+				grid, 
+				canAddRows, 
+				rows, 
+				rowsSelected, 
+				rowsEdited, 
+				rowsAdded, 
+				rowsDeleted, 
+				referencedValuesAdded, 
+				referencedValuesRemoved } = this.state
 		const { dbName, token, gridUuid, uuid } = this.props
 		const countRows = rows ? rows.length : 0
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
@@ -75,8 +86,12 @@ class Grid extends React.Component {
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
-									onAddReferencedValueClick={(fromUuid, col, toGridUuid, uuid, displayString, path) => this.addReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
-									onRemoveReferencedValueClick={(fromUuid, col, toGridUuid, uuid, displayString, path) => this.removeReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
+									onAddReferencedValueClick={
+										(fromUuid, col, toGridUuid, uuid, displayString, path) => 
+											this.addReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
+									onRemoveReferencedValueClick={
+										(fromUuid, col, toGridUuid, uuid, displayString, path) =>
+											this.removeReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token}
