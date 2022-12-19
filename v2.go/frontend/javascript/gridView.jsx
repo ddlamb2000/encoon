@@ -41,7 +41,6 @@ class GridView extends React.Component {
 									<ul className="list-unstyled mb-0">
 										{audits.map(
 											audit => {
-												const uri = `/${this.props.dbName}/${UuidUsers}/${audit.createdBy}`
 												return (
 													<li key={audit.uuid}>
 														{audit.actionName} on <DateTime dateTime={audit.created} />,
