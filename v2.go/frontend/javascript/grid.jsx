@@ -22,15 +22,15 @@ class Grid extends React.Component {
 		this.setGridRowRef = element => {
 			if(element != undefined) {
 				const uuid = element.getAttribute("uuid")
-				const col = element.getAttribute("col")
-				if(uuid != "" && col != "") {
+				const columnName = element.getAttribute("column")
+				if(uuid != "" && columnName != "") {
 					const gridInputMap = this.gridInput.get(uuid)
 					if(gridInputMap) {
-						gridInputMap.set(col, element)	
+						gridInputMap.set(columnName, element)	
 					}
 					else {
 						const gridRowInputMap = new Map()
-						gridRowInputMap.set(col, element)
+						gridRowInputMap.set(columnName, element)
 						this.gridInput.set(uuid, gridRowInputMap)
 					}
 				}
@@ -164,32 +164,34 @@ class Grid extends React.Component {
 		}))
 	}
 
-	addReferencedValue(fromUuid, columnName, toGridUuid, uuid, displayString, path) {
+	addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString, path) {
 		this.setState(state => ({
 			referencedValuesAdded: state.referencedValuesAdded.concat({
 				fromUuid: fromUuid,
+				columnUuid: columnUuid,
 				columnName: columnName,
 				toGridUuid: toGridUuid, 
 				uuid: uuid,
 				displayString: displayString,
 				path: path
 			}),
-			referencedValuesRemoved: state.referencedValuesRemoved.filter(ref => ref.fromUuid != fromUuid || ref.columnName != columnName || ref.uuid != uuid)
+			referencedValuesRemoved: state.referencedValuesRemoved.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
 		}))
 		this.editRow(fromUuid)
 	}
 
-	removeReferencedValue(fromUuid, columnName, toGridUuid, uuid, displayString, path) {
+	removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString, path) {
 		this.setState(state => ({
 			referencedValuesRemoved: state.referencedValuesRemoved.concat({
 				fromUuid: fromUuid,
+				columnuuid: columnUuid,
 				columnName: columnName,
 				toGridUuid: toGridUuid, 
 				uuid: uuid,
 				displayString: displayString,
 				path: path
 			}),
-			referencedValuesAdded: state.referencedValuesAdded.filter(ref => ref.fromUuid != fromUuid || ref.columnName != columnName || ref.uuid != uuid)
+			referencedValuesAdded: state.referencedValuesAdded.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
 		}))
 		this.editRow(fromUuid)
 	}

@@ -18,6 +18,7 @@ class GridView extends React.Component {
 												{!column.owned && <small><br />{column.grid.displayString}</small>}
 											</td>
 											<GridCell uuid={this.props.row.uuid}
+														columnUuid={column.uuid}
 														columnName={column.name}
 														type={column.type}
 														typeUuid={column.typeUuid}
