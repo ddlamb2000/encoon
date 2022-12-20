@@ -87,11 +87,11 @@ class Grid extends React.Component {
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
 									onAddReferencedValueClick={
-										(fromUuid, col, toGridUuid, uuid, displayString, path) => 
-											this.addReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
+										(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) => 
+											this.addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
 									onRemoveReferencedValueClick={
-										(fromUuid, col, toGridUuid, uuid, displayString, path) =>
-											this.removeReferencedValue(fromUuid, col, toGridUuid, uuid, displayString, path)}
+										(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
+											this.removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token}
@@ -164,7 +164,7 @@ class Grid extends React.Component {
 		}))
 	}
 
-	addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString, path) {
+	addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) {
 		this.setState(state => ({
 			referencedValuesAdded: state.referencedValuesAdded.concat({
 				fromUuid: fromUuid,
@@ -172,15 +172,14 @@ class Grid extends React.Component {
 				columnName: columnName,
 				toGridUuid: toGridUuid, 
 				uuid: uuid,
-				displayString: displayString,
-				path: path
+				displayString: displayString
 			}),
 			referencedValuesRemoved: state.referencedValuesRemoved.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
 		}))
 		this.editRow(fromUuid)
 	}
 
-	removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString, path) {
+	removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) {
 		this.setState(state => ({
 			referencedValuesRemoved: state.referencedValuesRemoved.concat({
 				fromUuid: fromUuid,
@@ -188,8 +187,7 @@ class Grid extends React.Component {
 				columnName: columnName,
 				toGridUuid: toGridUuid, 
 				uuid: uuid,
-				displayString: displayString,
-				path: path
+				displayString: displayString
 			}),
 			referencedValuesAdded: state.referencedValuesAdded.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
 		}))
@@ -467,8 +465,7 @@ function getColumnValueForReferencedRow(column, row) {
 						refRow => output.push({
 							gridUuid: refRow.gridUuid,
 							uuid: refRow.uuid,
-							displayString: refRow.displayString,
-							path: refRow.path
+							displayString: refRow.displayString
 						})
 					)
 				}
