@@ -31,12 +31,8 @@ class GridTable extends React.Component {
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 										onDeleteRowClick={uuid => this.props.onDeleteRowClick(uuid)}
-										onAddReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onAddReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
-										onRemoveReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onRemoveReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
+										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
+										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token}
@@ -87,15 +83,11 @@ class GridRow extends React.Component {
 										rowSelected={rowSelected}
 										rowEdited={rowEdited}
 										referencedValuesAdded={referencedValuesAdded.filter(ref => ref.columnUuid == column.uuid)}
-										referencedValuesRemoved={referencedValuesRemoved.filter(ref => ref.columnuuid == column.uuid)}
+										referencedValuesRemoved={referencedValuesRemoved.filter(ref => ref.columnUuid == column.uuid)}
 										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-										onAddReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onAddReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
-										onRemoveReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onRemoveReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
+										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
+										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token}
@@ -138,12 +130,8 @@ class GridCell extends React.Component {
 										gridPromptUuid={this.props.gridPromptUuid}
 										referencedValuesAdded={this.props.referencedValuesAdded}
 										referencedValuesRemoved={this.props.referencedValuesRemoved}
-										onAddReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onAddReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
-										onRemoveReferencedValueClick={
-											(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-												this.props.onRemoveReferencedValueClick(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)} />
+										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
+										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
 					<GridCellReferences uuid={this.props.uuid}
@@ -219,6 +207,14 @@ class GridCellDropDown extends React.Component {
 			filter(ref => !referencedValuesIncluded.map(ref => ref.uuid).includes(ref.uuid)).
 			filter((value, index, self) => index == self.findIndex((t) => (t.uuid == value.uuid)))
 		const countRows = referencedValuesNotIncluded ? referencedValuesNotIncluded.length : 0
+		if(trace) {
+			console.log("[GridCellDropDown.render()] this.props.columnName=", this.props.columnName)
+			console.log("[GridCellDropDown.render()] values=", values)
+			console.log("[GridCellDropDown.render()] referencedValuesAdded=", referencedValuesAdded)
+			console.log("[GridCellDropDown.render()] referencedValuesRemoved=", referencedValuesRemoved)
+			console.log("[GridCellDropDown.render()] referencedValuesIncluded=", referencedValuesIncluded)
+			console.log("[GridCellDropDown.render()] referencedValuesNotIncluded=", referencedValuesNotIncluded)
+		}
 		return (
 			<ul className="list-unstyled mb-0">
 				{referencedValuesIncluded.map(ref => 
@@ -226,12 +222,12 @@ class GridCellDropDown extends React.Component {
 						<span>
 							<button type="button" className="btn text-danger btn-sm mx-0 p-0"
 									onClick={() => 
-										this.props.onRemoveReferencedValueClick(this.props.uuid, 
-																				this.props.columnUuid,
-																				this.props.columnName,
-																				this.props.gridPromptUuid,
-																				ref.uuid,
-																				ref.displayString)}>
+										this.props.onRemoveReferencedValueClick({fromUuid: this.props.uuid, 
+																				 columnUuid: this.props.columnUuid,
+																				 columnName: this.props.columnName,
+																				 toGridUuid: this.props.gridPromptUuid,
+																				 uuid: ref.uuid,
+																				 displayString: ref.displayString})}>
 								<i className="bi bi-box-arrow-down pe-1"></i>
 							</button>
 							{ref.displayString}
@@ -254,12 +250,12 @@ class GridCellDropDown extends React.Component {
 						<span>
 							<button type="button"
 									className="btn text-success btn-sm mx-0 p-0"
-									onClick={() => this.props.onAddReferencedValueClick(this.props.uuid, 
-																						this.props.columnUuid,
-																						this.props.columnName,
-																						this.props.gridPromptUuid, 
-																						ref.uuid, 
-																						ref.displayString)}>
+									onClick={() => this.props.onAddReferencedValueClick({fromUuid: this.props.uuid, 
+																						 columnUuid: this.props.columnUuid,
+																						 columnName: this.props.columnName,
+																						 toGridUuid: this.props.gridPromptUuid, 
+																						 uuid: ref.uuid, 
+																						 displayString: ref.displayString})}>
 								<i className="bi bi-box-arrow-up pe-1"></i>
 							</button>
 							{ref.displayString}

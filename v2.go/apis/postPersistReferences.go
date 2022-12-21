@@ -24,7 +24,7 @@ func persistGridReferenceData(r apiRequestParameters, grid *model.Grid, addedRow
 func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	query := getInsertStatementForReferenceRow()
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
-	parms := getInsertStatementParametersForRefereceRow(r, grid, ref, rowUuid)
+	parms := getInsertStatementParametersForReferenceRow(r, grid, ref, rowUuid)
 	r.trace("postInsertReferenceRow(%s, %v, %v) - query=%s ; parms=%s", grid, addedRows, ref, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert referenced row error: %v.", err)
@@ -66,7 +66,7 @@ var getInsertStatementForReferenceRow = func() string {
 		"$8)"
 }
 
-func getInsertStatementParametersForRefereceRow(r apiRequestParameters, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
+func getInsertStatementParametersForReferenceRow(r apiRequestParameters, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, utils.GetNewUUID())
 	parameters = append(parameters, r.userUuid)
@@ -99,19 +99,10 @@ func postGridSetOwnership(r apiRequestParameters, grid *model.Grid, addedRows []
 	return nil
 }
 
-func getUuidFromRowsForTmpUuid(r apiRequestParameters, addedRows []*model.Row, tmpUuid string) string {
-	for _, row := range addedRows {
-		r.trace("getUuidFromRowsForTmpUuid() - row.TmpUuid=%v, row.Uuid=%v", row.TmpUuid, row.Uuid)
-		if row.TmpUuid == tmpUuid {
-			return row.Uuid
-		}
-	}
-	return tmpUuid
-}
-
 func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	query := getDeleteReferenceRowStatement()
-	parms := getDeleteReferenceRowStatementParameters(r, grid, ref)
+	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
+	parms := getDeleteReferenceRowStatementParameters(r, grid, ref, rowUuid)
 	r.trace("postDeleteReferenceRow(%s, %v, %v) query=%s ; params=%s", grid, addedRows, ref, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Delete referenced row error: %v.", err)
@@ -135,13 +126,23 @@ var getDeleteReferenceRowStatement = func() string {
 		"AND text5 = $6"
 }
 
-func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost) []any {
+func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, ref.ColumnName)
 	parameters = append(parameters, grid.Uuid)
-	parameters = append(parameters, ref.FromUuid)
+	parameters = append(parameters, rowUuid)
 	parameters = append(parameters, ref.ToGridUuid)
 	parameters = append(parameters, ref.ToUuid)
 	return parameters
+}
+
+func getUuidFromRowsForTmpUuid(r apiRequestParameters, addedRows []*model.Row, tmpUuid string) string {
+	for _, row := range addedRows {
+		r.trace("getUuidFromRowsForTmpUuid() - row.TmpUuid=%v, row.Uuid=%v", row.TmpUuid, row.Uuid)
+		if row.TmpUuid == tmpUuid {
+			return row.Uuid
+		}
+	}
+	return tmpUuid
 }

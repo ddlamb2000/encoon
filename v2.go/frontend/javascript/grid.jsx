@@ -86,12 +86,8 @@ class Grid extends React.Component {
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
-									onAddReferencedValueClick={
-										(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) => 
-											this.addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
-									onRemoveReferencedValueClick={
-										(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) =>
-											this.removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString)}
+									onAddReferencedValueClick={reference => this.addReferencedValue(reference)}
+									onRemoveReferencedValueClick={reference => this.removeReferencedValue(reference)}
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token}
@@ -164,34 +160,44 @@ class Grid extends React.Component {
 		}))
 	}
 
-	addReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) {
+	addReferencedValue(reference) {
+		if(trace) console.log("[Grid.addReferencedValue()] ", reference)
 		this.setState(state => ({
 			referencedValuesAdded: state.referencedValuesAdded.concat({
-				fromUuid: fromUuid,
-				columnUuid: columnUuid,
-				columnName: columnName,
-				toGridUuid: toGridUuid, 
-				uuid: uuid,
-				displayString: displayString
+				fromUuid: reference.fromUuid,
+				columnUuid: reference.columnUuid,
+				columnName: reference.columnName,
+				toGridUuid: reference.toGridUuid, 
+				uuid: reference.uuid,
+				displayString: reference.displayString
 			}),
-			referencedValuesRemoved: state.referencedValuesRemoved.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
+			referencedValuesRemoved: state.referencedValuesRemoved.
+				filter(ref => 
+						ref.fromUuid != reference.fromUuid || 
+						ref.columnUuid != reference.columnUuid || 
+						ref.uuid != reference.uuid)
 		}))
-		this.editRow(fromUuid)
+		this.editRow(reference.fromUuid)
 	}
 
-	removeReferencedValue(fromUuid, columnUuid, columnName, toGridUuid, uuid, displayString) {
+	removeReferencedValue(reference) {
+		if(trace) console.log("[Grid.removeReferencedValue()] ", reference)
 		this.setState(state => ({
 			referencedValuesRemoved: state.referencedValuesRemoved.concat({
-				fromUuid: fromUuid,
-				columnuuid: columnUuid,
-				columnName: columnName,
-				toGridUuid: toGridUuid, 
-				uuid: uuid,
-				displayString: displayString
+				fromUuid: reference.fromUuid,
+				columnUuid: reference.columnUuid,
+				columnName: reference.columnName,
+				toGridUuid: reference.toGridUuid, 
+				uuid: reference.uuid,
+				displayString: reference.displayString
 			}),
-			referencedValuesAdded: state.referencedValuesAdded.filter(ref => ref.fromUuid != fromUuid || ref.columnUuid != columnUuid || ref.uuid != uuid)
+			referencedValuesAdded: state.referencedValuesAdded.
+				filter(ref => 
+						ref.fromUuid != reference.fromUuid || 
+						ref.columnUuid != reference.columnUuid || 
+						ref.uuid != reference.uuid)
 		}))
-		this.editRow(fromUuid)
+		this.editRow(reference.fromUuid)
 	}
 
 	loadData() {
