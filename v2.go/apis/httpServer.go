@@ -196,7 +196,7 @@ type gridReferencePost struct {
 	FromUuid   string `json:"fromUuid"`
 	ToGridUuid string `json:"toGridUuid"`
 	ToUuid     string `json:"uuid"`
-	Owned      bool   `json:"columnOwned"`
+	Owned      bool   `json:"owned"`
 }
 
 func PostGridsRowsApi(c *gin.Context) {

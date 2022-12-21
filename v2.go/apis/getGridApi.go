@@ -16,7 +16,7 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 		return grid, nil
 	}
 	grid, err := getGridInstanceForGridsApi(r, gridUuid)
-	if err != nil {
+	if err != nil || grid == nil {
 		return nil, err
 	}
 	err = getColumnsForGridsApi(r, grid)

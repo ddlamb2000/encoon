@@ -47,10 +47,10 @@ func RunSystemTestCache(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid3 + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid3 + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
@@ -69,8 +69,8 @@ func RunSystemTestCache(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column24Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column24Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -105,8 +105,8 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -123,8 +123,8 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -154,7 +154,7 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"referencedValuesRemoved":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -171,7 +171,7 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"referencedValuesRemoved":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)

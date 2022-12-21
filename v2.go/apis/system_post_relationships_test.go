@@ -38,21 +38,21 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"d","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"e","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"e","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"f","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"g","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"h","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"i","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"i","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
-			`{"columnName":"relationship1","fromUuid":"j","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"j","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
-			`{"columnName":"relationship1","fromUuid":"k","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"k","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"d","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"e","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"e","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"f","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"g","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"h","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidIntColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"i","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"i","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"j","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"j","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"k","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"k","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
@@ -84,14 +84,14 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + column20Uuid + `","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"` + column20Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid1 + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + column20Uuid + `","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"` + column20Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`],` +
 			`"referencedValuesRemoved":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + column13Uuid + `","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + column13Uuid + `","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
@@ -115,13 +115,13 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column09Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column10Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column11Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column12Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column13Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column14Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column15Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column09Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column10Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column11Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column12Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column13Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column14Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column15Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -140,11 +140,11 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column16Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column17Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column18Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column19Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column16Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column18Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column19Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -168,18 +168,18 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"columnName":"relationship3","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"columnName":"relationship3","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship3","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship3","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
@@ -187,8 +187,8 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"countRows":3`)
 		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15`)
-		jsonStringContains(t, responseData, `"columns":[{"label":"Test Column 09","name":"text1","type":"Text"`)
-		jsonStringContains(t, responseData, `"references":[{"label":"Test Column 17","name":"relationship1","rows":[{`)
+		jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 09","name":"text1","type":"Text"`)
+		jsonStringContains(t, responseData, `"references":[{"owned":true,"label":"Test Column 17","name":"relationship1"`)
 	})
 
 	t.Run("CreateNewRowsIn3rdSingleGridDefect", func(t *testing.T) {
@@ -201,7 +201,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
@@ -222,7 +222,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 		postStr := `{"referencedValuesRemoved":` +
 			`[` +
-			`{"columnName":"relationship2","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
@@ -243,7 +243,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)

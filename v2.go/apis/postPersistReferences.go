@@ -91,6 +91,7 @@ func postGridSetOwnership(r apiRequestParameters, grid *model.Grid, addedRows []
 		r.trace("postGridSetOwnership(%s, %v)", grid, addedRows)
 		for _, row := range addedRows {
 			ref := gridReferencePost{
+				Owned:      true,
 				ColumnName: "relationship3",
 				FromUuid:   row.Uuid,
 				ToGridUuid: model.UuidUsers,

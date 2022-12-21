@@ -94,7 +94,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User01SetAccessForGrid02", func(t *testing.T) {
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -114,7 +114,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User01SetViewAccessForUser2Grid02", func(t *testing.T) {
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship4","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user02Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship4","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user02Uuid + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -141,7 +141,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	t.Run("User01SetEditAccessForUser3Grid03", func(t *testing.T) {
 		postStr := `{"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship5","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user03Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship5","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user03Uuid + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -280,7 +280,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
@@ -414,7 +414,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
@@ -540,7 +540,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
@@ -587,10 +587,10 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
-			`{"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid3 + `"},` +
-			`{"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid3 + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
@@ -611,10 +611,10 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column21Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column22Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column23Uuid + `"},` +
-			`{"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column21Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column22Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column23Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
@@ -663,8 +663,8 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"},` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row16Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row16Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid4, postStr)
@@ -685,7 +685,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+gridUuid4, postStr)
