@@ -166,6 +166,7 @@ class Grid extends React.Component {
 			referencedValuesAdded: state.referencedValuesAdded.concat({
 				fromUuid: reference.fromUuid,
 				columnUuid: reference.columnUuid,
+				columnOwned: reference.columnOwned,
 				columnName: reference.columnName,
 				toGridUuid: reference.toGridUuid, 
 				uuid: reference.uuid,
@@ -186,6 +187,7 @@ class Grid extends React.Component {
 			referencedValuesRemoved: state.referencedValuesRemoved.concat({
 				fromUuid: reference.fromUuid,
 				columnUuid: reference.columnUuid,
+				columnOwned: reference.columnOwned,
 				columnName: reference.columnName,
 				toGridUuid: reference.toGridUuid, 
 				uuid: reference.uuid,

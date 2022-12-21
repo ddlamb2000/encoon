@@ -72,10 +72,17 @@ func getInsertStatementParametersForReferenceRow(r apiRequestParameters, grid *m
 	parameters = append(parameters, r.userUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, ref.ColumnName)
-	parameters = append(parameters, grid.Uuid)
-	parameters = append(parameters, rowUuid)
-	parameters = append(parameters, ref.ToGridUuid)
-	parameters = append(parameters, ref.ToUuid)
+	if ref.Owned {
+		parameters = append(parameters, grid.Uuid)
+		parameters = append(parameters, rowUuid)
+		parameters = append(parameters, ref.ToGridUuid)
+		parameters = append(parameters, ref.ToUuid)
+	} else {
+		parameters = append(parameters, ref.ToGridUuid)
+		parameters = append(parameters, ref.ToUuid)
+		parameters = append(parameters, grid.Uuid)
+		parameters = append(parameters, rowUuid)
+	}
 	return parameters
 }
 
@@ -117,23 +124,33 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 // function is available for mocking
 var getDeleteReferenceRowStatement = func() string {
 	return "UPDATE relationships " +
-		"SET enabled = false " +
-		"WHERE gridUuid = $1 " +
-		"AND text1 = $2 " +
-		"AND text2 = $3 " +
-		"AND text3 = $4 " +
-		"AND text4 = $5 " +
-		"AND text5 = $6"
+		"SET enabled = false, " +
+		"updated = NOW(), " +
+		"updatedBy = $1 " +
+		"WHERE gridUuid = $2 " +
+		"AND text1 = $3 " +
+		"AND text2 = $4 " +
+		"AND text3 = $5 " +
+		"AND text4 = $6 " +
+		"AND text5 = $7"
 }
 
 func getDeleteReferenceRowStatementParameters(r apiRequestParameters, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
+	parameters = append(parameters, r.userUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, ref.ColumnName)
-	parameters = append(parameters, grid.Uuid)
-	parameters = append(parameters, rowUuid)
-	parameters = append(parameters, ref.ToGridUuid)
-	parameters = append(parameters, ref.ToUuid)
+	if ref.Owned {
+		parameters = append(parameters, grid.Uuid)
+		parameters = append(parameters, rowUuid)
+		parameters = append(parameters, ref.ToGridUuid)
+		parameters = append(parameters, ref.ToUuid)
+	} else {
+		parameters = append(parameters, ref.ToGridUuid)
+		parameters = append(parameters, ref.ToUuid)
+		parameters = append(parameters, grid.Uuid)
+		parameters = append(parameters, rowUuid)
+	}
 	return parameters
 }
 

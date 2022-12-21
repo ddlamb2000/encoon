@@ -71,6 +71,7 @@ class GridRow extends React.Component {
 					column => <GridCell uuid={row.uuid}
 										key={column.uuid}
 										columnUuid={column.uuid}
+										columnOwned={column.owned}
 										columnName={column.name}
 										type={column.type}
 										typeUuid={column.typeUuid}
@@ -110,7 +111,6 @@ class GridCell extends React.Component {
 					<GridCellInput type={this.props.type}
 									variantReadOnly={variantReadOnly}
 									uuid={this.props.uuid}
-									columnUuid={this.props.columnUuid}
 									columnName={this.props.columnName}
 									readOnly={this.props.readonly}
 									value={this.props.value}
@@ -124,6 +124,7 @@ class GridCell extends React.Component {
 					<GridCellDropDown uuid={this.props.uuid}
 										columnUuid={this.props.columnUuid}
 										columnName={this.props.columnName}
+										columnOwned={this.props.columnOwned}
 										values={this.props.values}
 										dbName={this.props.dbName}
 										token={this.props.token}
@@ -224,6 +225,7 @@ class GridCellDropDown extends React.Component {
 									onClick={() => 
 										this.props.onRemoveReferencedValueClick({fromUuid: this.props.uuid, 
 																				 columnUuid: this.props.columnUuid,
+																				 columnOwned: this.props.columnOwned,
 																				 columnName: this.props.columnName,
 																				 toGridUuid: this.props.gridPromptUuid,
 																				 uuid: ref.uuid,
@@ -252,6 +254,7 @@ class GridCellDropDown extends React.Component {
 									className="btn text-success btn-sm mx-0 p-0"
 									onClick={() => this.props.onAddReferencedValueClick({fromUuid: this.props.uuid, 
 																						 columnUuid: this.props.columnUuid,
+																						 columnOwned: this.props.columnOwned,
 																						 columnName: this.props.columnName,
 																						 toGridUuid: this.props.gridPromptUuid, 
 																						 uuid: ref.uuid, 
