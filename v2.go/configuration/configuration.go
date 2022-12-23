@@ -36,10 +36,11 @@ type DatabaseConfiguration struct {
 	Host             string `yaml:"host"`
 	Port             int    `yaml:"port"`
 	Name             string `yaml:"name"`
-	User             string `yaml:"user"`
+	Role             string `yaml:"role"`
+	RolePassword     string `yaml:"rolePassword"`
 	JwtSecret        string `yaml:"jwtsecret"`
 	Root             string `yaml:"root"`
-	Password         string `yaml:"password"`
+	RootPassword     string `yaml:"rootPassword"`
 	TestSleepTime    int    `yaml:"testSleepTime"`
 	TimeOutThreshold int    `yaml:"timeOutThreshold"`
 }
@@ -126,7 +127,7 @@ func GetRootAndPassword(dbName string) (string, string) {
 		return "", ""
 	}
 	dbConfiguration := GetDatabaseConfiguration(dbName)
-	return dbConfiguration.Root, dbConfiguration.Password
+	return dbConfiguration.Root, dbConfiguration.RootPassword
 }
 
 func GetContextWithTimeOut(ct context.Context, dbName string) (context.Context, context.CancelFunc) {

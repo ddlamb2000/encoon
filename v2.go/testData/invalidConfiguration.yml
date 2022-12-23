@@ -14,18 +14,20 @@ database:
 - name: "test"
   host: "localhost"
   port: 5432
-  user: "david.lambert"
+  role: "encoon"
+  rolePassword: "encoon"
   jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
   root: "root"
-  password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
   testSleepTime: 500
   timeOutThreshold: 1000
 
 - name: "sandbox"
   host: "localhost"
   port: 5432
-  user: "david.lambert"
+  role: "encoon"
+  rolePassword: "encoon"
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
-  password: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
   timeOutThreshold: 1000

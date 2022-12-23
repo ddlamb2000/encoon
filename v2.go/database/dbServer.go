@@ -56,13 +56,14 @@ func findDbConfiguration(dbName string) (*configuration.DatabaseConfiguration, e
 }
 
 func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbName string) (*sql.DB, error) {
-	if dbConfiguration.Host == "" || dbConfiguration.Port == 0 || dbConfiguration.User == "" || dbConfiguration.Name == "" {
+	if dbConfiguration.Host == "" || dbConfiguration.Port == 0 || dbConfiguration.Role == "" || dbConfiguration.Name == "" {
 		return nil, configuration.LogAndReturnError(dbName, "", "Incorrect database configuration.")
 	}
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s dbname=%s sslmode=disable",
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable connect_timeout=10",
 		dbConfiguration.Host,
 		dbConfiguration.Port,
-		dbConfiguration.User,
+		dbConfiguration.Role,
+		dbConfiguration.RolePassword,
 		dbConfiguration.Name,
 	)
 	db, _ := sql.Open("postgres", psqlInfo)
