@@ -58,3 +58,12 @@ func TestIsReference2(t *testing.T) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
 	}
 }
+
+func TestIsOwned(t *testing.T) {
+	column := Column{Owned: true}
+	got := column.IsOwned()
+	expect := true
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}

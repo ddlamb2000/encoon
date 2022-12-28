@@ -32,6 +32,9 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	if err := removeAssociatedGridFromCache(r, grid, rowUuid); err != nil {
 		return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
 	}
+	if ref.ToGridUuid == model.UuidGrids {
+		removeGridFromCache(ref.ToUuid)
+	}
 	r.log("Referenced row [%v] inserted into %s.", ref, grid)
 	return nil
 }
@@ -117,6 +120,9 @@ func postDeleteReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	}
 	if err := removeAssociatedGridFromCache(r, grid, ref.FromUuid); err != nil {
 		return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
+	}
+	if ref.ToGridUuid == model.UuidGrids {
+		removeGridFromCache(ref.ToUuid)
 	}
 	r.log("Referenced row [%v] deleted.", ref)
 	return nil

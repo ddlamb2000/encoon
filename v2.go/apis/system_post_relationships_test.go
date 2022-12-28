@@ -7,11 +7,13 @@ import (
 	"net/http"
 	"testing"
 
+	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
 )
 
 func RunSystemTestPostRelationships(t *testing.T) {
+	configuration.LoadConfiguration("../testData/systemTest.yml")
 	var user01Uuid string
 	db, _ := database.GetDbByName("test")
 	db.QueryRow("SELECT uuid FROM users WHERE gridUuid = $1 and text1= $2", model.UuidUsers, "test01").Scan(&user01Uuid)
@@ -153,137 +155,170 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
 	})
 
-	t.Run("CreateNewRowsIn3rdSingleGrid", func(t *testing.T) {
-		var grid1Uuid, grid3Uuid, row01Uuid, row05Uuid, row17Uuid string
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-17").Scan(&row17Uuid)
-		postStr := `{"rowsAdded":` +
-			`[` +
-			`{"uuid":"a", "text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15},` +
-			`{"uuid":"b", "text1":"test-16","text2":"test-17","text3":"test-18","text4":"test-19","int1":20,"int2":21,"int3":22,"int4":23},` +
-			`{"uuid":"c", "text1":"test-23","text2":"test-24","text3":"test-25","text4":"test-26","int1":27,"int2":28,"int3":29,"int4":30}` +
-			`],` +
-			`"referencedValuesAdded":` +
-			`[` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship3","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship3","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
-			`{"owned":true,"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	t.Run("VerifyNotOwnedColumnIn2ndSingleGrid", func(t *testing.T) {
+		var grid2Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid2Uuid)
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid)
 		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":3`)
-		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15`)
-		jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 09","name":"text1","type":"Text"`)
-		jsonStringContains(t, responseData, `"references":[{"owned":true,"label":"Test Column 17","name":"relationship1"`)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":12`)
+		jsonStringContains(t, responseData, `"owned":false,"label":"Test Column 20","name":"relationship4"`)
 	})
 
-	t.Run("CreateNewRowsIn3rdSingleGridDefect", func(t *testing.T) {
-		getInsertStatementForReferenceRowImpl := getInsertStatementForReferenceRow
-		getInsertStatementForReferenceRow = func() string { return "xxx" } // mock function
-		var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
-		postStr := `{"referencedValuesAdded":` +
-			`[` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
-		getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
-	})
+	// t.Run("CreateNewRowsIn3rdSingleGrid", func(t *testing.T) {
+	// 	var grid1Uuid, grid3Uuid, row01Uuid, row05Uuid, row17Uuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-17").Scan(&row17Uuid)
+	// 	postStr := `{"rowsAdded":` +
+	// 		`[` +
+	// 		`{"uuid":"a", "text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15},` +
+	// 		`{"uuid":"b", "text1":"test-16","text2":"test-17","text3":"test-18","text4":"test-19","int1":20,"int2":21,"int3":22,"int4":23},` +
+	// 		`{"uuid":"c", "text1":"test-23","text2":"test-24","text3":"test-25","text4":"test-26","int1":27,"int2":28,"int3":29,"int4":30}` +
+	// 		`],` +
+	// 		`"referencedValuesAdded":` +
+	// 		`[` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship3","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship2","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship3","fromUuid":"b","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship2","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"},` +
+	// 		`{"owned":true,"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusCreated)
+	// 	jsonStringContains(t, responseData, `"countRows":3`)
+	// 	jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15`)
+	// 	jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 09","name":"text1","type":"Text"`)
+	// 	jsonStringContains(t, responseData, `"references":[{"owned":true,"label":"Test Column 17","name":"relationship1"`)
+	// })
 
-	t.Run("UpdateAndDeleteColumnRelationshipsFor3rdGridDefect", func(t *testing.T) {
-		getDeleteReferenceRowStatementImpl := getDeleteReferenceRowStatement
-		getDeleteReferenceRowStatement = func() string { return "xxx" } // mock function
-		var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
+	// t.Run("CreateNewRowsIn3rdSingleGridDefect", func(t *testing.T) {
+	// 	getInsertStatementForReferenceRowImpl := getInsertStatementForReferenceRow
+	// 	getInsertStatementForReferenceRow = func() string { return "xxx" } // mock function
+	// 	var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
+	// 	postStr := `{"referencedValuesAdded":` +
+	// 		`[` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusInternalServerError)
+	// 	jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
+	// 	getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
+	// })
 
-		postStr := `{"referencedValuesRemoved":` +
-			`[` +
-			`{"owned":true,"columnName":"relationship2","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
-		getDeleteReferenceRowStatement = getDeleteReferenceRowStatementImpl
-	})
+	// t.Run("UpdateAndDeleteColumnRelationshipsFor3rdGridDefect", func(t *testing.T) {
+	// 	getDeleteReferenceRowStatementImpl := getDeleteReferenceRowStatement
+	// 	getDeleteReferenceRowStatement = func() string { return "xxx" } // mock function
+	// 	var grid1Uuid, grid3Uuid, row05Uuid, row09Uuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-05").Scan(&row05Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
 
-	t.Run("CreateNewRowIn3rdSingleGrid", func(t *testing.T) {
-		var grid1Uuid, grid3Uuid, row01Uuid string
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
-		postStr := `{"rowsAdded":` +
-			`[` +
-			`{"uuid":"a", "text1":"test-xx","text2":"test-yy","text3":"test-zz"}` +
-			`],` +
-			`"referencedValuesAdded":` +
-			`[` +
-			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":4`)
-		jsonStringContains(t, responseData, `"text1":"test-xx","text2":"test-yy","text3":"test-zz"`)
-		var rowXXUuid, referenceRowXXUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
-		if rowXXUuid == "" {
-			t.Errorf(`Row "test-xx" doesn't exist.`)
-		}
-		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
-		if referenceRowXXUuid == "" {
-			t.Errorf(`Referenced row for "test-xx" doesn't exist.`)
-		}
-	})
+	// 	postStr := `{"referencedValuesRemoved":` +
+	// 		`[` +
+	// 		`{"owned":true,"columnName":"relationship2","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusInternalServerError)
+	// 	jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
+	// 	getDeleteReferenceRowStatement = getDeleteReferenceRowStatementImpl
+	// })
 
-	t.Run("DeleteNewRowIn3rdSingleGrid", func(t *testing.T) {
-		var grid3Uuid, rowXXUuid, referenceRowXXUuid string
-		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
-		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
-		postStr := `{"rowsDeleted":` +
-			`[` +
-			`{"uuid":"` + rowXXUuid + `"}` +
-			`]` +
-			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":3`)
-		var newRowXXUuid, newReferenceRowXXUuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2 and enabled = true", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
-		if newRowXXUuid != "" {
-			t.Errorf(`Row "test-xx" still exists: %v.`, newRowXXUuid)
-		}
-		db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3  and enabled = true", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&newReferenceRowXXUuid)
-		if newReferenceRowXXUuid != "" {
-			t.Errorf(`Referenced row for "test-xx" still exists: %v.`, newReferenceRowXXUuid)
-		}
-	})
+	// t.Run("CreateNewRowIn3rdSingleGrid", func(t *testing.T) {
+	// 	var grid1Uuid, grid3Uuid, row01Uuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&grid1Uuid)
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid1Uuid, "test-01").Scan(&row01Uuid)
+	// 	postStr := `{"rowsAdded":` +
+	// 		`[` +
+	// 		`{"uuid":"a", "text1":"test-xx","text2":"test-yy","text3":"test-zz"}` +
+	// 		`],` +
+	// 		`"referencedValuesAdded":` +
+	// 		`[` +
+	// 		`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusCreated)
+	// 	jsonStringContains(t, responseData, `"countRows":4`)
+	// 	jsonStringContains(t, responseData, `"text1":"test-xx","text2":"test-yy","text3":"test-zz"`)
+	// 	var rowXXUuid, referenceRowXXUuid string
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
+	// 	if rowXXUuid == "" {
+	// 		t.Errorf(`Row "test-xx" doesn't exist.`)
+	// 	}
+	// 	db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
+	// 	if referenceRowXXUuid == "" {
+	// 		t.Errorf(`Referenced row for "test-xx" doesn't exist.`)
+	// 	}
+	// })
+
+	// t.Run("DeleteNewRowIn3rdSingleGrid", func(t *testing.T) {
+	// 	var grid3Uuid, rowXXUuid, referenceRowXXUuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-xx").Scan(&rowXXUuid)
+	// 	db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&referenceRowXXUuid)
+	// 	postStr := `{"rowsDeleted":` +
+	// 		`[` +
+	// 		`{"uuid":"` + rowXXUuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusCreated)
+	// 	jsonStringContains(t, responseData, `"countRows":3`)
+	// 	var newRowXXUuid, newReferenceRowXXUuid string
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2 and enabled = true", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
+	// 	if newRowXXUuid != "" {
+	// 		t.Errorf(`Row "test-xx" still exists: %v.`, newRowXXUuid)
+	// 	}
+	// 	db.QueryRow("SELECT uuid FROM relationships WHERE gridUuid = $1 and text2= $2 and text3 = $3  and enabled = true", model.UuidRelationships, grid3Uuid, rowXXUuid).Scan(&newReferenceRowXXUuid)
+	// 	if newReferenceRowXXUuid != "" {
+	// 		t.Errorf(`Referenced row for "test-xx" still exists: %v.`, newReferenceRowXXUuid)
+	// 	}
+	// })
+
+	// t.Run("CreateNewRowsIn2ndSingleGridWithNotOwnedReferences", func(t *testing.T) {
+	// 	var grid2Uuid, grid3Uuid, row09Uuid string
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid2Uuid)
+	// 	db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+	// 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
+	// 	postStr := `{"rowsAdded":` +
+	// 		`[` +
+	// 		`{"uuid":"a","int1":2,"int2":3,"int3":4,"int4":5}` +
+	// 		`],` +
+	// 		`"referencedValuesAdded":` +
+	// 		`[` +
+	// 		`{"owned":false,"columnName":"relationship4","fromUuid":"a","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
+	// 		`]` +
+	// 		`}`
+	// 	responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid, postStr)
+	// 	errorIsNil(t, err)
+	// 	httpCodeEqual(t, code, http.StatusCreated)
+	// 	jsonStringContains(t, responseData, `"countRows":13`)
+	// 	jsonStringContains(t, responseData, `"int1":2,"int2":3,"int3":4,"int4":5`)
+	// 	jsonStringContains(t, responseData, `"owned":false,"label":"Test Column 20","name":"relationship4"`)
+	// 	// jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
+	// })
 }
