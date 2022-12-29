@@ -176,7 +176,7 @@ func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, query s
 			column.Grid, _ = getGridInstanceForGridsApi(r, column.GridUuid)
 		}
 		r.trace("Got column for %s: %s.", grid, column)
-		grid.Columns = append(grid.Columns, *&column)
+		grid.Columns = append(grid.Columns, column)
 	}
 	return nil
 }

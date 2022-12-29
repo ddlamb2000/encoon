@@ -74,6 +74,7 @@ func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid
 			return
 		}
 		r.ctxChan <- apiResponse{
+			Err:                    err,
 			Grid:                   grid,
 			Rows:                   rowSet,
 			CountRows:              rowSetCount,

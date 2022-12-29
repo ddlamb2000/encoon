@@ -82,7 +82,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol4 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"}` +
 			`]` +
 			`}`
-		responseData, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
+		_, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 	})
@@ -339,7 +339,7 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol4 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidIntColumnType + `"}` +
 			`]` +
 			`}`
-		responseData, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
+		_, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 	})

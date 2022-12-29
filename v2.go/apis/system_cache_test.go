@@ -283,11 +283,11 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 
-		responseData, code, err = runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
+		responseData, _, _ := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
 		jsonStringDoesntContain(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 	})
 
