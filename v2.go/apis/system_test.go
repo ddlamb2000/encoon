@@ -36,6 +36,7 @@ func TestSystem(t *testing.T) {
 	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
 	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
+	t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {

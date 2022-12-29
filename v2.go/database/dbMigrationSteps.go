@@ -2450,6 +2450,21 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidTransactions + "', " +
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidTransactionColumnRowDeleted + "')",
+
+		247: "INSERT INTO rows " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidBooleanColumnType + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'Boolean', " +
+			"'True or false.')",
 	}
 }
 

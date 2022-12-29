@@ -104,6 +104,7 @@ class GridRow extends React.Component {
 class GridCell extends React.Component {
 	render() {
 		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
+		const checkedBoolean = this.props.value && this.props.value == "true" ? true : false
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
@@ -113,6 +114,7 @@ class GridCell extends React.Component {
 									uuid={this.props.uuid}
 									columnName={this.props.columnName}
 									readOnly={this.props.readonly}
+									checkedBoolean={checkedBoolean}
 									value={this.props.value}
 									inputRef={this.props.inputRef}
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
@@ -148,12 +150,15 @@ class GridCell extends React.Component {
 
 class GridCellInput  extends React.Component {
 	render() {
+		const className = this.props.type == "checkbox" ? "form-check-input" : "form-control"
 		return (
 			<input type={this.props.type}
-					className={"form-control form-control-sm rounded-2 shadow " + this.props.variantReadOnly}
+					className={className + " form-control-sm " + this.props.variantReadOnly}
+					name={this.props.uuid}
 					uuid={this.props.uuid}
 					column={this.props.columnName}
 					readOnly={this.props.readonly}
+					defaultChecked={this.props.checkedBoolean}
 					defaultValue={this.props.value}
 					ref={this.props.inputRef}
 					onInput={() => this.props.onEditRowClick(this.props.uuid)} />

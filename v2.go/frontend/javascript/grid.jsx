@@ -414,6 +414,8 @@ function getColumnType(type) {
 			return "number"
 		case UuidPasswordColumnType:
 			return "password"
+		case UuidBooleanColumnType:
+			return "checkbox"
 		case UuidReferenceColumnType:
 			return "reference"
 		default:
@@ -485,15 +487,18 @@ function getColumnValueForReferencedRow(column, row) {
 
 function getCellValue(type, value) {
 	if(type == 'password') return '*****'
+	else if(type == 'checkbox') return value == 'true' ? '✔︎' : ''
 	return value
 }
 
 function getConvertedValue(cell) {
 	switch(cell.type) {
-		case "number":
+		case 'number':
 			return Number(cell.value)
-		case "text":
+		case 'text':
 			return String(cell.value)
+		case 'checkbox':
+			return String(cell.checked)
 		default:
 			return cell.value
 	}

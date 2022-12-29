@@ -38,6 +38,7 @@ const (
 	UuidIntColumnType       = "8c28d527-66f4-481c-902e-ac1e65a8abb0"
 	UuidReferenceColumnType = "c8b16312-d4f0-40a5-aa04-c0bc1350fea7"
 	UuidPasswordColumnType  = "5f038b21-d9a4-45fc-aa3f-fc405342c287"
+	UuidBooleanColumnType   = "6e205ebd-6567-44dc-8fd4-ef6ad281ab40"
 	UuidUuidColumnType      = "d7c004ff-da5e-4a18-9520-cd42b2847508"
 
 	UuidRelationships                  = "c3deef8a-8c10-44f3-814b-02d242e959c5"

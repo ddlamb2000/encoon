@@ -453,6 +453,7 @@ const UuidTextColumnType                 = "65f3c258-fb1e-4f8b-96ca-f790e70d29c1
 const UuidIntColumnType                  = "8c28d527-66f4-481c-902e-ac1e65a8abb0"
 const UuidReferenceColumnType            = "c8b16312-d4f0-40a5-aa04-c0bc1350fea7"
 const UuidPasswordColumnType             = "5f038b21-d9a4-45fc-aa3f-fc405342c287"
+const UuidBooleanColumnType              = "6e205ebd-6567-44dc-8fd4-ef6ad281ab40"
 const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508"
 const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
 const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
