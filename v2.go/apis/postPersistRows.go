@@ -186,6 +186,11 @@ var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Gri
 }
 
 // function is available for mocking
+var removeAssociatedGridNotOwnedColumnFromCache = func(r apiRequestParameters, grid *model.Grid, uuid string) error {
+	return removeAssociatedGridFromCache(r, grid, uuid)
+}
+
+// function is available for mocking
 var getGridUuidAttachedToColumnForCache = func(r apiRequestParameters, uuid string) (string, error) {
 	return getGridUuidAttachedToColumn(r, uuid)
 }

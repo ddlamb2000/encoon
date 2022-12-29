@@ -4,6 +4,7 @@
 package apis
 
 import (
+	"errors"
 	"net/http"
 	"testing"
 
@@ -130,6 +131,56 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
+	})
+
+	t.Run("AddColumnsTo3rdSingleGridDefect", func(t *testing.T) {
+		getRowsQueryForGridUuidReferencedByColumnImpl := getRowsQueryForGridUuidReferencedByColumn
+		getRowsQueryForGridUuidReferencedByColumn = func() string { return "xxx" }
+		var gridUuid, column16Uuid, column17Uuid, column18Uuid, column19Uuid, column20Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 16").Scan(&column16Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 17").Scan(&column17Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 18").Scan(&column18Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
+		postStr := `{"referencedValuesAdded":` +
+			`[` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column16Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column18Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column19Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		getRowsQueryForGridUuidReferencedByColumn = getRowsQueryForGridUuidReferencedByColumnImpl
+	})
+
+	t.Run("AddColumnsTo3rdSingleGridDefect2", func(t *testing.T) {
+		removeAssociatedGridNotOwnedColumnFromCacheImpl := removeAssociatedGridNotOwnedColumnFromCache
+		removeAssociatedGridNotOwnedColumnFromCache = func(apiRequestParameters, *model.Grid, string) error { return errors.New("xxx") }
+		var gridUuid, column16Uuid, column17Uuid, column18Uuid, column19Uuid, column20Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 16").Scan(&column16Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 17").Scan(&column17Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 18").Scan(&column18Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 19").Scan(&column19Uuid)
+		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 20").Scan(&column20Uuid)
+		postStr := `{"referencedValuesAdded":` +
+			`[` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column16Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column17Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column18Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column19Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
+			`]` +
+			`}`
+		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		removeAssociatedGridNotOwnedColumnFromCache = removeAssociatedGridNotOwnedColumnFromCacheImpl
 	})
 
 	t.Run("AddColumnsTo3rdSingleGrid", func(t *testing.T) {
@@ -306,19 +357,39 @@ func RunSystemTestPostRelationships(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
 		postStr := `{"rowsAdded":` +
 			`[` +
-			`{"uuid":"a","int1":2,"int2":3,"int3":4,"int4":5}` +
+			`{"uuid":"a","int1":2,"int2":3,"int3":4,"int4":5},` +
+			`{"uuid":"b","int1":3,"int2":4,"int3":5,"int4":6}` +
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
-			`{"owned":false,"columnName":"relationship4","fromUuid":"a","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
+			`{"owned":false,"columnName":"relationship4","fromUuid":"a","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"},` +
+			`{"owned":false,"columnName":"relationship4","fromUuid":"b","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid, postStr)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
-		jsonStringContains(t, responseData, `"countRows":13`)
+		jsonStringContains(t, responseData, `"countRows":14`)
 		jsonStringContains(t, responseData, `"int1":2,"int2":3,"int3":4,"int4":5`)
+		jsonStringContains(t, responseData, `"int1":3,"int2":4,"int3":5,"int4":6`)
 		jsonStringContains(t, responseData, `"owned":false,"label":"Test Column 20","name":"relationship4"`)
-		// jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
+		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
+	})
+
+	t.Run("RemoveNotOwnedReferencesIn2ndSingleGrid", func(t *testing.T) {
+		var grid2Uuid, grid3Uuid, row09Uuid, rowInt3Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid2Uuid)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&grid3Uuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid3Uuid, "test-09").Scan(&row09Uuid)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and int1= $2", grid2Uuid, 3).Scan(&rowInt3Uuid)
+		postStr := `{"referencedValuesRemoved":` +
+			`[` +
+			`{"owned":false,"columnName":"relationship4","fromUuid":"` + rowInt3Uuid + `","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"int1":3,"int2":4,"int3":5,"int4":6`)
 	})
 }

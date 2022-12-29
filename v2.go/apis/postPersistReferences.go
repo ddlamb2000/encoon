@@ -36,7 +36,7 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 		removeGridFromCache(ref.ToUuid)
 	}
 	if grid.Uuid == model.UuidGrids && ref.ToGridUuid == model.UuidColumns {
-		if err := removeAssociatedGridFromCache(r, grid, ref.ToUuid); err != nil {
+		if err := removeAssociatedGridNotOwnedColumnFromCache(r, grid, ref.ToUuid); err != nil {
 			return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
 		}
 	}
