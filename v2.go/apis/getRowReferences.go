@@ -16,7 +16,8 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 		var err error
 		if col.IsReference() {
 			r.trace("getRelationshipsForRow() - col=%s", col)
-			referencedRows, err = getReferencedRowsForRow(r, row, col.Name, col.IsOwned())
+			r.log("getRelationshipsForRow() - col.Name=%s, col.GridUuid=%s", col.Name, col.GridUuid)
+			referencedRows, err = getReferencedRowsForRow(r, row, col.Name, col.GridUuid, col.IsOwned())
 			if err != nil {
 				return r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
 			}
@@ -34,11 +35,11 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 	return nil
 }
 
-func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, referenceName string, owned bool) ([]model.Row, error) {
+func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, referenceName, referenceColumnUuid string, owned bool) ([]model.Row, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getReferencedRowsForRow()", t)
 	query := getQueryReferencedRowsForRow(owned)
-	parms := getQueryParametersReferencedRowsForRow(referenceName, parentRow)
+	parms := getQueryParametersReferencedRowsForRow(referenceName, referenceColumnUuid, parentRow)
 	r.trace("getReferencedRowsForRow(%s, %s) - query=%s ; parms=%s", parentRow, referenceName, query, parms)
 	rows, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
@@ -73,6 +74,7 @@ var getQueryReferencedRowsForRow = func(owned bool) string {
 			"AND text1 = $2 " +
 			"AND text2 = $3 " +
 			"AND text3 = $4 " +
+			"AND text2 = $5 " +
 			"AND enabled = true"
 	} else {
 		return "SELECT text2, " +
@@ -82,15 +84,17 @@ var getQueryReferencedRowsForRow = func(owned bool) string {
 			"AND text1 = $2 " +
 			"AND text4 = $3 " +
 			"AND text5 = $4 " +
+			"AND text2 = $5 " +
 			"AND enabled = true"
 	}
 }
 
-func getQueryParametersReferencedRowsForRow(referenceName string, parentRow *model.Row) []any {
+func getQueryParametersReferencedRowsForRow(referenceName, referenceColumnUuid string, parentRow *model.Row) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, referenceName)
 	parameters = append(parameters, parentRow.GridUuid)
 	parameters = append(parameters, parentRow.Uuid)
+	parameters = append(parameters, referenceColumnUuid)
 	return parameters
 }

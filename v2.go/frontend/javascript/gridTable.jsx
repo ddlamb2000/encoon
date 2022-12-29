@@ -12,7 +12,8 @@ class GridTable extends React.Component {
 							column =>
 								<th scope="col" key={column.uuid}>
 									{column.label}
-									{!column.owned && <small><br />{column.grid.displayString}</small>}
+									{!column.owned && <small><br />[{column.grid.displayString}]</small>}
+									<small><br /><em>{column.name}</em></small>
 								</th>
 						)}
 						<th className="text-end" scope="col">Revision</th>

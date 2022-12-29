@@ -161,7 +161,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect6", func(t *testing.T) {
 		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
 		getQueryReferencedRowsForRow = func(bool) string {
-			return "SELECT NULL, NULL FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4"
+			return "SELECT NULL, NULL FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text2 = $5"
 		} // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
