@@ -25,6 +25,7 @@ const (
 	UuidColumnColumnLabel          = "09dbe8b8-ec7b-45f1-b51c-6ea3f89c64bf"
 	UuidColumnColumnName           = "a5194e16-415e-45fd-a603-b5db45d13d7d"
 	UuidColumnColumnColumnType     = "87245ad9-323a-4946-a0a7-a4082beae745"
+	UuidColumnColumnBidirectional  = "7619dace-e8b0-481a-aeac-f6e3ad7b5c18"
 	UuidColumnTypeColumnGridPrompt = "a0ce0980-19af-4ff8-afc9-86d04bd047cd"
 	UuidColumnTypeColumnName       = "9da0e49f-528c-4081-bc07-3c32497857ff"
 	UuidColumnTypeColumnDesc       = "5a9eba36-7601-4627-be8e-50cf027d9ad8"

@@ -34,10 +34,10 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"uuid":"f","text1":"Test Column 14","text2":"int2"},` +
 			`{"uuid":"g","text1":"Test Column 15","text2":"int3"},` +
 			`{"uuid":"h","text1":"Test Column 16","text2":"int4"},` +
-			`{"uuid":"i","text1":"Test Column 17","text2":"relationship1"},` +
-			`{"uuid":"j","text1":"Test Column 18","text2":"relationship2"},` +
-			`{"uuid":"k","text1":"Test Column 19","text2":"relationship3"},` +
-			`{"uuid":"l","text1":"Test Column 20","text2":"relationship4"}` +
+			`{"uuid":"i","text1":"Test Column 17","text2":"relationship1","text3":"true"},` +
+			`{"uuid":"j","text1":"Test Column 18","text2":"relationship2","text3":"true"},` +
+			`{"uuid":"k","text1":"Test Column 19","text2":"relationship3","text3":"true"},` +
+			`{"uuid":"l","text1":"Test Column 20","text2":"relationship4","text3":"true"}` +
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +

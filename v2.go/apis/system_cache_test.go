@@ -43,7 +43,7 @@ func RunSystemTestCache(t *testing.T) {
 			`[` +
 			`{"uuid":"a","text1":"Test Column 24","text2":"text1"},` +
 			`{"uuid":"b","text1":"Test Column 25","text2":"text2"},` +
-			`{"uuid":"c","text1":"Test Column 26","text2":"relationship1"}` +
+			`{"uuid":"c","text1":"Test Column 26","text2":"relationship1","text3":"true"}` +
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +
@@ -240,7 +240,7 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"rowsEdited":` +
 			`[` +
-			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1"}` +
+			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
 		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
@@ -254,7 +254,7 @@ func RunSystemTestCache(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"rowsEdited":` +
 			`[` +
-			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1"}` +
+			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
 		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)

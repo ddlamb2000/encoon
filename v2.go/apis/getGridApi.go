@@ -261,6 +261,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func() string {
 		"INNER JOIN columns col " +
 		"ON rel1.text4 = col.gridUuid " +
 		"AND rel1.text5 = col.uuid " +
+		"AND col.text3 = 'true' " +
 		"AND rel1.gridUuid = $1 " +
 		"AND rel1.text1 = $2 " +
 		"AND rel1.text2 = $3 " +

@@ -583,7 +583,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`[` +
 			`{"uuid":"a","text1":"Test Column 21","text2":"text1"},` +
 			`{"uuid":"b","text1":"Test Column 22","text2":"text2"},` +
-			`{"uuid":"c","text1":"Test Column 23","text2":"relationship1"}` +
+			`{"uuid":"c","text1":"Test Column 23","text2":"relationship1","text3":"true"}` +
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +

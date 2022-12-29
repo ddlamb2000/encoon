@@ -16,7 +16,6 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 		var err error
 		if col.IsReference() {
 			r.trace("getRelationshipsForRow() - col=%s", col)
-			r.log("getRelationshipsForRow() - col.Name=%s, col.GridUuid=%s", col.Name, col.GridUuid)
 			referencedRows, err = getReferencedRowsForRow(r, row, col.Name, col.GridUuid, col.IsOwned())
 			if err != nil {
 				return r.logAndReturnError("Error when retrieving referenced rows: %v.", err)

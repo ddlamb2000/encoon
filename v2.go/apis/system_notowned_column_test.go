@@ -40,7 +40,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"uuid":"a","text1":"Test Column 27","text2":"text1"},` +
 			`{"uuid":"b","text1":"Test Column 28","text2":"int1"},` +
 			`{"uuid":"c","text1":"Test Column 29","text2":"text2"},` +
-			`{"uuid":"d","text1":"Test Column 30","text2":"relationship1"}` +
+			`{"uuid":"d","text1":"Test Column 30","text2":"relationship1","text3":"true"}` +
 			`],` +
 			`"referencedValuesAdded":` +
 			`[` +

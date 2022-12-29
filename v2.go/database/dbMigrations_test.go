@@ -31,7 +31,7 @@ func TestRecreateDb(t *testing.T) {
 	if err != nil {
 		t.Errorf(`Database %q not found.`, dbName)
 	}
-
+ 
 	t.Run("RecreateDb1", func(t *testing.T) {
 		err = RecreateDb(context.Background(), db, "xxx")
 		expect := "Only test database can be recreated."

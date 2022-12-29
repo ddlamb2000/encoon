@@ -67,6 +67,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"enabled boolean NOT NULL, " +
 			"text1 text," +
 			"text2 text," +
+			"text3 text," +
 			"revision integer NOT NULL CHECK (revision > 0), " +
 			"PRIMARY KEY (gridUuid, uuid), " +
 			"UNIQUE (uuid)" +
@@ -797,7 +798,8 @@ var getMigrationSteps = func(dbName string) map[int]string {
 		147: "INSERT INTO columns " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
 			"text1, " +
-			"text2) " +
+			"text2, " +
+			"text3) " +
 			"VALUES ('" + model.UuidGridColumnColumns + "', " +
 			"1, " +
 			"NOW(), " +
@@ -807,7 +809,8 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"true, " +
 			"'" + model.UuidColumns + "', " +
 			"'Columns', " +
-			"'relationship1')",
+			"'relationship1', " +
+			"'true')",
 
 		150: "INSERT INTO relationships " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
@@ -1614,7 +1617,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidRootUser + "', " +
 			"true, " +
 			"'" + model.UuidGrids + "', " +
-			"'Access level', " +
+			"'Access levels', " +
 			"'Defines security access to data.', " +
 			"'file-lock')",
 
@@ -2465,6 +2468,63 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumnTypes + "', " +
 			"'Boolean', " +
 			"'True or false.')",
+
+		248: "INSERT INTO columns " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidColumnColumnBidirectional + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumns + "', " +
+			"'Bidirectional', " +
+			"'text3')",
+
+		249: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidColumnColumnBidirectional + "', " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'" + model.UuidBooleanColumnType + "')",
+
+		250: "INSERT INTO relationships " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2, " +
+			"text3, " +
+			"text4, " +
+			"text5) " +
+			"VALUES ('" + utils.GetNewUUID() + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidRelationships + "', " +
+			"'relationship1', " +
+			"'" + model.UuidGrids + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidColumns + "', " +
+			"'" + model.UuidColumnColumnBidirectional + "')",
 	}
 }
 
