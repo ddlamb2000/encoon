@@ -264,17 +264,58 @@ var getRowsQueryForGridUuidAttachedToColumn = func() string {
 	return "SELECT text3 " +
 		"FROM relationships " +
 		"WHERE gridUuid = $1 " +
-		"AND text2 = $2 " +
-		"AND text4 = $3 " +
-		"AND text5 = $4 " +
+		"AND text1 = $2 " +
+		"AND text2 = $3 " +
+		"AND text4 = $4 " +
+		"AND text5 = $5 " +
 		"AND enabled = true"
 }
 
 func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship1")
 	parameters = append(parameters, model.UuidGrids)
 	parameters = append(parameters, model.UuidColumns)
 	parameters = append(parameters, uuid)
+	return parameters
+}
+
+// function is available for mocking
+var getGridUuidReferencedByColumn = func(r apiRequestParameters, uuid string) (string, error) {
+	t := r.startTiming()
+	defer r.stopTiming("getGridUuidReferencedByColumn()", t)
+	var gridUuuid string
+	query := getRowsQueryForGridUuidReferencedByColumn()
+	parms := getRowsQueryParametersGridUuidReferencedByColumn(uuid)
+	r.trace("getGridUuidReferencedByColumn(%s) - query=%s ; parms=%s", uuid, query, parms)
+	if err := r.db.QueryRowContext(r.ctx, query, parms...).Scan(&gridUuuid); err != nil {
+		if err == sql.ErrNoRows {
+			return "", nil
+		}
+		return "", r.logAndReturnError("Error when retrieving grid uuid for column %q: %v.", uuid, err)
+	}
+	return gridUuuid, nil
+}
+
+// function is available for mocking
+var getRowsQueryForGridUuidReferencedByColumn = func() string {
+	return "SELECT text5 " +
+		"FROM relationships " +
+		"WHERE gridUuid = $1 " +
+		"AND text1 = $2 " +
+		"AND text2 = $3 " +
+		"AND text3 = $4 " +
+		"AND text4 = $5 " +
+		"AND enabled = true"
+}
+
+func getRowsQueryParametersGridUuidReferencedByColumn(uuid string) []any {
+	parameters := make([]any, 0)
+	parameters = append(parameters, model.UuidRelationships)
+	parameters = append(parameters, "relationship2")
+	parameters = append(parameters, model.UuidColumns)
+	parameters = append(parameters, uuid)
+	parameters = append(parameters, model.UuidGrids)
 	return parameters
 }

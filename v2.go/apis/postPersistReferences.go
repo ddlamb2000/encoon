@@ -35,6 +35,11 @@ func postInsertReferenceRow(r apiRequestParameters, grid *model.Grid, addedRows 
 	if ref.ToGridUuid == model.UuidGrids {
 		removeGridFromCache(ref.ToUuid)
 	}
+	if grid.Uuid == model.UuidGrids && ref.ToGridUuid == model.UuidColumns {
+		if err := removeAssociatedGridFromCache(r, grid, ref.ToUuid); err != nil {
+			return r.logAndReturnError("Error when getting data for cache deletion: %v.", err)
+		}
+	}
 	r.log("Referenced row [%v] inserted into %s.", ref, grid)
 	return nil
 }

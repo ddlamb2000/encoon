@@ -41,5 +41,6 @@ func getGridFromCache(uuid string) (grid *model.Grid, ok bool) {
 func removeGridFromCache(uuid string) {
 	if gridCache != nil {
 		gridCache.Remove(uuid)
+		configuration.Trace("", "", "Grid %q id removed from cache.", uuid)
 	}
 }

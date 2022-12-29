@@ -163,6 +163,14 @@ var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Gri
 	if grid.Uuid == model.UuidGrids {
 		r.trace("removeAssociatedGridFromCache() - Grid")
 		removeGridFromCache(uuid)
+		gridUuid, err := getGridUuidReferencedByColumn(r, uuid)
+		if err != nil {
+			return err
+		}
+		if gridUuid != "" {
+			r.trace("removeAssociatedGridFromCache(%s, %v) - gridUuid=%s", grid, uuid, gridUuid)
+			removeGridFromCache(gridUuid)
+		}
 	} else if grid.Uuid == model.UuidColumns {
 		r.trace("removeAssociatedGridFromCache() - Column")
 		gridUuid, err := getGridUuidAttachedToColumnForCache(r, uuid)
@@ -170,7 +178,7 @@ var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Gri
 			return err
 		}
 		if gridUuid != "" {
-			r.log("removeAssociatedGridFromCache(%s, %v) - gridUuid=%s", grid, uuid, gridUuid)
+			r.trace("removeAssociatedGridFromCache(%s, %v) - gridUuid=%s", grid, uuid, gridUuid)
 			removeGridFromCache(gridUuid)
 		}
 	}
