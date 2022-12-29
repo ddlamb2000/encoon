@@ -8,6 +8,7 @@ class GridView extends React.Component {
 		return (
 			<div>
 				<h4 className="card-title">{this.props.row.displayString}</h4>
+				<div className="card-subtitle mb-2 text-muted">{this.props.grid.displayString}</div>
 				<table className="table table-hover table-sm">
 					<thead className="table-light"></thead>
 					<tbody>

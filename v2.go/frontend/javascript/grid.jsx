@@ -97,6 +97,7 @@ class Grid extends React.Component {
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
 									columns={grid.columns}
+									grid={grid}
 									referencedValuesAdded={referencedValuesAdded}
 									referencedValuesRemoved={referencedValuesRemoved}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
