@@ -62,7 +62,14 @@ class Grid extends React.Component {
 				rowsDeleted, 
 				referencedValuesAdded, 
 				referencedValuesRemoved } = this.state
-		const { dbName, token, gridUuid, uuid } = this.props
+		const { dbName, 
+				token, 
+				gridUuid, 
+				uuid,
+				filterColumnName,
+				filterColumnLabel,
+				filterColumnValue,
+				filterColumnDisplayString } = this.props
 		const countRows = rows ? rows.length : 0
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
@@ -73,7 +80,14 @@ class Grid extends React.Component {
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
 						</h4>
 					}
-					{isLoaded && rows && grid && grid.text2 && uuid == "" && <div className="card-subtitle mb-2 text-muted">{grid.text2}</div>}
+					{isLoaded && rows && grid && grid.text2 && uuid == "" && 
+						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
+					}
+					{isLoaded && filterColumnLabel && filterColumnName &&
+						<div className="card-subtitle mb-2 text-muted">
+							{filterColumnLabel} <em>{filterColumnName}</em> = {filterColumnDisplayString}
+						</div>
+					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
 						<GridTable rows={rows}
@@ -97,13 +111,15 @@ class Grid extends React.Component {
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
 									columns={grid.columns}
+									columnsUsage={grid.columnsUsage}
 									grid={grid}
 									referencedValuesAdded={referencedValuesAdded}
 									referencedValuesRemoved={referencedValuesRemoved}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									dbName={dbName}
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+									token={this.props.token} />
 					}
 					<GridFooter 
 							isLoading={isLoading}
@@ -382,16 +398,11 @@ class GridFooter extends React.Component {
 			<div onClick={() => this.props.onSelectRowClick()}>
 				{isLoading && <Spinner />}
 				{!isLoading && countRows == 0 && <small className="text-muted px-1">No data</small>}
-				{!isLoading && countRows == 1 && <small className="text-muted px-1">{countRows} row</small>}
+				{!isLoading && countRows == 1 && uuid == '' && <small className="text-muted px-1">{countRows} row</small>}
 				{!isLoading && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
 				{!isLoading && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
 				{!isLoading && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
 				{!isLoading && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
-				{!isLoading && grid && uuid != "" &&
-					<a href="#" onClick={() => this.props.navigateToGrid(grid.uuid, "")}>
-						<i className="bi bi-box-arrow-up-right mx-1"></i>
-					</a>
-				}
 				{!isLoading && grid && uuid == "" && canAddRows &&
 					<button type="button" className="btn btn-outline-success btn-sm mx-1"
 							onClick={this.props.onAddRowClick}>

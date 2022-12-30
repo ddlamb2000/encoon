@@ -8,6 +8,7 @@ import "fmt"
 type Grid struct {
 	Row
 	Columns []*Column `json:"columns,omitempty"`
+	Usages  []*Column `json:"columnsUsage,omitempty"`
 
 	Owners            map[string]bool `json:"-"`
 	DefaultAccess     map[string]bool `json:"-"`

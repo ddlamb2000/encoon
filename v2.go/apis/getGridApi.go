@@ -149,19 +149,25 @@ func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	t := r.startTiming()
 	defer r.stopTiming("getColumnsForGridsApi()", t)
 	grid.Columns = make([]*model.Column, 0)
+	grid.Usages = make([]*model.Column, 0)
 	queryOwned := getGridColumsOwnedQueryForGridsApi()
 	parmsOwned := getGridColumsOwnedQueryParametersForGridsApi(grid)
 	r.trace("getColumnsForGridsApi(%s) - queryOwned=%s ; parmsOwned=%v", grid, queryOwned, parmsOwned)
-	if err := getColumnsRowsForGridsApi(r, grid, queryOwned, parmsOwned); err != nil {
+	if err := getColumnsRowsForGridsApi(r, grid, false, queryOwned, parmsOwned); err != nil {
 		return err
 	}
-	queryNotOwned := getGridColumsNotOwnedQueryForGridsApi()
+	queryNotOwned := getGridColumsNotOwnedQueryForGridsApi(true)
 	parmsNotOwned := getGridColumsNotOwnedQueryParametersForGridsApi(grid)
 	r.trace("getColumnsForGridsApi(%s) - queryNotOwned=%s ; parmsNotOwned=%v", grid, queryNotOwned, parmsNotOwned)
-	return getColumnsRowsForGridsApi(r, grid, queryNotOwned, parmsNotOwned)
+	if err := getColumnsRowsForGridsApi(r, grid, false, queryNotOwned, parmsNotOwned); err != nil {
+		return err
+	}
+	queryUsages := getGridColumsNotOwnedQueryForGridsApi(false)
+	r.trace("getColumnsForGridsApi(%s) - queryNotOwned=%s ; parmsNotOwned=%v", grid, queryUsages, parmsNotOwned)
+	return getColumnsRowsForGridsApi(r, grid, true, queryUsages, parmsNotOwned)
 }
 
-func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, query string, parms []any) error {
+func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, setUsages bool, query string, parms []any) error {
 	rows, err := r.queryContext(query, parms...)
 	if err != nil {
 		return r.logAndReturnError("Error when querying columns: %v.", err)
@@ -176,7 +182,11 @@ func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, query s
 			column.Grid, _ = getGridInstanceForGridsApi(r, column.GridUuid)
 		}
 		r.trace("Got column for %s: %s.", grid, column)
-		grid.Columns = append(grid.Columns, column)
+		if setUsages {
+			grid.Usages = append(grid.Usages, column)
+		} else {
+			grid.Columns = append(grid.Columns, column)
+		}
 	}
 	return nil
 }
@@ -247,7 +257,13 @@ func getGridColumsOwnedQueryParametersForGridsApi(grid *model.Grid) []any {
 }
 
 // function is available for mocking
-var getGridColumsNotOwnedQueryForGridsApi = func() string {
+var getGridColumsNotOwnedQueryForGridsApi = func(bidirectional bool) string {
+	var bidirectionalCondition = ""
+	if bidirectional {
+		bidirectionalCondition = "AND col.text3 = 'true' "
+	} else {
+		bidirectionalCondition = "AND (col.text3 IS NULL OR col.text3 != 'true') "
+	}
 	return "SELECT col.uuid, " +
 		"col.text1, " +
 		"col.text2, " +
@@ -261,7 +277,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func() string {
 		"INNER JOIN columns col " +
 		"ON rel1.text4 = col.gridUuid " +
 		"AND rel1.text5 = col.uuid " +
-		"AND col.text3 = 'true' " +
+		bidirectionalCondition +
 		"AND rel1.gridUuid = $1 " +
 		"AND rel1.text1 = $2 " +
 		"AND rel1.text2 = $3 " +
