@@ -10,9 +10,9 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-type persistGridRowDataFunc func(apiRequestParameters, *model.Grid, *model.Row) error
+type persistGridRowDataFunc func(apiRequest, *model.Grid, *model.Row) error
 
-func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
+func persistGridRowData(r apiRequest, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
 	for _, row := range rows {
 		row.GridUuid = grid.Uuid
 		err := f(r, grid, row)
@@ -24,8 +24,8 @@ func persistGridRowData(r apiRequestParameters, grid *model.Grid, rows []*model.
 	return nil
 }
 
-func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
-	_, _, _, canAddRows := grid.GetViewEditAccessFlags(r.userUuid)
+func postInsertGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
+	_, _, _, canAddRows := grid.GetViewEditAccessFlags(r.p.userUuid)
 	if !canAddRows {
 		r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to create rows.")
@@ -33,7 +33,7 @@ func postInsertGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
 	query := getInsertStatementForGridsApi(grid)
-	parms := getInsertValuesForGridsApi(r.userUuid, grid, row)
+	parms := getInsertValuesForGridsApi(r.p.userUuid, grid, row)
 	r.trace("postInsertGridRow(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert row error: %v.", err)
@@ -135,7 +135,7 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 	return output
 }
 
-func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+func postUpdateGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before update: %v.", row.Uuid, grid.Uuid, err)
@@ -145,7 +145,7 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getUpdateStatementForGridsApi(grid)
-	parms := getUpdateValuesForGridsApi(r.userUuid, grid, row)
+	parms := getUpdateValuesForGridsApi(r.p.userUuid, grid, row)
 	r.trace("postUpdateGridRow(%s, %s) - query=%s ; parms=%s", grid, row, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
@@ -158,7 +158,7 @@ func postUpdateGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 }
 
 // function is available for mocking
-var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Grid, uuid string) error {
+var removeAssociatedGridFromCache = func(r apiRequest, grid *model.Grid, uuid string) error {
 	r.trace("removeAssociatedGridFromCache(%s, %v)", grid, uuid)
 	if grid.Uuid == model.UuidGrids {
 		r.trace("removeAssociatedGridFromCache() - Grid")
@@ -186,12 +186,12 @@ var removeAssociatedGridFromCache = func(r apiRequestParameters, grid *model.Gri
 }
 
 // function is available for mocking
-var removeAssociatedGridNotOwnedColumnFromCache = func(r apiRequestParameters, grid *model.Grid, uuid string) error {
+var removeAssociatedGridNotOwnedColumnFromCache = func(r apiRequest, grid *model.Grid, uuid string) error {
 	return removeAssociatedGridFromCache(r, grid, uuid)
 }
 
 // function is available for mocking
-var getGridUuidAttachedToColumnForCache = func(r apiRequestParameters, uuid string) (string, error) {
+var getGridUuidAttachedToColumnForCache = func(r apiRequest, uuid string) (string, error) {
 	return getGridUuidAttachedToColumn(r, uuid)
 }
 
@@ -228,7 +228,7 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	return values
 }
 
-func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+func postDeleteGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before delete: %v.", row.Uuid, grid.Uuid, err)
@@ -245,7 +245,7 @@ func postDeleteGridRow(r apiRequestParameters, grid *model.Grid, row *model.Row)
 
 	query = getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, grid.Uuid, row.Uuid, r.userUuid); err != nil {
+	if err := r.execContext(query, grid.Uuid, row.Uuid, r.p.userUuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	if err := removeAssociatedGridFromCache(r, grid, row.Uuid); err != nil {

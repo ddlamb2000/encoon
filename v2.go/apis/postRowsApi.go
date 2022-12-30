@@ -9,16 +9,16 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid, uuid string, payload gridPost) apiResponse {
-	r, cancel, err := createContextAndApiRequestParameters(ct, dbName, userUuid, userName, uri)
+func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gridPost) apiResponse {
+	r, cancel, err := createContextAndapiRequest(ct, p, uri)
 	defer cancel()
 	if err != nil {
 		return apiResponse{Err: err}
 	}
 	go func() {
 		r.trace("postGridsRows()")
-		database.Sleep(r.ctx, dbName, userName, r.db)
-		grid, err := getGridForGridsApi(r, gridUuid)
+		database.Sleep(r.ctx, p.dbName, p.userName, r.db)
+		grid, err := getGridForGridsApi(r, p.gridUuid)
 		if err != nil {
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
@@ -26,7 +26,7 @@ func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		canViewRows, canEditRows, canEditOwnedRows, canAddRows := grid.GetViewEditAccessFlags(r.userUuid)
+		canViewRows, canEditRows, canEditOwnedRows, canAddRows := grid.GetViewEditAccessFlags(p.userUuid)
 		if !canViewRows {
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
@@ -68,8 +68,8 @@ func postGridsRows(ct context.Context, uri, dbName, userUuid, userName, gridUuid
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, uuid, true, true)
-		if uuid != "" && rowSetCount == 0 {
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, p.uuid, true, true)
+		if p.uuid != "" && rowSetCount == 0 {
 			r.ctxChan <- apiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}

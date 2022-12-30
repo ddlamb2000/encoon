@@ -5,7 +5,7 @@ package apis
 
 import "d.lambert.fr/encoon/model"
 
-func getAuditsForRow(r apiRequestParameters, grid *model.Grid, uuid string) ([]*model.Audit, error) {
+func getAuditsForRow(r apiRequest, grid *model.Grid, uuid string) ([]*model.Audit, error) {
 	r.trace("getAuditsForRow(%s, %s)", grid, uuid)
 	t := r.startTiming()
 	defer r.stopTiming("getAuditsForRow()", t)

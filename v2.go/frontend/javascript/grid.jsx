@@ -234,8 +234,10 @@ class Grid extends React.Component {
 			referencedValuesAdded: [],
 			referencedValuesRemoved: []
 		})
-		const { dbName, token, gridUuid, uuid } = this.props
-		const uri = `/${dbName}/api/v1/${gridUuid}${uuid != "" ? '/' + uuid : ''}`
+		const { dbName, token, gridUuid, uuid, filterColumnName, filterColumnValue } = this.props
+		const uuidFilter = uuid != "" ? '/' + uuid : ''
+		const columnFilter = filterColumnName && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnValue=' + filterColumnValue : ''
+		const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',

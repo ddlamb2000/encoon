@@ -8,9 +8,9 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-func postInsertTransaction(r apiRequestParameters) error {
+func postInsertTransaction(r apiRequest) error {
 	query := getInsertStatementForTransaction()
-	parms := getInsertValuesForTransaction(r.userUuid, r.transaction)
+	parms := getInsertValuesForTransaction(r.p.userUuid, r.transaction)
 	r.trace("postInsertTransaction() - query=%s, parms=%s", query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		_ = r.rollbackTransaction()
@@ -55,7 +55,7 @@ func getInsertValuesForTransaction(userUuid string, row *model.Row) []any {
 	return values
 }
 
-func postInsertTransactionReferenceRow(r apiRequestParameters, grid *model.Grid, row *model.Row, relationship string) error {
+func postInsertTransactionReferenceRow(r apiRequest, grid *model.Grid, row *model.Row, relationship string) error {
 	query := getInsertStatementForTransactionReferenceRow()
 	parms := getInsertStatementParametersForTransactionReferenceRow(r, grid, row, relationship)
 	r.trace("postInsertTransactionReferenceRow(%s) - query=%s ; parms=%s", row, query, parms)
@@ -96,10 +96,10 @@ var getInsertStatementForTransactionReferenceRow = func() string {
 		"$8)"
 }
 
-func getInsertStatementParametersForTransactionReferenceRow(r apiRequestParameters, grid *model.Grid, row *model.Row, relationship string) []any {
+func getInsertStatementParametersForTransactionReferenceRow(r apiRequest, grid *model.Grid, row *model.Row, relationship string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, utils.GetNewUUID())
-	parameters = append(parameters, r.userUuid)
+	parameters = append(parameters, r.p.userUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, relationship)
 	parameters = append(parameters, model.UuidTransactions)

@@ -172,7 +172,7 @@ func RunSystemTestGet(t *testing.T) {
 
 	t.Run("VerifyActualRowsWithDefect7", func(t *testing.T) {
 		getGridForGridsApiImpl := getGridForGridsApi
-		getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) { return nil, errors.New("xxx") } // mock function
+		getGridForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error) { return nil, errors.New("xxx") } // mock function
 		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusInternalServerError)

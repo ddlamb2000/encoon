@@ -8,7 +8,7 @@ import (
 )
 
 // function is available for mocking
-var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
+var getGridForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridForGridsApi()", t)
 	grid, ok := getGridFromCache(gridUuid)
@@ -27,11 +27,11 @@ var getGridForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.G
 	return grid, nil
 }
 
-var getGridInstanceForGridsApi = func(r apiRequestParameters, gridUuid string) (*model.Grid, error) {
+var getGridInstanceForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridInstanceForGridsApi()", t)
 	query := getGridQueryForGridsApi()
-	parms := getGridQueryParametersForGridsApi(gridUuid, r.userUuid)
+	parms := getGridQueryParametersForGridsApi(gridUuid, r.p.userUuid)
 	r.trace("getGridInstanceForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
 	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
@@ -50,7 +50,7 @@ var getGridInstanceForGridsApi = func(r apiRequestParameters, gridUuid string) (
 	if len(grids) == 0 {
 		return nil, nil
 	}
-	grids[0].SetPathAndDisplayString(r.dbName)
+	grids[0].SetPathAndDisplayString(r.p.dbName)
 	return &grids[0], nil
 }
 
@@ -145,7 +145,7 @@ var getGridQueryOutputForGridsApi = func(grid *model.Grid) []any {
 	return output
 }
 
-func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
+func getColumnsForGridsApi(r apiRequest, grid *model.Grid) error {
 	t := r.startTiming()
 	defer r.stopTiming("getColumnsForGridsApi()", t)
 	grid.Columns = make([]*model.Column, 0)
@@ -167,7 +167,7 @@ func getColumnsForGridsApi(r apiRequestParameters, grid *model.Grid) error {
 	return getColumnsRowsForGridsApi(r, grid, true, queryUsages, parmsNotOwned)
 }
 
-func getColumnsRowsForGridsApi(r apiRequestParameters, grid *model.Grid, setUsages bool, query string, parms []any) error {
+func getColumnsRowsForGridsApi(r apiRequest, grid *model.Grid, setUsages bool, query string, parms []any) error {
 	rows, err := r.queryContext(query, parms...)
 	if err != nil {
 		return r.logAndReturnError("Error when querying columns: %v.", err)

@@ -160,7 +160,7 @@ func RunSystemTestPostRelationships(t *testing.T) {
 
 	t.Run("AddColumnsTo3rdSingleGridDefect2", func(t *testing.T) {
 		removeAssociatedGridNotOwnedColumnFromCacheImpl := removeAssociatedGridNotOwnedColumnFromCache
-		removeAssociatedGridNotOwnedColumnFromCache = func(apiRequestParameters, *model.Grid, string) error { return errors.New("xxx") }
+		removeAssociatedGridNotOwnedColumnFromCache = func(apiRequest, *model.Grid, string) error { return errors.New("xxx") }
 		var gridUuid, column16Uuid, column17Uuid, column18Uuid, column19Uuid, column20Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid)
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 16").Scan(&column16Uuid)

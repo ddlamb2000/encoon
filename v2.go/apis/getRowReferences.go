@@ -7,10 +7,11 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model.Row) error {
+func getRelationshipsForRow(r apiRequest, grid *model.Grid, row *model.Row) ([]*model.Reference, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getRelationshipsForRow()", t)
 	r.trace("getRelationshipsForRow(%s, %s)", grid, row)
+	references := make([]*model.Reference, 0)
 	for _, col := range grid.Columns {
 		var referencedRows []model.Row
 		var err error
@@ -18,7 +19,7 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 			r.trace("getRelationshipsForRow() - col=%s", col)
 			referencedRows, err = getReferencedRowsForRow(r, row, col.Name, col.GridUuid, col.IsOwned())
 			if err != nil {
-				return r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
+				return nil, r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
 			}
 		}
 		if len(referencedRows) > 0 {
@@ -28,13 +29,13 @@ func getRelationshipsForRow(r apiRequestParameters, grid *model.Grid, row *model
 			reference.Label = col.Label
 			reference.GridUuid = col.GridUuid
 			reference.Rows = referencedRows
-			row.References = append(row.References, reference)
+			references = append(references, reference)
 		}
 	}
-	return nil
+	return references, nil
 }
 
-func getReferencedRowsForRow(r apiRequestParameters, parentRow *model.Row, referenceName, referenceColumnUuid string, owned bool) ([]model.Row, error) {
+func getReferencedRowsForRow(r apiRequest, parentRow *model.Row, referenceName, referenceColumnUuid string, owned bool) ([]model.Row, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getReferencedRowsForRow()", t)
 	query := getQueryReferencedRowsForRow(owned)

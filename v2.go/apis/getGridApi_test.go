@@ -14,12 +14,14 @@ import (
 
 func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	dbName := "test"
-	gridUuid := model.UuidUsers
-	userName := "root"
-	r, cancel, _ := createContextAndApiRequestParameters(context.Background(), dbName, model.UuidRootUser, userName, "test")
+	p := htmlParameters{
+		dbName:   "test",
+		gridUuid: model.UuidUsers,
+		userName: "root",
+	}
+	r, cancel, _ := createContextAndapiRequest(context.Background(), p, "test")
 	defer cancel()
-	grid, err := getGridForGridsApi(r, gridUuid)
+	grid, err := getGridForGridsApi(r, p.gridUuid)
 	if err != nil {
 		t.Errorf(`Error: %v.`, err)
 		return
