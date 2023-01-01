@@ -79,10 +79,7 @@ func main() {
 			if err := srv.Shutdown(ctx); err != nil {
 				configuration.LogError("", "", "Error during server shutdown: %v.", err)
 			}
-			select {
-			case <-ctx.Done():
-				configuration.Log("", "", "Timeout of 5 seconds.")
-			}
+			<-ctx.Done()
 		}
 	}
 	configuration.Log("", "", "Stopped.")
