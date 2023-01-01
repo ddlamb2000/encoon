@@ -8,3 +8,4 @@ tmp/
 logs/*.log
 logs/*.out
 encoon
+node_modules

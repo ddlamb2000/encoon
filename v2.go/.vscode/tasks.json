@@ -44,6 +44,16 @@
             "problemMatcher": []
         },
         {
+            "label": "Build front-end",
+            "type": "shell",
+            "command": "npm run build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
             "label": "Build all",
             "type": "shell",
             "command": "./scripts/build_all.sh",
