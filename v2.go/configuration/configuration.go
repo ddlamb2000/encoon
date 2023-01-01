@@ -7,7 +7,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"os"
 	"sync"
 	"time"
 
@@ -68,7 +68,7 @@ func LoadConfiguration(fileName string) error {
 
 func loadConfigurationFromFile() error {
 	Log("", "", "Loading configuration from %v.", configurationFileName)
-	f, err := ioutil.ReadFile(configurationFileName)
+	f, err := os.ReadFile(configurationFileName)
 	if err != nil {
 		return LogAndReturnError("", "", "Error loading configuration from file %q: %v.", configurationFileName, err)
 	}

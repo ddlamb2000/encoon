@@ -5,7 +5,7 @@ package configuration
 
 import (
 	"context"
-	"io/ioutil"
+	"os"
 	"reflect"
 	"strings"
 	"testing"
@@ -207,7 +207,7 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		t.Errorf("Can't marshal yaml: %v.", err)
 		return
 	}
-	err = ioutil.WriteFile(fileName, out, 0666)
+	err = os.WriteFile(fileName, out, 0666)
 	if err != nil {
 		t.Errorf("Can't create file %q: %v.", fileName, err)
 		return
@@ -233,7 +233,7 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		t.Errorf("Can't marshal yaml: %v.", err)
 		return
 	}
-	err = ioutil.WriteFile(fileName, out, 0666)
+	err = os.WriteFile(fileName, out, 0666)
 	if err != nil {
 		t.Errorf("Can't create file %q: %v.", fileName, err)
 		return
