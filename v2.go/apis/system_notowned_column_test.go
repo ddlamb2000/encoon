@@ -109,4 +109,12 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		jsonStringContains(t, responseData, `"label":"Test Column 30","name":"relationship1","type":"Reference"`)
 		jsonStringContains(t, responseData, `"displayString":"test-09"`)
 	})
+
+	t.Run("VerifyActualGridsOwnedByUser01Count", func(t *testing.T) {
+		filter := "?filterColumnName=relationship3&filterColumnValue=" + user01Uuid
+		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+filter)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusOK)
+		jsonStringContains(t, responseData, `"countRows":5`)
+	})
 }

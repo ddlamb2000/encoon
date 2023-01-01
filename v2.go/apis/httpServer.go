@@ -154,7 +154,7 @@ type apiResponse struct {
 	CanAddRows             bool                `json:"canAddRows"`
 }
 
-func createContextAndapiRequest(ct context.Context, p htmlParameters, uri string) (request apiRequest, cancelFunc context.CancelFunc, error error) {
+func createContextAndApiRequest(ct context.Context, p htmlParameters, uri string) (request apiRequest, cancelFunc context.CancelFunc, error error) {
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.dbName)
 	db, err := database.GetDbByName(p.dbName)
 	r := apiRequest{

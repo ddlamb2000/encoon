@@ -10,8 +10,10 @@ import (
 )
 
 func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gridPost) apiResponse {
-	r, cancel, err := createContextAndapiRequest(ct, p, uri)
+	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
+	t := r.startTiming()
+	defer r.stopTiming("postGridsRows()", t)
 	if err != nil {
 		return apiResponse{Err: err}
 	}

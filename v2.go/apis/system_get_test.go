@@ -190,6 +190,16 @@ func RunSystemTestGet(t *testing.T) {
 		getGridQueryOutputForGridsApi = getGridQueryOutputForGridsApiImpl
 	})
 
+	t.Run("VerifyActualGridsOwnedByUser01Defect", func(t *testing.T) {
+		getGridColumsNotOwnedQueryForGridsApiImpl := getGridColumsNotOwnedQueryForGridsApi
+		getGridColumsNotOwnedQueryForGridsApi = func(bool) string { return "xxx" } // mock function
+		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Error when querying columns: pq: syntax error`)
+		getGridColumsNotOwnedQueryForGridsApi = getGridColumsNotOwnedQueryForGridsApiImpl
+	})
+
 	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
 		getRowsQueryParametersForGridsApiImpl := getRowsQueryParametersForGridsApi
 		getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any { return nil }

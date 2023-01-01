@@ -12,7 +12,7 @@ import (
 )
 
 func getGridsRows(ct context.Context, uri string, p htmlParameters) apiResponse {
-	r, cancel, err := createContextAndapiRequest(ct, p, uri)
+	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
 	t := r.startTiming()
 	defer r.stopTiming("getGridsRows()", t)

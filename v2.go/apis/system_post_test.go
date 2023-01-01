@@ -17,6 +17,18 @@ func RunSystemTestPost(t *testing.T) {
 	db, _ := database.GetDbByName("test")
 	db.QueryRow("SELECT uuid FROM users WHERE gridUuid = $1 and text1= $2", model.UuidUsers, "test01").Scan(&user01Uuid)
 
+	t.Run("VerifyPostDbNotConfigured", func(t *testing.T) {
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("baddb", "root", model.UuidRootUser, "/baddb/api/v1/xxx", postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusNotFound)
+		jsonStringContains(t, responseData, `Unable to connect to database: dial tcp`)
+	})
+
 	t.Run("CreateNewSingleGrid", func(t *testing.T) {
 		postStr := `{"rowsAdded":` +
 			`[` +
