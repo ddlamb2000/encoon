@@ -104,6 +104,7 @@ func setAndStartHttpServer() error {
 		router.LoadHTMLGlob("frontend/templates/index-production.html")
 		router.Static("/javascript", "./frontend/javascript")
 	}
+	router.Static("/bootstrap", "./frontend/bootstrap-5.2.3-dist")
 	router.Static("/stylesheets", "./frontend/stylesheets")
 	router.Static("/images", "./frontend/images")
 	router.Static("/icons", "./frontend/bootstrap-icons/icons")

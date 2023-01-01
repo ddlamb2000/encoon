@@ -323,7 +323,7 @@ class Header extends React.Component {
     }, /*#__PURE__*/React.createElement("a", {
       className: "navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6",
       href: "/" + this.props.dbName
-    }, this.props.appName, " / ", this.props.dbName), /*#__PURE__*/React.createElement("div", {
+    }, this.props.appName, " | ", this.props.dbName), /*#__PURE__*/React.createElement("div", {
       className: "navbar-text"
     }, /*#__PURE__*/React.createElement("small", {
       className: "nav-item text-nowrap px-4 text-muted"
