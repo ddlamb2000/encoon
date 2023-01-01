@@ -51,11 +51,11 @@ func main() {
 	handleFlags()
 	flags := os.O_APPEND | os.O_CREATE | os.O_WRONLY
 	f, err := os.OpenFile(logFileName, flags, 0666)
-	defer f.Close()
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
+	defer f.Close()
 	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
@@ -97,9 +97,14 @@ func handleFlags() {
 }
 
 func setAndStartHttpServer() error {
-	router.LoadHTMLGlob("frontend/templates/index.html")
+	if configuration.IsFrontEndDevelopment() {
+		router.LoadHTMLGlob("frontend/templates/index-development.html")
+		router.Static("/javascript", "./frontend/react")
+	} else {
+		router.LoadHTMLGlob("frontend/templates/index-production.html")
+		router.Static("/javascript", "./frontend/javascript")
+	}
 	router.Static("/stylesheets", "./frontend/stylesheets")
-	router.Static("/javascript", "./frontend/javascript")
 	router.Static("/images", "./frontend/images")
 	router.Static("/icons", "./frontend/bootstrap-icons/icons")
 	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
@@ -123,7 +128,11 @@ func setAndStartHttpServer() error {
 }
 
 func getIndexHtml(c *gin.Context) {
-	c.HTML(http.StatusOK, "index.html", gin.H{
+	var indexFile = "index-production.html"
+	if configuration.IsFrontEndDevelopment() {
+		indexFile = "index-development.html"
+	}
+	c.HTML(http.StatusOK, indexFile, gin.H{
 		"appName":  configuration.GetConfiguration().AppName,
 		"appTag":   configuration.GetConfiguration().AppTag,
 		"dbName":   c.Param("dbName"),
