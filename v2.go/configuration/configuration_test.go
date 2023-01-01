@@ -85,7 +85,14 @@ func TestGetRootAndPassword(t *testing.T) {
 	if root != "" || password != "" {
 		t.Errorf("Root or password isn't correct for database %q: %q and %q.", "xxx", root, password)
 	}
+}
 
+func TestIsFrontEndDevelopment(t *testing.T) {
+	got := IsFrontEndDevelopment()
+	expect := false
+	if got != expect {
+		t.Errorf("Got %v instead of %v.", got, expect)
+	}
 }
 
 func TestValidateConfiguration1(t *testing.T) {
