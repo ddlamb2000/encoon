@@ -50,7 +50,7 @@ var getGridInstanceForGridsApi = func(r apiRequest, gridUuid string) (*model.Gri
 	if len(grids) == 0 {
 		return nil, nil
 	}
-	grids[0].SetPathAndDisplayString(r.p.dbName)
+	grids[0].SetDisplayString(r.p.dbName)
 	return &grids[0], nil
 }
 

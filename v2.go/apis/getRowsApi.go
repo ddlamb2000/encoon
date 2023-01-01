@@ -6,7 +6,6 @@ package apis
 import (
 	"context"
 	"database/sql"
-	"fmt"
 
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
@@ -88,8 +87,7 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 		if err != nil {
 			return nil, 0, err
 		}
-		r.trace("getRowSetForGridsApi(%s, %s, %v) - gridForOwnership=%v", grid, uuid, getReferences, gridForOwnership)
-		row.SetPathAndDisplayString(r.p.dbName)
+		row.SetDisplayString(r.p.dbName)
 		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.DisplayString=%s", grid, uuid, getReferences, row.DisplayString)
 		row.SetViewEditAccessFlags(gridForOwnership, r.p.userUuid)
 		if row.CanViewRow {
@@ -100,9 +98,9 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 				}
 				if uuid != "" {
 					row.Audits, err = getAuditsForRow(r, grid, uuid)
-				}
-				if err != nil {
-					return nil, 0, err
+					if err != nil {
+						return nil, 0, err
+					}
 				}
 				if matchesFilterColumn(references, r.p.filterColumnName, r.p.filterColumnValue) {
 					row.References = references
@@ -124,7 +122,6 @@ func matchesFilterColumn(references []*model.Reference, filterColumnName, filter
 		if ref.Name == filterColumnName {
 			for _, refRow := range ref.Rows {
 				if refRow.Uuid == filterColumnValue {
-					fmt.Printf("filterColumnName=%s ; filterColumnValue=%s\n", filterColumnName, filterColumnValue)
 					return true
 				}
 			}

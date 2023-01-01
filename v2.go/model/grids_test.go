@@ -14,17 +14,13 @@ func TestGetNewGrid(t *testing.T) {
 	}
 }
 
-func TestGridSetPath(t *testing.T) {
+func TestGridDisplayString(t *testing.T) {
 	grid := GetNewGrid()
 	grid.Uuid = "xxx"
 	text1 := "aaa"
 	grid.Text1 = &text1
-	grid.SetPathAndDisplayString("test")
-	expect := "/test/xxx"
-	if grid.Path != expect {
-		t.Errorf(`Got %v instead of %v.`, grid.Path, expect)
-	}
-	expect = "aaa"
+	grid.SetDisplayString("test")
+	expect := "aaa"
 	if grid.DisplayString != expect {
 		t.Errorf(`Got %v instead of %v.`, grid.DisplayString, expect)
 	}

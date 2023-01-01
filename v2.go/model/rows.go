@@ -4,7 +4,6 @@
 package model
 
 import (
-	"fmt"
 	"time"
 
 	"d.lambert.fr/encoon/utils"
@@ -44,7 +43,6 @@ type Row struct {
 	Int8          *int64       `json:"int8,omitempty" yaml:"int8,omitempty"`
 	Int9          *int64       `json:"int9,omitempty" yaml:"int9,omitempty"`
 	Int10         *int64       `json:"int10,omitempty" yaml:"int10,omitempty"`
-	Path          string       `json:"path,omitempty" yaml:"path,omitempty"`
 	DisplayString string       `json:"displayString,omitempty" yaml:"displayString,omitempty"`
 	CanViewRow    bool         `json:"canViewRow"`
 	CanEditRow    bool         `json:"canEditRow"`
@@ -85,8 +83,7 @@ func (row Row) String() string {
 	return row.DisplayString + " [" + row.Uuid + "]"
 }
 
-func (row *Row) SetPathAndDisplayString(dbName string) {
-	row.Path = fmt.Sprintf("/%s/%s/%s", dbName, row.GridUuid, row.Uuid)
+func (row *Row) SetDisplayString(dbName string) {
 	if row.Text1 != nil && *row.Text1 != "" {
 		row.DisplayString = *row.Text1
 	} else {

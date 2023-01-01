@@ -14,7 +14,7 @@ func TestGetNewRow(t *testing.T) {
 	}
 }
 
-func TestSetPath(t *testing.T) {
+func TestDisplayString(t *testing.T) {
 	text1 := "xxx"
 	row := Row{
 		Uuid:     "12345",
@@ -22,18 +22,14 @@ func TestSetPath(t *testing.T) {
 		Text1:    &text1,
 		Enabled:  true,
 	}
-	row.SetPathAndDisplayString("test")
-	expect := "/test/56789/12345"
-	if row.Path != expect {
-		t.Errorf(`Got %v instead of %v.`, row.Path, expect)
-	}
-	expect2 := "xxx"
-	if row.DisplayString != expect2 {
-		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect2)
+	row.SetDisplayString("test")
+	expect := "xxx"
+	if row.DisplayString != expect {
+		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)
 	}
 }
 
-func TestSetPath2(t *testing.T) {
+func TestDisplayString2(t *testing.T) {
 	text1 := "xxx"
 	row := Row{
 		Uuid:     "12345",
@@ -41,20 +37,20 @@ func TestSetPath2(t *testing.T) {
 		Text1:    &text1,
 		Enabled:  false,
 	}
-	row.SetPathAndDisplayString("test")
+	row.SetDisplayString("test")
 	expect := "xxx [DELETED]"
 	if row.DisplayString != expect {
 		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)
 	}
 }
 
-func TestSetPath3(t *testing.T) {
+func TestDisplayString3(t *testing.T) {
 	row := Row{
 		Uuid:     "12345",
 		GridUuid: "56789",
 		Enabled:  true,
 	}
-	row.SetPathAndDisplayString("test")
+	row.SetDisplayString("test")
 	expect := "12345"
 	if row.DisplayString != expect {
 		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)

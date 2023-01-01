@@ -29,8 +29,7 @@ func GetNewGrid() *Grid {
 	return grid
 }
 
-func (grid *Grid) SetPathAndDisplayString(dbName string) {
-	grid.Path = fmt.Sprintf("/%s/%s", dbName, grid.Uuid)
+func (grid *Grid) SetDisplayString(dbName string) {
 	if grid.Text1 != nil {
 		grid.DisplayString = fmt.Sprintf("%s", *grid.Text1)
 	}
