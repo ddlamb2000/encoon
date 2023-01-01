@@ -69,3 +69,9 @@ Test automation
     Godog: https://github.com/cucumber/godog
 
     Testing APIs with gin: https://circleci.com/blog/gin-gonic-testing/
+
+npm
+    https://docs.npmjs.com/about-npm
+
+nvm
+    https://github.com/nvm-sh/nvm

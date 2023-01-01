@@ -54,7 +54,7 @@ class App extends React.Component {
 						userLastName={this.userLastName} />
 				<div className="container-fluid">
 					<div className="row">
-						{/* <nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+						<nav id="sidebarMenu" className="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
 							<Navigation appName={this.props.appName} 
 										appTag={this.props.appTag}
 										dbName={this.props.dbName} 
@@ -63,7 +63,7 @@ class App extends React.Component {
 										userLastName={this.userLastName}
 										token={this.token}
 										navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-						</nav> */}
+						</nav>
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 							{gridUuid == "" &&
 								<div>
