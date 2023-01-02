@@ -70,7 +70,6 @@ class GridView extends React.Component {
 				</table>
 				{this.props.grid.uuid == UuidGrids &&
 					<div>
-						<h5 className="card-subtitle">Data</h5>
 						<Grid token={this.props.token}
 									dbName={this.props.dbName} 
 									gridUuid={this.props.row.uuid} 
@@ -79,7 +78,6 @@ class GridView extends React.Component {
 				}
 				{columnsUsage && 
 					<div>
-						{columnsUsage.length > 0 && <h5 className="card-subtitle">Referenced by</h5>}
 						{columnsUsage.map(column =>
 							<Grid token={this.props.token}
 									dbName={this.props.dbName} 
