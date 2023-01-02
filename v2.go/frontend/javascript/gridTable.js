@@ -146,7 +146,7 @@ class GridCellInput extends React.Component {
     const className = this.props.type == "checkbox" ? "form-check-input" : "form-control";
     return /*#__PURE__*/React.createElement("input", {
       type: this.props.type,
-      className: className + " form-control-sm " + this.props.variantReadOnly,
+      className: className + " form-control-sm rounded-2 shadow gap-2 p-1 " + this.props.variantReadOnly,
       name: this.props.uuid,
       uuid: this.props.uuid,
       column: this.props.columnName,
