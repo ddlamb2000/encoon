@@ -3,8 +3,6 @@
 
 package model
 
-import "fmt"
-
 type Grid struct {
 	Row
 	Columns []*Column `json:"columns,omitempty"`
@@ -31,7 +29,7 @@ func GetNewGrid() *Grid {
 
 func (grid *Grid) SetDisplayString(dbName string) {
 	if grid.Text1 != nil {
-		grid.DisplayString = fmt.Sprintf("%s", *grid.Text1)
+		grid.DisplayString = *grid.Text1
 	}
 }
 
