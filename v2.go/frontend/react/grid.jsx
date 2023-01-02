@@ -68,7 +68,6 @@ class Grid extends React.Component {
 				uuid,
 				filterColumnName,
 				filterColumnLabel,
-				filterColumnValue,
 				filterColumnDisplayString } = this.props
 		const countRows = rows ? rows.length : 0
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
@@ -313,14 +312,16 @@ class Grid extends React.Component {
 	}
 
 	saveData() {
+		const { dbName, token, gridUuid, filterColumnName, filterColumnValue } = this.props
 		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${this.props.gridUuid}`
+		const columnFilter = filterColumnName && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnValue=' + filterColumnValue : ''
+		const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`
 		fetch(uri, {
 			method: 'POST',
 			headers: {
 				'Accept': 'application/json',
 				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + this.props.token
+				'Authorization': 'Bearer ' + token
 			},
 			body: JSON.stringify({
 				rowsAdded: this.getInputValues(this.state.rowsAdded),
