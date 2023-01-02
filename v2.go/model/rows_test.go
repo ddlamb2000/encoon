@@ -57,6 +57,21 @@ func TestDisplayString3(t *testing.T) {
 	}
 }
 
+func TestDisplayString5(t *testing.T) {
+	var i1 int64 = 10
+	row := Row{
+		Uuid:     "12345",
+		GridUuid: "56789",
+		Int1:     &i1,
+		Enabled:  true,
+	}
+	row.SetDisplayString("test")
+	expect := "10"
+	if row.DisplayString != expect {
+		t.Errorf(`Got %v instead of %v.`, row.DisplayString, expect)
+	}
+}
+
 func TestRowAsString(t *testing.T) {
 	row := Row{
 		Uuid:          "12345",

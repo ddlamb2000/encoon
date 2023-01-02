@@ -238,7 +238,7 @@ var getGridColumsOwnedQueryForGridsApi = func() string {
 		"AND grid.Uuid = rel3.text5 " +
 		"AND grid.enabled = true " +
 
-		"ORDER BY col.text1 "
+		"ORDER BY col.int1, col.text1 "
 }
 
 func getGridColumsOwnedQueryParametersForGridsApi(grid *model.Grid) []any {
@@ -305,7 +305,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func(bidirectional bool) string {
 		"AND rel3.text5 = $4 " +
 		"AND rel3.enabled = true " +
 
-		"ORDER BY col.text1 "
+		"ORDER BY col.int1, col.text1 "
 }
 
 func getGridColumsNotOwnedQueryParametersForGridsApi(grid *model.Grid) []any {

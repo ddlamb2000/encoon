@@ -4,6 +4,7 @@
 package model
 
 import (
+	"fmt"
 	"time"
 
 	"d.lambert.fr/encoon/utils"
@@ -86,6 +87,8 @@ func (row Row) String() string {
 func (row *Row) SetDisplayString(dbName string) {
 	if row.Text1 != nil && *row.Text1 != "" {
 		row.DisplayString = *row.Text1
+	} else if row.Int1 != nil {
+		row.DisplayString = fmt.Sprint(*row.Int1)
 	} else {
 		row.DisplayString = row.Uuid
 	}
