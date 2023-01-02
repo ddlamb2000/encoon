@@ -182,15 +182,27 @@ func defaultReferenceValues(r apiRequest, payload gridPost) []gridReferencePost 
 	}
 	defaults := make([]gridReferencePost, 0)
 	for _, rowAdded := range payload.RowsAdded {
-		referencePost := gridReferencePost{
-			FromUuid:   rowAdded.TmpUuid,
-			ColumnName: r.p.filterColumnName,
-			ToGridUuid: r.p.filterColumnGridUuid,
-			ToUuid:     r.p.filterColumnValue,
-			Owned:      true,
+		var foundReference = false
+		for _, refAdded := range payload.ReferenceValuesAdded {
+			if refAdded.FromUuid == rowAdded.TmpUuid &&
+				refAdded.ColumnName == r.p.filterColumnName &&
+				refAdded.ToGridUuid == r.p.filterColumnGridUuid &&
+				refAdded.ToUuid == r.p.filterColumnValue &&
+				refAdded.Owned {
+				foundReference = true
+			}
 		}
-		r.trace("defaultReferenceValues() - referencePost=%v", referencePost)
-		defaults = append(defaults, referencePost)
+		if !foundReference {
+			referencePost := gridReferencePost{
+				FromUuid:   rowAdded.TmpUuid,
+				ColumnName: r.p.filterColumnName,
+				ToGridUuid: r.p.filterColumnGridUuid,
+				ToUuid:     r.p.filterColumnValue,
+				Owned:      true,
+			}
+			r.trace("defaultReferenceValues() - referencePost=%v", referencePost)
+			defaults = append(defaults, referencePost)
+		}
 	}
 	return defaults
 }

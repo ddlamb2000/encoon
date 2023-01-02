@@ -23,7 +23,7 @@ class GridView extends React.Component {
 								<td>
 									{column.label}
 									{!column.owned && <small>&nbsp;[{column.grid.displayString}]</small>}
-									<small>&nbsp;<em>{column.name}</em></small>
+									{trace && <small>&nbsp;<em>{column.name}</em></small>}
 								</td>
 								<GridCell uuid={this.props.row.uuid}
 											columnUuid={column.uuid}
@@ -70,7 +70,7 @@ class GridView extends React.Component {
 				</table>
 				{this.props.grid.uuid == UuidGrids &&
 					<div>
-						<h5 className="card-subtitle text-muted">Data</h5>
+						<h5 className="card-subtitle">Data</h5>
 						<Grid token={this.props.token}
 									dbName={this.props.dbName} 
 									gridUuid={this.props.row.uuid} 
@@ -79,7 +79,7 @@ class GridView extends React.Component {
 				}
 				{columnsUsage && 
 					<div>
-						{columnsUsage.length > 0 && <h5 className="card-subtitle text-muted">Usages</h5>}
+						{columnsUsage.length > 0 && <h5 className="card-subtitle">Referenced by</h5>}
 						{columnsUsage.map(column =>
 							<Grid token={this.props.token}
 									dbName={this.props.dbName} 

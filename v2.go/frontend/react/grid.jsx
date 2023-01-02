@@ -83,9 +83,7 @@ class Grid extends React.Component {
 						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
 					}
 					{isLoaded && filterColumnLabel && filterColumnName &&
-						<div className="card-subtitle mb-2">
-							<mark>{filterColumnLabel} <em>{filterColumnName}</em> = {filterColumnDisplayString}</mark>
-						</div>
+						<div className="card-subtitle mb-2"><mark>{filterColumnLabel} = {filterColumnDisplayString}</mark></div>
 					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
@@ -105,7 +103,8 @@ class Grid extends React.Component {
 									dbName={dbName}
 									token={token}
 									grid={grid}
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+									filterColumnName={filterColumnName} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}

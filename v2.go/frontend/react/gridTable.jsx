@@ -8,13 +8,11 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						{this.props.columns && this.props.columns.map(
-							column =>
-								<th scope="col" key={column.uuid}>
-									{column.label}
-									{!column.owned && <small><br />[{column.grid.displayString}]</small>}
-									<small><br /><em>{column.name}</em></small>
-								</th>
+						{this.props.columns && this.props.columns.map( 
+							column => <GridRowHeader key={column.uuid}
+														column={column}
+														filterColumnName={this.props.filterColumnName}
+														grid={this.props.grid} />
 						)}
 						<th className="text-end" scope="col">Revision</th>
 					</tr>
@@ -42,6 +40,20 @@ class GridTable extends React.Component {
 					)}
 				</tbody>
 			</table>
+		)
+	}
+}
+
+class GridRowHeader extends React.Component {
+	render() {
+		const { column, grid, filterColumnName } = this.props
+		return (
+			<th scope="col">
+				{column.name == filterColumnName && column.gridUuid == grid.uuid && <mark>{column.label}</mark>}
+				{(column.name != filterColumnName || column.gridUuid != grid.uuid) && column.label}
+				{!column.owned && <small><br />[{column.grid.displayString}]</small>}
+				{trace && <small><br /><em>{column.name}</em></small>}
+			</th>
 		)
 	}
 }

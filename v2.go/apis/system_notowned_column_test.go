@@ -188,4 +188,25 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"test15","text2":"","text3":"16","int1":15`)
 		jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 31","name":"text3","type":"Text"`)
 	})
+
+	t.Run("User01CreateAnotherColumnsWithDefaultFor6thGrid", func(t *testing.T) {
+		var gridUuid6 string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
+
+		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"Test Column 32","text2":"text4"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidTextColumnType + `"},` +
+			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Test Column 32","text2":"text4"`)
+	})
 }
