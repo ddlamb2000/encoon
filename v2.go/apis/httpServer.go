@@ -42,18 +42,20 @@ func getParameters(c *gin.Context) (htmlParameters, error) {
 		return p, configuration.LogAndReturnError(dbName, userName, "User not authorized.")
 	}
 	p.filterColumnName = c.Query("filterColumnName")
+	p.filterColumnGridUuid = c.Query("filterColumnGridUuid")
 	p.filterColumnValue = c.Query("filterColumnValue")
 	return p, nil
 }
 
 type htmlParameters struct {
-	dbName            string
-	userUuid          string
-	userName          string
-	gridUuid          string
-	uuid              string
-	filterColumnName  string
-	filterColumnValue string
+	dbName               string
+	userUuid             string
+	userName             string
+	gridUuid             string
+	uuid                 string
+	filterColumnName     string
+	filterColumnGridUuid string
+	filterColumnValue    string
 }
 
 type apiRequest struct {

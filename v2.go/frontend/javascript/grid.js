@@ -82,8 +82,8 @@ class Grid extends React.Component {
     }))), isLoaded && rows && grid && grid.text2 && uuid == "" && /*#__PURE__*/React.createElement("div", {
       className: "card-subtitle mb-2 text-muted"
     }, grid.text2), isLoaded && filterColumnLabel && filterColumnName && /*#__PURE__*/React.createElement("div", {
-      className: "card-subtitle mb-2 text-muted"
-    }, filterColumnLabel, " ", /*#__PURE__*/React.createElement("em", null, filterColumnName), " = ", filterColumnDisplayString), error && !isLoading && /*#__PURE__*/React.createElement("div", {
+      className: "card-subtitle mb-2"
+    }, /*#__PURE__*/React.createElement("mark", null, filterColumnLabel, " ", /*#__PURE__*/React.createElement("em", null, filterColumnName), " = ", filterColumnDisplayString)), error && !isLoading && /*#__PURE__*/React.createElement("div", {
       className: "alert alert-danger",
       role: "alert"
     }, error), isLoaded && rows && countRows > 0 && uuid == "" && /*#__PURE__*/React.createElement(GridTable, {
@@ -227,10 +227,11 @@ class Grid extends React.Component {
       gridUuid,
       uuid,
       filterColumnName,
+      filterColumnGridUuid,
       filterColumnValue
     } = this.props;
     const uuidFilter = uuid != "" ? '/' + uuid : '';
-    const columnFilter = filterColumnName && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnValue=' + filterColumnValue : '';
+    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
     const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`;
     fetch(uri, {
       headers: {
@@ -311,12 +312,13 @@ class Grid extends React.Component {
       token,
       gridUuid,
       filterColumnName,
+      filterColumnGridUuid,
       filterColumnValue
     } = this.props;
     this.setState({
       isLoading: true
     });
-    const columnFilter = filterColumnName && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnValue=' + filterColumnValue : '';
+    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
     const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`;
     fetch(uri, {
       method: 'POST',

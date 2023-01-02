@@ -53,6 +53,10 @@ func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gri
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
+		if err := persistGridReferenceData(r, grid, payload.RowsAdded, defaultReferenceValues(r, payload), postInsertReferenceRow); err != nil {
+			r.ctxChan <- apiResponse{Err: err, System: true}
+			return
+		}
 		if err := persistGridReferenceData(r, grid, payload.RowsAdded, payload.ReferenceValuesAdded, postInsertReferenceRow); err != nil {
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return

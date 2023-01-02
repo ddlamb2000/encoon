@@ -111,10 +111,81 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 	})
 
 	t.Run("VerifyActualGridsOwnedByUser01Count", func(t *testing.T) {
-		filter := "?filterColumnName=relationship3&filterColumnValue=" + user01Uuid
+		filter := "?filterColumnName=relationship3&filterColumnGridUuid=" + model.UuidUsers + "&filterColumnValue=" + user01Uuid
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+filter)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
 		jsonStringContains(t, responseData, `"countRows":5`)
+	})
+
+	t.Run("User01CreateAdditionalColumnsWithDefaultFor6thGridDefect", func(t *testing.T) {
+		getInsertStatementForReferenceRowImpl := getInsertStatementForReferenceRow
+		getInsertStatementForReferenceRow = func() string { return "xxx" } // mock function
+		var gridUuid6 string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
+
+		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"Test Column 31","text2":"text3"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusInternalServerError)
+		jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
+		getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
+	})
+
+	t.Run("User01CreateAdditionalColumnsWithDefaultFor6thGrid", func(t *testing.T) {
+		var gridUuid6 string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
+
+		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"Test Column 31","text2":"text3"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"text1":"Test Column 31","text2":"text3"`)
+	})
+
+	t.Run("CreateAdditionalRowsIn6thGrid", func(t *testing.T) {
+		var gridUuid3, gridUuid6, row09Uuid string
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid03").Scan(&gridUuid3)
+		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
+		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", gridUuid3, "test-09").Scan(&row09Uuid)
+		postStr := `{"rowsAdded":` +
+			`[` +
+			`{"uuid":"a","text1":"test11","int1":11,"text2":"","text3":"12"},` +
+			`{"uuid":"b","text1":"test13","int1":13,"text2":"","text3":"14"},` +
+			`{"uuid":"c","text1":"test15","int1":15,"text2":"","text3":"16"}` +
+			`],` +
+			`"referencedValuesAdded":` +
+			`[` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"b","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"},` +
+			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
+			`]` +
+			`}`
+		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid6, postStr)
+		errorIsNil(t, err)
+		httpCodeEqual(t, code, http.StatusCreated)
+		jsonStringContains(t, responseData, `"countRows":13`)
+		jsonStringContains(t, responseData, `"text1":"test11","text2":"","text3":"12","int1":11`)
+		jsonStringContains(t, responseData, `"text1":"test13","text2":"","text3":"14","int1":13`)
+		jsonStringContains(t, responseData, `"text1":"test15","text2":"","text3":"16","int1":15`)
+		jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 31","name":"text3","type":"Text"`)
 	})
 }

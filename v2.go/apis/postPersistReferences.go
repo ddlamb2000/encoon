@@ -175,3 +175,22 @@ func getUuidFromRowsForTmpUuid(r apiRequest, addedRows []*model.Row, tmpUuid str
 	}
 	return tmpUuid
 }
+
+func defaultReferenceValues(r apiRequest, payload gridPost) []gridReferencePost {
+	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
+		return nil
+	}
+	defaults := make([]gridReferencePost, 0)
+	for _, rowAdded := range payload.RowsAdded {
+		referencePost := gridReferencePost{
+			FromUuid:   rowAdded.TmpUuid,
+			ColumnName: r.p.filterColumnName,
+			ToGridUuid: r.p.filterColumnGridUuid,
+			ToUuid:     r.p.filterColumnValue,
+			Owned:      true,
+		}
+		r.trace("defaultReferenceValues() - referencePost=%v", referencePost)
+		defaults = append(defaults, referencePost)
+	}
+	return defaults
+}

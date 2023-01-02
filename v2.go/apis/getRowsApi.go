@@ -102,7 +102,7 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 						return nil, 0, err
 					}
 				}
-				if matchesFilterColumn(references, r.p.filterColumnName, r.p.filterColumnValue) {
+				if matchesFilterColumn(r, references) {
 					row.References = references
 					rows = append(rows, *row)
 				}
@@ -114,14 +114,14 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 	return rows, len(rows), nil
 }
 
-func matchesFilterColumn(references []*model.Reference, filterColumnName, filterColumnValue string) bool {
-	if filterColumnName == "" || filterColumnValue == "" {
+func matchesFilterColumn(r apiRequest, references []*model.Reference) bool {
+	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
 		return true
 	}
 	for _, ref := range references {
-		if ref.Name == filterColumnName {
+		if ref.Name == r.p.filterColumnName {
 			for _, refRow := range ref.Rows {
-				if refRow.Uuid == filterColumnValue {
+				if refRow.GridUuid == r.p.filterColumnGridUuid && refRow.Uuid == r.p.filterColumnValue {
 					return true
 				}
 			}
