@@ -72,6 +72,16 @@ class GridView extends React.Component {
 					<div>
 						<Grid token={this.props.token}
 									dbName={this.props.dbName} 
+									gridUuid={UuidColumns}
+									filterColumnOwned='false'
+									filterColumnName='relationship1'
+									filterColumnLabel='Columns [Grids]'
+									filterColumnGridUuid={UuidGrids}
+									filterColumnValue={this.props.row.uuid}
+									filterColumnDisplayString={this.props.row.displayString}
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+						<Grid token={this.props.token}
+									dbName={this.props.dbName} 
 									gridUuid={this.props.row.uuid} 
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 					</div>
@@ -83,9 +93,10 @@ class GridView extends React.Component {
 									dbName={this.props.dbName} 
 									key={column.uuid}
 									gridUuid={column.grid.uuid} 
+									filterColumnOwned='true'
 									filterColumnName={column.name}
 									filterColumnLabel={column.label}
-									filterColumnGridUuid={this.props.grid.uuid}
+									filterColumnGridUuid={column.gridUuid}
 									filterColumnValue={this.props.row.uuid}
 									filterColumnDisplayString={this.props.row.displayString}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />

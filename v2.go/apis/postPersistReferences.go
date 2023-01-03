@@ -188,7 +188,7 @@ func defaultReferenceValues(r apiRequest, payload gridPost) []gridReferencePost 
 				refAdded.ColumnName == r.p.filterColumnName &&
 				refAdded.ToGridUuid == r.p.filterColumnGridUuid &&
 				refAdded.ToUuid == r.p.filterColumnValue &&
-				refAdded.Owned {
+				refAdded.Owned == r.p.filterColumnOwned {
 				foundReference = true
 			}
 		}
@@ -198,7 +198,7 @@ func defaultReferenceValues(r apiRequest, payload gridPost) []gridReferencePost 
 				ColumnName: r.p.filterColumnName,
 				ToGridUuid: r.p.filterColumnGridUuid,
 				ToUuid:     r.p.filterColumnValue,
-				Owned:      true,
+				Owned:      r.p.filterColumnOwned,
 			}
 			r.trace("defaultReferenceValues() - referencePost=%v", referencePost)
 			defaults = append(defaults, referencePost)

@@ -119,9 +119,10 @@ func matchesFilterColumn(r apiRequest, references []*model.Reference) bool {
 		return true
 	}
 	for _, ref := range references {
-		if ref.Name == r.p.filterColumnName {
+		if ref.Owned == r.p.filterColumnOwned && ref.Name == r.p.filterColumnName {
 			for _, refRow := range ref.Rows {
-				if refRow.GridUuid == r.p.filterColumnGridUuid && refRow.Uuid == r.p.filterColumnValue {
+				r.trace("matchesFilterColumn() - refRow.GridUuid=%s ; r.p.filterColumnGridUuid=%s", refRow.GridUuid, r.p.filterColumnGridUuid)
+				if (ref.Owned || refRow.GridUuid == r.p.filterColumnGridUuid) && refRow.Uuid == r.p.filterColumnValue {
 					return true
 				}
 			}

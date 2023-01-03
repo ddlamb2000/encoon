@@ -111,7 +111,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 	})
 
 	t.Run("VerifyActualGridsOwnedByUser01Count", func(t *testing.T) {
-		filter := "?filterColumnName=relationship3&filterColumnGridUuid=" + model.UuidUsers + "&filterColumnValue=" + user01Uuid
+		filter := "?filterColumnOwned=true&filterColumnName=relationship3&filterColumnGridUuid=" + model.UuidUsers + "&filterColumnValue=" + user01Uuid
 		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+filter)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
@@ -124,7 +124,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
 
-		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 31","text2":"text3"}` +
@@ -145,7 +145,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
 
-		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 31","text2":"text3"}` +
@@ -193,7 +193,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
 
-		filter := "?filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
+		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32","text2":"text4"}` +

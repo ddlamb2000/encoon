@@ -41,6 +41,7 @@ func getParameters(c *gin.Context) (htmlParameters, error) {
 	if dbName == "" || gridUuid == "" || len(userUuid) != len(model.UuidUsers) || userName == "" || !exists || auth == false {
 		return p, configuration.LogAndReturnError(dbName, userName, "User not authorized.")
 	}
+	p.filterColumnOwned = c.Query("filterColumnOwned") == "true"
 	p.filterColumnName = c.Query("filterColumnName")
 	p.filterColumnGridUuid = c.Query("filterColumnGridUuid")
 	p.filterColumnValue = c.Query("filterColumnValue")
@@ -53,6 +54,7 @@ type htmlParameters struct {
 	userName             string
 	gridUuid             string
 	uuid                 string
+	filterColumnOwned    bool
 	filterColumnName     string
 	filterColumnGridUuid string
 	filterColumnValue    string

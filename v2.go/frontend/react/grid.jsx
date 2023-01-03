@@ -66,8 +66,10 @@ class Grid extends React.Component {
 				token, 
 				gridUuid, 
 				uuid,
+				filterColumnOwned,
 				filterColumnName,
 				filterColumnLabel,
+				filterColumnGridUuid,
 				filterColumnDisplayString } = this.props
 		const countRows = rows ? rows.length : 0
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
@@ -79,11 +81,11 @@ class Grid extends React.Component {
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
 						</h4>
 					}
-					{isLoaded && rows && grid && grid.text2 && uuid == "" && 
-						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
-					}
 					{isLoaded && filterColumnLabel && filterColumnName &&
 						<div className="card-subtitle mb-2"><mark>{filterColumnLabel} = {filterColumnDisplayString}</mark></div>
+					}
+					{isLoaded && rows && grid && grid.text2 && uuid == "" && 
+						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
 					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
@@ -104,7 +106,9 @@ class Grid extends React.Component {
 									token={token}
 									grid={grid}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-									filterColumnName={filterColumnName} />
+									filterColumnOwned={filterColumnOwned}
+									filterColumnName={filterColumnName}
+									filterColumnGridUuid={filterColumnGridUuid} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
@@ -232,10 +236,11 @@ class Grid extends React.Component {
 			referencedValuesAdded: [],
 			referencedValuesRemoved: []
 		})
-		const { dbName, token, gridUuid, uuid, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
+		const { dbName, token, gridUuid, uuid, filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
 		const uuidFilter = uuid != "" ? '/' + uuid : ''
-		const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? 
-								'?filterColumnName=' + filterColumnName + 
+		const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ?
+								'?filterColumnOwned=' + filterColumnOwned +
+								'&filterColumnName=' + filterColumnName + 
 								'&filterColumnGridUuid=' + filterColumnGridUuid + 
 								'&filterColumnValue=' + filterColumnValue : ''
 		const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`
@@ -314,10 +319,11 @@ class Grid extends React.Component {
 	}
 
 	saveData() {
-		const { dbName, token, gridUuid, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
+		const { dbName, token, gridUuid, filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
 		this.setState({isLoading: true})
 		const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? 
-								'?filterColumnName=' + filterColumnName + 
+								'?filterColumnOwned=' + filterColumnOwned +
+								'&filterColumnName=' + filterColumnName + 
 								'&filterColumnGridUuid=' + filterColumnGridUuid +
 								'&filterColumnValue=' + filterColumnValue : ''
 		const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`
