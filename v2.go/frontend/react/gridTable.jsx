@@ -76,7 +76,7 @@ class GridRow extends React.Component {
 				<td scope="row" className="vw-10">
 					{!(rowAdded || rowSelected) && 
 						<a href="#" onClick={() => this.props.navigateToGrid(row.gridUuid, row.uuid)}>
-						<i className="bi bi-card-text"></i>
+						<i className="bi bi-box-arrow-up-right"></i>
 					</a>
 					}
 					{row.canEditRow && (rowAdded || rowSelected) && 

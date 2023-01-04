@@ -106,16 +106,16 @@ class App extends React.Component {
 
 	navigateToGrid(gridUuid, uuid) {
 		if(trace) console.log("[App.navigateToGrid()] gridUuid=", gridUuid, ", uuid=", uuid)
-		const url = `/${this.props.dbName}/${gridUuid}` + (uuid == "" ? "" : `/${uuid}`)
-		history.pushState({ gridUuid: gridUuid, uuid: uuid }, null, url)
+		const url = `/${this.props.dbName}/${this.state.gridUuid}` + (this.state.uuid == "" ? "" : `/${this.state.uuid}`)
+		history.replaceState({ gridUuid: this.state.gridUuid, uuid: this.state.uuid }, null, url)
 		this.setState({ gridUuid: gridUuid, uuid: uuid })
 	}
 
 	componentDidMount() {
 		window.addEventListener('popstate', (e) => {
 			e.preventDefault()
-			if(e && e.isTrusted && e.state != null && e.state.gridUuid) {
-				if(trace) console.log("popstate", e)
+			if(e && e.isTrusted && e.state != null) {
+				if(trace) console.log("[App.componentDidMount()] popstate, e=", e)
 				this.setState({ gridUuid: e.state.gridUuid, uuid: e.state.uuid })
 			}
 		})
