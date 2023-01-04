@@ -88,15 +88,18 @@ class GridView extends React.Component {
 													gridPromptUuid={column.gridPromptUuid}
 													readonly={column.readonly}
 													bidirectional={column.bidirectional}
+													canEditRow={this.props.row.canEditRow}
 													grid={this.props.grid}
 													displayString={this.props.row.displayString}
-													rowAdded={this.props.rowAdded}
-													rowSelected={this.props.rowSelected}
-													rowEdited={this.props.rowEdited}
+													rowSelected={this.props.rowsSelected.includes(this.props.row.uuid)}
+													rowEdited={this.props.rowsEdited.includes(this.props.row.uuid)}
+													rowAdded={this.props.rowsAdded.includes(this.props.row.uuid)}
 													referencedValuesAdded={this.props.referencedValuesAdded}
 													referencedValuesRemoved={this.props.referencedValuesRemoved}
 													onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 													onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
+													onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
+													onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)}
 													inputRef={this.props.inputRef}
 													navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 													dbName={this.props.dbName}

@@ -91,12 +91,13 @@ class Grid extends React.Component {
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
 						<GridTable rows={rows}
+									columns={grid.columns}
+									grid={grid}
 									rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
 									rowsAdded={rowsAdded}
 									referencedValuesAdded={referencedValuesAdded}
 									referencedValuesRemoved={referencedValuesRemoved}
-									columns={grid.columns}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
 									onDeleteRowClick={uuid => this.deleteRow(uuid)}
@@ -105,7 +106,6 @@ class Grid extends React.Component {
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									token={token}
-									grid={grid}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									filterColumnOwned={filterColumnOwned}
 									filterColumnName={filterColumnName}
@@ -116,38 +116,51 @@ class Grid extends React.Component {
 									columns={grid.columns}
 									columnsUsage={grid.columnsUsage}
 									grid={grid}
+									rowsSelected={rowsSelected}
+									rowsEdited={rowsEdited}
+									rowsAdded={rowsAdded}
 									referencedValuesAdded={referencedValuesAdded}
 									referencedValuesRemoved={referencedValuesRemoved}
 									onSelectRowClick={uuid => this.selectRow(uuid)}
 									onEditRowClick={uuid => this.editRow(uuid)}
+									onDeleteRowClick={uuid => this.deleteRow(uuid)}
+									onAddReferencedValueClick={reference => this.addReferencedValue(reference)}
+									onRemoveReferencedValueClick={reference => this.removeReferencedValue(reference)}
+									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									token={this.props.token} />
 					}
-					<GridFooter 
-							isLoading={isLoading}
-							grid={grid}
-							rows={rows}
-							uuid={uuid}
-							canAddRows={canAddRows}
-							rowsSelected={rowsSelected}
-							rowsAdded={rowsAdded}
-							rowsEdited={rowsEdited}
-							rowsDeleted={rowsDeleted}
-							onSelectRowClick={() => this.deselectRows()}
-							onAddRowClick={() => this.addRow()}
-							onSaveDataClick={() => this.saveData()}
-							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+					<GridFooter isLoading={isLoading}
+								grid={grid}
+								rows={rows}
+								uuid={uuid}
+								canAddRows={canAddRows}
+								rowsSelected={rowsSelected}
+								rowsAdded={rowsAdded}
+								rowsEdited={rowsEdited}
+								rowsDeleted={rowsDeleted}
+								onSelectRowClick={() => this.deselectRows()}
+								onAddRowClick={() => this.addRow()}
+								onSaveDataClick={() => this.saveData()}
+								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				</div>
 			</div>
 		)
 	}
 
-	selectRow(selectUuid) { this.setState(state => ({ rowsSelected: [selectUuid] })) }
+	selectRow(selectUuid) {
+		if(trace) console.log("[Grid.selectRow()] ", selectUuid)
+		this.setState(state => ({ rowsSelected: [selectUuid] })) 
+	}
 
-	deselectRows() { this.setState(state => ({ rowsSelected: [] })) }
+	deselectRows() {
+		if(trace) console.log("[Grid.deselectRows()] ")
+		this.setState(state => ({ rowsSelected: [] })) 
+	}
 
 	editRow(editUuid) {
+		if(trace) console.log("[Grid.editRow()] ", editUuid)
 		if(!this.state.rowsAdded.includes(editUuid)) {
 			this.setState(state => ({
 				rowsEdited: state.rowsEdited.filter(uuid => uuid != editUuid).concat(editUuid)
@@ -156,6 +169,7 @@ class Grid extends React.Component {
 	}
 
 	addRow() {
+		if(trace) console.log("[Grid.addRow()] ")
 		const newRow = { uuid: `${this.props.gridUuid}-${this.state.rows.length+1}` }
 		this.setState(state => ({
 			rows: state.rows.concat(newRow),
@@ -164,6 +178,7 @@ class Grid extends React.Component {
 	}
 
 	deleteRow(deleteUuid) {
+		if(trace) console.log("[Grid.deleteRow()] ", deleteUuid)
 		if(this.state.rowsAdded.includes(deleteUuid)) {
 			this.setState(state => ({
 				rowsAdded: state.rowsAdded.filter(uuid => uuid != deleteUuid),
@@ -320,14 +335,15 @@ class Grid extends React.Component {
 	}
 
 	saveData() {
-		const { dbName, token, gridUuid, filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
+		const { dbName, token, gridUuid, uuid, filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
 		this.setState({isLoading: true})
+		const uuidFilter = uuid != "" ? '/' + uuid : ''
 		const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? 
 								'?filterColumnOwned=' + filterColumnOwned +
 								'&filterColumnName=' + filterColumnName + 
 								'&filterColumnGridUuid=' + filterColumnGridUuid +
 								'&filterColumnValue=' + filterColumnValue : ''
-		const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`
+		const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`
 		fetch(uri, {
 			method: 'POST',
 			headers: {
@@ -419,13 +435,15 @@ class GridFooter extends React.Component {
 				{!isLoading && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
 				{!isLoading && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
 				{!isLoading && grid && uuid == "" && canAddRows &&
-					<button type="button" className="btn btn-outline-success btn-sm mx-1"
+					<button type="button"
+							className="btn btn-outline-success btn-sm mx-1"
 							onClick={this.props.onAddRowClick}>
 						Add <i className="bi bi-plus-circle"></i>
 					</button>
 				}
 				{!isLoading && countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
-					<button type="button" className="btn btn-outline-primary btn-sm mx-1"
+					<button type="button"
+							className="btn btn-outline-primary btn-sm mx-1"
 							onClick={this.props.onSaveDataClick}>
 						Save <i className="bi bi-save"></i>
 					</button>
