@@ -177,7 +177,8 @@ class GridCell extends React.Component {
 							filterColumnGridUuid={this.props.grid.uuid}
 							filterColumnValue={this.props.uuid}
 							filterColumnDisplayString={this.props.displayString}
-							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+							innerGrid={true} />
 				}
 			</td>
 		)

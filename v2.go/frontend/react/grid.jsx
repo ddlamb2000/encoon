@@ -70,21 +70,22 @@ class Grid extends React.Component {
 				filterColumnName,
 				filterColumnLabel,
 				filterColumnGridUuid,
-				filterColumnDisplayString } = this.props
+				filterColumnDisplayString,
+				innerGrid } = this.props
 		const countRows = rows ? rows.length : 0
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
-			<div className="card my-4">
-				<div className="card-body">
-					{isLoaded && rows && grid  && uuid == "" && 
-						<h4 className="card-title">
+			<div className={!innerGrid ? "card my-4" : ""}>
+				<div className={!innerGrid ? "card-body" : ""}>
+					{isLoaded && rows && grid  && uuid == "" && !innerGrid &&
+						<h5 className="card-title">
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
-						</h4>
+						</h5>
 					}
-					{isLoaded && filterColumnLabel && filterColumnName &&
+					{isLoaded && filterColumnLabel && filterColumnName && !innerGrid &&
 						<div className="card-subtitle mb-2"><mark>{filterColumnLabel} = {filterColumnDisplayString}</mark></div>
 					}
-					{isLoaded && rows && grid && grid.text2 && uuid == "" && 
+					{isLoaded && rows && grid && grid.text2 && uuid == "" && !innerGrid && 
 						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
 					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
