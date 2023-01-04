@@ -11,7 +11,7 @@ class GridView extends React.Component {
 				<h4 className="card-title">{this.props.row.displayString}</h4>
 				<div className="card-subtitle mb-2 text-muted">
 					{this.props.grid.displayString}
-					<a href="#" onClick={() => this.props.navigateToGrid(this.props.grid.uuid, "")}>
+					<a href="#" onClick={() => this.props.navigateToGrid(UuidGrids, this.props.grid.uuid)}>
 						<i className="bi bi-box-arrow-up-right mx-1"></i>
 					</a>
 				</div>

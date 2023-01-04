@@ -385,7 +385,7 @@ class Navigation extends React.Component {
 					</li>
 					{isLoaded && rows && rows.map(row => 
 						<li className="nav-item" key={row.uuid}>
-							<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid(row.uuid, "")}>
+							<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid(UuidGrids, row.uuid)}>
 								{row.text1} {row.text3 && <i className={`bi bi-${row.text3}`}></i>}
 							</a>
 						</li>
