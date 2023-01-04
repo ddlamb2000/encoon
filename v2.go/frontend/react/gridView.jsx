@@ -76,30 +76,24 @@ class GridView extends React.Component {
 					</tbody>
 				</table>
 				{this.props.grid.uuid == UuidGrids &&
-					<div>
-						<Grid token={this.props.token}
-									dbName={this.props.dbName} 
-									gridUuid={this.props.row.uuid} 
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
-					</div>
+					<Grid token={this.props.token}
+								dbName={this.props.dbName} 
+								gridUuid={this.props.row.uuid} 
+								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				}
-				{columnsUsage && 
-					<div>
-						{columnsUsage.map(column =>
-							<Grid token={this.props.token}
-									dbName={this.props.dbName} 
-									key={column.uuid}
-									gridUuid={column.grid.uuid} 
-									filterColumnOwned='true'
-									filterColumnName={column.name}
-									filterColumnLabel={column.label}
-									filterColumnGridUuid={column.gridUuid}
-									filterColumnValue={this.props.row.uuid}
-									filterColumnDisplayString={this.props.row.displayString}
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
-						)}
-					</div>
-				}
+				{columnsUsage && columnsUsage.map(column =>
+					<Grid token={this.props.token}
+							dbName={this.props.dbName} 
+							key={column.uuid}
+							gridUuid={column.grid.uuid} 
+							filterColumnOwned='true'
+							filterColumnName={column.name}
+							filterColumnLabel={column.label}
+							filterColumnGridUuid={column.gridUuid}
+							filterColumnValue={this.props.row.uuid}
+							filterColumnDisplayString={this.props.row.displayString}
+							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+				)}
 			</div>
 		)
 	}
