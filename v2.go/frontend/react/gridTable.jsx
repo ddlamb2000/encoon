@@ -178,7 +178,8 @@ class GridCell extends React.Component {
 							filterColumnValue={this.props.uuid}
 							filterColumnDisplayString={this.props.displayString}
 							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-							innerGrid={true} />
+							innerGrid={true}
+							loadParentData={() => this.props.loadParentData()} />
 				}
 			</td>
 		)
@@ -324,7 +325,7 @@ class GridCellDropDown extends React.Component {
 			})
 			.then(response => {
 				const contentType = response.headers.get("content-type")
-				if(contentType && contentType.indexOf("application/json") !== -1) {
+				if(contentType && contentType.indexOf("application/json") != -1) {
 					return response.json().then(	
 						(result) => {
 							if(result.response != undefined) {

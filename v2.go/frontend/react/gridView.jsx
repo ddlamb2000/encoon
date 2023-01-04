@@ -103,7 +103,8 @@ class GridView extends React.Component {
 													inputRef={this.props.inputRef}
 													navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 													dbName={this.props.dbName}
-													token={this.props.token} />
+													token={this.props.token}
+													loadParentData={() => this.props.loadParentData()} />
 									</tr>
 								)}
 								{audits &&

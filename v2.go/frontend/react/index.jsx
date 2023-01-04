@@ -172,7 +172,7 @@ class Login extends React.Component {
 		const updatedDbName = this.getUpdatedDbName()
 		this.setState({ isLoading: false })
 		const contentType = response.headers.get("content-type")
-		if(contentType && contentType.indexOf("application/json") !== -1) {
+		if(contentType && contentType.indexOf("application/json") != -1) {
 			return response.json().then(	
 				(result) => {
 					if(response.status == 200) {
@@ -407,7 +407,7 @@ class Navigation extends React.Component {
 		})
 		.then(response => {
 			const contentType = response.headers.get("content-type")
-			if(contentType && contentType.indexOf("application/json") !== -1) {
+			if(contentType && contentType.indexOf("application/json") != -1) {
 				return response.json().then(	
 					(result) => {
 						if(result.response != undefined) {

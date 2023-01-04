@@ -44,7 +44,7 @@ class Grid extends React.Component {
 
 	componentDidUpdate(prevProps) {
 		if(trace) console.log("[Grid.componentDidUpdate()] **** this.props.gridUuid=", this.props.gridUuid, ", this.props.uuid=", this.props.uuid)
-		if(this.props.gridUuid !== prevProps.gridUuid || this.props.uuid !== prevProps.uuid) {
+		if(this.props.gridUuid != prevProps.gridUuid || this.props.uuid != prevProps.uuid) {
 			this.loadData()
 		}
 	}
@@ -129,7 +129,8 @@ class Grid extends React.Component {
 									inputRef={this.setGridRowRef}
 									dbName={dbName}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-									token={this.props.token} />
+									token={this.props.token}
+									loadParentData={() => this.loadData()} />
 					}
 					<GridFooter isLoading={isLoading}
 								grid={grid}
@@ -269,7 +270,7 @@ class Grid extends React.Component {
 		})
 		.then(response => {
 			const contentType = response.headers.get("content-type")
-			if(contentType && contentType.indexOf("application/json") !== -1) {
+			if(contentType && contentType.indexOf("application/json") != -1) {
 				return response.json().then(	
 					(result) => {
 						if(result.response != undefined) {
@@ -361,7 +362,7 @@ class Grid extends React.Component {
 		})
 		.then(response => {
 			const contentType = response.headers.get("content-type")
-			if(contentType && contentType.indexOf("application/json") !== -1) {
+			if(contentType && contentType.indexOf("application/json") != -1) {
 				return response.json().then(	
 					(result) => {
 						if(result.response != undefined) {
@@ -378,6 +379,7 @@ class Grid extends React.Component {
 								referencedValuesAdded: [],
 								referencedValuesRemoved: []
 							})
+							if(this.props.loadParentData != undefined) this.props.loadParentData()
 						} else {
 							this.setState({
 								isLoading: false,
