@@ -12,7 +12,7 @@ class GridView extends React.Component {
       className: "card-subtitle mb-2 text-muted"
     }, this.props.grid.displayString, /*#__PURE__*/React.createElement("a", {
       href: "#",
-      onClick: () => this.props.navigateToGrid(this.props.grid.uuid, "")
+      onClick: () => this.props.navigateToGrid(UuidGrids, this.props.grid.uuid)
     }, /*#__PURE__*/React.createElement("i", {
       className: "bi bi-box-arrow-up-right mx-1"
     }))), /*#__PURE__*/React.createElement("table", {
@@ -21,16 +21,21 @@ class GridView extends React.Component {
       className: "table-light"
     }), /*#__PURE__*/React.createElement("tbody", null, columns && columns.map(column => /*#__PURE__*/React.createElement("tr", {
       key: column.uuid
-    }, /*#__PURE__*/React.createElement("td", null, column.label, !column.owned && /*#__PURE__*/React.createElement("small", null, "\xA0[", column.grid.displayString, "]"), /*#__PURE__*/React.createElement("small", null, "\xA0", /*#__PURE__*/React.createElement("em", null, column.name))), /*#__PURE__*/React.createElement(GridCell, {
+    }, /*#__PURE__*/React.createElement("td", null, column.label, !column.owned && /*#__PURE__*/React.createElement("small", null, "\xA0[", column.grid.displayString, "]"), trace && /*#__PURE__*/React.createElement("small", null, "\xA0", /*#__PURE__*/React.createElement("em", null, column.name))), /*#__PURE__*/React.createElement(GridCell, {
       uuid: this.props.row.uuid,
       columnUuid: column.uuid,
       owned: column.owned,
       columnName: column.name,
+      columnLabel: column.label,
       type: column.type,
       typeUuid: column.typeUuid,
       value: column.value,
       values: column.values,
+      gridPromptUuid: column.gridPromptUuid,
       readonly: column.readonly,
+      bidirectional: column.bidirectional,
+      grid: this.props.grid,
+      displayString: this.props.row.displayString,
       rowAdded: this.props.rowAdded,
       rowSelected: this.props.rowSelected,
       rowEdited: this.props.rowEdited,
@@ -39,7 +44,9 @@ class GridView extends React.Component {
       onSelectRowClick: uuid => this.props.onSelectRowClick(uuid),
       onEditRowClick: uuid => this.props.onEditRowClick(uuid),
       inputRef: this.props.inputRef,
-      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      dbName: this.props.dbName,
+      token: this.props.token
     }))), audits && /*#__PURE__*/React.createElement("tr", null, /*#__PURE__*/React.createElement("td", null, "Audit"), /*#__PURE__*/React.createElement("td", null, /*#__PURE__*/React.createElement("ul", {
       className: "list-unstyled mb-0"
     }, audits.map(audit => {
@@ -51,26 +58,23 @@ class GridView extends React.Component {
         href: "#",
         onClick: () => this.props.navigateToGrid(UuidUsers, audit.createdBy)
       }, audit.createdByName));
-    })))))), this.props.grid.uuid == UuidGrids && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h5", {
-      className: "card-subtitle text-muted"
-    }, "Data"), /*#__PURE__*/React.createElement(Grid, {
+    })))))), this.props.grid.uuid == UuidGrids && /*#__PURE__*/React.createElement(Grid, {
       token: this.props.token,
       dbName: this.props.dbName,
       gridUuid: this.props.row.uuid,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
-    })), columnsUsage && /*#__PURE__*/React.createElement("div", null, columnsUsage.length > 0 && /*#__PURE__*/React.createElement("h5", {
-      className: "card-subtitle text-muted"
-    }, "Usages"), columnsUsage.map(column => /*#__PURE__*/React.createElement(Grid, {
+    }), columnsUsage && columnsUsage.map(column => /*#__PURE__*/React.createElement(Grid, {
       token: this.props.token,
       dbName: this.props.dbName,
       key: column.uuid,
       gridUuid: column.grid.uuid,
+      filterColumnOwned: "true",
       filterColumnName: column.name,
       filterColumnLabel: column.label,
-      filterColumnGridUuid: this.props.grid.uuid,
+      filterColumnGridUuid: column.gridUuid,
       filterColumnValue: this.props.row.uuid,
       filterColumnDisplayString: this.props.row.displayString,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
-    }))));
+    })));
   }
 }

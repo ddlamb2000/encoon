@@ -447,7 +447,7 @@ class Navigation extends React.Component {
     }, /*#__PURE__*/React.createElement("a", {
       className: "nav-link",
       href: "#",
-      onClick: () => this.props.navigateToGrid(row.uuid, "")
+      onClick: () => this.props.navigateToGrid(UuidGrids, row.uuid)
     }, row.text1, " ", row.text3 && /*#__PURE__*/React.createElement("i", {
       className: `bi bi-${row.text3}`
     }))))));

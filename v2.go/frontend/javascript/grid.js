@@ -65,8 +65,10 @@ class Grid extends React.Component {
       token,
       gridUuid,
       uuid,
+      filterColumnOwned,
       filterColumnName,
       filterColumnLabel,
+      filterColumnGridUuid,
       filterColumnDisplayString
     } = this.props;
     const countRows = rows ? rows.length : 0;
@@ -79,11 +81,11 @@ class Grid extends React.Component {
       className: "card-title"
     }, grid.text1, " ", grid.text3 && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("i", {
       className: `bi bi-${grid.text3} mx-1`
-    }))), isLoaded && rows && grid && grid.text2 && uuid == "" && /*#__PURE__*/React.createElement("div", {
-      className: "card-subtitle mb-2 text-muted"
-    }, grid.text2), isLoaded && filterColumnLabel && filterColumnName && /*#__PURE__*/React.createElement("div", {
+    }))), isLoaded && filterColumnLabel && filterColumnName && /*#__PURE__*/React.createElement("div", {
       className: "card-subtitle mb-2"
-    }, /*#__PURE__*/React.createElement("mark", null, filterColumnLabel, " ", /*#__PURE__*/React.createElement("em", null, filterColumnName), " = ", filterColumnDisplayString)), error && !isLoading && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("mark", null, filterColumnLabel, " = ", filterColumnDisplayString)), isLoaded && rows && grid && grid.text2 && uuid == "" && /*#__PURE__*/React.createElement("div", {
+      className: "card-subtitle mb-2 text-muted"
+    }, grid.text2), error && !isLoading && /*#__PURE__*/React.createElement("div", {
       className: "alert alert-danger",
       role: "alert"
     }, error), isLoaded && rows && countRows > 0 && uuid == "" && /*#__PURE__*/React.createElement(GridTable, {
@@ -103,7 +105,10 @@ class Grid extends React.Component {
       dbName: dbName,
       token: token,
       grid: grid,
-      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      filterColumnOwned: filterColumnOwned,
+      filterColumnName: filterColumnName,
+      filterColumnGridUuid: filterColumnGridUuid
     }), isLoaded && rows && countRows > 0 && uuid != "" && /*#__PURE__*/React.createElement(GridView, {
       row: rows[0],
       columns: grid.columns,
@@ -226,12 +231,13 @@ class Grid extends React.Component {
       token,
       gridUuid,
       uuid,
+      filterColumnOwned,
       filterColumnName,
       filterColumnGridUuid,
       filterColumnValue
     } = this.props;
     const uuidFilter = uuid != "" ? '/' + uuid : '';
-    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
+    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnOwned=' + filterColumnOwned + '&filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
     const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`;
     fetch(uri, {
       headers: {
@@ -311,6 +317,7 @@ class Grid extends React.Component {
       dbName,
       token,
       gridUuid,
+      filterColumnOwned,
       filterColumnName,
       filterColumnGridUuid,
       filterColumnValue
@@ -318,7 +325,7 @@ class Grid extends React.Component {
     this.setState({
       isLoading: true
     });
-    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
+    const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnOwned=' + filterColumnOwned + '&filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
     const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`;
     fetch(uri, {
       method: 'POST',
@@ -458,13 +465,14 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
           owned: column.owned,
           name: column.name,
           label: column.label,
-          values: getColumnValueForReferencedRow(column, row),
+          bidirectional: column.bidirectional,
           typeUuid: column.typeUuid,
           gridPromptUuid: column.gridPromptUuid,
           gridUuid: column.gridUuid,
           grid: column.grid,
           type: type,
-          readonly: false
+          readonly: false,
+          values: getColumnValueForReferencedRow(column, row)
         });
       } else {
         cols.push({

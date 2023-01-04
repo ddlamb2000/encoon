@@ -10,10 +10,14 @@ class GridTable extends React.Component {
       style: {
         width: "24px"
       }
-    }), this.props.columns && this.props.columns.map(column => /*#__PURE__*/React.createElement("th", {
-      scope: "col",
-      key: column.uuid
-    }, column.label, !column.owned && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("br", null), "[", column.grid.displayString, "]"), /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, column.name)))), /*#__PURE__*/React.createElement("th", {
+    }), this.props.columns && this.props.columns.map(column => /*#__PURE__*/React.createElement(GridRowHeader, {
+      key: column.uuid,
+      column: column,
+      filterColumnOwned: this.props.filterColumnOwned,
+      filterColumnName: this.props.filterColumnName,
+      filterColumnGridUuid: this.props.filterColumnGridUuid,
+      grid: this.props.grid
+    })), /*#__PURE__*/React.createElement("th", {
       className: "text-end",
       scope: "col"
     }, "Revision"))), /*#__PURE__*/React.createElement("tbody", {
@@ -38,6 +42,23 @@ class GridTable extends React.Component {
       grid: this.props.grid,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
     }))));
+  }
+}
+class GridRowHeader extends React.Component {
+  render() {
+    const {
+      column,
+      filterColumnOwned,
+      filterColumnName,
+      filterColumnGridUuid
+    } = this.props;
+    return /*#__PURE__*/React.createElement("th", {
+      scope: "col"
+    }, this.matchFilter(column, filterColumnOwned, filterColumnName, filterColumnGridUuid) && /*#__PURE__*/React.createElement("mark", null, column.label), !this.matchFilter(column, filterColumnOwned, filterColumnName, filterColumnGridUuid) && column.label, !column.owned && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("br", null), "[", column.grid.displayString, "]"), trace && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, column.gridUuid)), trace && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("em", null, column.name)));
+  }
+  matchFilter(column, filterColumnOwned, filterColumnName, filterColumnGridUuid) {
+    const ownership = column.owned && filterColumnOwned == 'true' || !column.owned && filterColumnOwned != 'true';
+    return ownership && column.name == filterColumnName && column.gridUuid == filterColumnGridUuid;
   }
 }
 class GridRow extends React.Component {
@@ -74,12 +95,14 @@ class GridRow extends React.Component {
       columnUuid: column.uuid,
       owned: column.owned,
       columnName: column.name,
+      columnLabel: column.label,
       type: column.type,
       typeUuid: column.typeUuid,
       value: column.value,
       values: column.values,
       gridPromptUuid: column.gridPromptUuid,
       readonly: column.readonly,
+      bidirectional: false,
       canEditRow: row.canEditRow,
       rowAdded: rowAdded,
       rowSelected: rowSelected,
@@ -105,9 +128,10 @@ class GridCell extends React.Component {
     const variantReadOnly = this.props.readonly ? "form-control-plaintext" : "";
     const checkedBoolean = this.props.value && this.props.value == "true" ? true : false;
     const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : "";
+    const embedded = this.props.bidirectional && this.props.owned;
     return /*#__PURE__*/React.createElement("td", {
       onClick: () => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')
-    }, (this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && /*#__PURE__*/React.createElement(GridCellInput, {
+    }, (this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded && /*#__PURE__*/React.createElement(GridCellInput, {
       type: this.props.type,
       variantReadOnly: variantReadOnly,
       uuid: this.props.uuid,
@@ -117,9 +141,9 @@ class GridCell extends React.Component {
       value: this.props.value,
       inputRef: this.props.inputRef,
       onEditRowClick: uuid => this.props.onEditRowClick(uuid)
-    }), !(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && /*#__PURE__*/React.createElement("span", {
+    }), !(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded && /*#__PURE__*/React.createElement("span", {
       className: variantMonospace
-    }, getCellValue(this.props.type, this.props.value)), (this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && /*#__PURE__*/React.createElement(GridCellDropDown, {
+    }, getCellValue(this.props.type, this.props.value)), (this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !embedded && /*#__PURE__*/React.createElement(GridCellDropDown, {
       uuid: this.props.uuid,
       columnUuid: this.props.columnUuid,
       columnName: this.props.columnName,
@@ -132,11 +156,22 @@ class GridCell extends React.Component {
       referencedValuesRemoved: this.props.referencedValuesRemoved,
       onAddReferencedValueClick: reference => this.props.onAddReferencedValueClick(reference),
       onRemoveReferencedValueClick: reference => this.props.onRemoveReferencedValueClick(reference)
-    }), !(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && /*#__PURE__*/React.createElement(GridCellReferences, {
+    }), !(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !embedded && /*#__PURE__*/React.createElement(GridCellReferences, {
       uuid: this.props.uuid,
       values: this.props.values,
       referencedValuesAdded: this.props.referencedValuesAdded,
       referencedValuesRemoved: this.props.referencedValuesRemoved,
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
+    }), this.props.type == "reference" && embedded && /*#__PURE__*/React.createElement(Grid, {
+      token: this.props.token,
+      dbName: this.props.dbName,
+      gridUuid: this.props.gridPromptUuid,
+      filterColumnOwned: this.props.owned ? 'false' : 'true',
+      filterColumnName: this.props.columnName,
+      filterColumnLabel: this.props.columnLabel,
+      filterColumnGridUuid: this.props.grid.uuid,
+      filterColumnValue: this.props.uuid,
+      filterColumnDisplayString: this.props.displayString,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
     }));
   }
