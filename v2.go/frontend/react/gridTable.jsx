@@ -94,12 +94,14 @@ class GridRow extends React.Component {
 										columnUuid={column.uuid}
 										owned={column.owned}
 										columnName={column.name}
+										columnLabel={column.label}
 										type={column.type}
 										typeUuid={column.typeUuid}
 										value={column.value}
 										values={column.values}
 										gridPromptUuid={column.gridPromptUuid}
 										readonly={column.readonly}
+										bidirectional={false}
 										canEditRow={row.canEditRow}
 										rowAdded={rowAdded}
 										rowSelected={rowSelected}
@@ -129,7 +131,7 @@ class GridCell extends React.Component {
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
-				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && 
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !this.props.bidirectional && 
 					<GridCellInput type={this.props.type}
 									variantReadOnly={variantReadOnly}
 									uuid={this.props.uuid}
@@ -140,10 +142,10 @@ class GridCell extends React.Component {
 									inputRef={this.props.inputRef}
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" &&
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !this.props.bidirectional &&
 					<span className={variantMonospace}>{getCellValue(this.props.type, this.props.value)}</span>
 				}
-				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && 
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !this.props.bidirectional && 
 					<GridCellDropDown uuid={this.props.uuid}
 										columnUuid={this.props.columnUuid}
 										columnName={this.props.columnName}
@@ -157,12 +159,24 @@ class GridCell extends React.Component {
 										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
 										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" &&
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !this.props.bidirectional &&
 					<GridCellReferences uuid={this.props.uuid}
 										values={this.props.values}
 										referencedValuesAdded={this.props.referencedValuesAdded}
 										referencedValuesRemoved={this.props.referencedValuesRemoved}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+				}
+				{this.props.type == "reference" && this.props.bidirectional && 
+					<Grid token={this.props.token}
+							dbName={this.props.dbName} 
+							gridUuid={this.props.gridPromptUuid}
+							filterColumnOwned={this.props.owned ? 'false' : 'true'}
+							filterColumnName={this.props.columnName}
+							filterColumnLabel={this.props.columnLabel}
+							filterColumnGridUuid={this.props.grid.uuid}
+							filterColumnValue={this.props.uuid}
+							filterColumnDisplayString={this.props.displayString}
+							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				}
 			</td>
 		)

@@ -29,11 +29,16 @@ class GridView extends React.Component {
 											columnUuid={column.uuid}
 											owned={column.owned}
 											columnName={column.name}
+											columnLabel={column.label}
 											type={column.type}
 											typeUuid={column.typeUuid}
 											value={column.value}
 											values={column.values}
+											gridPromptUuid={column.gridPromptUuid}
 											readonly={column.readonly}
+											bidirectional={column.bidirectional}
+											grid={this.props.grid}
+											displayString={this.props.row.displayString}
 											rowAdded={this.props.rowAdded}
 											rowSelected={this.props.rowSelected}
 											rowEdited={this.props.rowEdited}
@@ -42,7 +47,9 @@ class GridView extends React.Component {
 											onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 											onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 											inputRef={this.props.inputRef}
-											navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+											navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+											dbName={this.props.dbName}
+											token={this.props.token} />
 							</tr>
 						)}
 						{audits &&
@@ -70,16 +77,6 @@ class GridView extends React.Component {
 				</table>
 				{this.props.grid.uuid == UuidGrids &&
 					<div>
-						<Grid token={this.props.token}
-									dbName={this.props.dbName} 
-									gridUuid={UuidColumns}
-									filterColumnOwned='false'
-									filterColumnName='relationship1'
-									filterColumnLabel='Columns [Grids]'
-									filterColumnGridUuid={UuidGrids}
-									filterColumnValue={this.props.row.uuid}
-									filterColumnDisplayString={this.props.row.displayString}
-									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 						<Grid token={this.props.token}
 									dbName={this.props.dbName} 
 									gridUuid={this.props.row.uuid} 

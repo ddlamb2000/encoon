@@ -460,13 +460,14 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 					owned: column.owned,
 					name: column.name,
 					label: column.label,
-					values: getColumnValueForReferencedRow(column, row),
+					bidirectional: column.bidirectional,
 					typeUuid: column.typeUuid,
 					gridPromptUuid: column.gridPromptUuid,
 					gridUuid: column.gridUuid,
 					grid: column.grid,
 					type: type,
-					readonly: false
+					readonly: false,
+					values: getColumnValueForReferencedRow(column, row)
 				})
 			} else {
 				cols.push({

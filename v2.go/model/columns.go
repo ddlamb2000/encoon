@@ -15,6 +15,7 @@ type Column struct {
 	GridUuid       string  `json:"gridUuid,omitempty" yaml:"gridUuid,omitempty"`
 	Grid           *Grid   `json:"grid,omitempty" yaml:"grid,omitempty"`
 	GridPromptUuid *string `json:"gridPromptUuid,omitempty" yaml:"gridPromptUuid,omitempty"`
+	Bidirectional  *bool   `json:"bidirectional,omitempty" yaml:"bidirectional,omitempty"`
 }
 
 func GetNewColumn() *Column {

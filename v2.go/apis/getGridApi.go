@@ -196,6 +196,7 @@ var getGridColumsOwnedQueryForGridsApi = func() string {
 	return "SELECT col.uuid, " +
 		"col.text1, " +
 		"col.text2, " +
+		"col.text3 = 'true' bidirectional, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
 		"grid.uuid, " +
@@ -267,6 +268,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func(bidirectional bool) string {
 	return "SELECT col.uuid, " +
 		"col.text1, " +
 		"col.text2, " +
+		"col.text3 = 'true' bidirectional, " +
 		"coltype.uuid, " +
 		"coltype.text1, " +
 		"rel1.text3, " +
@@ -329,6 +331,7 @@ var getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any {
 	output = append(output, &column.Uuid)
 	output = append(output, &column.Label)
 	output = append(output, &column.Name)
+	output = append(output, &column.Bidirectional)
 	output = append(output, &column.TypeUuid)
 	output = append(output, &column.Type)
 	output = append(output, &column.GridPromptUuid)
