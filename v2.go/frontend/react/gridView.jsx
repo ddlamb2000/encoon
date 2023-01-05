@@ -10,7 +10,7 @@ class GridView extends React.Component {
 		const activeDefinition = this.props.grid.uuid != UuidGrids ? "show active" : ""
 		return (
 			<div>
-				<h4 className="card-title">{this.props.row.displayString}</h4>
+				<h5 className="card-title">{this.props.row.displayString}</h5>
 				{this.props.grid.uuid == UuidGrids &&
 					<div className="card-subtitle mb-2 text-muted">
 						{this.props.row.text2} {this.props.row.text3 && <small><i className={`bi bi-${this.props.row.text3} mx-1`}></i></small>}

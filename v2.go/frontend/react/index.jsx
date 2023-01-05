@@ -359,17 +359,15 @@ class Navigation extends React.Component {
 	render() {
 		if(trace) console.log("[Navigation.render()]")
 		return (
-			<div className="position-sticky pt-4 sidebar-sticky">
-				<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid("", "")}>
-					Dashboard <i className="bi bi-view-stacked"></i>
-				</a>
+			<nav className="position-sticky pt-4 sidebar-sticky">
 				<Grid token={this.props.token}
 						dbName={this.props.dbName}
 						gridUuid={UuidGrids}
 						navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 						innerGrid={true}
-						miniGrid={true} />
-			</div>
+						miniGrid={true}
+						gridTitle="All grids" />
+			</nav>
 		)
 	}
 }

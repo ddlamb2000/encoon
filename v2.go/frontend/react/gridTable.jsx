@@ -5,20 +5,22 @@ class GridTable extends React.Component {
 	render() {
 		return (
 			<table className="table table-hover table-sm table-responsive align-middle">
-				<thead>
-					<tr>
-						<th scope="col" style={{width: "24px"}}></th>
-						{!this.props.miniGrid && this.props.columns && this.props.columns.map( 
-							column => <GridRowHeader key={column.uuid}
-														column={column}
-														filterColumnOwned={this.props.filterColumnOwned}
-														filterColumnName={this.props.filterColumnName}
-														filterColumnGridUuid={this.props.filterColumnGridUuid}
-														grid={this.props.grid} />
-						)}
-					</tr>
-				</thead>
-				<tbody className="table-group-divider">
+				{!this.props.miniGrid && 
+					<thead>
+						<tr>
+							{<th scope="col" style={{width: "24px"}}></th>}
+							{this.props.columns && this.props.columns.map( 
+								column => <GridRowHeader key={column.uuid}
+															column={column}
+															filterColumnOwned={this.props.filterColumnOwned}
+															filterColumnName={this.props.filterColumnName}
+															filterColumnGridUuid={this.props.filterColumnGridUuid}
+															grid={this.props.grid} />
+							)}
+						</tr>
+					</thead>
+				}
+				<tbody className={!this.props.miniGrid ? "table-group-divider" : ""}>
 					{this.props.rows.map(
 						row => <GridRow key={row.uuid}
 										row={row}
@@ -130,7 +132,7 @@ class GridCell extends React.Component {
 		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
 		const checkedBoolean = this.props.value && this.props.value == "true" ? true : false
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
-		const embedded = this.props.bidirectional && this.props.owned
+		const embedded = this.props.type == "reference" && this.props.bidirectional && this.props.owned
 		return (
 			<td onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded && 
@@ -170,7 +172,7 @@ class GridCell extends React.Component {
 										referencedValuesRemoved={this.props.referencedValuesRemoved}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				}
-				{this.props.type == "reference" && embedded && 
+				{embedded && 
 					<Grid token={this.props.token}
 							dbName={this.props.dbName} 
 							gridUuid={this.props.gridPromptUuid}
