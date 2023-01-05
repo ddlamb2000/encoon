@@ -356,93 +356,21 @@ class Spinner extends React.Component {
 }
 
 class Navigation extends React.Component {
-	constructor(props) {
-		super(props)
-		this.state = {
-			error: "",
-			isLoaded: false,
-			isLoading: false,
-			rows: []
-		}
-	}
-
-	componentDidMount() {
-		this.loadData()
-	}
-
 	render() {
-		const { isLoading, isLoaded, error, rows } = this.state
 		if(trace) console.log("[Navigation.render()]")
 		return (
 			<div className="position-sticky pt-4 sidebar-sticky">
-				{isLoading && <Spinner />}
-				{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
-				<ul className="nav flex-column mb-2">
-					<li className="nav-item">
-						<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid("", "")}>
-							Dashboard <i className="bi bi-view-stacked"></i>
-						</a>
-					</li>
-					{isLoaded && rows && rows.map(row => 
-						<li className="nav-item" key={row.uuid}>
-							<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid(UuidGrids, row.uuid)}>
-								{row.text1} {row.text3 && <i className={`bi bi-${row.text3}`}></i>}
-							</a>
-						</li>
-					)}
-				</ul>
+				<a className="nav-link" href="#" onClick={() => this.props.navigateToGrid("", "")}>
+					Dashboard <i className="bi bi-view-stacked"></i>
+				</a>
+				<Grid token={this.props.token}
+						dbName={this.props.dbName}
+						gridUuid={UuidGrids}
+						navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+						innerGrid={true}
+						miniGrid={true} />
 			</div>
 		)
-	}
-
-	loadData() {
-		this.setState({isLoading: true})
-		const uri = `/${this.props.dbName}/api/v1/${UuidGrids}`
-		fetch(uri, {
-			headers: {
-				'Accept': 'application/json',
-				'Content-Type': 'application/json',
-				'Authorization': 'Bearer ' + this.props.token
-			}
-		})
-		.then(response => {
-			const contentType = response.headers.get("content-type")
-			if(contentType && contentType.indexOf("application/json") != -1) {
-				return response.json().then(	
-					(result) => {
-						if(result.response != undefined) {
-							this.setState({
-								isLoading: false,
-								isLoaded: true,
-								rows: result.response.rows,
-								error: result.response.error
-							})
-						} else {
-							this.setState({
-								isLoading: false,
-								isLoaded: true,
-								error: result.error
-							})
-						}
-					},
-					(error) => {
-						this.setState({
-							isLoading: false,
-							isLoaded: false,
-							rows: [],
-							error: error.message
-						})
-					}
-				)
-			} else {
-				this.setState({
-					isLoading: false,
-					isLoaded: false,
-					rows: [],
-					error: `[${response.status}] Internal server issue.`
-				})
-			}
-		})
 	}
 }
 
@@ -456,6 +384,7 @@ const UuidPasswordColumnType             = "5f038b21-d9a4-45fc-aa3f-fc405342c287
 const UuidBooleanColumnType              = "6e205ebd-6567-44dc-8fd4-ef6ad281ab40"
 const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508"
 const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
+const UuidGridColumnName                 = "e9e4a415-c31e-4383-ae70-18949d6ec692"
 const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"
 const UuidColumns                        = "533b6862-add3-4fef-8f93-20a17aaaaf5a"
 

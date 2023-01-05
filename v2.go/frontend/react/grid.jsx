@@ -71,13 +71,15 @@ class Grid extends React.Component {
 				filterColumnLabel,
 				filterColumnGridUuid,
 				filterColumnDisplayString,
-				innerGrid } = this.props
+				innerGrid,
+				miniGrid } = this.props
 		const countRows = rows ? rows.length : 0
+		const columns = miniGrid ? (grid && grid.columns != undefined ? grid.columns.slice(0,1) : []) : grid.columns
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
 		return (
 			<div className={!innerGrid ? "card my-4" : ""}>
 				<div className={!innerGrid ? "card-body" : ""}>
-					{isLoaded && rows && grid  && uuid == "" && !innerGrid &&
+					{isLoaded && rows && grid && uuid == "" && !innerGrid &&
 						<h5 className="card-title">
 							{grid.text1} {grid.text3 && <small><i className={`bi bi-${grid.text3} mx-1`}></i></small>}
 						</h5>
@@ -91,7 +93,7 @@ class Grid extends React.Component {
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&
 						<GridTable rows={rows}
-									columns={grid.columns}
+									columns={columns}
 									grid={grid}
 									rowsSelected={rowsSelected}
 									rowsEdited={rowsEdited}
@@ -109,7 +111,8 @@ class Grid extends React.Component {
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									filterColumnOwned={filterColumnOwned}
 									filterColumnName={filterColumnName}
-									filterColumnGridUuid={filterColumnGridUuid} />
+									filterColumnGridUuid={filterColumnGridUuid}
+									miniGrid={miniGrid} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
 						<GridView row={rows[0]}
@@ -144,7 +147,8 @@ class Grid extends React.Component {
 								onSelectRowClick={() => this.deselectRows()}
 								onAddRowClick={() => this.addRow()}
 								onSaveDataClick={() => this.saveData()}
-								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+								miniGrid={this.props.miniGrid} />
 				</div>
 			</div>
 		)
@@ -422,7 +426,7 @@ Grid.defaultProps = {
 
 class GridFooter extends React.Component {
 	render() {
-		const { grid, rows, uuid, canAddRows, rowsEdited, rowsAdded, rowsDeleted, isLoading } = this.props
+		const { grid, rows, uuid, canAddRows, rowsEdited, rowsAdded, rowsDeleted, isLoading, miniGrid } = this.props
 		const countRows = rows ? rows.length : 0
 		const countRowsAdded = rowsAdded ? rowsAdded.length : 0
 		const countRowsEdited = rowsEdited ? rowsEdited.length : 0
@@ -430,12 +434,12 @@ class GridFooter extends React.Component {
 		return (
 			<div onClick={() => this.props.onSelectRowClick()}>
 				{isLoading && <Spinner />}
-				{!isLoading && countRows == 0 && <small className="text-muted px-1">No data</small>}
-				{!isLoading && countRows == 1 && uuid == '' && <small className="text-muted px-1">{countRows} row</small>}
-				{!isLoading && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
-				{!isLoading && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
-				{!isLoading && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
-				{!isLoading && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
+				{!isLoading && !miniGrid && countRows == 0 && <small className="text-muted px-1">No data</small>}
+				{!isLoading && !miniGrid && countRows == 1 && uuid == '' && <small className="text-muted px-1">{countRows} row</small>}
+				{!isLoading && !miniGrid && countRows > 1 && <small className="text-muted px-1">{countRows} rows</small>}
+				{!isLoading && !miniGrid && countRowsAdded > 0 && <small className="text-muted px-1">({countRowsAdded} added)</small>}
+				{!isLoading && !miniGrid && countRowsEdited > 0 && <small className="text-muted px-1">({countRowsEdited} edited)</small>}
+				{!isLoading && !miniGrid && countRowsDeleted > 0 && <small className="text-muted px-1">({countRowsDeleted} deleted)</small>}
 				{!isLoading && grid && uuid == "" && canAddRows &&
 					<button type="button"
 							className="btn btn-outline-success btn-sm mx-1"

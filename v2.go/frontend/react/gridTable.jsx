@@ -8,7 +8,7 @@ class GridTable extends React.Component {
 				<thead>
 					<tr>
 						<th scope="col" style={{width: "24px"}}></th>
-						{this.props.columns && this.props.columns.map( 
+						{!this.props.miniGrid && this.props.columns && this.props.columns.map( 
 							column => <GridRowHeader key={column.uuid}
 														column={column}
 														filterColumnOwned={this.props.filterColumnOwned}
@@ -16,7 +16,6 @@ class GridTable extends React.Component {
 														filterColumnGridUuid={this.props.filterColumnGridUuid}
 														grid={this.props.grid} />
 						)}
-						<th className="text-end" scope="col">Revision</th>
 					</tr>
 				</thead>
 				<tbody className="table-group-divider">
@@ -38,7 +37,8 @@ class GridTable extends React.Component {
 										dbName={this.props.dbName}
 										token={this.props.token}
 										grid={this.props.grid}
-										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+										miniGrid={this.props.miniGrid} />
 					)}
 				</tbody>
 			</table>
@@ -68,18 +68,19 @@ class GridRowHeader extends React.Component {
 
 class GridRow extends React.Component {
 	render() {
-		const { row, rowAdded, rowSelected, rowEdited, referencedValuesAdded, referencedValuesRemoved } = this.props
+		const { row, rowAdded, rowSelected, rowEdited, referencedValuesAdded, referencedValuesRemoved, miniGrid } = this.props
 		const variantEdited = this.props.rowEdited ? "table-warning" : ""
-		const columns = getColumnValuesForRow(this.props.columns, row)
+		const columns = getColumnValuesForRow(this.props.columns, row, false)
+		const icon = row && this.props.grid.uuid == UuidGrids ? row.text3 : ''
 		return (
 			<tr className={variantEdited}>
 				<td scope="row" className="vw-10">
 					{!(rowAdded || rowSelected) && 
 						<a href="#" onClick={() => this.props.navigateToGrid(row.gridUuid, row.uuid)}>
-						<i className="bi bi-box-arrow-up-right"></i>
-					</a>
+							<i className="bi bi-box-arrow-up-right"></i>
+						</a>
 					}
-					{row.canEditRow && (rowAdded || rowSelected) && 
+					{row.canEditRow && (rowAdded || rowSelected) && !miniGrid &&
 						<button
 							type="button"
 							className="btn text-danger btn-sm mx-0 p-0"
@@ -108,17 +109,17 @@ class GridRow extends React.Component {
 										rowEdited={rowEdited}
 										referencedValuesAdded={referencedValuesAdded.filter(ref => ref.columnUuid == column.uuid)}
 										referencedValuesRemoved={referencedValuesRemoved.filter(ref => ref.columnUuid == column.uuid)}
-										onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
-										onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
+										onSelectRowClick={!miniGrid ? uuid => this.props.onSelectRowClick(uuid) : undefined}
+										onEditRowClick={!miniGrid ? uuid => this.props.onEditRowClick(uuid) : undefined}
 										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
 										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)}
 										inputRef={this.props.inputRef}
 										dbName={this.props.dbName}
 										token={this.props.token}
 										grid={this.props.grid}
+										icon={column.uuid == UuidGridColumnName ? icon : ''}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
 				)}
-				<td className="text-end">{this.props.row.revision}</td>
 			</tr>
 		)
 	}
@@ -144,7 +145,9 @@ class GridCell extends React.Component {
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded &&
-					<span className={variantMonospace}>{getCellValue(this.props.type, this.props.value)}</span>
+					<span className={variantMonospace}>
+						{getCellValue(this.props.type, this.props.value)} {this.props.icon && <i className={`bi bi-${this.props.icon}`}></i>}
+					</span>
 				}
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !embedded && 
 					<GridCellDropDown uuid={this.props.uuid}
