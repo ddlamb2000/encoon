@@ -3,6 +3,7 @@
 
 class GridView extends React.Component {
 	render() {
+		const { row, rowsAdded, rowsSelected, rowsEdited, referencedValuesAdded, referencedValuesRemoved } = this.props
 		const columns = getColumnValuesForRow(this.props.columns, this.props.row, true)
 		const columnsUsage = getColumnValuesForRow(this.props.columnsUsage, this.props.row, false)
 		const audits = this.props.row ? this.props.row.audits : []
@@ -76,7 +77,7 @@ class GridView extends React.Component {
 											{!column.owned && <small>&nbsp;[{column.grid.displayString}]</small>}
 											{trace && <small>&nbsp;<em>{column.name}</em></small>}
 										</td>
-										<GridCell uuid={this.props.row.uuid}
+										<GridCell uuid={row.uuid}
 													columnUuid={column.uuid}
 													owned={column.owned}
 													columnName={column.name}
@@ -88,14 +89,14 @@ class GridView extends React.Component {
 													gridPromptUuid={column.gridPromptUuid}
 													readonly={column.readonly}
 													bidirectional={column.bidirectional}
-													canEditRow={this.props.row.canEditRow}
+													canEditRow={row.canEditRow}
 													grid={this.props.grid}
-													displayString={this.props.row.displayString}
-													rowSelected={this.props.rowsSelected.includes(this.props.row.uuid)}
-													rowEdited={this.props.rowsEdited.includes(this.props.row.uuid)}
-													rowAdded={this.props.rowsAdded.includes(this.props.row.uuid)}
-													referencedValuesAdded={this.props.referencedValuesAdded}
-													referencedValuesRemoved={this.props.referencedValuesRemoved}
+													displayString={row.displayString}
+													rowSelected={rowsSelected.includes(row.uuid)}
+													rowEdited={rowsEdited.includes(row.uuid)}
+													rowAdded={rowsAdded.includes(row.uuid)}
+													referencedValuesAdded={referencedValuesAdded.filter(ref => ref.columnUuid == column.uuid)}
+													referencedValuesRemoved={referencedValuesRemoved.filter(ref => ref.columnUuid == column.uuid)}
 													onSelectRowClick={uuid => this.props.onSelectRowClick(uuid)}
 													onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
 													onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
