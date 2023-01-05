@@ -71,11 +71,10 @@ class GridRowHeader extends React.Component {
 class GridRow extends React.Component {
 	render() {
 		const { row, rowAdded, rowSelected, rowEdited, referencedValuesAdded, referencedValuesRemoved, miniGrid } = this.props
-		const variantEdited = this.props.rowEdited ? "table-warning" : ""
 		const columns = getColumnValuesForRow(this.props.columns, row, false)
 		const icon = row && this.props.grid.uuid == UuidGrids ? row.text3 : ''
 		return (
-			<tr className={variantEdited}>
+			<tr>
 				<td scope="row" className="vw-10">
 					{!(rowAdded || rowSelected) && 
 						<a href="#" onClick={() => this.props.navigateToGrid(row.gridUuid, row.uuid)}>
@@ -132,9 +131,10 @@ class GridCell extends React.Component {
 		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
 		const checkedBoolean = this.props.value && this.props.value == "true" ? true : false
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
+		const variantEdited = this.props.rowEdited ? "table-warning" : ""
 		const embedded = this.props.type == "reference" && this.props.bidirectional && this.props.owned
 		return (
-			<td onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
+			<td className={variantEdited} onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded && 
 					<GridCellInput type={this.props.type}
 									variantReadOnly={variantReadOnly}

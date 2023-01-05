@@ -74,7 +74,8 @@ class Grid extends React.Component {
 				innerGrid,
 				miniGrid,
 				gridTitle,
-				gridSubTitle } = this.props
+				gridSubTitle,
+			 	noEdit } = this.props
 		const countRows = rows ? rows.length : 0
 		const columns = miniGrid ? (grid && grid.columns != undefined ? grid.columns.slice(0,1) : []) : grid.columns
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
@@ -92,10 +93,10 @@ class Grid extends React.Component {
 					{isLoaded && rows && grid && grid.text2 && uuid == "" && !innerGrid && 
 						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
 					}
-					{isLoaded && rows && grid && uuid == "" && innerGrid && gridTitle &&
+					{isLoaded && rows && countRows > 0 && grid && uuid == "" && innerGrid && gridTitle &&
 						<h5 className="card-title">{gridTitle}</h5>
 					}
-					{isLoaded && rows && grid && uuid == "" && innerGrid && gridSubTitle &&
+					{isLoaded && rows && countRows > 0 && grid && uuid == "" && innerGrid && gridSubTitle &&
 						<div className="card-subtitle mb-2 text-muted">{gridSubTitle}  <small><i className={`bi bi-grid-3x3 mx-1`}></i></small></div>
 					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
@@ -143,20 +144,22 @@ class Grid extends React.Component {
 									token={this.props.token}
 									loadParentData={() => this.loadData()} />
 					}
-					<GridFooter isLoading={isLoading}
-								grid={grid}
-								rows={rows}
-								uuid={uuid}
-								canAddRows={canAddRows}
-								rowsSelected={rowsSelected}
-								rowsAdded={rowsAdded}
-								rowsEdited={rowsEdited}
-								rowsDeleted={rowsDeleted}
-								onSelectRowClick={() => this.deselectRows()}
-								onAddRowClick={() => this.addRow()}
-								onSaveDataClick={() => this.saveData()}
-								navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-								miniGrid={this.props.miniGrid} />
+					{!noEdit &&
+						<GridFooter isLoading={isLoading}
+									grid={grid}
+									rows={rows}
+									uuid={uuid}
+									canAddRows={canAddRows}
+									rowsSelected={rowsSelected}
+									rowsAdded={rowsAdded}
+									rowsEdited={rowsEdited}
+									rowsDeleted={rowsDeleted}
+									onSelectRowClick={() => this.deselectRows()}
+									onAddRowClick={() => this.addRow()}
+									onSaveDataClick={() => this.saveData()}
+									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+									miniGrid={this.props.miniGrid} />
+					}
 				</div>
 			</div>
 		)
@@ -440,7 +443,7 @@ class GridFooter extends React.Component {
 		const countRowsEdited = rowsEdited ? rowsEdited.length : 0
 		const countRowsDeleted = rowsDeleted ? rowsDeleted.length : 0
 		return (
-			<div onClick={() => this.props.onSelectRowClick()}>
+			<nav className='mb-3' onClick={() => this.props.onSelectRowClick()}>
 				{isLoading && <Spinner />}
 				{!isLoading && !miniGrid && countRows == 0 && <small className="text-muted px-1">No data</small>}
 				{!isLoading && !miniGrid && countRows == 1 && uuid == '' && <small className="text-muted px-1">{countRows} row</small>}
@@ -462,7 +465,7 @@ class GridFooter extends React.Component {
 						Save <i className="bi bi-save"></i>
 					</button>
 				}
-			</div>
+			</nav>
 		)
 	}
 }
