@@ -41,7 +41,7 @@ class Grid extends React.Component {
   }
   componentDidUpdate(prevProps) {
     if (trace) console.log("[Grid.componentDidUpdate()] **** this.props.gridUuid=", this.props.gridUuid, ", this.props.uuid=", this.props.uuid);
-    if (this.props.gridUuid !== prevProps.gridUuid || this.props.uuid !== prevProps.uuid) {
+    if (this.props.gridUuid != prevProps.gridUuid || this.props.uuid != prevProps.uuid) {
       this.loadData();
     }
   }
@@ -69,33 +69,46 @@ class Grid extends React.Component {
       filterColumnName,
       filterColumnLabel,
       filterColumnGridUuid,
-      filterColumnDisplayString
+      filterColumnDisplayString,
+      innerGrid,
+      miniGrid,
+      gridTitle,
+      gridSubTitle,
+      noEdit
     } = this.props;
     const countRows = rows ? rows.length : 0;
+    const columns = miniGrid ? grid && grid.columns != undefined ? grid.columns.slice(0, 1) : [] : grid.columns;
     if (trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid);
     return /*#__PURE__*/React.createElement("div", {
-      className: "card my-4"
+      className: !innerGrid ? "card my-4" : ""
     }, /*#__PURE__*/React.createElement("div", {
-      className: "card-body"
-    }, isLoaded && rows && grid && uuid == "" && /*#__PURE__*/React.createElement("h4", {
+      className: !innerGrid ? "card-body" : ""
+    }, isLoaded && rows && grid && uuid == "" && !innerGrid && /*#__PURE__*/React.createElement("h5", {
       className: "card-title"
     }, grid.text1, " ", grid.text3 && /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("i", {
       className: `bi bi-${grid.text3} mx-1`
-    }))), isLoaded && filterColumnLabel && filterColumnName && /*#__PURE__*/React.createElement("div", {
+    }))), isLoaded && filterColumnLabel && filterColumnName && !innerGrid && /*#__PURE__*/React.createElement("div", {
       className: "card-subtitle mb-2"
-    }, /*#__PURE__*/React.createElement("mark", null, filterColumnLabel, " = ", filterColumnDisplayString)), isLoaded && rows && grid && grid.text2 && uuid == "" && /*#__PURE__*/React.createElement("div", {
+    }, /*#__PURE__*/React.createElement("mark", null, filterColumnLabel, " = ", filterColumnDisplayString)), isLoaded && rows && grid && grid.text2 && uuid == "" && !innerGrid && /*#__PURE__*/React.createElement("div", {
       className: "card-subtitle mb-2 text-muted"
-    }, grid.text2), error && !isLoading && /*#__PURE__*/React.createElement("div", {
+    }, grid.text2), isLoaded && rows && countRows > 0 && grid && uuid == "" && innerGrid && gridTitle && /*#__PURE__*/React.createElement("h5", {
+      className: "card-title"
+    }, gridTitle), isLoaded && rows && countRows > 0 && grid && uuid == "" && innerGrid && gridSubTitle && /*#__PURE__*/React.createElement("div", {
+      className: "card-subtitle mb-2 text-muted"
+    }, gridSubTitle, "  ", /*#__PURE__*/React.createElement("small", null, /*#__PURE__*/React.createElement("i", {
+      className: `bi bi-grid-3x3 mx-1`
+    }))), error && !isLoading && /*#__PURE__*/React.createElement("div", {
       className: "alert alert-danger",
       role: "alert"
     }, error), isLoaded && rows && countRows > 0 && uuid == "" && /*#__PURE__*/React.createElement(GridTable, {
       rows: rows,
+      columns: columns,
+      grid: grid,
       rowsSelected: rowsSelected,
       rowsEdited: rowsEdited,
       rowsAdded: rowsAdded,
       referencedValuesAdded: referencedValuesAdded,
       referencedValuesRemoved: referencedValuesRemoved,
-      columns: grid.columns,
       onSelectRowClick: uuid => this.selectRow(uuid),
       onEditRowClick: uuid => this.editRow(uuid),
       onDeleteRowClick: uuid => this.deleteRow(uuid),
@@ -104,24 +117,32 @@ class Grid extends React.Component {
       inputRef: this.setGridRowRef,
       dbName: dbName,
       token: token,
-      grid: grid,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
       filterColumnOwned: filterColumnOwned,
       filterColumnName: filterColumnName,
-      filterColumnGridUuid: filterColumnGridUuid
+      filterColumnGridUuid: filterColumnGridUuid,
+      miniGrid: miniGrid
     }), isLoaded && rows && countRows > 0 && uuid != "" && /*#__PURE__*/React.createElement(GridView, {
       row: rows[0],
       columns: grid.columns,
       columnsUsage: grid.columnsUsage,
       grid: grid,
+      rowsSelected: rowsSelected,
+      rowsEdited: rowsEdited,
+      rowsAdded: rowsAdded,
       referencedValuesAdded: referencedValuesAdded,
       referencedValuesRemoved: referencedValuesRemoved,
       onSelectRowClick: uuid => this.selectRow(uuid),
       onEditRowClick: uuid => this.editRow(uuid),
+      onDeleteRowClick: uuid => this.deleteRow(uuid),
+      onAddReferencedValueClick: reference => this.addReferencedValue(reference),
+      onRemoveReferencedValueClick: reference => this.removeReferencedValue(reference),
+      inputRef: this.setGridRowRef,
       dbName: dbName,
       navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
-      token: this.props.token
-    }), /*#__PURE__*/React.createElement(GridFooter, {
+      token: this.props.token,
+      loadParentData: () => this.loadData()
+    }), !noEdit && /*#__PURE__*/React.createElement(GridFooter, {
       isLoading: isLoading,
       grid: grid,
       rows: rows,
@@ -134,20 +155,24 @@ class Grid extends React.Component {
       onSelectRowClick: () => this.deselectRows(),
       onAddRowClick: () => this.addRow(),
       onSaveDataClick: () => this.saveData(),
-      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      miniGrid: this.props.miniGrid
     })));
   }
   selectRow(selectUuid) {
+    if (trace) console.log("[Grid.selectRow()] ", selectUuid);
     this.setState(state => ({
       rowsSelected: [selectUuid]
     }));
   }
   deselectRows() {
+    if (trace) console.log("[Grid.deselectRows()] ");
     this.setState(state => ({
       rowsSelected: []
     }));
   }
   editRow(editUuid) {
+    if (trace) console.log("[Grid.editRow()] ", editUuid);
     if (!this.state.rowsAdded.includes(editUuid)) {
       this.setState(state => ({
         rowsEdited: state.rowsEdited.filter(uuid => uuid != editUuid).concat(editUuid)
@@ -155,6 +180,7 @@ class Grid extends React.Component {
     }
   }
   addRow() {
+    if (trace) console.log("[Grid.addRow()] ");
     const newRow = {
       uuid: `${this.props.gridUuid}-${this.state.rows.length + 1}`
     };
@@ -164,6 +190,7 @@ class Grid extends React.Component {
     }));
   }
   deleteRow(deleteUuid) {
+    if (trace) console.log("[Grid.deleteRow()] ", deleteUuid);
     if (this.state.rowsAdded.includes(deleteUuid)) {
       this.setState(state => ({
         rowsAdded: state.rowsAdded.filter(uuid => uuid != deleteUuid)
@@ -247,7 +274,7 @@ class Grid extends React.Component {
       }
     }).then(response => {
       const contentType = response.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") !== -1) {
+      if (contentType && contentType.indexOf("application/json") != -1) {
         return response.json().then(result => {
           if (result.response != undefined) {
             this.setState({
@@ -317,6 +344,7 @@ class Grid extends React.Component {
       dbName,
       token,
       gridUuid,
+      uuid,
       filterColumnOwned,
       filterColumnName,
       filterColumnGridUuid,
@@ -325,8 +353,9 @@ class Grid extends React.Component {
     this.setState({
       isLoading: true
     });
+    const uuidFilter = uuid != "" ? '/' + uuid : '';
     const columnFilter = filterColumnName && filterColumnGridUuid && filterColumnValue ? '?filterColumnOwned=' + filterColumnOwned + '&filterColumnName=' + filterColumnName + '&filterColumnGridUuid=' + filterColumnGridUuid + '&filterColumnValue=' + filterColumnValue : '';
-    const uri = `/${dbName}/api/v1/${gridUuid}${columnFilter}`;
+    const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`;
     fetch(uri, {
       method: 'POST',
       headers: {
@@ -343,7 +372,7 @@ class Grid extends React.Component {
       })
     }).then(response => {
       const contentType = response.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") !== -1) {
+      if (contentType && contentType.indexOf("application/json") != -1) {
         return response.json().then(result => {
           if (result.response != undefined) {
             this.setState({
@@ -359,6 +388,7 @@ class Grid extends React.Component {
               referencedValuesAdded: [],
               referencedValuesRemoved: []
             });
+            if (this.props.loadParentData != undefined) this.props.loadParentData();
           } else {
             this.setState({
               isLoading: false,
@@ -405,25 +435,27 @@ class GridFooter extends React.Component {
       rowsEdited,
       rowsAdded,
       rowsDeleted,
-      isLoading
+      isLoading,
+      miniGrid
     } = this.props;
     const countRows = rows ? rows.length : 0;
     const countRowsAdded = rowsAdded ? rowsAdded.length : 0;
     const countRowsEdited = rowsEdited ? rowsEdited.length : 0;
     const countRowsDeleted = rowsDeleted ? rowsDeleted.length : 0;
-    return /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement("nav", {
+      className: "mb-3",
       onClick: () => this.props.onSelectRowClick()
-    }, isLoading && /*#__PURE__*/React.createElement(Spinner, null), !isLoading && countRows == 0 && /*#__PURE__*/React.createElement("small", {
+    }, isLoading && /*#__PURE__*/React.createElement(Spinner, null), !isLoading && !miniGrid && countRows == 0 && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
-    }, "No data"), !isLoading && countRows == 1 && uuid == '' && /*#__PURE__*/React.createElement("small", {
+    }, "No data"), !isLoading && !miniGrid && countRows == 1 && uuid == '' && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
-    }, countRows, " row"), !isLoading && countRows > 1 && /*#__PURE__*/React.createElement("small", {
+    }, countRows, " row"), !isLoading && !miniGrid && countRows > 1 && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
-    }, countRows, " rows"), !isLoading && countRowsAdded > 0 && /*#__PURE__*/React.createElement("small", {
+    }, countRows, " rows"), !isLoading && !miniGrid && countRowsAdded > 0 && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
-    }, "(", countRowsAdded, " added)"), !isLoading && countRowsEdited > 0 && /*#__PURE__*/React.createElement("small", {
+    }, "(", countRowsAdded, " added)"), !isLoading && !miniGrid && countRowsEdited > 0 && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
-    }, "(", countRowsEdited, " edited)"), !isLoading && countRowsDeleted > 0 && /*#__PURE__*/React.createElement("small", {
+    }, "(", countRowsEdited, " edited)"), !isLoading && !miniGrid && countRowsDeleted > 0 && /*#__PURE__*/React.createElement("small", {
       className: "text-muted px-1"
     }, "(", countRowsDeleted, " deleted)"), !isLoading && grid && uuid == "" && canAddRows && /*#__PURE__*/React.createElement("button", {
       type: "button",

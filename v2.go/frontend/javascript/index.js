@@ -63,6 +63,7 @@ class App extends React.Component {
       appTag: this.props.appTag,
       dbName: this.props.dbName,
       user: this.user,
+      userUuid: this.userUuid,
       userFirstName: this.userFirstName,
       userLastName: this.userLastName,
       token: this.token,
@@ -115,10 +116,10 @@ class App extends React.Component {
   }
   navigateToGrid(gridUuid, uuid) {
     if (trace) console.log("[App.navigateToGrid()] gridUuid=", gridUuid, ", uuid=", uuid);
-    const url = `/${this.props.dbName}/${gridUuid}` + (uuid == "" ? "" : `/${uuid}`);
-    history.pushState({
-      gridUuid: gridUuid,
-      uuid: uuid
+    const url = `/${this.props.dbName}/${this.state.gridUuid}` + (this.state.uuid == "" ? "" : `/${this.state.uuid}`);
+    history.replaceState({
+      gridUuid: this.state.gridUuid,
+      uuid: this.state.uuid
     }, null, url);
     this.setState({
       gridUuid: gridUuid,
@@ -128,8 +129,8 @@ class App extends React.Component {
   componentDidMount() {
     window.addEventListener('popstate', e => {
       e.preventDefault();
-      if (e && e.isTrusted && e.state != null && e.state.gridUuid) {
-        if (trace) console.log("popstate", e);
+      if (e && e.isTrusted && e.state != null) {
+        if (trace) console.log("[App.componentDidMount()] popstate, e=", e);
         this.setState({
           gridUuid: e.state.gridUuid,
           uuid: e.state.uuid
@@ -206,7 +207,7 @@ class Login extends React.Component {
       isLoading: false
     });
     const contentType = response.headers.get("content-type");
-    if (contentType && contentType.indexOf("application/json") !== -1) {
+    if (contentType && contentType.indexOf("application/json") != -1) {
       return response.json().then(result => {
         if (response.status == 200) {
           localStorage.setItem(`access_token_${updatedDbName}`, result.token);
@@ -406,98 +407,52 @@ class Spinner extends React.Component {
   }
 }
 class Navigation extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      error: "",
-      isLoaded: false,
-      isLoading: false,
-      rows: []
-    };
-  }
-  componentDidMount() {
-    this.loadData();
-  }
   render() {
-    const {
-      isLoading,
-      isLoaded,
-      error,
-      rows
-    } = this.state;
     if (trace) console.log("[Navigation.render()]");
-    return /*#__PURE__*/React.createElement("div", {
+    return /*#__PURE__*/React.createElement("nav", {
       className: "position-sticky pt-4 sidebar-sticky"
-    }, isLoading && /*#__PURE__*/React.createElement(Spinner, null), error && !isLoading && /*#__PURE__*/React.createElement("div", {
-      className: "alert alert-danger",
-      role: "alert"
-    }, error), /*#__PURE__*/React.createElement("ul", {
-      className: "nav flex-column mb-2"
-    }, /*#__PURE__*/React.createElement("li", {
-      className: "nav-item"
-    }, /*#__PURE__*/React.createElement("a", {
-      className: "nav-link",
-      href: "#",
-      onClick: () => this.props.navigateToGrid("", "")
-    }, "Dashboard ", /*#__PURE__*/React.createElement("i", {
-      className: "bi bi-view-stacked"
-    }))), isLoaded && rows && rows.map(row => /*#__PURE__*/React.createElement("li", {
-      className: "nav-item",
-      key: row.uuid
-    }, /*#__PURE__*/React.createElement("a", {
-      className: "nav-link",
-      href: "#",
-      onClick: () => this.props.navigateToGrid(UuidGrids, row.uuid)
-    }, row.text1, " ", row.text3 && /*#__PURE__*/React.createElement("i", {
-      className: `bi bi-${row.text3}`
-    }))))));
-  }
-  loadData() {
-    this.setState({
-      isLoading: true
-    });
-    const uri = `/${this.props.dbName}/api/v1/${UuidGrids}`;
-    fetch(uri, {
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.props.token
-      }
-    }).then(response => {
-      const contentType = response.headers.get("content-type");
-      if (contentType && contentType.indexOf("application/json") !== -1) {
-        return response.json().then(result => {
-          if (result.response != undefined) {
-            this.setState({
-              isLoading: false,
-              isLoaded: true,
-              rows: result.response.rows,
-              error: result.response.error
-            });
-          } else {
-            this.setState({
-              isLoading: false,
-              isLoaded: true,
-              error: result.error
-            });
-          }
-        }, error => {
-          this.setState({
-            isLoading: false,
-            isLoaded: false,
-            rows: [],
-            error: error.message
-          });
-        });
-      } else {
-        this.setState({
-          isLoading: false,
-          isLoaded: false,
-          rows: [],
-          error: `[${response.status}] Internal server issue.`
-        });
-      }
-    });
+    }, /*#__PURE__*/React.createElement(Grid, {
+      token: this.props.token,
+      dbName: this.props.dbName,
+      gridUuid: UuidGrids,
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      innerGrid: true,
+      miniGrid: true,
+      gridTitle: "My grids",
+      gridSubTitle: "Grids I own",
+      filterColumnOwned: true,
+      filterColumnName: "relationship3",
+      filterColumnGridUuid: UuidGrids,
+      filterColumnValue: this.props.userUuid
+    }), /*#__PURE__*/React.createElement(Grid, {
+      token: this.props.token,
+      dbName: this.props.dbName,
+      gridUuid: UuidGrids,
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      innerGrid: true,
+      miniGrid: true,
+      gridTitle: "Edit grids",
+      gridSubTitle: "Grids I can edit",
+      filterColumnOwned: true,
+      filterColumnName: "relationship5",
+      filterColumnGridUuid: UuidGrids,
+      filterColumnValue: this.props.userUuid,
+      noEdit: true
+    }), /*#__PURE__*/React.createElement(Grid, {
+      token: this.props.token,
+      dbName: this.props.dbName,
+      gridUuid: UuidGrids,
+      navigateToGrid: (gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid),
+      innerGrid: true,
+      miniGrid: true,
+      gridTitle: "View grids",
+      gridSubTitle: "Grids I can view",
+      filterColumnOwned: true,
+      filterColumnName: "relationship4",
+      filterColumnGridUuid: UuidGrids,
+      filterColumnValue: this.props.userUuid,
+      noEdit: true
+    }));
   }
 }
 const rootElement = document.getElementById("application");
@@ -509,6 +464,7 @@ const UuidPasswordColumnType = "5f038b21-d9a4-45fc-aa3f-fc405342c287";
 const UuidBooleanColumnType = "6e205ebd-6567-44dc-8fd4-ef6ad281ab40";
 const UuidUuidColumnType = "d7c004ff-da5e-4a18-9520-cd42b2847508";
 const UuidGrids = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7";
+const UuidGridColumnName = "e9e4a415-c31e-4383-ae70-18949d6ec692";
 const UuidUsers = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2";
 const UuidColumns = "533b6862-add3-4fef-8f93-20a17aaaaf5a";
 const trace = false;
