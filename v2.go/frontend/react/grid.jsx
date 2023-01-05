@@ -73,7 +73,8 @@ class Grid extends React.Component {
 				filterColumnDisplayString,
 				innerGrid,
 				miniGrid,
-				gridTitle } = this.props
+				gridTitle,
+				gridSubTitle } = this.props
 		const countRows = rows ? rows.length : 0
 		const columns = miniGrid ? (grid && grid.columns != undefined ? grid.columns.slice(0,1) : []) : grid.columns
 		if(trace) console.log("[Grid.render()] gridUuid=", gridUuid, ", uuid=", uuid)
@@ -92,7 +93,10 @@ class Grid extends React.Component {
 						<div className="card-subtitle mb-2 text-muted">{grid.text2}</div>
 					}
 					{isLoaded && rows && grid && uuid == "" && innerGrid && gridTitle &&
-						<h5 className="card-title">{gridTitle} <small><i className={`bi bi-grid-3x3 mx-1`}></i></small></h5>
+						<h5 className="card-title">{gridTitle}</h5>
+					}
+					{isLoaded && rows && grid && uuid == "" && innerGrid && gridSubTitle &&
+						<div className="card-subtitle mb-2 text-muted">{gridSubTitle}  <small><i className={`bi bi-grid-3x3 mx-1`}></i></small></div>
 					}
 					{error && !isLoading && <div className="alert alert-danger" role="alert">{error}</div>}
 					{isLoaded && rows && countRows > 0 && uuid == "" &&

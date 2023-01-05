@@ -366,7 +366,8 @@ class Navigation extends React.Component {
 						navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 						innerGrid={true}
 						miniGrid={true}
-						gridTitle="All grids" />
+						gridTitle="Grids"
+						gridSubTitle="All grids I can access to" />
 			</nav>
 		)
 	}
