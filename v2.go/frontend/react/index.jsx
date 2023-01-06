@@ -44,6 +44,8 @@ class App extends React.Component {
 		const gridUuid = this.state.gridUuid
 		const uuid = this.state.uuid
 		if(trace) console.log("[App.render()] gridUuid=", gridUuid, ", uuid=", uuid)
+
+
 		return (
 			<div>
 				<Header appName={this.props.appName} 
@@ -69,6 +71,7 @@ class App extends React.Component {
 							{gridUuid == "" &&
 								<div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
+									<div id="editor"><p>Hello World!</p></div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
@@ -119,6 +122,16 @@ class App extends React.Component {
 				if(trace) console.log("[App.componentDidMount()] popstate, e=", e)
 				this.setState({ gridUuid: e.state.gridUuid, uuid: e.state.uuid })
 			}
+		})
+		new Quill('#editor', {
+			modules: {
+				toolbar: [
+				  [{ header: [1, 2, false] }],
+				  ['bold', 'italic', 'underline'],
+				  ['image', 'code-block']
+				]
+			  },
+			theme: 'snow',
 		})
 	}
 }

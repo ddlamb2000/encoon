@@ -8,7 +8,7 @@ log: true # show basic messages
 trace: false # show detailed trace
 showTiming: false # show basic timings
 
-frontEndDevelopment: false # use front-end development code and run-time (React, JSX, Babel)
+frontEndDevelopment: true # use front-end development code and run-time (React, JSX, Babel)
 
 gridCacheSize: 500 # number of grids kept in local server cache
 

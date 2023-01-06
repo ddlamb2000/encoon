@@ -58,6 +58,7 @@ Tabulator
 
 Rich text editors
     https://github.com/ianstormtaylor/slate
+    https://quilljs.com
 
 
 Test automation
