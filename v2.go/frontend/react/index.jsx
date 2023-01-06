@@ -44,8 +44,6 @@ class App extends React.Component {
 		const gridUuid = this.state.gridUuid
 		const uuid = this.state.uuid
 		if(trace) console.log("[App.render()] gridUuid=", gridUuid, ", uuid=", uuid)
-
-
 		return (
 			<div>
 				<Header appName={this.props.appName} 
@@ -71,7 +69,8 @@ class App extends React.Component {
 							{gridUuid == "" &&
 								<div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<div id="editor"><p>Hello World!</p></div>
+									<div id="editor1"><p>Hello World!</p></div>
+									<div id="editor2"><p>Salut!</p></div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
@@ -123,16 +122,29 @@ class App extends React.Component {
 				this.setState({ gridUuid: e.state.gridUuid, uuid: e.state.uuid })
 			}
 		})
-		new Quill('#editor', {
-			modules: {
-				toolbar: [
-				  [{ header: [1, 2, false] }],
-				  ['bold', 'italic', 'underline'],
-				  ['image', 'code-block']
-				]
-			  },
-			theme: 'snow',
-		})
+		const gridUuid = this.state.gridUuid
+		if(gridUuid == '') {
+			new Quill('#editor1', {
+				modules: {
+					toolbar: [
+					[{ header: [1, 2, false] }],
+					['bold', 'italic', 'underline'],
+					['image', 'code-block']
+					]
+				},
+				theme: 'snow',
+			})
+			new Quill('#editor2', {
+				modules: {
+					toolbar: [
+					[{ header: [1, 2, false] }],
+					['bold', 'italic', 'underline'],
+					['image', 'code-block']
+					]
+				},
+				theme: 'snow',
+			})
+		}
 	}
 }
 
@@ -426,6 +438,7 @@ const UuidReferenceColumnType            = "c8b16312-d4f0-40a5-aa04-c0bc1350fea7
 const UuidPasswordColumnType             = "5f038b21-d9a4-45fc-aa3f-fc405342c287"
 const UuidBooleanColumnType              = "6e205ebd-6567-44dc-8fd4-ef6ad281ab40"
 const UuidUuidColumnType                 = "d7c004ff-da5e-4a18-9520-cd42b2847508"
+const UuidRichTextColumnType   			 = "28ac131f-f04b-4350-b464-3db4f8920597"
 const UuidGrids                          = "f35ef7de-66e7-4e51-9a09-6ff8667da8f7"
 const UuidGridColumnName                 = "e9e4a415-c31e-4383-ae70-18949d6ec692"
 const UuidUsers                          = "018803e1-b4bf-42fa-b58f-ac5faaeeb0c2"

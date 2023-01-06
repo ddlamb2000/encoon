@@ -139,6 +139,7 @@ class GridCell extends React.Component {
 					<GridCellInput type={this.props.type}
 									variantReadOnly={variantReadOnly}
 									uuid={this.props.uuid}
+									columnUuid={this.props.columnUuid}
 									columnName={this.props.columnName}
 									readOnly={this.props.readonly}
 									checkedBoolean={checkedBoolean}
@@ -192,20 +193,56 @@ class GridCell extends React.Component {
 }
 
 class GridCellInput  extends React.Component {
+	getId() {
+		const id = this.props.columnName + '-' + this.props.uuid + '-' + this.props.columnUuid
+		return id
+	}
+
 	render() {
-		const className = this.props.type == "checkbox" ? "form-check-input" : "form-control"
-		return (
-			<input type={this.props.type}
-					className={className + " form-control-sm rounded-2 shadow gap-2 p-1 " + this.props.variantReadOnly}
-					name={this.props.uuid}
-					uuid={this.props.uuid}
-					column={this.props.columnName}
-					readOnly={this.props.readonly}
-					defaultChecked={this.props.checkedBoolean}
-					defaultValue={this.props.value}
-					ref={this.props.inputRef}
-					onInput={() => this.props.onEditRowClick(this.props.uuid)} />
-		)
+		if(this.props.type == 'richtext') {
+			return (
+				<div id={this.getId()}
+						type={this.props.type}
+						name={this.props.uuid}
+						uuid={this.props.uuid}
+						column={this.props.columnName}
+						ref={this.props.inputRef}
+						onInput={() => this.props.onEditRowClick(this.props.uuid)}>
+					<p>{this.props.value}</p>
+				</div>
+			)
+		}
+		else {
+			const className = this.props.type == "checkbox" ? "form-check-input" : "form-control"
+			return (
+				<input id={this.getId()}
+						type={this.props.type}
+						className={className + " form-control-sm rounded-2 shadow gap-2 p-1 " + this.props.variantReadOnly}
+						name={this.props.uuid}
+						uuid={this.props.uuid}
+						column={this.props.columnName}
+						readOnly={this.props.readonly}
+						defaultChecked={this.props.checkedBoolean}
+						defaultValue={this.props.value}
+						ref={this.props.inputRef}
+						onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+			)
+		}
+	}
+
+	componentDidMount() {
+		if(this.props.type == 'richtext') {
+			new Quill('#' + this.getId(), {
+				modules: {
+					toolbar: [
+						[{ header: [1, 2, 3, false] }],
+						['bold', 'italic', 'underline'],
+						['image', 'code-block']
+					]
+				},
+				theme: 'snow'
+			})
+		}
 	}
 }
 

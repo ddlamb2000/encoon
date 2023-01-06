@@ -2635,6 +2635,21 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumns + "', " +
 			"'" + model.UuidColumnColumnOrder + "')",
+
+		254: "INSERT INTO rows " +
+			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
+			"text1, " +
+			"text2) " +
+			"VALUES ('" + model.UuidRichTextColumnType + "', " +
+			"1, " +
+			"NOW(), " +
+			"NOW(), " +
+			"'" + model.UuidRootUser + "', " +
+			"'" + model.UuidRootUser + "', " +
+			"true, " +
+			"'" + model.UuidColumnTypes + "', " +
+			"'Rich text', " +
+			"'Rich text column type.')",
 	}
 }
 

@@ -332,6 +332,7 @@ class Grid extends React.Component {
 			const e1 = this.gridInput.get(uuid)
 			if(e1) {
 				const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
+				console.log('e2', e2)
 				const e3 = Object.keys(e2).map(key => ({
 						col: e2[key].name,
 						value: getConvertedValue(e1.get(e2[key].name))
@@ -480,6 +481,8 @@ function getColumnType(type) {
 			return "checkbox"
 		case UuidReferenceColumnType:
 			return "reference"
+		case UuidRichTextColumnType:
+			return "richtext"
 		default:
 			return "text"
 	}
@@ -555,6 +558,7 @@ function getCellValue(type, value) {
 }
 
 function getConvertedValue(cell) {
+	console.log('cell.type=', cell.type, ',cell=', cell)
 	switch(cell.type) {
 		case 'number':
 			return Number(cell.value)
@@ -562,6 +566,9 @@ function getConvertedValue(cell) {
 			return String(cell.value)
 		case 'checkbox':
 			return String(cell.checked)
+		case 'richtext':
+			console.log('richtext!')
+			return String(cell.value)
 		default:
 			return cell.value
 	}
