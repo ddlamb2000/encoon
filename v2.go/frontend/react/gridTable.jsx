@@ -132,11 +132,12 @@ class GridCell extends React.Component {
 		const checkedBoolean = this.props.value && this.props.value == "true" ? true : false
 		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		const variantEdited = this.props.rowEdited ? "table-warning" : ""
-		const embedded = this.props.type == "reference" && this.props.bidirectional && this.props.owned
+		const embedded = this.props.typeUuid == UuidReferenceColumnType && this.props.bidirectional && this.props.owned
 		return (
 			<td className={variantEdited} onClick={() => this.props.onSelectRowClick(this.props.canEditRow ? this.props.uuid : '')}>
-				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded && 
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid != UuidReferenceColumnType && !embedded && 
 					<GridCellInput type={this.props.type}
+									typeUuid={this.props.typeUuid}
 									variantReadOnly={variantReadOnly}
 									uuid={this.props.uuid}
 									columnUuid={this.props.columnUuid}
@@ -147,12 +148,12 @@ class GridCell extends React.Component {
 									inputRef={this.props.inputRef}
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type != "reference" && !embedded &&
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid != UuidReferenceColumnType && !embedded &&
 					<span className={variantMonospace}>
-						{getCellValue(this.props.type, this.props.value)} {this.props.icon && <i className={`bi bi-${this.props.icon}`}></i>}
+						{this.getCellValue(this.props.typeUuid, this.props.value)} {this.props.icon && <i className={`bi bi-${this.props.icon}`}></i>}
 					</span>
 				}
-				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !embedded && 
+				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid == UuidReferenceColumnType && !embedded && 
 					<GridCellDropDown uuid={this.props.uuid}
 										columnUuid={this.props.columnUuid}
 										columnName={this.props.columnName}
@@ -166,7 +167,7 @@ class GridCell extends React.Component {
 										onAddReferencedValueClick={reference => this.props.onAddReferencedValueClick(reference)}
 										onRemoveReferencedValueClick={reference => this.props.onRemoveReferencedValueClick(reference)} />
 				}
-				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.type == "reference" && !embedded &&
+				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid == UuidReferenceColumnType && !embedded &&
 					<GridCellReferences uuid={this.props.uuid}
 										values={this.props.values}
 										referencedValuesAdded={this.props.referencedValuesAdded}
@@ -190,6 +191,14 @@ class GridCell extends React.Component {
 			</td>
 		)
 	}
+
+	getCellValue(typeUuid, value) {
+		switch(typeUuid) {
+			case UuidPasswordColumnType: return '*****'
+			case UuidBooleanColumnType: return value == 'true' ? '✔︎' : ''
+		}
+		return value
+	}
 }
 
 class GridCellInput  extends React.Component {
@@ -199,10 +208,11 @@ class GridCellInput  extends React.Component {
 	}
 
 	render() {
-		if(this.props.type == 'richtext') {
+		if(this.props.typeUuid == UuidRichTextColumnType) {
 			return (
 				<div id={this.getId()}
 						type={this.props.type}
+						typeuuid={this.props.typeUuid}
 						name={this.props.uuid}
 						uuid={this.props.uuid}
 						column={this.props.columnName}
@@ -217,6 +227,7 @@ class GridCellInput  extends React.Component {
 			return (
 				<input id={this.getId()}
 						type={this.props.type}
+						typeuuid={this.props.typeUuid}
 						className={className + " form-control-sm rounded-2 shadow gap-2 p-1 " + this.props.variantReadOnly}
 						name={this.props.uuid}
 						uuid={this.props.uuid}
@@ -231,7 +242,7 @@ class GridCellInput  extends React.Component {
 	}
 
 	componentDidMount() {
-		if(this.props.type == 'richtext') {
+		if(this.props.typeUuid == UuidRichTextColumnType) {
 			new Quill('#' + this.getId(), {
 				modules: {
 					toolbar: [

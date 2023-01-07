@@ -332,10 +332,9 @@ class Grid extends React.Component {
 			const e1 = this.gridInput.get(uuid)
 			if(e1) {
 				const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
-				console.log('e2', e2)
 				const e3 = Object.keys(e2).map(key => ({
 						col: e2[key].name,
-						value: getConvertedValue(e1.get(e2[key].name))
+						value: this.getConvertedValue(e1.get(e2[key].name))
 					}))
 				const e4 = e3.reduce(
 					(hash, {col, value}) => {
@@ -351,6 +350,19 @@ class Grid extends React.Component {
 		})
 	}
 
+	getConvertedValue(cell) {
+		switch(cell.getAttribute('typeuuid')) {
+			case UuidTextColumnType: return String(cell.value)
+			case UuidIntColumnType: return Number(cell.value)
+			case UuidUuidColumnType: return String(cell.value)
+			case UuidBooleanColumnType: return String(cell.checked)
+			case UuidRichTextColumnType:
+				console.log('richtext!', ',cell=', cell)
+				return String(cell.value)
+		}
+		return cell.value
+	}
+	
 	saveData() {
 		const { dbName, token, gridUuid, uuid, filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue } = this.props
 		this.setState({isLoading: true})
@@ -471,7 +483,7 @@ class GridFooter extends React.Component {
 	}
 }
 
-function getColumnType(type) {
+function getHtmlColumnType(type) {
 	switch(type) {
 		case UuidIntColumnType:
 			return "number"
@@ -479,10 +491,6 @@ function getColumnType(type) {
 			return "password"
 		case UuidBooleanColumnType:
 			return "checkbox"
-		case UuidReferenceColumnType:
-			return "reference"
-		case UuidRichTextColumnType:
-			return "richtext"
 		default:
 			return "text"
 	}
@@ -492,8 +500,8 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 	const cols = []
 	{columns && columns.map(
 		column => {
-			let type = getColumnType(column.typeUuid)
-			if(type == "reference") {
+			let type = getHtmlColumnType(column.typeUuid)
+			if(column.typeUuid == UuidReferenceColumnType) {
 				cols.push({
 					uuid: column.uuid,
 					owned: column.owned,
@@ -504,6 +512,7 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 					gridPromptUuid: column.gridPromptUuid,
 					gridUuid: column.gridUuid,
 					grid: column.grid,
+					typeUuid: column.typeUuid,
 					type: type,
 					readonly: false,
 					values: getColumnValueForReferencedRow(column, row)
@@ -518,6 +527,7 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 					typeUuid: column.typeUuid,
 					gridUuid: column.gridUuid,
 					grid: column.grid,
+					typeUuid: column.typeUuid,
 					type: type,
 					readonly: false
 				})	
@@ -525,8 +535,8 @@ function getColumnValuesForRow(columns, row, withTimeStamps) {
 		}
 	)}
 	if(withTimeStamps) {
-		cols.push({uuid: "a", name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, type: "text", owned: true, readonly: true})
-		cols.push({uuid: "b", name: "revision", label: "Revision", value: row.revision, type: "number", owned: true, readonly: true})
+		cols.push({uuid: "a", name: "uuid", label: "Identifier", value: row.uuid, typeUuid: UuidUuidColumnType, typeUuid: UuidUuidColumnType, type: "text", owned: true, readonly: true})
+		cols.push({uuid: "b", name: "revision", label: "Revision", value: row.revision, typeUuid: UuidIntColumnType, type: "number", owned: true, readonly: true})
 	}
 	return cols
 }
@@ -549,27 +559,4 @@ function getColumnValueForReferencedRow(column, row) {
 		)
 	}
 	return output
-}
-
-function getCellValue(type, value) {
-	if(type == 'password') return '*****'
-	else if(type == 'checkbox') return value == 'true' ? '✔︎' : ''
-	return value
-}
-
-function getConvertedValue(cell) {
-	console.log('cell.type=', cell.type, ',cell=', cell)
-	switch(cell.type) {
-		case 'number':
-			return Number(cell.value)
-		case 'text':
-			return String(cell.value)
-		case 'checkbox':
-			return String(cell.checked)
-		case 'richtext':
-			console.log('richtext!')
-			return String(cell.value)
-		default:
-			return cell.value
-	}
 }
