@@ -105,7 +105,9 @@ class GridView extends React.Component {
 													navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 													dbName={this.props.dbName}
 													token={this.props.token}
-													loadParentData={() => this.props.loadParentData()} />
+													loadParentData={() => this.props.loadParentData()}
+													createRichTextField={(id, value) => this.props.createRichTextField(id, value)}
+													deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 									</tr>
 								)}
 								{audits &&

@@ -18,20 +18,21 @@ class Grid extends React.Component {
 			referencedValuesAdded: [],
 			referencedValuesRemoved: []
 		}
-		this.gridInput = new Map()
+		this.inputMap = new Map()
+		this.richTextMap = new Map()
 		this.setGridRowRef = element => {
 			if(element != undefined) {
 				const uuid = element.getAttribute("uuid")
 				const columnName = element.getAttribute("column")
 				if(uuid != "" && columnName != "") {
-					const gridInputMap = this.gridInput.get(uuid)
-					if(gridInputMap) {
-						gridInputMap.set(columnName, element)	
+					const inputRowMap = this.inputMap.get(uuid)
+					if(inputRowMap) {
+						inputRowMap.set(columnName, element)
 					}
 					else {
-						const gridRowInputMap = new Map()
-						gridRowInputMap.set(columnName, element)
-						this.gridInput.set(uuid, gridRowInputMap)
+						const inputRowMap = new Map()
+						inputRowMap.set(columnName, element)
+						this.inputMap.set(uuid, inputRowMap)
 					}
 				}
 			}
@@ -121,6 +122,8 @@ class Grid extends React.Component {
 									filterColumnOwned={filterColumnOwned}
 									filterColumnName={filterColumnName}
 									filterColumnGridUuid={filterColumnGridUuid}
+									createRichTextField={(id, value) => this.createRichTextField(id, value)}
+									deleteRichTextField={id => this.deleteRichTextField(id)}
 									miniGrid={miniGrid} />
 					}
 					{isLoaded && rows && countRows > 0 && uuid != "" &&
@@ -142,7 +145,9 @@ class Grid extends React.Component {
 									dbName={dbName}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									token={this.props.token}
-									loadParentData={() => this.loadData()} />
+									loadParentData={() => this.loadData()}
+									createRichTextField={(id, value) => this.createRichTextField(id, value)}
+									deleteRichTextField={id => this.deleteRichTextField(id)} />
 					}
 					{!noEdit &&
 						<GridFooter isLoading={isLoading}
@@ -253,6 +258,39 @@ class Grid extends React.Component {
 		this.editRow(reference.fromUuid)
 	}
 
+	createRichTextField(id, value) {
+		const richText = new Quill('#' + id, {
+			modules: {
+				toolbar: [
+					[{ header: [1, 2, 3, false] }],
+					['bold', 'italic', 'underline', 'strike','script', 'code'],
+					['blockquote', 'list', 'align', 'code-block']
+				]
+			},
+			theme: 'snow'
+		})
+		this.setRichTextValue(richText, value)
+		this.richTextMap.set(id, richText)
+	}
+
+	setRichTextValue(richText, value) {
+		if(value) {
+			try {
+				console.log(value)
+				richText.setContents(JSON.parse(value))
+			} catch (error) {
+				console.error("Invalid value", value)
+			}
+		}
+	}
+
+	deleteRichTextField(id) {
+		const richText = this.richTextMap.get(id)
+		if(richText) {
+			this.richTextMap.delete(id)
+		}
+	}
+
 	loadData() {
 		this.setState({
 			error: "",
@@ -329,7 +367,7 @@ class Grid extends React.Component {
 
 	getInputValues(rows) {
 		return rows.map(uuid => {
-			const e1 = this.gridInput.get(uuid)
+			const e1 = this.inputMap.get(uuid)
 			if(e1) {
 				const e2 = Array.from(e1, ([name, value]) => ({ name, value }))
 				const e3 = Object.keys(e2).map(key => ({
@@ -357,8 +395,12 @@ class Grid extends React.Component {
 			case UuidUuidColumnType: return String(cell.value)
 			case UuidBooleanColumnType: return String(cell.checked)
 			case UuidRichTextColumnType:
-				console.log('richtext!', ',cell=', cell)
-				return String(cell.value)
+				const richText = this.richTextMap.get(cell.id)
+				if(richText != undefined) {
+					const content = richText.getContents()
+					const contentString = JSON.stringify(content)
+					return contentString
+				}				
 		}
 		return cell.value
 	}
