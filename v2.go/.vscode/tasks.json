@@ -73,5 +73,55 @@
             },
             "problemMatcher": []
         },
+        {
+            "label": "Build encoon docker image",
+            "type": "shell",
+            "command": "docker build -t encoon .",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run encoon docker application",
+            "type": "shell",
+            "command": "docker run -d -p 8080:8080 -it --name encoon encoon",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Pull Postgres docker image",
+            "type": "shell",
+            "command": "docker pull postgres",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start Postgres docker",
+            "type": "shell",
+            "command": "docker run -d -p 5432:5432 --name postgres-encoon -e POSTGRES_USER=encoon -e POSTGRES_PASSWORD=encoon postgres",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Build docker network",
+            "type": "shell",
+            "command": "./scripts/create_docker_network.sh",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
     ]
 }

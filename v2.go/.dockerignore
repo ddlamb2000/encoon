@@ -1,0 +1,11 @@
+.git
+.bundle
+.DS_Store
+.loadpath
+.tmp*
+*.autosave
+tmp/
+logs/*.log
+logs/*.out
+encoon
+node_modules

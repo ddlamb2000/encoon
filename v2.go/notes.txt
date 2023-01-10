@@ -5,6 +5,8 @@ Go
 
     Contexts: https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
 
+    Docker: https://registry.hub.docker.com/_/golang
+
 Gin
     https://gin-gonic.com/ 
     Templates: https://pkg.go.dev/text/template, https://gohugo.io/templates/
@@ -37,6 +39,8 @@ PostgreSQL
     https://postgresapp.com/
 
     https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
+
+    Docker: https://registry.hub.docker.com/_/postgres
 
     Passwords:
         create an "encoded64 password"

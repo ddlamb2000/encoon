@@ -8,7 +8,7 @@ log: true # show basic messages
 trace: false # show detailed trace
 showTiming: false # show basic timings
 
-frontEndDevelopment: true # use front-end development code and run-time (React, JSX, Babel)
+frontEndDevelopment: false # use front-end development code and run-time (React, JSX, Babel)
 
 gridCacheSize: 500 # number of grids kept in local server cache
 
@@ -47,7 +47,7 @@ database:
   timeOutThreshold: 500 # timeout threshold (in milliseconds) for database requests
 
 - name: "test"
-  host: "localhost"
+  host: "postgres-encoon"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"
