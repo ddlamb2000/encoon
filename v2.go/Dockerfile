@@ -17,11 +17,19 @@ COPY frontend frontend
 RUN npm install --save-dev @babel/core @babel/cli
 RUN npm run build
 
-# Production container
+# Test container
 
 FROM debian:11-slim
+LABEL application="εncooη"
+LABEL description="Data structuration, presentation and navigation."
+LABEL version="2.0"
+RUN useradd -ms /bin/bash encoon
+USER encoon
+ENV LOG="encoon.log"
+ENV CONFIGURATION_PATH="testData/"
+ENV CONFIGURATION="docker-testing.yml"
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY --from=node-builder /usr/src/encoon/frontend frontend
-COPY configuration.yml .
-CMD ["./encoon", "-log", "encoon.log"]
+COPY ${CONFIGURATION_PATH}${CONFIGURATION} .
+CMD ["sh", "-c", "./encoon -configuration ${CONFIGURATION} -log ${LOG}"]

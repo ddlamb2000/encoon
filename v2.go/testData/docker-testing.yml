@@ -22,7 +22,7 @@ database:
 
 # Use the configuration below as a template for every database  
 - name: "master" # name of the PostgreSQL database
-  host: "localhost" # name of the database host
+  host: "postgres-encoon" # name of the database host
   port: 5432 # TCP port number of the database host
   # PostgreSQL login role set as owner of the database
   #   CREATE ROLE encoon LOGIN PASSWORD '*****';
@@ -58,7 +58,7 @@ database:
   timeOutThreshold: 2000
 
 - name: "sandbox"
-  host: "localhost"
+  host: "postgres-encoon"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"

@@ -1,0 +1,68 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2022
+
+appName: "εncooη" # Application name to be displayed
+appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
+
+log: true # show basic messages
+trace: false # show detailed trace
+showTiming: false # show basic timings
+
+frontEndDevelopment: true # use front-end development code and run-time (React, JSX, Babel)
+
+gridCacheSize: 500 # number of grids kept in local server cache
+
+# Http Server configuration
+httpServer:
+  port: 8080 # http Tcp port
+  jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
+
+# Database configuration
+database:
+
+# Use the configuration below as a template for every database  
+- name: "master" # name of the PostgreSQL database
+  host: "localhost" # name of the database host
+  port: 5432 # TCP port number of the database host
+  # PostgreSQL login role set as owner of the database
+  #   CREATE ROLE encoon LOGIN PASSWORD '*****';
+  #   CREATE DATABASE sandbox WITH OWNER = encoon;
+  role: "encoon"
+  rolePassword: "encoon"
+  # secret key to generate JWT tokens
+  # JSON Web Tokens (JWTs) are a popular method for dealing with online authentication
+  # you should use a cryptographically secure string for your secret key
+  # it's recommended to use the same approach as the initial root user password (see below)
+  # to set a different secret key for each database
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root" # user name for the user created with administrator privileges
+  # initial password set for the user created with administrator privileges
+  # password should be base64-encoded AND encrypted
+  # password is temporarly and needs to be changed after first login
+  # to generate a password, log to a PostgreSQL database
+  # then enter:
+  #   CREATE EXTENSION pgcrypto; # if needed
+  #   SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8)); # replace ***** with the desired password.
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 500 # timeout threshold (in milliseconds) for database requests
+
+- name: "test"
+  host: "localhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "encoon"
+  jwtsecret: "$2a$08$gI0CqdhzX.Ke.y.77AzGweKGGiXql7n9YJPEXtTAcnDQnTe4/AcGy"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  testSleepTime: 500 # Temporisation (in milliseconds) of every database requests
+  timeOutThreshold: 2000
+
+- name: "sandbox"
+  host: "localhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "encoon"
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 500

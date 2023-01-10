@@ -4,9 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Run web server",
+            "label": "Start local web server",
             "type": "shell",
-            "command": "go run .",
+            "command": "go run . -configuration ./testData/local-development.yml",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -44,26 +44,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Build front-end",
-            "type": "shell",
-            "command": "npm run build",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Build all",
-            "type": "shell",
-            "command": "./scripts/build_all.sh",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Cleanup logs",
             "type": "shell",
             "command": "rm ./logs/*.*",
@@ -84,9 +64,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Run encoon docker application",
+            "label": "Start encoon docker container",
             "type": "shell",
-            "command": "docker run -d -p 8080:8080 -it --name encoon encoon",
+            "command": "docker run -d -p 8080:8080 -it --name=\"encoon\" -e CONFIGURATION=\"docker-testing.yml\" encoon",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -104,9 +84,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Start Postgres docker",
+            "label": "Start Postgres container",
             "type": "shell",
-            "command": "docker run -d -p 5432:5432 --name postgres-encoon -e POSTGRES_USER=encoon -e POSTGRES_PASSWORD=encoon postgres",
+            "command": "docker run -d -p 5432:5432 --name postgres-encoon -e POSTGRES_USER=encoon -e POSTGRES_PASSWORD=encoon -e POSTGRES_DB=test postgres",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -114,7 +94,7 @@
             "problemMatcher": []
         },
         {
-            "label": "Build docker network",
+            "label": "Create docker network",
             "type": "shell",
             "command": "./scripts/create_docker_network.sh",
             "group": {
