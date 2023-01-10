@@ -1,15 +1,20 @@
+# εncooη : data structuration, presentation and navigation.
+# Copyright David Lambert 2023
 
 # Go build container
-
 FROM golang:1.19 as go-builder
 WORKDIR /usr/src/encoon
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
-COPY . .
+COPY apis apis
+COPY configuration configuration
+COPY database database
+COPY model model
+COPY utils utils
+COPY encoon.go .
 RUN go build -v
 
 # Node build container
-
 FROM node:18.13.0 as node-builder
 WORKDIR /usr/src/encoon
 COPY package.json babel.config.json ./
@@ -18,7 +23,6 @@ RUN npm install --save-dev @babel/core @babel/cli
 RUN npm run build
 
 # Test container
-
 FROM debian:11-slim
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."

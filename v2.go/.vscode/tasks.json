@@ -66,7 +66,7 @@
         {
             "label": "Start encoon docker container",
             "type": "shell",
-            "command": "docker run -d -p 8080:8080 -it --name=\"encoon\" encoon && docker network connect encoon-network encoon",
+            "command": "docker run -d -p 8080:8080 -it --restart=unless-stopped --name=\"encoon\" encoon && docker network connect encoon encoon",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -86,7 +86,7 @@
         {
             "label": "Start Postgres container",
             "type": "shell",
-            "command": "docker run -d -p 5432:5432 --name=\"postgres-encoon\" -e POSTGRES_USER=\"encoon\" -e POSTGRES_PASSWORD=\"encoon\" -e POSTGRES_DB=\"test\" postgres",
+            "command": "docker run -d -p 5432:5432 --restart=unless-stopped --name=\"postgres-encoon\" -e POSTGRES_USER=\"encoon\" -e POSTGRES_PASSWORD=\"encoon\" -e POSTGRES_DB=\"test\" postgres && docker network connect encoon postgres-encoon",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -96,7 +96,7 @@
         {
             "label": "Create docker network",
             "type": "shell",
-            "command": "./scripts/create_docker_network.sh",
+            "command": "docker network create encoon",
             "group": {
                 "kind": "build",
                 "isDefault": true
