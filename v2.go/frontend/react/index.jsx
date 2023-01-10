@@ -69,8 +69,6 @@ class App extends React.Component {
 							{gridUuid == "" &&
 								<div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<div id="editor1"><p>Hello World!</p></div>
-									<div id="editor2"><p>Salut!</p></div>
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 									<Grid token={this.token} dbName={this.props.dbName} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
@@ -122,29 +120,6 @@ class App extends React.Component {
 				this.setState({ gridUuid: e.state.gridUuid, uuid: e.state.uuid })
 			}
 		})
-		const gridUuid = this.state.gridUuid
-		if(gridUuid == '') {
-			new Quill('#editor1', {
-				modules: {
-					toolbar: [
-					[{ header: [1, 2, false] }],
-					['bold', 'italic', 'underline'],
-					['image', 'code-block']
-					]
-				},
-				theme: 'snow',
-			})
-			new Quill('#editor2', {
-				modules: {
-					toolbar: [
-					[{ header: [1, 2, false] }],
-					['bold', 'italic', 'underline'],
-					['image', 'code-block']
-					]
-				},
-				theme: 'snow',
-			})
-		}
 	}
 }
 
