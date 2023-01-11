@@ -29,11 +29,9 @@ LABEL description="Data structuration, presentation and navigation."
 LABEL version="2.0"
 RUN useradd -ms /bin/bash encoon
 USER encoon
-ENV LOG="encoon.log"
-ENV CONFIGURATION_PATH="testData/"
-ENV CONFIGURATION="configuration-template.yml"
+ENV CONFIGURATION="testData/configuration-template.yml"
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY --from=node-builder /usr/src/encoon/frontend frontend
-COPY ${CONFIGURATION_PATH}${CONFIGURATION} configuration.yml
-CMD ["sh", "-c", "./encoon -log ${LOG}"]
+COPY ${CONFIGURATION} configuration.yml
+CMD ["sh", "-c", "./encoon"]

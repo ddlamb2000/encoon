@@ -44,16 +44,6 @@
             "problemMatcher": []
         },
         {
-            "label": "Cleanup logs",
-            "type": "shell",
-            "command": "rm ./logs/*.*",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Build encoon docker image",
             "type": "shell",
             "command": "docker build -t encoon .",

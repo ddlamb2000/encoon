@@ -1,7 +1,7 @@
 #  εncooη : data structuration, presentation and navigation.
 #  Copyright David Lambert 2022
 
-appName: "εncooη" # Application name to be displayed
+appName: "εncooη [local]" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
 log: true # show basic messages

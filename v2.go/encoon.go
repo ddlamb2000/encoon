@@ -7,8 +7,6 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"io"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -27,7 +25,6 @@ var (
 	router                = gin.New()
 	srv                   *http.Server
 	configurationFileName string
-	logFileName           string
 	exportDb              string
 	exportFileName        string
 )
@@ -36,9 +33,6 @@ const (
 	configurationFileNameFlag    = "configuration"
 	defaultConfigurationFileName = "./configuration.yml"
 	usageConfigurationFileName   = "Name of the file (.yml) used to configure the application (full path)."
-	logFileNameFlag              = "log"
-	defaultLogFileName           = "./logs/encoon.log"
-	usageLogFileName             = "Name of the file (.log) used for logging."
 	exportDbFlag                 = "export"
 	defaultDbExport              = ""
 	usageDbExport                = "Name of the database to export."
@@ -49,20 +43,11 @@ const (
 
 func main() {
 	handleFlags()
-	flags := os.O_APPEND | os.O_CREATE | os.O_WRONLY
-	f, err := os.OpenFile(logFileName, flags, 0666)
-	if err != nil {
-		log.Fatal(err)
-		return
-	}
-	defer f.Close()
-	gin.DefaultWriter = io.MultiWriter(f, os.Stdout)
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		if exportDb != "" && exportFileName != "" {
 			database.ExportDb(context.Background(), exportDb, exportFileName)
 		} else {
-			configuration.Log("", "", "Starting, log into %v.", logFileName)
 			configuration.WatchConfigurationChanges(configurationFileName)
 			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -87,7 +72,6 @@ func main() {
 
 func handleFlags() {
 	flag.StringVar(&configurationFileName, configurationFileNameFlag, defaultConfigurationFileName, usageConfigurationFileName)
-	flag.StringVar(&logFileName, logFileNameFlag, defaultLogFileName, usageLogFileName)
 	flag.StringVar(&exportDb, exportDbFlag, defaultDbExport, usageDbExport)
 	flag.StringVar(&exportFileName, exportFileNameFlag, defaultExportFileName, usageExportFileName)
 	flag.Parse()
