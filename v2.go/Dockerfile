@@ -31,9 +31,9 @@ RUN useradd -ms /bin/bash encoon
 USER encoon
 ENV LOG="encoon.log"
 ENV CONFIGURATION_PATH="testData/"
-ENV CONFIGURATION="docker-testing.yml"
+ENV CONFIGURATION="configuration-template.yml"
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY --from=node-builder /usr/src/encoon/frontend frontend
-COPY ${CONFIGURATION_PATH}${CONFIGURATION} .
-CMD ["sh", "-c", "./encoon -configuration ${CONFIGURATION} -log ${LOG}"]
+COPY ${CONFIGURATION_PATH}${CONFIGURATION} configuration.yml
+CMD ["sh", "-c", "./encoon -log ${LOG}"]

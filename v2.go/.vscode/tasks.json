@@ -64,9 +64,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Start encoon docker container",
+            "label": "Start encoon docker testing container",
             "type": "shell",
-            "command": "docker run -d -p 8080:8080 -it --restart=unless-stopped --name=\"encoon\" encoon && docker network connect encoon encoon",
+            "command": "docker run -d -p 8081:8081 -it --restart=unless-stopped --name=\"encoon\" encoon && docker network connect encoon encoon && docker cp testData/docker-testing.yml encoon:/usr/encoon/configuration.yml",
             "group": {
                 "kind": "build",
                 "isDefault": true
