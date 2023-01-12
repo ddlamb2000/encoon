@@ -78,19 +78,14 @@ func handleFlags() {
 }
 
 func setAndStartHttpServer() error {
-	if configuration.IsFrontEndDevelopment() {
-		router.LoadHTMLGlob("frontend/templates/index-development.html")
-		router.Static("/javascript", "./frontend/react")
-	} else {
-		router.LoadHTMLGlob("frontend/templates/index-production.html")
-		router.Static("/javascript", "./frontend/javascript")
-	}
-	router.Static("/bootstrap", "./frontend/bootstrap-5.2.3-dist")
-	router.Static("/quill", "./frontend/quill")
-	router.Static("/stylesheets", "./frontend/stylesheets")
-	router.Static("/images", "./frontend/images")
-	router.Static("/icons", "./frontend/bootstrap-icons/icons")
-	router.StaticFile("favicon.ico", "./frontend/images/favicon.ico")
+	router.LoadHTMLGlob("frontend/templates/*.html")
+	router.Static("/react", "./frontend/react")
+	router.Static("/javascript", "./frontend/javascript")
+	router.Static("/bootstrap", "./frontend/lib/bootstrap-5.2.3-dist")
+	router.Static("/icons", "./frontend/lib/bootstrap-icons")
+	router.Static("/quill", "./frontend/lib/quill")
+	router.Static("/stylesheets", "./frontend")
+	router.StaticFile("favicon.ico", "./frontend/favicon.ico")
 	router.GET("/", getIndexHtml)
 	router.GET("/:dbName", getIndexHtml)
 	router.GET("/:dbName/:gridUuid", getIndexHtml)
