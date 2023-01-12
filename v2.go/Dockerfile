@@ -17,9 +17,10 @@ RUN go build -v
 # Node build container
 FROM node:18.13.0 as node-builder
 WORKDIR /usr/src/encoon
-COPY package.json babel.config.json ./
-COPY frontend frontend
+COPY frontend/package.json frontend/babel.config.json ./
 RUN npm install --save-dev @babel/core @babel/cli
+COPY frontend/javascript javascript
+COPY frontend/react react
 RUN npm run build
 
 # Test container
@@ -32,6 +33,10 @@ USER encoon
 ENV CONFIGURATION="testData/configuration-template.yml"
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
-COPY --from=node-builder /usr/src/encoon/frontend frontend
+COPY frontend/lib frontend/lib
+COPY frontend/templates frontend/templates
+COPY frontend/encoon.css frontend/encoon.css
+COPY frontend/favicon.ico frontend/favicon.ico
+COPY --from=node-builder /usr/src/encoon/javascript frontend/javascript
 COPY ${CONFIGURATION} configuration.yml
 CMD ["sh", "-c", "./encoon"]
