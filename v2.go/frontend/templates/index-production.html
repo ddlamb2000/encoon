@@ -1,26 +1,8 @@
 <!doctype html>
 <html lang="en">
-	<head>
-		<title>{{ .appName }}</title>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-		<meta charset="utf-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-	    <meta name="description" content="Data structuration, presentation and navigation.">
-	    <meta name="author" content="David Lambert">
-		<link rel="stylesheet" media="screen" href="/bootstrap/css/bootstrap.min.css" />
-		<link rel="stylesheet" media="screen" href="/icons/font/bootstrap-icons.css" />
-		<link rel="stylesheet" media="screen" href="/quill/quill.snow.css" />
-		<link rel="stylesheet" media="screen" href="/stylesheets/encoon.css" />
-	</head>
+	{{ template "header.html" }}
 	<body>
 		<div id="application" appName="{{ .appName }}" appTag="{{ .appTag }}" dbName="{{ .dbName }}" gridUuid="{{ .gridUuid }}" uuid="{{ .uuid }}"></div>
-		<script src="/bootstrap/js/bootstrap.bundle.min.js"></script>
-		<script src="/quill/quill.min.js"></script>
-		<script src="/javascript/react.production.min.js"></script>
-		<script src="/javascript/react-dom.production.min.js"></script>
-		<script src="/javascript/index.js"></script>
-		<script src="/javascript/grid.js"></script>
-		<script src="/javascript/gridView.js"></script>
-		<script src="/javascript/gridTable.js"></script>
+		{{ template "includes-production.html" }}
 	</body>
 </html>
