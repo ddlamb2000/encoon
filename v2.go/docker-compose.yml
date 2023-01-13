@@ -30,5 +30,5 @@ configs:
   encoon-configuration:
     file: ./testData/docker-testing.yml
 networks:
-  # The presence of these objects is sufficient to define them
-  encoon-network: {}
+  encoon-network:
+    driver: bridge
