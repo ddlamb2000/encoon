@@ -30,7 +30,6 @@ LABEL description="Data structuration, presentation and navigation."
 LABEL version="2.0"
 RUN useradd -ms /bin/bash encoon
 USER encoon
-ENV CONFIGURATION="testData/configuration-template.yml"
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY frontend/lib frontend/lib
@@ -38,5 +37,4 @@ COPY frontend/templates frontend/templates
 COPY frontend/encoon.css frontend/encoon.css
 COPY frontend/favicon.ico frontend/favicon.ico
 COPY --from=node-builder /usr/src/encoon/javascript frontend/javascript
-COPY ${CONFIGURATION} configuration.yml
 CMD ["sh", "-c", "./encoon"]

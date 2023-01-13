@@ -4,7 +4,7 @@
 appName: "εncooη [docker testing]" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
-log: false # show basic messages
+log: true # show basic messages
 trace: false # show detailed trace
 showTiming: false # show basic timings
 
@@ -22,7 +22,7 @@ database:
 
 # Use the configuration below as a template for every database  
 - name: "master" # name of the PostgreSQL database
-  host: "postgres-encoon" # name of the database host
+  host: "encoon-db" # name of the database host
   port: 5432 # TCP port number of the database host
   # PostgreSQL login role set as owner of the database
   #   CREATE ROLE encoon LOGIN PASSWORD '*****';
@@ -47,7 +47,7 @@ database:
   timeOutThreshold: 500 # timeout threshold (in milliseconds) for database requests
 
 - name: "test"
-  host: "postgres-encoon"
+  host: "encoon-db"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"
@@ -58,7 +58,7 @@ database:
   timeOutThreshold: 2000
 
 - name: "sandbox"
-  host: "postgres-encoon"
+  host: "encoon-db"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"

@@ -48,6 +48,7 @@ func main() {
 		if exportDb != "" && exportFileName != "" {
 			database.ExportDb(context.Background(), exportDb, exportFileName)
 		} else {
+			configuration.Log("", "", "Starting...")
 			configuration.WatchConfigurationChanges(configurationFileName)
 			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
@@ -56,8 +57,8 @@ func main() {
 				configuration.Log("", "", "Stopping.")
 				doneChan <- true
 			}()
-			go apis.InitializeCaches()
 			go setAndStartHttpServer()
+			go apis.InitializeCaches()
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()

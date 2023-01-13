@@ -44,49 +44,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Build encoon docker image",
+            "label": "Build and start docker containers",
             "type": "shell",
-            "command": "docker build -t encoon .",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Start encoon docker testing container",
-            "type": "shell",
-            "command": "docker run -d -p 8081:8081 -u 500 -it --restart=unless-stopped --name=\"encoon\" encoon && docker network connect encoon encoon && docker cp testData/docker-testing.yml encoon:/usr/encoon/configuration.yml",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Pull Postgres docker image",
-            "type": "shell",
-            "command": "docker pull postgres",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Start Postgres container",
-            "type": "shell",
-            "command": "docker run -d -p 5432:5432 --restart=unless-stopped --name=\"postgres-encoon\" -e POSTGRES_USER=\"encoon\" -e POSTGRES_PASSWORD=\"encoon\" -e POSTGRES_DB=\"test\" postgres && docker network connect encoon postgres-encoon",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Create docker network",
-            "type": "shell",
-            "command": "docker network create encoon",
+            "command": "docker compose up --build",
             "group": {
                 "kind": "build",
                 "isDefault": true
