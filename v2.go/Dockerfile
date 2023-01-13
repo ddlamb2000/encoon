@@ -2,7 +2,7 @@
 # Copyright David Lambert 2023
 
 # Go build container
-FROM golang:1.19 as go-builder
+FROM golang:1.19-buster as go-builder
 WORKDIR /usr/src/encoon
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
@@ -24,12 +24,10 @@ COPY frontend/react react
 RUN npm run build
 
 # Test container
-FROM debian:11-slim
+FROM almalinux:9.1-minimal
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."
 LABEL version="2.0"
-RUN useradd -ms /bin/bash encoon
-USER encoon
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY frontend/lib frontend/lib
