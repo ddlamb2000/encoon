@@ -1,5 +1,5 @@
 version: "3.9"
-name: "encoon"
+name: "encoon-development"
 services:
   db:
     container_name: db
@@ -9,10 +9,15 @@ services:
       - "5432:5432"
     networks:
       - encoon-network
+    configs:
+      - source: db-init
+        target: /docker-entrypoint-initdb.d/docker-testing.sql
+    secrets:
+      - db-password
     environment:
       POSTGRES_USER: "encoon"
-      POSTGRES_PASSWORD: "encoon"
-      POSTGRES_DB: "test"
+      POSTGRES_DB: "postgres"
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   web:
     build: .
     container_name: web
@@ -42,6 +47,11 @@ services:
 configs:
   encoon-configuration:
     file: ./testData/docker-testing.yml
+  db-init:
+    file: ./testData/docker-testing.sql
 networks:
   encoon-network:
     driver: bridge
+secrets:
+  db-password:
+    file: ./testData/.db_password

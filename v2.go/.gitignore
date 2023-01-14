@@ -5,7 +5,8 @@
 .tmp*
 *.autosave
 tmp/
-logs/*.log
-logs/*.out
+*.log
+*.out
 encoon
 node_modules
+.db_password
