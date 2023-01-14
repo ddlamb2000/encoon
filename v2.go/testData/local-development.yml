@@ -1,7 +1,7 @@
 #  εncooη : data structuration, presentation and navigation.
 #  Copyright David Lambert 2022
 
-appName: "εncooη [local]" # Application name to be displayed
+appName: "εncooη (local)" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
 log: true # show basic messages
@@ -28,7 +28,7 @@ database:
   #   CREATE ROLE encoon LOGIN PASSWORD '*****';
   #   CREATE DATABASE sandbox WITH OWNER = encoon;
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   # secret key to generate JWT tokens
   # JSON Web Tokens (JWTs) are a popular method for dealing with online authentication
   # you should use a cryptographically secure string for your secret key
@@ -50,7 +50,7 @@ database:
   host: "localhost"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$gI0CqdhzX.Ke.y.77AzGweKGGiXql7n9YJPEXtTAcnDQnTe4/AcGy"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
@@ -61,7 +61,7 @@ database:
   host: "localhost"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
