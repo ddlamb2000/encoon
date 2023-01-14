@@ -36,7 +36,7 @@ func TestLoadConfiguration3(t *testing.T) {
 }
 
 func TestLoadMainConfiguration4(t *testing.T) {
-	fileName := "../encoon.go"
+	fileName := "configuration.go"
 	if err := LoadConfiguration(fileName); err == nil {
 		t.Errorf("Can load configuration %q.", fileName)
 	}

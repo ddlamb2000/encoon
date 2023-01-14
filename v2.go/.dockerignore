@@ -6,7 +6,8 @@
 *.autosave
 tmp/
 *.log
-*.out
+cover*.out
+cover*.html
 encoon
 node_modules
 .db_password
