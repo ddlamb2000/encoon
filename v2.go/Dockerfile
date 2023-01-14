@@ -24,10 +24,12 @@ COPY frontend/react react
 RUN npm run build
 
 # Test container
-FROM almalinux:9.1-minimal
+FROM almalinux:9.1
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."
 LABEL version="2.0"
+RUN useradd -ms /bin/bash encoon
+USER encoon
 WORKDIR /usr/encoon
 COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
 COPY frontend/lib frontend/lib

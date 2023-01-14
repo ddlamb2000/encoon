@@ -56,7 +56,7 @@
         {
             "label": "Start docker containers (production like)",
             "type": "shell",
-            "command": "docker compose -f docker-compose.prod.yml up -d",
+            "command": "docker compose -f docker-compose.production.yml up -d",
             "group": {
                 "kind": "build",
                 "isDefault": true
