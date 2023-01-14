@@ -4,6 +4,7 @@
 package database
 
 import (
+	"strings"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -41,8 +42,9 @@ func TestConnectDbServers4(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	dbName := "baddb"
 	_, err := GetDbByName(dbName)
-	expect := "Unable to connect to database: dial tcp: lookup testhost: no such host."
-	if err == nil || err.Error() != expect {
+	got := err.Error()
+	expect := "Unable to connect to database: dial tcp"
+	if err == nil || !strings.Contains(got, expect) {
 		t.Errorf("Got err %v instead of %v.", err, expect)
 	}
 }

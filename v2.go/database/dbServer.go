@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"math/rand"
+	"os"
 	"sync"
 	"time"
 
@@ -59,8 +60,14 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbNam
 	if dbConfiguration.Host == "" || dbConfiguration.Port == 0 || dbConfiguration.Role == "" || dbConfiguration.Name == "" {
 		return nil, configuration.LogAndReturnError(dbName, "", "Incorrect database configuration.")
 	}
+	var dbHost = dbConfiguration.Host
+	mockDbHost := os.Getenv("ENCOON_MOCK_DB_LOCALHOST")
+	if dbHost == "localhost" && mockDbHost != "" {
+		dbHost = mockDbHost
+		configuration.Log(dbName, "", "Use mock host %s.", mockDbHost)
+	}
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable connect_timeout=10",
-		dbConfiguration.Host,
+		dbHost,
 		dbConfiguration.Port,
 		dbConfiguration.Role,
 		dbConfiguration.RolePassword,

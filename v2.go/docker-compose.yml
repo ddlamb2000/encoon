@@ -26,6 +26,17 @@ services:
         target: /usr/encoon/configuration.yml
     depends_on:
       - encoon-db
+  encoon-test:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-systemTest
+    container_name: encoon-test
+    networks:
+      - encoon-network
+    environment:
+      - ENCOON_MOCK_DB_LOCALHOST=encoon-db
+      - ENCOON_KEEP_ALIVE_AFTER_SECONDS=1800
+    command: sh -c "./testData/run_all_tests.sh"
 configs:
   encoon-configuration:
     file: ./testData/docker-testing.yml

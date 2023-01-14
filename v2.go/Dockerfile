@@ -12,12 +12,6 @@ COPY database database
 COPY model model
 COPY utils utils
 COPY encoon.go .
-COPY testData testData
-RUN go test utils/*
-RUN go test configuration/*
-RUN go test model/*
-# RUN go test database/*
-# RUN go test apis/*
 RUN go build -v
 
 # Node build container
