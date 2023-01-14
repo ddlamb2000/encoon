@@ -10,3 +10,4 @@ tmp/
 encoon
 node_modules
 .db_password
+.db_password.production
