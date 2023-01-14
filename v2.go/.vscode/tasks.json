@@ -44,9 +44,19 @@
             "problemMatcher": []
         },
         {
-            "label": "Build and start docker containers",
+            "label": "Build and start docker containers (development)",
             "type": "shell",
             "command": "docker compose up --build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start docker containers (production like)",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.prod.yml up -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

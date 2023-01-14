@@ -1,9 +1,9 @@
 version: "3.9"
-name: "encoon"
+name: "encoon-development"
 services:
   db:
-    container_name: db
-    image: "postgres"
+    container_name: encoon-db-development
+    image: postgres
     restart: unless-stopped
     ports:
       - "5432:5432"
@@ -11,19 +11,20 @@ services:
       - encoon
     configs:
       - source: db-init
-        target: /docker-entrypoint-initdb.d/docker.testing.sql
+        target: /docker-entrypoint-initdb.d/encoon-initdb.sql
     secrets:
       - db-password
     environment:
-      POSTGRES_USER: "encoon"
-      POSTGRES_DB: "postgres"
+      POSTGRES_USER: encoon
+      POSTGRES_DB: postgres
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   web:
     build: .
-    container_name: web
+    container_name: encoon-development
+    image: encoon
     restart: unless-stopped
     ports:
-      - "8081:8081"
+      - "8081:8080"
     networks:
       - encoon
     configs:
@@ -35,7 +36,8 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.systemTest
-    container_name: test
+    container_name: encoon-system-test
+    image: encoon-system-test
     networks:
       - encoon
     environment:

@@ -1,13 +1,13 @@
 #  εncooη : data structuration, presentation and navigation.
 #  Copyright David Lambert 2023
-appName: "εncooη [testing]"
+appName: "εncooη (testing)"
 appTag: "Data structuration, presentation and navigation."
 log: true
 trace: false
 showTiming: false
-gridCacheSize: 500
+gridCacheSize: 50
 httpServer:
-  port: 8081
+  port: 8080
   jwtExpiration: 1440
 database:
 - name: "master"

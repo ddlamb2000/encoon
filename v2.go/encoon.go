@@ -92,13 +92,14 @@ func setAndStartHttpServer() error {
 	router.GET("/:dbName/:gridUuid", getIndexHtml)
 	router.GET("/:dbName/:gridUuid/:uuid", getIndexHtml)
 	apis.SetApiRoutes(router)
+	httpPort := configuration.GetConfiguration().HttpServer.Port
 	srv = &http.Server{
-		Addr:         fmt.Sprintf(":%d", configuration.GetConfiguration().HttpServer.Port),
+		Addr:         fmt.Sprintf(":%d", httpPort),
 		Handler:      router,
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
-	configuration.Log("", "", "Listening http.")
+	configuration.Log("", "", "Listening http port %d.", httpPort)
 	if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 		configuration.LogError("", "", "Error on http listening: %v.", err)
 		return err

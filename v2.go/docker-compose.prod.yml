@@ -1,0 +1,44 @@
+version: "3.9"
+name: "encoon-production"
+services:
+  db:
+    container_name: encoon-db-production
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - "5433:5432"
+    networks:
+      - encoon-production
+    configs:
+      - source: db-init
+        target: /docker-entrypoint-initdb.d/encoon-initdb.sql
+    secrets:
+      - db-password
+    environment:
+      POSTGRES_USER: encoon
+      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD_FILE: /run/secrets/db-password
+  web:
+    container_name: encoon-production
+    image: encoon
+    restart: unless-stopped
+    ports:
+      - "8082:8080"
+    networks:
+      - encoon-production
+    configs:
+      - source: encoon-configuration
+        target: /usr/encoon/configuration.yml
+    depends_on:
+      - db
+configs:
+  encoon-configuration:
+    file: ./testData/docker.production.yml
+  db-init:
+    file: ./testData/docker.production.sql
+networks:
+  encoon-production:
+    driver: bridge
+secrets:
+  db-password:
+    file: ./testData/.db_password.production

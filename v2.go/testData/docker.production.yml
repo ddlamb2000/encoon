@@ -1,0 +1,21 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2023
+appName: "εncooη (production)"
+appTag: "Data structuration, presentation and navigation."
+log: true
+trace: true
+showTiming: false
+gridCacheSize: 500
+httpServer:
+  port: 8080
+  jwtExpiration: 1440
+database:
+- name: "production"
+  host: "db"
+  port: 5432
+  role: "encoon"
+  rolePassword: "dGhpc2lzZW5jb29ucHJvZHVjdGlvbmxpa2U="
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000

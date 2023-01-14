@@ -66,6 +66,12 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbNam
 		dbHost = mockDbHost
 		configuration.Log(dbName, "", "Use mock host %s.", mockDbHost)
 	}
+	configuration.Log(dbName,
+		"",
+		"Connect to database host=%s port=%d user=%s.",
+		dbHost,
+		dbConfiguration.Port,
+		dbConfiguration.Role)
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable connect_timeout=10",
 		dbHost,
 		dbConfiguration.Port,
