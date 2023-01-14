@@ -1,5 +1,5 @@
 version: "3.9"
-name: "encoon-development"
+name: "encoon"
 services:
   db:
     container_name: db
@@ -8,7 +8,7 @@ services:
     ports:
       - "5432:5432"
     networks:
-      - encoon-network
+      - encoon
     configs:
       - source: db-init
         target: /docker-entrypoint-initdb.d/docker.testing.sql
@@ -25,7 +25,7 @@ services:
     ports:
       - "8081:8081"
     networks:
-      - encoon-network
+      - encoon
     configs:
       - source: encoon-configuration
         target: /usr/encoon/configuration.yml
@@ -37,7 +37,7 @@ services:
       dockerfile: ./Dockerfile.systemTest
     container_name: test
     networks:
-      - encoon-network
+      - encoon
     environment:
       - ENCOON_MOCK_DB_LOCALHOST=db
       - ENCOON_KEEP_ALIVE_AFTER_SECONDS=900
@@ -50,7 +50,7 @@ configs:
   db-init:
     file: ./testData/docker.testing.sql
 networks:
-  encoon-network:
+  encoon:
     driver: bridge
 secrets:
   db-password:
