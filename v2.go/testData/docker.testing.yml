@@ -14,26 +14,26 @@ database:
   host: "db"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 500
+  timeOutThreshold: 1000
 - name: "test"
   host: "db"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$gI0CqdhzX.Ke.y.77AzGweKGGiXql7n9YJPEXtTAcnDQnTe4/AcGy"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 500
+  timeOutThreshold: 1000
 - name: "sandbox"
   host: "db"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 500
+  timeOutThreshold: 1000

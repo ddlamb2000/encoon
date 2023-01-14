@@ -9,4 +9,3 @@ tmp/
 *.out
 encoon
 node_modules
-.db_password

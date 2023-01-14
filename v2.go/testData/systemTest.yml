@@ -22,7 +22,7 @@ database:
   host: "localhost"
   port: 5432
   role: "encoon"
-  rolePassword: "encoon"
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"

@@ -11,7 +11,7 @@ services:
       - encoon-network
     configs:
       - source: db-init
-        target: /docker-entrypoint-initdb.d/docker-testing.sql
+        target: /docker-entrypoint-initdb.d/docker.testing.sql
     secrets:
       - db-password
     environment:
@@ -34,7 +34,7 @@ services:
   test:
     build:
       context: .
-      dockerfile: ./Dockerfile-systemTest
+      dockerfile: ./Dockerfile.systemTest
     container_name: test
     networks:
       - encoon-network
@@ -46,9 +46,9 @@ services:
     command: sh -c "./testData/run_all_tests.sh"
 configs:
   encoon-configuration:
-    file: ./testData/docker-testing.yml
+    file: ./testData/docker.testing.yml
   db-init:
-    file: ./testData/docker-testing.sql
+    file: ./testData/docker.testing.sql
 networks:
   encoon-network:
     driver: bridge

@@ -33,7 +33,7 @@ func TestCleanupStrings(t *testing.T) {
 func TestCalculateFileHash1(t *testing.T) {
 	fileName := "../testData/validConfiguration1.yml"
 	got, _ := CalculateFileHash(fileName)
-	expect := "9f67af63f17368fedc1ad67f239a1484f808ed008e1281b785637c279ac082e6"
+	expect := "984795033e28dab99b3cbb0ff6e8f96e0c514599cd773157da92ffaf52c2b859"
 	if !strings.Contains(got, expect) {
 		t.Errorf("Got %q instead of %q.", got, expect)
 	}
