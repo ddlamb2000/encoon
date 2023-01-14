@@ -2,8 +2,8 @@
 #  Copyright David Lambert 2023
 appName: "εncooη (production)"
 appTag: "Data structuration, presentation and navigation."
-log: true
-trace: true
+log: false
+trace: false
 showTiming: false
 gridCacheSize: 500
 httpServer:
