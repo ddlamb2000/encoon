@@ -1,8 +1,8 @@
 version: "3.9"
 name: "encoon"
 services:
-  encoon-db:
-    container_name: encoon-db
+  db:
+    container_name: db
     image: "postgres"
     restart: unless-stopped
     ports:
@@ -13,9 +13,9 @@ services:
       POSTGRES_USER: "encoon"
       POSTGRES_PASSWORD: "encoon"
       POSTGRES_DB: "test"
-  encoon-web:
+  web:
     build: .
-    container_name: encoon-web
+    container_name: web
     restart: unless-stopped
     ports:
       - "8081:8081"
@@ -25,17 +25,19 @@ services:
       - source: encoon-configuration
         target: /usr/encoon/configuration.yml
     depends_on:
-      - encoon-db
-  encoon-test:
+      - db
+  test:
     build:
       context: .
       dockerfile: ./Dockerfile-systemTest
-    container_name: encoon-test
+    container_name: test
     networks:
       - encoon-network
     environment:
-      - ENCOON_MOCK_DB_LOCALHOST=encoon-db
-      - ENCOON_KEEP_ALIVE_AFTER_SECONDS=1800
+      - ENCOON_MOCK_DB_LOCALHOST=db
+      - ENCOON_KEEP_ALIVE_AFTER_SECONDS=900
+    depends_on:
+      - db
     command: sh -c "./testData/run_all_tests.sh"
 configs:
   encoon-configuration:

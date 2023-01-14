@@ -11,7 +11,7 @@ httpServer:
   jwtExpiration: 1440
 database:
 - name: "master"
-  host: "encoon-db"
+  host: "db"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"
@@ -20,7 +20,7 @@ database:
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
   timeOutThreshold: 500
 - name: "test"
-  host: "encoon-db"
+  host: "db"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"
@@ -29,7 +29,7 @@ database:
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
   timeOutThreshold: 500
 - name: "sandbox"
-  host: "encoon-db"
+  host: "db"
   port: 5432
   role: "encoon"
   rolePassword: "encoon"
