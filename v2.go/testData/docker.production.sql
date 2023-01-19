@@ -1,1 +1,0 @@
-CREATE DATABASE production WITH OWNER = encoon;

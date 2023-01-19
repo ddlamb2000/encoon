@@ -18,7 +18,7 @@ services:
       - db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: encoon
-      POSTGRES_DB: postgres
+      POSTGRES_DB: master
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   web:
     build: .

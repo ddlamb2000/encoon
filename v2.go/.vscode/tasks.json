@@ -54,9 +54,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Start docker containers (production like)",
+            "label": "Start docker containers (sandobx)",
             "type": "shell",
-            "command": "docker compose -f docker-compose.production.yml up -d",
+            "command": "docker compose -f docker-compose.sandbox.yml up -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

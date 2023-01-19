@@ -1,14 +1,14 @@
 version: "3.9"
-name: "encoon-production"
+name: "encoon-sandbox"
 services:
   db:
-    container_name: encoon-db-production
+    container_name: encoon-db-sandbox
     image: postgres
     restart: unless-stopped
     ports:
       - "5433:5432"
     networks:
-      - encoon-production
+      - encoon-sandbox
     configs:
       - source: db-init
         target: /docker-entrypoint-initdb.d/encoon-initdb.sql
@@ -18,16 +18,16 @@ services:
       - db:/var/lib/postgresql/data
     environment:
       POSTGRES_USER: encoon
-      POSTGRES_DB: postgres
+      POSTGRES_DB: sandbox
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   web:
-    container_name: encoon-production
+    container_name: encoon-sandbox
     image: encoon
     restart: unless-stopped
     ports:
       - "8082:8080"
     networks:
-      - encoon-production
+      - encoon-sandbox
     configs:
       - source: encoon-configuration
         target: /usr/encoon/configuration.yml
@@ -35,15 +35,15 @@ services:
       - db
 configs:
   encoon-configuration:
-    file: ./testData/docker.production.yml
+    file: ./testData/docker.sandbox.yml
   db-init:
-    file: ./testData/docker.production.sql
+    file: ./testData/docker.sandbox.sql
 networks:
-  encoon-production:
+  encoon-sandbox:
     driver: bridge
 secrets:
   db-password:
-    file: ./testData/.db_password.production
+    file: ./testData/.db_password.sandbox
 volumes:
   db:
     driver: local

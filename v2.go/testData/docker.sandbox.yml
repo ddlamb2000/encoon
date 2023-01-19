@@ -1,6 +1,6 @@
 #  εncooη : data structuration, presentation and navigation.
 #  Copyright David Lambert 2023
-appName: "εncooη (production)"
+appName: "εncooη (sandbox)"
 appTag: "Data structuration, presentation and navigation."
 log: false
 trace: false
@@ -10,7 +10,7 @@ httpServer:
   port: 8080
   jwtExpiration: 1440
 database:
-- name: "production"
+- name: "sandbox"
   host: "db"
   port: 5432
   role: "encoon"
