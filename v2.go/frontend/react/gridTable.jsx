@@ -40,7 +40,7 @@ class GridTable extends React.Component {
 										token={this.props.token}
 										grid={this.props.grid}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-										createRichTextField={(id, value) => this.props.createRichTextField(id, value)}
+										createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
 										deleteRichTextField={id => this.props.deleteRichTextField(id)}
 										miniGrid={this.props.miniGrid} />
 					)}
@@ -122,7 +122,7 @@ class GridRow extends React.Component {
 										grid={this.props.grid}
 										icon={column.uuid == UuidGridColumnName ? icon : ''}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
-										createRichTextField={(id, value) => this.props.createRichTextField(id, value)}
+										createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
 										deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 				)}
 			</tr>
@@ -134,7 +134,6 @@ class GridCell extends React.Component {
 	render() {
 		const variantReadOnly = this.props.readonly ? "form-control-plaintext" : ""
 		const checkedBoolean = this.props.value && this.props.value == "true" ? true : false
-		const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
 		const variantEdited = this.props.rowEdited ? "table-warning" : ""
 		const embedded = this.props.typeUuid == UuidReferenceColumnType && this.props.bidirectional && this.props.owned
 		const id = this.props.columnName + '-' + this.props.uuid + '-' + this.props.columnUuid
@@ -153,13 +152,16 @@ class GridCell extends React.Component {
 									value={this.props.value}
 									inputRef={this.props.inputRef}
 									onEditRowClick={uuid => this.props.onEditRowClick(uuid)}
-									createRichTextField={(id, value) => this.props.createRichTextField(id, value)}
+									createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
 									deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 				}
 				{!(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid != UuidReferenceColumnType && !embedded &&
-					<span className={variantMonospace}>
-						{this.getCellValue(this.props.typeUuid, this.props.value)} {this.props.icon && <i className={`bi bi-${this.props.icon}`}></i>}
-					</span>
+					<GridCellDisplay id={id}
+										typeUuid={this.props.typeUuid}
+										value={this.props.value}
+										icon={this.props.icon}
+										createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
+										deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 				}
 				{(this.props.rowAdded || this.props.rowEdited || this.props.rowSelected) && this.props.typeUuid == UuidReferenceColumnType && !embedded && 
 					<GridCellDropDown uuid={this.props.uuid}
@@ -199,6 +201,31 @@ class GridCell extends React.Component {
 			</td>
 		)
 	}
+}
+
+class GridCellDisplay extends React.Component {
+	render() {
+		if(this.props.typeUuid == UuidRichTextColumnType) {
+			return (
+				<div id={"richtext-" + this.props.id}>
+					<div id={this.props.id}
+							typeuuid={this.props.typeUuid}
+							uuid={this.props.uuid}
+							ref={this.props.inputRef}
+							column={this.props.columnName}
+							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+				</div>
+			)
+		}
+		else {
+			const variantMonospace = this.props.typeUuid == UuidUuidColumnType ? " font-monospace " : ""
+			return (
+				<span className={variantMonospace}>
+					{this.getCellValue(this.props.typeUuid, this.props.value)} {this.props.icon && <i className={`bi bi-${this.props.icon}`}></i>}
+				</span>
+			)
+		}
+	}
 
 	getCellValue(typeUuid, value) {
 		switch(typeUuid) {
@@ -208,13 +235,32 @@ class GridCell extends React.Component {
 		return value
 	}
 
+	componentDidMount() {
+		if(this.props.typeUuid == UuidRichTextColumnType) {
+			this.props.createRichTextField(this.props.id, this.props.value, true)
+		}
+	}
+
+	componentWillUnmount() {
+		if(trace) console.log("[GridCellDisplay.componentWillUnmount()]")
+		if(this.props.typeUuid == UuidRichTextColumnType) {
+			this.props.deleteRichTextField(this.props.id)
+		}
+	}
 }
 
-class GridCellInput  extends React.Component {
+class GridCellInput extends React.Component {
 	render() {
 		if(this.props.typeUuid == UuidRichTextColumnType) {
 			return (
-				<div id={this.props.id} onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+				<div id={"richtext-" + this.props.id}>
+					<div id={this.props.id}
+							typeuuid={this.props.typeUuid}
+							uuid={this.props.uuid}
+							ref={this.props.inputRef}
+							column={this.props.columnName}
+							onInput={() => this.props.onEditRowClick(this.props.uuid)} />
+				</div>
 			)
 		}
 		else {
@@ -237,12 +283,12 @@ class GridCellInput  extends React.Component {
 
 	componentDidMount() {
 		if(this.props.typeUuid == UuidRichTextColumnType) {
-			this.props.createRichTextField(this.props.id, this.props.value)
+			this.props.createRichTextField(this.props.id, this.props.value, false)
 		}
 	}
 
 	componentWillUnmount() {
-		console.log("[GridCellInput.componentWillUnmount()]")
+		if(trace) console.log("[GridCellInput.componentWillUnmount()]")
 		if(this.props.typeUuid == UuidRichTextColumnType) {
 			this.props.deleteRichTextField(this.props.id)
 		}

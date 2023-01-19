@@ -44,7 +44,7 @@ database:
   #   CREATE EXTENSION pgcrypto; # if needed
   #   SELECT crypt(encode('*****', 'base64'), gen_salt('bf', 8)); # replace ***** with the desired password.
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 500 # timeout threshold (in milliseconds) for database requests
+  timeOutThreshold: 1000 # timeout threshold (in milliseconds) for database requests
 
 - name: "test"
   host: "localhost"
@@ -65,4 +65,4 @@ database:
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 500
+  timeOutThreshold: 1000

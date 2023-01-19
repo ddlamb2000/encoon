@@ -106,7 +106,7 @@ class GridView extends React.Component {
 													dbName={this.props.dbName}
 													token={this.props.token}
 													loadParentData={() => this.props.loadParentData()}
-													createRichTextField={(id, value) => this.props.createRichTextField(id, value)}
+													createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
 													deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 									</tr>
 								)}

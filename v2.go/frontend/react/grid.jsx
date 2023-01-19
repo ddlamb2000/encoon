@@ -122,7 +122,7 @@ class Grid extends React.Component {
 									filterColumnOwned={filterColumnOwned}
 									filterColumnName={filterColumnName}
 									filterColumnGridUuid={filterColumnGridUuid}
-									createRichTextField={(id, value) => this.createRichTextField(id, value)}
+									createRichTextField={(id, value, display) => this.createRichTextField(id, value, display)}
 									deleteRichTextField={id => this.deleteRichTextField(id)}
 									miniGrid={miniGrid} />
 					}
@@ -146,7 +146,7 @@ class Grid extends React.Component {
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									token={this.props.token}
 									loadParentData={() => this.loadData()}
-									createRichTextField={(id, value) => this.createRichTextField(id, value)}
+									createRichTextField={(id, value, display) => this.createRichTextField(id, value, display)}
 									deleteRichTextField={id => this.deleteRichTextField(id)} />
 					}
 					{!noEdit &&
@@ -258,35 +258,57 @@ class Grid extends React.Component {
 		this.editRow(reference.fromUuid)
 	}
 
-	createRichTextField(id, value) {
-		const richText = new Quill('#' + id, {
-			modules: {
-				toolbar: [
-					[{ header: [1, 2, 3, false] }],
-					['bold', 'italic', 'underline', 'strike','script', 'code'],
-					['blockquote', 'list', 'align', 'code-block']
-				]
-			},
-			theme: 'snow'
-		})
-		this.setRichTextValue(richText, value)
-		this.richTextMap.set(id, richText)
+	createRichTextField(id, value, display) {
+		if(display) {
+			const richText = new Quill('#' + id, {
+				modules: {
+					toolbar: []
+				},
+				readOnly: true,
+				theme: 'bubble'
+			})	
+			this.setRichTextValue(richText, value, display)
+			this.richTextMap.set(id, richText)
+			const container = document.getElementById(id)
+			if(container) {
+				const toolbar = container.querySelector('.ql-tooltip')
+				if(toolbar) toolbar.hidden = true
+				const editor = container.querySelector('.ql-editor')
+				if(editor) editor.style.padding = '0'
+			}
+		}
+		else {
+			const richText = new Quill('#' + id, {
+				modules: {
+					toolbar: [
+						[{ header: [1, 2, 3, false] }],
+						['bold', 'italic', 'underline', 'strike','script', 'code'],
+						['blockquote', 'list', 'align', 'code-block']
+					]
+				},
+				theme: 'snow'
+			})	
+			this.setRichTextValue(richText, value, display)
+			this.richTextMap.set(id, richText)
+		}
 	}
 
-	setRichTextValue(richText, value) {
+	setRichTextValue(richText, value, display) {
 		if(value) {
 			try {
-				console.log(value)
 				richText.setContents(JSON.parse(value))
 			} catch (error) {
-				console.error("Invalid value", value)
+				console.error("Invalid value", value, "for", richText)
 			}
+			if(display) richText.disable()
 		}
 	}
 
 	deleteRichTextField(id) {
 		const richText = this.richTextMap.get(id)
 		if(richText) {
+			const container = document.getElementById("richtext-" + id)
+			if(container) container.hidden = true
 			this.richTextMap.delete(id)
 		}
 	}
