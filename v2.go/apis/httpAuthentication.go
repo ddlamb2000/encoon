@@ -15,12 +15,12 @@ import (
 )
 
 type login struct {
-	Id       string `json:"id" yaml:"id" binding:"required"`
-	Password string `json:"password" yaml:"password" binding:"required"`
+	Id       string `json:"id" binding:"required"`
+	Password string `json:"password" binding:"required"`
 }
 
 type JWTtoken struct {
-	Token string `json:"token" yaml:"token" binding:"required"`
+	Token string `json:"token" binding:"required"`
 }
 
 func authentication(c *gin.Context) {

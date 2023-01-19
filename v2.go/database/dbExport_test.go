@@ -60,14 +60,14 @@ func TestExportDb5(t *testing.T) {
 }
 
 func TestExportDb6(t *testing.T) {
-	convertYamlImpl := convertYaml
-	convertYaml = func(rowSet []model.Row) ([]byte, error) { return nil, errors.New("xxx") } // mock function
+	convertJsonImpl := convertJson
+	convertJson = func(rowSet []model.Row) ([]byte, error) { return nil, errors.New("xxx") } // mock function
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	err := ExportDb(context.Background(), "test", "/tmp/exportTestDb.yml")
 	if err == nil {
 		t.Errorf("Can export database while it shouldn't: %v.", err)
 	}
-	convertYaml = convertYamlImpl
+	convertJson = convertJsonImpl
 }
 
 func TestExportDb7(t *testing.T) {

@@ -6,12 +6,12 @@ package model
 import "time"
 
 type Audit struct {
-	ColumnName    string     `json:"columnName" yaml:"columnName"`
-	Uuid          string     `json:"uuid" yaml:"uuid"`
-	Created       *time.Time `json:"created" yaml:"created"`
-	CreatedBy     *string    `json:"createdBy" yaml:"createdBy"`
-	CreatedByName *string    `json:"createdByName,omitempty" yaml:"createdByName,omitempty"`
-	ActionName    string     `json:"actionName" yaml:"actionName"`
+	ColumnName    string     `json:"columnName"`
+	Uuid          string     `json:"uuid"`
+	Created       *time.Time `json:"created"`
+	CreatedBy     *string    `json:"createdBy"`
+	CreatedByName *string    `json:"createdByName,omitempty"`
+	ActionName    string     `json:"actionName"`
 }
 
 func GetNewAudit() *Audit {

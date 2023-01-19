@@ -5,11 +5,11 @@ package database
 
 import (
 	"context"
+	"encoding/json"
 	"os"
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
-	"gopkg.in/yaml.v2"
 )
 
 func ExportDb(ct context.Context, dbName, exportFileName string) error {
@@ -39,7 +39,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		rowSet = append(rowSet, *row)
 	}
 	configuration.Trace(dbName, "", "ExportDb() - end of fetching rows.")
-	out, err := convertYaml(rowSet)
+	out, err := convertJson(rowSet)
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when marshalling rows: %v.", err)
 	}
@@ -51,8 +51,8 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 }
 
 // function is available for mocking
-var convertYaml = func(rowSet []model.Row) ([]byte, error) {
-	return yaml.Marshal(rowSet)
+var convertJson = func(rowSet []model.Row) ([]byte, error) {
+	return json.Marshal(rowSet)
 }
 
 // function is available for mocking
@@ -73,26 +73,7 @@ func getRowsQueryColumnsForExportDb() string {
 		"createdBy, " +
 		"updated, " +
 		"updatedBy, " +
-		"text1, " +
-		"text2, " +
-		"text3, " +
-		"text4, " +
-		"text5, " +
-		"text6, " +
-		"text7, " +
-		"text8, " +
-		"text9, " +
-		"text10, " +
-		"int1, " +
-		"int2, " +
-		"int3, " +
-		"int4, " +
-		"int5, " +
-		"int6, " +
-		"int7, " +
-		"int8, " +
-		"int9, " +
-		"int10, " +
+		getRowsColumnDefinitions() +
 		"enabled, " +
 		"revision "
 }

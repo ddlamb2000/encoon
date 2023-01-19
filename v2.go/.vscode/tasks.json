@@ -16,7 +16,7 @@
         {
             "label": "Export data from master",
             "type": "shell",
-            "command": "go run . -export master -exportfile ./seedData/master.yml",
+            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData/master.json",
             "group": {
                 "kind": "build",
                 "isDefault": true

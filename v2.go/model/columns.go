@@ -6,16 +6,16 @@ package model
 import "fmt"
 
 type Column struct {
-	Uuid           string  `json:"uuid,omitempty" yaml:"uuid,omitempty"`
-	Owned          bool    `json:"owned" yaml:"owned"`
-	Label          string  `json:"label,omitempty" yaml:"label,omitempty"`
-	Name           string  `json:"name,omitempty" yaml:"name,omitempty"`
-	Type           string  `json:"type,omitempty" yaml:"type,omitempty"`
-	TypeUuid       string  `json:"typeUuid,omitempty" yaml:"typeUuid,omitempty"`
-	GridUuid       string  `json:"gridUuid,omitempty" yaml:"gridUuid,omitempty"`
-	Grid           *Grid   `json:"grid,omitempty" yaml:"grid,omitempty"`
-	GridPromptUuid *string `json:"gridPromptUuid,omitempty" yaml:"gridPromptUuid,omitempty"`
-	Bidirectional  *bool   `json:"bidirectional,omitempty" yaml:"bidirectional,omitempty"`
+	Uuid           string  `json:"uuid,omitempty"`
+	Owned          bool    `json:"owned"`
+	Label          string  `json:"label,omitempty"`
+	Name           string  `json:"name,omitempty"`
+	Type           string  `json:"type,omitempty"`
+	TypeUuid       string  `json:"typeUuid,omitempty"`
+	GridUuid       string  `json:"gridUuid,omitempty"`
+	Grid           *Grid   `json:"grid,omitempty"`
+	GridPromptUuid *string `json:"gridPromptUuid,omitempty"`
+	Bidirectional  *bool   `json:"bidirectional,omitempty"`
 }
 
 func GetNewColumn() *Column {
