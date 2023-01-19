@@ -6,7 +6,7 @@ SPACES='                      '
 for PACK in utils configuration model database apis
 do
     MSG=`echo "$PACK:$SPACES"|cut -c1-20`
-    echo -n "$MSG" && go test $PACK/* -outputdir testData -covermode=count -cover -coverprofile cover_"$PACK"_test.out
+    echo -n "$MSG" && go test $PACK/* -outputdir testData -covermode=count -cover -coverprofile cover_"$PACK"_test.out && go tool cover -html=testData/cover_"$PACK"_test.out  -o testData/cover_"$PACK"_test.html
 done
 
 echo "εncooη system test completed."
