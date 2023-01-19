@@ -168,7 +168,6 @@ func createContextAndApiRequest(ct context.Context, p htmlParameters, uri string
 		ctxChan:     make(chan apiResponse, 1),
 		transaction: model.GetNewRowWithUuid(),
 	}
-	r.transaction.Text1 = &uri
 	return r, cancel, err
 }
 
