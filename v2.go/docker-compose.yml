@@ -26,6 +26,8 @@ services:
       dockerfile: ./Dockerfile.devcontainer
     container_name: encoon-devcontainer
     image: encoon-devcontainer
+    volumes:
+      - ./:/usr/src/encoon
     restart: unless-stopped
     ports:
       - "8080:8080"
