@@ -52,7 +52,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"updated timestamp with time zone NOT NULL, " +
 			"updatedBy uuid NOT NULL, " +
 			"enabled boolean NOT NULL, " +
-			getRowsColumnDefinitions() +
+			getRowsColumnDefinitions(model.GetNewGrid("")) +
 			"revision integer NOT NULL CHECK (revision > 0), " +
 			"PRIMARY KEY (gridUuid, uuid)" +
 			")",

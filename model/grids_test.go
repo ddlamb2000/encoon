@@ -8,15 +8,14 @@ import (
 )
 
 func TestGetNewGrid(t *testing.T) {
-	grid := GetNewGrid()
+	grid := GetNewGrid("")
 	if grid == nil {
 		t.Errorf(`Isse when creating grid.`)
 	}
 }
 
 func TestGridDisplayString(t *testing.T) {
-	grid := GetNewGrid()
-	grid.Uuid = "xxx"
+	grid := GetNewGrid("xxx")
 	text1 := "aaa"
 	grid.Text1 = &text1
 	grid.SetDisplayString("test")
@@ -40,8 +39,7 @@ func TestGetTableName(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.expect, func(t *testing.T) {
-			grid := GetNewGrid()
-			grid.Uuid = tt.uuid
+			grid := GetNewGrid(tt.uuid)
 			got := grid.GetTableName()
 			if got != tt.expect {
 				t.Errorf(`Got %v instead of %v.`, got, tt.expect)
@@ -82,8 +80,7 @@ func TestGridSetViewEditAccessFlags(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			grid := GetNewGrid()
-			grid.Uuid = tt.uuid
+			grid := GetNewGrid(tt.uuid)
 			grid.Owners[tt.ownerUuid] = true
 			grid.DefaultAccess[tt.defaultAccessUuid] = true
 			grid.ViewAccess[tt.viewAccessUuid] = true
@@ -107,12 +104,12 @@ func TestGridSetViewEditAccessFlags(t *testing.T) {
 
 func TestCopyAccessToOtherGrid(t *testing.T) {
 	uuid1, uuid2, uuid3, uuid4 := "aaa", "bbb", "ccc", "ddd"
-	grid1 := GetNewGrid()
+	grid1 := GetNewGrid("")
 	grid1.OwnerUuid = &uuid1
 	grid1.DefaultAccessUuid = &uuid2
 	grid1.ViewAccessUuid = &uuid3
 	grid1.EditAccessUuid = &uuid4
-	grid2 := GetNewGrid()
+	grid2 := GetNewGrid("")
 	grid1.CopyAccessToOtherGrid(grid2)
 	if !grid2.Owners[uuid1] {
 		t.Errorf(`Can't find owner.`)
@@ -129,7 +126,7 @@ func TestCopyAccessToOtherGrid(t *testing.T) {
 }
 
 func TestHasOwnership(t *testing.T) {
-	grid := GetNewGrid()
+	grid := GetNewGrid("")
 	grid.Owners["aaaa"] = true
 	grid.Owners["bbbb"] = true
 	tests := []struct {

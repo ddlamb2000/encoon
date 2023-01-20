@@ -98,12 +98,12 @@ func TestGetRowsQueryOutput(t *testing.T) {
 
 func TestRowSetViewEditAccessFlags(t *testing.T) {
 	user1 := "aaaa"
-	grid1 := GetNewGrid()
-	grid2 := GetNewGrid()
+	grid1 := GetNewGrid("")
+	grid2 := GetNewGrid("")
 	grid2.ViewAccess[user1] = true
-	grid3 := GetNewGrid()
+	grid3 := GetNewGrid("")
 	grid3.EditAccess[user1] = true
-	grid4 := GetNewGrid()
+	grid4 := GetNewGrid("")
 	grid4.Uuid = UuidColumns
 	grid4.Owners[user1] = true
 	tests := []struct {

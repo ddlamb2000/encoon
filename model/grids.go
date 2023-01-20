@@ -18,8 +18,9 @@ type Grid struct {
 	EditAccessUuid    *string         `json:"-"`
 }
 
-func GetNewGrid() *Grid {
+func GetNewGrid(uuid string) *Grid {
 	grid := new(Grid)
+	grid.Uuid = uuid
 	grid.Owners = make(map[string]bool)
 	grid.DefaultAccess = make(map[string]bool)
 	grid.ViewAccess = make(map[string]bool)

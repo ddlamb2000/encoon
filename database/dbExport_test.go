@@ -39,7 +39,7 @@ func TestExportDb3(t *testing.T) {
 
 func TestExportDb4(t *testing.T) {
 	getRowsQueryForExportDbImpl := getRowsQueryForExportDb
-	getRowsQueryForExportDb = func() string { return "xxx" } // mock function
+	getRowsQueryForExportDb = func(*model.Grid) string { return "xxx" } // mock function
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
 	err := ExportDb(context.Background(), "test", "/tmp/exportTestDb.yml")
 	if err == nil {

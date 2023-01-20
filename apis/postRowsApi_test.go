@@ -12,8 +12,7 @@ import (
 )
 
 func TestGetInsertStatementForGridsApi(t *testing.T) {
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
@@ -25,8 +24,7 @@ func TestGetInsertStatementForGridsApi(t *testing.T) {
 }
 
 func TestGetInsertValuesForGridsApi(t *testing.T) {
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
@@ -55,8 +53,7 @@ func TestGetInsertValuesForGridsApi(t *testing.T) {
 }
 
 func TestGetInsertValuesForGridsApi2(t *testing.T) {
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text1", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text3", Owned: true})
@@ -129,8 +126,7 @@ func TestGetInsertValuesForGridsApi2(t *testing.T) {
 }
 
 func TestGetUpdateStatementForGridsApi(t *testing.T) {
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
@@ -142,8 +138,7 @@ func TestGetUpdateStatementForGridsApi(t *testing.T) {
 }
 
 func TestGetUpdateValuesForGridsApi(t *testing.T) {
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})

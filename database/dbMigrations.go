@@ -115,13 +115,22 @@ var getMigrationInsertStatement = func() string {
 }
 
 // function is available for mocking
-var getRowsColumnDefinitions = func() string {
+var getRowsColumnDefinitions = func(grid *model.Grid) string {
 	columnDefinitions := ""
-	for i := 1; i <= model.NumberOfTextFields; i++ {
-		columnDefinitions += fmt.Sprintf("text%d text, ", i)
-	}
-	for i := 1; i <= model.NumberOfIntFields; i++ {
-		columnDefinitions += fmt.Sprintf("int%d integer, ", i)
+	switch grid.Uuid {
+	case model.UuidGrids:
+		columnDefinitions += "text1, text2, text3, "
+	case model.UuidColumns:
+		columnDefinitions += "text1, text2, text3, int1, "
+	case model.UuidRelationships:
+		columnDefinitions += "text1, text2, text3, text4, text5, "
+	default:
+		for i := 1; i <= model.NumberOfTextFields; i++ {
+			columnDefinitions += fmt.Sprintf("text%d text, ", i)
+		}
+		for i := 1; i <= model.NumberOfIntFields; i++ {
+			columnDefinitions += fmt.Sprintf("int%d integer, ", i)
+		}
 	}
 	return columnDefinitions
 }

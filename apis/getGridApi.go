@@ -40,7 +40,7 @@ var getGridInstanceForGridsApi = func(r apiRequest, gridUuid string) (*model.Gri
 	defer set.Close()
 	grids := make([]model.Grid, 0)
 	for set.Next() {
-		grid := model.GetNewGrid()
+		grid := model.GetNewGrid(gridUuid)
 		if err := set.Scan(getGridQueryOutputForGridsApi(grid)...); err != nil {
 			return nil, r.logAndReturnError("Error when scanning grid definition: %v.", err)
 		}

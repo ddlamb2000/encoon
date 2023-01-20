@@ -9,11 +9,12 @@ import (
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/model"
 	_ "github.com/lib/pq"
 )
 
 func TestGetRowsColumnDefinitions(t *testing.T) {
-	got := getRowsColumnDefinitions()
+	got := getRowsColumnDefinitions(model.GetNewGrid(""))
 	expect := "text1 text, text2 text, text3 text"
 	if !strings.Contains(got, expect) {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
@@ -42,7 +43,7 @@ func TestRecreateDb(t *testing.T) {
 
 	t.Run("RecreateDb2", func(t *testing.T) {
 		getRowsColumnDefinitionsImpl := getRowsColumnDefinitions
-		getRowsColumnDefinitions = func() string { return "x x x" } // mock function
+		getRowsColumnDefinitions = func(*model.Grid) string { return "x x x" } // mock function
 		if err := RecreateDb(context.Background(), db, dbName); err == nil {
 			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
 		}

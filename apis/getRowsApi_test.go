@@ -13,8 +13,7 @@ import (
 
 func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 	row := model.GetNewRow()
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
@@ -39,8 +38,7 @@ func TestGetRowsQueryOutputForGridsApi(t *testing.T) {
 
 func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 	row := model.GetNewRow()
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text6", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text7", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "text8", Owned: true})
@@ -81,8 +79,7 @@ func TestGetRowsQueryOutputForGridsApi2(t *testing.T) {
 
 func TestGetRowsQueryOutputForGridsApi3(t *testing.T) {
 	row := model.GetNewRow()
-	grid := model.GetNewGrid()
-	grid.Uuid = model.UuidUsers
+	grid := model.GetNewGrid(model.UuidUsers)
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int7", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int9", Owned: true})
 	grid.Columns = append(grid.Columns, &model.Column{Name: "int10", Owned: true})
