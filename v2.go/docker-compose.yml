@@ -31,9 +31,6 @@ services:
       - "8080:8080"
     networks:
       - encoon
-    configs:
-      - source: encoon-configuration
-        target: /usr/encoon/configuration.yml
     depends_on:
       - db
   web-test:
