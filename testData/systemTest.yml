@@ -1,0 +1,41 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2023
+
+appName: "systemTest" # Application name to be displayed
+appTag: "System test." # Application tag to be displayed
+
+# Http Server configuration
+httpServer:
+  host: "localhost"
+  port: 8080
+  jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
+
+log: false
+trace: false
+
+gridCacheSize: 20
+
+# Database configuration
+database:
+
+- name: "test"
+  host: "localhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "ZW5jb29u"
+  jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  testSleepTime: 200
+  timeOutThreshold: 2000
+
+- name: "baddb"
+  host: "testhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "encoon"
+  jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  testSleepTime: 500
+  timeOutThreshold: 1000
