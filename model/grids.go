@@ -3,6 +3,8 @@
 
 package model
 
+import "fmt"
+
 type Grid struct {
 	Row
 	Columns []*Column `json:"columns,omitempty"`
@@ -88,4 +90,111 @@ func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditR
 
 func (grid *Grid) HasOwnership(userUuid string) bool {
 	return grid.Owners[userUuid]
+}
+
+func (grid *Grid) GetRowsColumnDefinitions() string {
+	columnDefinitions := ""
+	for i := 1; i <= NumberOfTextFields; i++ {
+		columnDefinitions += fmt.Sprintf(", text%d text", i)
+	}
+	for i := 1; i <= NumberOfIntFields; i++ {
+		columnDefinitions += fmt.Sprintf(", int%d integer", i)
+	}
+	return columnDefinitions
+}
+
+func (grid *Grid) GetRowsQueryForExportDb() string {
+	return grid.getRowsQueryColumnsForExportDb() + "FROM " + grid.GetTableName() + " ORDER BY created"
+}
+
+func (grid *Grid) getRowsQueryColumnsForExportDb() string {
+	return "SELECT uuid, " +
+		"gridUuid, " +
+		"created, " +
+		"createdBy, " +
+		"updated, " +
+		"updatedBy" +
+		grid.getRowsColumnDefinitionsForExportDb() + ", " +
+		"enabled, " +
+		"revision "
+}
+
+func (grid *Grid) getRowsColumnDefinitionsForExportDb() string {
+	columnDefinitions := ""
+	switch grid.Uuid {
+	case UuidGrids:
+		columnDefinitions += ", text1, text2, text3"
+	case UuidColumns:
+		columnDefinitions += ", text1, text2, text3, int1"
+	case UuidRelationships:
+		columnDefinitions += ", text1, text2, text3, text4, text5"
+	default:
+		for i := 1; i <= NumberOfTextFields; i++ {
+			columnDefinitions += fmt.Sprintf(", text%d", i)
+		}
+		for i := 1; i <= NumberOfIntFields; i++ {
+			columnDefinitions += fmt.Sprintf(", int%d", i)
+		}
+	}
+	return columnDefinitions
+}
+
+func (grid *Grid) GetRowsQueryForSeedData() string {
+	return "SELECT uuid FROM " + grid.GetTableName() + " WHERE gridUuid = $1 AND uuid = $2"
+}
+
+func (grid *Grid) GetInsertStatementForInsertSeedRowDb() string {
+	return "INSERT INTO " + grid.GetTableName() +
+		" (uuid, " +
+		"revision, " +
+		"created, " +
+		"updated, " +
+		"createdBy, " +
+		"updatedBy, " +
+		"enabled, " +
+		"gridUuid" +
+		grid.getRowsColumnDefinitionsForExportDb() +
+		") " +
+		"VALUES ($1, " +
+		"1, " +
+		"NOW(), " +
+		"NOW(), " +
+		"$2, " +
+		"$2, " +
+		"true, " +
+		"$3" +
+		grid.getInsertStatementParametersForInsertSeedRowDb() +
+		")"
+}
+
+func (grid *Grid) getInsertStatementParametersForInsertSeedRowDb() string {
+	parameters := ""
+	switch grid.Uuid {
+	case UuidGrids:
+		parameters += ", $4, $5, $6"
+	case UuidColumns:
+		parameters += ", $4, $5, $6, $7"
+	case UuidRelationships:
+		parameters += ", $4, $5, $6, $7, $8"
+	default:
+		parameterIndex := 4
+		for i := 1; i <= NumberOfTextFields; i++ {
+			parameters += fmt.Sprintf(", $%d", parameterIndex)
+			parameterIndex += 1
+		}
+		for i := 1; i <= NumberOfIntFields; i++ {
+			parameters += fmt.Sprintf(", $%d", parameterIndex)
+			parameterIndex += 1
+		}
+	}
+	return parameters
+}
+
+func (grid *Grid) GetInsertValuesForInsertSeedRowDb(userUuid string, row *Row) []any {
+	values := make([]any, 0)
+	values = append(values, row.Uuid)
+	values = append(values, userUuid)
+	values = append(values, grid.Uuid)
+	values = row.AppendRowValuesForInsertSeedRowDb(values)
+	return values
 }

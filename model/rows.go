@@ -147,3 +147,45 @@ func (row *Row) GetRowsQueryOutput() []any {
 	output = append(output, &row.Revision)
 	return output
 }
+
+func (row *Row) AppendRowValuesForInsertSeedRowDb(values []any) []any {
+	switch row.GridUuid {
+	case UuidGrids:
+		values = append(values, row.Text1)
+		values = append(values, row.Text2)
+		values = append(values, row.Text3)
+	case UuidColumns:
+		values = append(values, row.Text1)
+		values = append(values, row.Text2)
+		values = append(values, row.Text3)
+		values = append(values, row.Int1)
+	case UuidRelationships:
+		values = append(values, row.Text1)
+		values = append(values, row.Text2)
+		values = append(values, row.Text3)
+		values = append(values, row.Text4)
+		values = append(values, row.Text5)
+	default:
+		values = append(values, row.Text1)
+		values = append(values, row.Text2)
+		values = append(values, row.Text3)
+		values = append(values, row.Text4)
+		values = append(values, row.Text5)
+		values = append(values, row.Text6)
+		values = append(values, row.Text7)
+		values = append(values, row.Text8)
+		values = append(values, row.Text9)
+		values = append(values, row.Text10)
+		values = append(values, row.Int1)
+		values = append(values, row.Int2)
+		values = append(values, row.Int3)
+		values = append(values, row.Int4)
+		values = append(values, row.Int5)
+		values = append(values, row.Int6)
+		values = append(values, row.Int7)
+		values = append(values, row.Int8)
+		values = append(values, row.Int9)
+		values = append(values, row.Int10)
+	}
+	return values
+}

@@ -31,7 +31,9 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		grid := model.GetNewGrid(gridUuid)
 		tableName := grid.GetTableName()
 		configuration.Log(dbName, "", "Export from %s.", tableName)
-		rows, err := db.QueryContext(ct, getRowsQueryForExportDb(grid))
+		query := grid.GetRowsQueryForExportDb()
+		configuration.Trace(dbName, "", "ExportDb() - query=%s", query)
+		rows, err := db.QueryContext(ct, query)
 		if err != nil {
 			return configuration.LogAndReturnError(dbName, "", "Error when querying rows: %v.", err)
 		}
@@ -39,7 +41,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		for rows.Next() {
 			row := model.GetNewRow()
 			row.GridUuid = gridUuid
-			if err := rows.Scan(getRowsQueryOutputForExportDb(row)...); err != nil {
+			if err := rows.Scan(row.GetRowsQueryOutput()...); err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 			}
 			rowSet = append(rowSet, *row)
@@ -67,26 +69,4 @@ var convertJson = func(rowSet []model.Row) ([]byte, error) {
 var exportToFile = func(f *os.File, out []byte) error {
 	_, err := f.Write(out)
 	return err
-}
-
-// function is available for mocking
-var getRowsQueryForExportDb = func(grid *model.Grid) string {
-	return getRowsQueryColumnsForExportDb(grid) + "FROM " + grid.GetTableName() + " ORDER BY created"
-}
-
-func getRowsQueryColumnsForExportDb(grid *model.Grid) string {
-	return "SELECT uuid, " +
-		"gridUuid, " +
-		"created, " +
-		"createdBy, " +
-		"updated, " +
-		"updatedBy, " +
-		getRowsColumnDefinitions(grid) +
-		"enabled, " +
-		"revision "
-}
-
-// function is available for mocking
-var getRowsQueryOutputForExportDb = func(row *model.Row) []any {
-	return row.GetRowsQueryOutput()
 }

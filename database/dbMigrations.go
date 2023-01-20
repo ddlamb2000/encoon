@@ -6,7 +6,6 @@ package database
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"sort"
 
 	"d.lambert.fr/encoon/configuration"
@@ -43,7 +42,10 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 			return anyError
 		}
 	}
-	return migrateDb(ctx, db, dbName)
+	if err := migrateDb(ctx, db, dbName); err != nil {
+		return err
+	}
+	return seedDb(ctx, db, dbName)
 }
 
 func getLatestMigration(ctx context.Context, db *sql.DB, dbName string) int {
@@ -116,21 +118,5 @@ var getMigrationInsertStatement = func() string {
 
 // function is available for mocking
 var getRowsColumnDefinitions = func(grid *model.Grid) string {
-	columnDefinitions := ""
-	switch grid.Uuid {
-	case model.UuidGrids:
-		columnDefinitions += "text1, text2, text3, "
-	case model.UuidColumns:
-		columnDefinitions += "text1, text2, text3, int1, "
-	case model.UuidRelationships:
-		columnDefinitions += "text1, text2, text3, text4, text5, "
-	default:
-		for i := 1; i <= model.NumberOfTextFields; i++ {
-			columnDefinitions += fmt.Sprintf("text%d text, ", i)
-		}
-		for i := 1; i <= model.NumberOfIntFields; i++ {
-			columnDefinitions += fmt.Sprintf("int%d integer, ", i)
-		}
-	}
-	return columnDefinitions
+	return grid.GetRowsColumnDefinitions()
 }
