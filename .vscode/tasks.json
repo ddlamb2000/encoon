@@ -16,7 +16,7 @@
         {
             "label": "Export data from master",
             "type": "shell",
-            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData/master.json",
+            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData.json",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -46,7 +46,7 @@
         {
             "label": "Build and start docker containers (development)",
             "type": "shell",
-            "command": "docker compose up --build",
+            "command": "docker compose up --build -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

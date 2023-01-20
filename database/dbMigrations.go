@@ -42,10 +42,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 			return anyError
 		}
 	}
-	if err := migrateDb(ctx, db, dbName); err != nil {
-		return err
-	}
-	return seedDb(ctx, db, dbName)
+	return migrateDb(ctx, db, dbName)
 }
 
 func getLatestMigration(ctx context.Context, db *sql.DB, dbName string) int {
@@ -71,7 +68,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 			return err
 		}
 	}
-	return nil
+	return seedDb(ctx, db, dbName)
 }
 
 func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, step int, command string, dbName string) error {

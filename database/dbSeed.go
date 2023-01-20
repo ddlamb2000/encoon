@@ -13,7 +13,7 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-const seedDataFileName = "../seedData/master.json"
+const seedDataFileName = "./seedData.json"
 
 func seedDb(ctx context.Context, db *sql.DB, dbName string) error {
 	configuration.Log(dbName, "", "Start seeding data from %s.", seedDataFileName)

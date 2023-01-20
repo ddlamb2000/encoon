@@ -36,5 +36,6 @@ COPY frontend/lib frontend/lib
 COPY frontend/templates frontend/templates
 COPY frontend/encoon.css frontend/encoon.css
 COPY frontend/favicon.ico frontend/favicon.ico
+COPY seedData.json .
 COPY --from=node-builder /usr/src/encoon/javascript frontend/javascript
 CMD ["sh", "-c", "./encoon"]
