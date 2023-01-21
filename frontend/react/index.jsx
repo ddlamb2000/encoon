@@ -67,14 +67,10 @@ class App extends React.Component {
 						</nav>
 						<main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 							{gridUuid == "" &&
-								<div>
-									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidUsers} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidGrids} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<Grid token={this.token} dbName={this.props.dbName} gridUuid={UuidColumns} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<Grid token={this.token} dbName={this.props.dbName} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<Grid token={this.token} navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
-									<Grid />
-								</div>
+								<Grid token={this.token}
+										dbName={this.props.dbName}
+										gridUuid={UuidGrids}
+										navigateToGrid={(gridUuid, uuid) => this.navigateToGrid(gridUuid, uuid)} />
 							}
 							{gridUuid != "" &&
 								<Grid token={this.token}

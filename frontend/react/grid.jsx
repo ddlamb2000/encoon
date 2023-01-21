@@ -337,6 +337,7 @@ class Grid extends React.Component {
 								'&filterColumnGridUuid=' + filterColumnGridUuid + 
 								'&filterColumnValue=' + filterColumnValue : ''
 		const uri = `/${dbName}/api/v1/${gridUuid}${uuidFilter}${columnFilter}`
+		if(trace) console.log("[Grid.loadData()] uri=", uri)
 		fetch(uri, {
 			headers: {
 				'Accept': 'application/json',
