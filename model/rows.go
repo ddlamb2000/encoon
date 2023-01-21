@@ -75,7 +75,7 @@ func (row *Row) SetViewEditAccessFlags(grid *Grid, userUuid string) {
 		if canEditRows {
 			row.CanEditRow = true
 		} else if canEditOwnedRows {
-			row.CanEditRow = grid.HasOwnership(userUuid)
+			row.CanEditRow = grid.HasOwnership(userUuid) || *row.CreatedBy == userUuid
 		}
 	}
 }
