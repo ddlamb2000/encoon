@@ -148,7 +148,7 @@ func (row *Row) GetRowsQueryOutput() []any {
 	return output
 }
 
-func (row *Row) AppendRowValuesForInsertSeedRowDb(values []any) []any {
+func (row *Row) AppendRowValuesForSeedRowDb(values []any) []any {
 	switch row.GridUuid {
 	case UuidGrids:
 		values = append(values, row.Text1)

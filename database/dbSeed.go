@@ -41,14 +41,18 @@ func seedRowDb(ctx context.Context, db *sql.DB, dbName string, row model.Row) er
 	parms := GetRowsQueryParametersForSeedData(row.GridUuid, row.Uuid)
 	configuration.Trace(dbName, "", "seedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	var uuid string
-	if err := db.QueryRowContext(ctx, query, parms...).Scan(&uuid); err != nil {
+	var revision int8
+	if err := db.QueryRowContext(ctx, query, parms...).Scan(&uuid, &revision); err != nil {
 		if err == sql.ErrNoRows {
 			configuration.Trace(dbName, "", "Not found row with grid uuid %q and uuid %q.", row.GridUuid, row.Uuid)
 			return insertSeedRowDb(ctx, db, dbName, grid, &row)
 		}
 		return configuration.LogAndReturnError(dbName, "", "Error when retrieving row with grid uuid %q and uuid %q: %v.", row.GridUuid, row.Uuid, err)
 	}
-	configuration.Trace(dbName, "", "Found %q.", uuid)
+	if row.Uuid == uuid && row.Revision > revision {
+		configuration.Trace(dbName, "", "seedRowDb(%s, %s) - found %q with revision %d that needs update.", grid, row, uuid, row.Revision)
+		return updateSeedRowDb(ctx, db, dbName, grid, &row)
+	}
 	return nil
 }
 
@@ -60,12 +64,23 @@ func GetRowsQueryParametersForSeedData(gridUuid, uuid string) []any {
 }
 
 func insertSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model.Grid, row *model.Row) error {
-	query := grid.GetInsertStatementForInsertSeedRowDb()
-	parms := grid.GetInsertValuesForInsertSeedRowDb(model.UuidRootUser, row)
+	query := grid.GetInsertStatementForSeedRowDb()
+	parms := grid.GetInsertValuesForSeedRowDb(model.UuidRootUser, row)
 	configuration.Trace(dbName, "", "insertSeedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	if _, err := db.ExecContext(ctx, query, parms...); err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Insert error when seeding row: %v.", err)
 	}
-	configuration.Log(dbName, "", "Row [%s] inserted.", row.Uuid)
+	configuration.Log(dbName, "", "Seed data row [%s] inserted.", row)
+	return nil
+}
+
+func updateSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model.Grid, row *model.Row) error {
+	query := grid.GetUpdateStatementForSeedRowDb()
+	parms := grid.GetUpdateValuesForSeedRowDb(model.UuidRootUser, row)
+	configuration.Trace(dbName, "", "updateSeedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
+	if _, err := db.ExecContext(ctx, query, parms...); err != nil {
+		return configuration.LogAndReturnError(dbName, "", "Update error when seeding row: %v.", err)
+	}
+	configuration.Log(dbName, "", "Seed data row [%s] with revision %d updated.", row, row.Revision)
 	return nil
 }

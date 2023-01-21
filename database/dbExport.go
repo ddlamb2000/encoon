@@ -13,13 +13,6 @@ import (
 )
 
 func ExportDb(ct context.Context, dbName, exportFileName string) error {
-	flags := os.O_CREATE | os.O_WRONLY | os.O_TRUNC
-	f, err := os.OpenFile(exportFileName, flags, 0666)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-
 	db, err := GetDbByName(dbName)
 	if err != nil {
 		return err
@@ -44,7 +37,9 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 			if err := rows.Scan(row.GetRowsQueryOutput()...); err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 			}
-			rowSet = append(rowSet, *row)
+			if !(row.GridUuid == model.UuidRelationships && *row.Text2 == model.UuidTransactions) {
+				rowSet = append(rowSet, *row)
+			}
 		}
 	}
 
@@ -53,6 +48,11 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	if err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when marshalling rows: %v.", err)
 	}
+	f, err := os.OpenFile(exportFileName, os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0666)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
 	if err = exportToFile(f, out); err != nil {
 		return configuration.LogAndReturnError(dbName, "", "Error when writing file: %v.", err)
 	}

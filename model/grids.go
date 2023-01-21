@@ -140,10 +140,10 @@ func (grid *Grid) getRowsColumnDefinitionsForExportDb() string {
 }
 
 func (grid *Grid) GetRowsQueryForSeedData() string {
-	return "SELECT uuid FROM " + grid.GetTableName() + " WHERE gridUuid = $1 AND uuid = $2"
+	return "SELECT uuid, revision FROM " + grid.GetTableName() + " WHERE gridUuid = $1 AND uuid = $2"
 }
 
-func (grid *Grid) GetInsertStatementForInsertSeedRowDb() string {
+func (grid *Grid) GetInsertStatementForSeedRowDb() string {
 	return "INSERT INTO " + grid.GetTableName() +
 		" (uuid, " +
 		"revision, " +
@@ -153,8 +153,7 @@ func (grid *Grid) GetInsertStatementForInsertSeedRowDb() string {
 		"updatedBy, " +
 		"enabled, " +
 		"gridUuid" +
-		grid.getRowsColumnDefinitionsForExportDb() +
-		") " +
+		grid.getRowsColumnDefinitionsForExportDb() + ") " +
 		"VALUES ($1, " +
 		"1, " +
 		"NOW(), " +
@@ -163,11 +162,10 @@ func (grid *Grid) GetInsertStatementForInsertSeedRowDb() string {
 		"$2, " +
 		"true, " +
 		"$3" +
-		grid.getInsertStatementParametersForInsertSeedRowDb() +
-		")"
+		grid.getInsertStatementParametersForSeedRowDb() + ")"
 }
 
-func (grid *Grid) getInsertStatementParametersForInsertSeedRowDb() string {
+func (grid *Grid) getInsertStatementParametersForSeedRowDb() string {
 	parameters := ""
 	switch grid.Uuid {
 	case UuidGrids:
@@ -190,11 +188,56 @@ func (grid *Grid) getInsertStatementParametersForInsertSeedRowDb() string {
 	return parameters
 }
 
-func (grid *Grid) GetInsertValuesForInsertSeedRowDb(userUuid string, row *Row) []any {
+func (grid *Grid) GetInsertValuesForSeedRowDb(userUuid string, row *Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	values = append(values, grid.Uuid)
-	values = row.AppendRowValuesForInsertSeedRowDb(values)
+	values = row.AppendRowValuesForSeedRowDb(values)
 	return values
+}
+
+func (grid *Grid) GetUpdateValuesForSeedRowDb(userUuid string, row *Row) []any {
+	values := make([]any, 0)
+	values = append(values, grid.Uuid)
+	values = append(values, row.Uuid)
+	values = append(values, row.Revision)
+	values = append(values, userUuid)
+	values = append(values, row.Enabled)
+	values = row.AppendRowValuesForSeedRowDb(values)
+	return values
+}
+
+func (grid *Grid) GetUpdateStatementForSeedRowDb() string {
+	return "UPDATE " + grid.GetTableName() +
+		" SET revision = $3, " +
+		"updated = NOW(), " +
+		"updatedBy = $4, " +
+		"enabled = $5" +
+		grid.getUpdateStatementParametersForSeedRowDb() +
+		" WHERE gridUuid = $1 " +
+		"AND uuid = $2"
+}
+
+func (grid *Grid) getUpdateStatementParametersForSeedRowDb() string {
+	parameters := ""
+	switch grid.Uuid {
+	case UuidGrids:
+		parameters += ", text1 = $6, text2 = $7, text3 = $8"
+	case UuidColumns:
+		parameters += ", text1 = $6, text2 = $7, text3 = $8, int1 = $9"
+	case UuidRelationships:
+		parameters += ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10"
+	default:
+		parameterIndex := 6
+		for i := 1; i <= NumberOfTextFields; i++ {
+			parameters += fmt.Sprintf(", text%d = $%d", i, parameterIndex)
+			parameterIndex += 1
+		}
+		for i := 1; i <= NumberOfIntFields; i++ {
+			parameters += fmt.Sprintf(", int%d = $%d", i, parameterIndex)
+			parameterIndex += 1
+		}
+	}
+	return parameters
 }
