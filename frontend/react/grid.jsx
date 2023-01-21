@@ -162,6 +162,7 @@ class Grid extends React.Component {
 									onSelectRowClick={() => this.deselectRows()}
 									onAddRowClick={() => this.addRow()}
 									onSaveDataClick={() => this.saveData()}
+									onLoadDataClick={() => this.loadData()}
 									navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 									miniGrid={this.props.miniGrid} />
 					}
@@ -533,6 +534,13 @@ class GridFooter extends React.Component {
 							className="btn btn-outline-success btn-sm mx-1"
 							onClick={this.props.onAddRowClick}>
 						Add <i className="bi bi-plus-circle"></i>
+					</button>
+				}
+				{!isLoading && countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
+					<button type="button"
+							className="btn btn-outline-warning btn-sm mx-1"
+							onClick={this.props.onLoadDataClick}>
+						Cancel <i className="bi bi-arrow-counterclockwise"></i>
 					</button>
 				}
 				{!isLoading && countRowsAdded + countRowsEdited + countRowsDeleted > 0 &&
