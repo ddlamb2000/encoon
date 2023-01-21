@@ -110,27 +110,25 @@ class GridView extends React.Component {
 													deleteRichTextField={id => this.props.deleteRichTextField(id)} />
 									</tr>
 								)}
-								{audits &&
-									<tr>
-										<td>Audit</td>
-										<td>
-											<ul className="list-unstyled mb-0">
-												{audits.map(
-													audit => {
-														return (
-															<li key={audit.uuid}>
-																{audit.actionName} on <DateTime dateTime={audit.created} />,
-																by <a href="#" onClick={() => this.props.navigateToGrid(UuidUsers, audit.createdBy)}>
-																	{audit.createdByName}
-																</a>
-															</li>
-														)
-													}
-												)}
-											</ul>
-										</td>
-									</tr>
-								}
+								<tr>
+									<td>Audit</td>
+									<td>
+										<ul className="list-unstyled mb-0">
+											{audits && audits.map( audit => {
+												return (
+													<li key={audit.uuid}>
+														{audit.actionName} on <DateTime dateTime={audit.created} />,
+														by <a href="#" onClick={() => this.props.navigateToGrid(UuidUsers, audit.createdBy)}>
+															{audit.createdByName}
+														</a>
+													</li>
+												)})
+											}
+											{!audits && <li>Created on <DateTime dateTime={row.created} /></li>}
+											{!audits && row.revision > 1 && <li>Updated on <DateTime dateTime={row.updated} /></li>}
+										</ul>
+									</td>
+								</tr>
 							</tbody>
 						</table>
 					</div>
