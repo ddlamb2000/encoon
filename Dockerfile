@@ -1,7 +1,7 @@
 # εncooη : data structuration, presentation and navigation.
 # Copyright David Lambert 2023
 
-# Go build container
+# Go build
 FROM golang:1.19-buster as go-builder
 WORKDIR /usr/src/encoon
 COPY go.mod go.sum ./
@@ -14,7 +14,7 @@ COPY utils utils
 COPY encoon.go .
 RUN go build -v
 
-# Node build container
+# Node build
 FROM node:18.13.0 as node-builder
 WORKDIR /usr/src/encoon
 COPY frontend/package.json frontend/babel.config.json ./
@@ -23,7 +23,7 @@ COPY frontend/javascript javascript
 COPY frontend/react react
 RUN npm run build
 
-# Test container
+# Image
 FROM almalinux:9.1
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."

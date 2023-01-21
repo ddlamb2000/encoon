@@ -6,6 +6,7 @@ log: false
 trace: false
 showTiming: false
 gridCacheSize: 500
+seedDataFile: /usr/encoon/seedData.json
 httpServer:
   port: 8080
   jwtExpiration: 1440

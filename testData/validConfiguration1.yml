@@ -13,6 +13,8 @@ httpServer:
 log: true
 trace: true
 
+seedDataFile: ../seedData.json
+
 # Database configuration
 database:
 

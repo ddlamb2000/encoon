@@ -14,6 +14,7 @@ log: false
 trace: false
 
 gridCacheSize: 20
+seedDataFile: ../seedData.json
 
 # Database configuration
 database:

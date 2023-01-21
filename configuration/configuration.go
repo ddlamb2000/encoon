@@ -24,6 +24,7 @@ type Configuration struct {
 	ShowTiming          bool                     `yaml:"showTiming"`
 	FrontEndDevelopment bool                     `yaml:"frontEndDevelopment"`
 	GridCacheSize       int                      `yaml:"gridCacheSize"`
+	SeedDataFile        string                   `yaml:"seedDataFile"`
 	HttpServer          HttpServerConfiguration  `yaml:"httpServer"`
 	Databases           []*DatabaseConfiguration `yaml:"database"`
 }
@@ -203,4 +204,8 @@ func StopTiming(dbName, userName, funcName string, start time.Time) {
 
 func IsFrontEndDevelopment() bool {
 	return appConfiguration.FrontEndDevelopment
+}
+
+func GetSeedDataFile() string {
+	return appConfiguration.SeedDataFile
 }
