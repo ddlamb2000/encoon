@@ -4,6 +4,7 @@
 package model
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -84,18 +85,6 @@ func TestRowAsString(t *testing.T) {
 	}
 }
 
-func TestGetRowsQueryOutput(t *testing.T) {
-	row := Row{
-		Uuid:          "12345",
-		DisplayString: "xyz",
-	}
-	got := len(row.GetRowsQueryOutput())
-	expect := 28
-	if got != expect {
-		t.Errorf(`Got %d instead of %d.`, got, expect)
-	}
-}
-
 func TestRowSetViewEditAccessFlags(t *testing.T) {
 	user1 := "aaaa"
 	grid1 := GetNewGrid("")
@@ -131,6 +120,157 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 			}
 			if row.CanEditRow != tt.expectCanEditRow {
 				t.Errorf(`Got row.CanEditRow=%v instead of %v.`, row.CanEditRow, tt.expectCanEditRow)
+			}
+		})
+	}
+}
+
+func TestGetRowsQueryOutput(t *testing.T) {
+	row := GetNewRow()
+	tests := []struct {
+		test   string
+		uuid   string
+		expect []any
+	}{
+		{"1", UuidGrids, []any{
+			&row.Uuid,
+			&row.GridUuid,
+			&row.Created,
+			&row.CreatedBy,
+			&row.Updated,
+			&row.UpdatedBy,
+			&row.Text1,
+			&row.Text2,
+			&row.Text3,
+			&row.Enabled,
+			&row.Revision,
+		}},
+		{"2", UuidColumns, []any{
+			&row.Uuid,
+			&row.GridUuid,
+			&row.Created,
+			&row.CreatedBy,
+			&row.Updated,
+			&row.UpdatedBy,
+			&row.Text1,
+			&row.Text2,
+			&row.Text3,
+			&row.Int1,
+			&row.Enabled,
+			&row.Revision,
+		}},
+		{"3", UuidRelationships, []any{
+			&row.Uuid,
+			&row.GridUuid,
+			&row.Created,
+			&row.CreatedBy,
+			&row.Updated,
+			&row.UpdatedBy,
+			&row.Text1,
+			&row.Text2,
+			&row.Text3,
+			&row.Text4,
+			&row.Text5,
+			&row.Enabled,
+			&row.Revision,
+		}},
+		{"4", "xxx", []any{
+			&row.Uuid,
+			&row.GridUuid,
+			&row.Created,
+			&row.CreatedBy,
+			&row.Updated,
+			&row.UpdatedBy,
+			&row.Text1,
+			&row.Text2,
+			&row.Text3,
+			&row.Text4,
+			&row.Text5,
+			&row.Text6,
+			&row.Text7,
+			&row.Text8,
+			&row.Text9,
+			&row.Text10,
+			&row.Int1,
+			&row.Int2,
+			&row.Int3,
+			&row.Int4,
+			&row.Int5,
+			&row.Int6,
+			&row.Int7,
+			&row.Int8,
+			&row.Int9,
+			&row.Int10,
+			&row.Enabled,
+			&row.Revision,
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			row.GridUuid = tt.uuid
+			got := row.GetRowsQueryOutput()
+			if !reflect.DeepEqual(got, tt.expect) {
+				t.Errorf(`Got %s instead of %s.`, got, tt.expect)
+			}
+		})
+	}
+}
+
+func TestAppendRowValuesForSeedRowDb(t *testing.T) {
+	row := GetNewRow()
+	tests := []struct {
+		test   string
+		uuid   string
+		expect []any
+	}{
+		{"1", UuidGrids, []any{
+			row.Text1,
+			row.Text2,
+			row.Text3,
+		}},
+		{"2", UuidColumns, []any{
+			row.Text1,
+			row.Text2,
+			row.Text3,
+			row.Int1,
+		}},
+		{"3", UuidRelationships, []any{
+			row.Text1,
+			row.Text2,
+			row.Text3,
+			row.Text4,
+			row.Text5,
+		}},
+		{"4", "xxx", []any{
+			row.Text1,
+			row.Text2,
+			row.Text3,
+			row.Text4,
+			row.Text5,
+			row.Text6,
+			row.Text7,
+			row.Text8,
+			row.Text9,
+			row.Text10,
+			row.Int1,
+			row.Int2,
+			row.Int3,
+			row.Int4,
+			row.Int5,
+			row.Int6,
+			row.Int7,
+			row.Int8,
+			row.Int9,
+			row.Int10,
+		}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			values := make([]any, 0)
+			row.GridUuid = tt.uuid
+			got := row.AppendRowValuesForSeedRowDb(values)
+			if !reflect.DeepEqual(got, tt.expect) {
+				t.Errorf(`Got %s instead of %s.`, got, tt.expect)
 			}
 		})
 	}
