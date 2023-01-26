@@ -4,6 +4,7 @@
 package model
 
 import (
+	"reflect"
 	"testing"
 )
 
@@ -144,5 +145,169 @@ func TestHasOwnership(t *testing.T) {
 				t.Errorf(`Got grid.HasOwnership=%v instead of %v.`, grid.HasOwnership(tt.uuid), tt.expect)
 			}
 		})
+	}
+}
+
+func TestGetRowsColumnDefinitions(t *testing.T) {
+	grid := GetNewGrid("xxx")
+	got := grid.GetRowsColumnDefinitions()
+	expect := ", text1 text, text2 text, text3 text, text4 text, text5 text, text6 text, text7 text, text8 text, text9 text, text10 text, int1 integer, int2 integer, int3 integer, int4 integer, int5 integer, int6 integer, int7 integer, int8 integer, int9 integer, int10 integer"
+	if got != expect {
+		t.Errorf(`Got %s instead of %s.`, got, expect)
+	}
+}
+
+func TestGetRowsColumnDefinitionsForExportDb(t *testing.T) {
+	tests := []struct {
+		test   string
+		uuid   string
+		expect string
+	}{
+		{"1", UuidGrids, ", text1, text2, text3"},
+		{"2", UuidColumns, ", text1, text2, text3, int1"},
+		{"3", UuidRelationships, ", text1, text2, text3, text4, text5"},
+		{"4", "xxx", ", text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			grid := GetNewGrid(tt.uuid)
+			got := grid.getRowsColumnDefinitionsForExportDb()
+			if got != tt.expect {
+				t.Errorf(`Got %s instead of %s.`, got, tt.expect)
+			}
+		})
+	}
+}
+
+func TestGetRowsQueryForExportDb(t *testing.T) {
+	grid := GetNewGrid("xxx")
+	got := grid.GetRowsQueryForExportDb()
+	expect := "SELECT uuid, gridUuid, created, createdBy, updated, updatedBy, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10, enabled, revision FROM rows ORDER BY created"
+	if got != expect {
+		t.Errorf(`Got %s instead of %s.`, got, expect)
+	}
+}
+
+func TestGetRowsQueryForSeedData(t *testing.T) {
+	grid := GetNewGrid("xxx")
+	got := grid.GetRowsQueryForSeedData()
+	expect := "SELECT uuid, revision FROM rows WHERE gridUuid = $1 AND uuid = $2"
+	if got != expect {
+		t.Errorf(`Got %s instead of %s.`, got, expect)
+	}
+}
+
+func TestGetInsertStatementForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid("xxx")
+	got := grid.GetInsertStatementForSeedRowDb()
+	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10) VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)"
+	if got != expect {
+		t.Errorf(`Got %s instead of %s.`, got, expect)
+	}
+}
+
+func TestGetInsertStatementParametersForSeedRowDb(t *testing.T) {
+	tests := []struct {
+		test   string
+		uuid   string
+		expect string
+	}{
+		{"1", UuidGrids, ", $4, $5, $6"},
+		{"2", UuidColumns, ", $4, $5, $6, $7"},
+		{"3", UuidRelationships, ", $4, $5, $6, $7, $8"},
+		{"4", "xxx", ", $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			grid := GetNewGrid(tt.uuid)
+			got := grid.getInsertStatementParametersForSeedRowDb()
+			if got != tt.expect {
+				t.Errorf(`Got %s instead of %s.`, got, tt.expect)
+			}
+		})
+	}
+}
+
+func TestGetInsertValuesForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidGrids)
+	text1 := "yyy"
+	row := Row{
+		Uuid:     "zzz",
+		GridUuid: UuidGrids,
+		Text1:    &text1,
+		Text2:    &text1,
+		Text3:    &text1,
+	}
+	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		"zzz",
+		"xxx",
+		UuidGrids,
+		&text1,
+		&text1,
+		&text1,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetUpdateValuesForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidGrids)
+	text1 := "yyy"
+	const revision int8 = 10
+	row := Row{
+		Uuid:     "zzz",
+		GridUuid: UuidGrids,
+		Text1:    &text1,
+		Text2:    &text1,
+		Text3:    &text1,
+		Revision: revision,
+		Enabled:  true,
+	}
+	got := grid.GetUpdateValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		UuidGrids,
+		"zzz",
+		revision,
+		"xxx",
+		true,
+		&text1,
+		&text1,
+		&text1,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetUpdateStatementParametersForSeedRowDb(t *testing.T) {
+	tests := []struct {
+		test   string
+		uuid   string
+		expect string
+	}{
+		{"1", UuidGrids, ", text1 = $6, text2 = $7, text3 = $8"},
+		{"2", UuidColumns, ", text1 = $6, text2 = $7, text3 = $8, int1 = $9"},
+		{"3", UuidRelationships, ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10"},
+		{"4", "xxx", ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10, text6 = $11, text7 = $12, text8 = $13, text9 = $14, text10 = $15, int1 = $16, int2 = $17, int3 = $18, int4 = $19, int5 = $20, int6 = $21, int7 = $22, int8 = $23, int9 = $24, int10 = $25"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			grid := GetNewGrid(tt.uuid)
+			got := grid.getUpdateStatementParametersForSeedRowDb()
+			if got != tt.expect {
+				t.Errorf(`Got %s instead of %s.`, got, tt.expect)
+			}
+		})
+	}
+}
+
+func TestGetUpdateStatementForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid("xxx")
+	got := grid.GetUpdateStatementForSeedRowDb()
+	expect := "UPDATE rows SET revision = $3, updated = NOW(), updatedBy = $4, enabled = $5, text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10, text6 = $11, text7 = $12, text8 = $13, text9 = $14, text10 = $15, int1 = $16, int2 = $17, int3 = $18, int4 = $19, int5 = $20, int6 = $21, int7 = $22, int8 = $23, int9 = $24, int10 = $25 WHERE gridUuid = $1 AND uuid = $2"
+	if got != expect {
+		t.Errorf(`Got %s instead of %s.`, got, expect)
 	}
 }
