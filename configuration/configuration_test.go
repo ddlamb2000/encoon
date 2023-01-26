@@ -316,3 +316,13 @@ func TestTiming(t *testing.T) {
 	StopTiming("test", "root", "test()", s)
 	appConfiguration.ShowTiming = previous
 }
+
+func TestGetSeedDataFile(t *testing.T) {
+	fileName := "../testData/validConfiguration1.yml"
+	LoadConfiguration(fileName)
+	got := GetSeedDataFile()
+	expect := "../seedData.json"
+	if got != expect {
+		t.Errorf("Got %v instead of %v.", got, expect)
+	}
+}
