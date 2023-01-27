@@ -24,7 +24,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		grid := model.GetNewGrid(gridUuid)
 		tableName := grid.GetTableName()
 		configuration.Log(dbName, "", "Export from %s.", tableName)
-		query := grid.GetRowsQueryForExportDb()
+		query := GetGridRowsQueryForExportDb(grid)
 		configuration.Trace(dbName, "", "ExportDb() - query=%s", query)
 		rows, err := db.QueryContext(ct, query)
 		if err != nil {
@@ -34,7 +34,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 		for rows.Next() {
 			row := model.GetNewRow()
 			row.GridUuid = gridUuid
-			if err := rows.Scan(row.GetRowsQueryOutput()...); err != nil {
+			if err := rows.Scan(GetRowsQueryOutput(row)...); err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 			}
 			if !(row.GridUuid == model.UuidRelationships && *row.Text2 == model.UuidTransactions) {
@@ -58,6 +58,16 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	}
 	configuration.Log(dbName, "", "Export of database (%d rows) into %s completed.", len(rowSet), exportFileName)
 	return nil
+}
+
+// function is available for mocking
+var GetGridRowsQueryForExportDb = func(grid *model.Grid) string {
+	return grid.GetRowsQueryForExportDb()
+}
+
+// function is available for mocking
+var GetRowsQueryOutput = func(row *model.Row) []any {
+	return row.GetRowsQueryOutput()
 }
 
 // function is available for mocking

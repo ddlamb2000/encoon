@@ -88,4 +88,64 @@ func TestRecreateDb(t *testing.T) {
 			t.Errorf(`Error for migrating an up-to-date database: %v.`, err)
 		}
 	})
+
+	t.Run("seedDb1", func(t *testing.T) {
+		configuration.LoadConfiguration("../testData/invalidConfiguration1.yml")
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Database %q found while it shouldn't be.`, dbName)
+		}
+	})
+
+	t.Run("seedDb2", func(t *testing.T) {
+		configuration.LoadConfiguration("../testData/invalidConfiguration2.yml")
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Database %q found while it shouldn't be.`, dbName)
+		}
+	})
+
+	t.Run("seedDbDefect1", func(t *testing.T) {
+		GetGridRowsQueryForSeedDataImpl := GetGridRowsQueryForSeedData
+		GetGridRowsQueryForSeedData = func(grid *model.Grid) string { return "xxx" }
+		configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Database %q found while it shouldn't be.`, dbName)
+		}
+		GetGridRowsQueryForSeedData = GetGridRowsQueryForSeedDataImpl
+	})
+
+	t.Run("seedDbDefect2", func(t *testing.T) {
+		GetGridInsertStatementForSeedRowDbImpl := GetGridInsertStatementForSeedRowDb
+		GetGridInsertStatementForSeedRowDb = func(grid *model.Grid) string { return "xxx" }
+		configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Database %q found while it shouldn't be.`, dbName)
+		}
+		GetGridInsertStatementForSeedRowDb = GetGridInsertStatementForSeedRowDbImpl
+	})
+
+	t.Run("seedDbDefect3", func(t *testing.T) {
+		GetGridUpdateStatementForSeedRowDbImpl := GetGridUpdateStatementForSeedRowDb
+		GetGridUpdateStatementForSeedRowDb = func(grid *model.Grid) string { return "xxx" }
+		configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+		if err := RecreateDb(context.Background(), db, dbName); err == nil {
+			t.Errorf(`Database %q found while it shouldn't be.`, dbName)
+		}
+		GetGridUpdateStatementForSeedRowDb = GetGridUpdateStatementForSeedRowDbImpl
+	})
+
+	t.Run("seedDb3", func(t *testing.T) {
+		configuration.LoadConfiguration("../testData/validConfiguration1.yml")
+		dbName := "test"
+		db, err := GetDbByName(dbName)
+		if err != nil {
+			t.Errorf(`Database %q not found.`, dbName)
+		}
+		if err := RecreateDb(context.Background(), db, dbName); err != nil {
+			t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
+		}
+		err = seedDb(context.Background(), db, dbName)
+		if err != nil {
+			t.Errorf(`Error when seeding database %q: %v`, dbName, err)
+		}
+	})
 }

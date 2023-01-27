@@ -86,8 +86,7 @@ func connectDbServer(dbConfiguration *configuration.DatabaseConfiguration, dbNam
 		return nil, configuration.LogAndReturnError(dbName, "", "Unable to connect to database: %v.", err)
 	}
 	configuration.Log(dbName, "", "Database connected.")
-	migrateDb(ctx, db, dbConfiguration.Name)
-	return db, nil
+	return db, migrateDb(ctx, db, dbConfiguration.Name)
 }
 
 func Sleep(ctx context.Context, dbName, user string, db *sql.DB) {

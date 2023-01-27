@@ -37,7 +37,7 @@ func seedDb(ctx context.Context, db *sql.DB, dbName string) error {
 func seedRowDb(ctx context.Context, db *sql.DB, dbName string, row model.Row) error {
 	configuration.Trace(dbName, "", "Import %v.", row)
 	grid := model.GetNewGrid(row.GridUuid)
-	query := grid.GetRowsQueryForSeedData()
+	query := GetGridRowsQueryForSeedData(grid)
 	parms := GetRowsQueryParametersForSeedData(row.GridUuid, row.Uuid)
 	configuration.Trace(dbName, "", "seedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	var uuid string
@@ -56,6 +56,11 @@ func seedRowDb(ctx context.Context, db *sql.DB, dbName string, row model.Row) er
 	return nil
 }
 
+// function is available for mocking
+var GetGridRowsQueryForSeedData = func(grid *model.Grid) string {
+	return grid.GetRowsQueryForSeedData()
+}
+
 func GetRowsQueryParametersForSeedData(gridUuid, uuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, gridUuid)
@@ -64,7 +69,7 @@ func GetRowsQueryParametersForSeedData(gridUuid, uuid string) []any {
 }
 
 func insertSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model.Grid, row *model.Row) error {
-	query := grid.GetInsertStatementForSeedRowDb()
+	query := GetGridInsertStatementForSeedRowDb(grid)
 	parms := grid.GetInsertValuesForSeedRowDb(model.UuidRootUser, row)
 	configuration.Trace(dbName, "", "insertSeedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	if _, err := db.ExecContext(ctx, query, parms...); err != nil {
@@ -74,8 +79,13 @@ func insertSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model
 	return nil
 }
 
+// function is available for mocking
+var GetGridInsertStatementForSeedRowDb = func(grid *model.Grid) string {
+	return grid.GetInsertStatementForSeedRowDb()
+}
+
 func updateSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model.Grid, row *model.Row) error {
-	query := grid.GetUpdateStatementForSeedRowDb()
+	query := GetGridUpdateStatementForSeedRowDb(grid)
 	parms := grid.GetUpdateValuesForSeedRowDb(model.UuidRootUser, row)
 	configuration.Trace(dbName, "", "updateSeedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	if _, err := db.ExecContext(ctx, query, parms...); err != nil {
@@ -83,4 +93,9 @@ func updateSeedRowDb(ctx context.Context, db *sql.DB, dbName string, grid *model
 	}
 	configuration.Log(dbName, "", "Seed data row [%s] with revision %d updated.", row, row.Revision)
 	return nil
+}
+
+// function is available for mocking
+var GetGridUpdateStatementForSeedRowDb = func(grid *model.Grid) string {
+	return grid.GetUpdateStatementForSeedRowDb()
 }
