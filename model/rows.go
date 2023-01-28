@@ -80,7 +80,7 @@ func (row *Row) SetViewEditAccessFlags(grid *Grid, userUuid string) {
 		switch {
 		case row.GridUuid == UuidGrids || row.GridUuid == UuidColumns || row.GridUuid == UuidRelationships:
 			row.CanEditRow = canEditGrid
-		case row.GridUuid == UuidUsers:
+		case row.GridUuid == UuidUsers && !canEditRows:
 			row.CanEditRow = row.Uuid == userUuid
 		case canEditRows:
 			row.CanEditRow = true
