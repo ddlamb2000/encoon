@@ -67,6 +67,7 @@ class GridCell extends React.Component {
 							filterColumnDisplayString={this.props.displayString}
 							navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 							innerGrid={true}
+							noEdit={!this.props.canEditRow}
 							loadParentData={() => this.props.loadParentData()} />
 				}
 			</td>
