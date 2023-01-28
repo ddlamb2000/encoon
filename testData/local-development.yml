@@ -10,7 +10,7 @@ showTiming: false # show basic timings
 
 frontEndDevelopment: true # use front-end development code and run-time (React, JSX, Babel)
 
-gridCacheSize: 500 # number of grids kept in local server cache
+gridCacheSize: 50 # number of grids kept in local server cache
 seedDataFile: ./seedData.json
 
 # Http Server configuration
