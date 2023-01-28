@@ -70,16 +70,20 @@ func (row *Row) SetViewEditAccessFlags(grid *Grid, userUuid string) {
 			row.CanEditRow = true
 		}
 	} else {
-		canViewRows, canEditRows, canEditOwnedRows, _, canEditGrid := grid.GetViewEditAccessFlags(userUuid)
-		row.CanViewRow = canViewRows
-		if row.GridUuid == UuidGrids {
+		canViewRows, canEditRows, _, canEditGrid := grid.GetViewEditAccessFlags(userUuid)
+		switch {
+		case row.GridUuid == UuidUsers && !canEditRows:
+			row.CanViewRow = row.Uuid == userUuid
+		case canViewRows:
+			row.CanViewRow = true
+		}
+		switch {
+		case row.GridUuid == UuidGrids || row.GridUuid == UuidColumns || row.GridUuid == UuidRelationships:
 			row.CanEditRow = canEditGrid
-		} else {
-			if canEditRows {
-				row.CanEditRow = true
-			} else if canEditOwnedRows {
-				row.CanEditRow = grid.HasOwnership(userUuid)
-			}
+		case row.GridUuid == UuidUsers:
+			row.CanEditRow = row.Uuid == userUuid
+		case canEditRows:
+			row.CanEditRow = true
 		}
 	}
 }

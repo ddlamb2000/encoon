@@ -11,7 +11,14 @@ import (
 func TestGetNewRow(t *testing.T) {
 	row := GetNewRow()
 	if row == nil {
-		t.Errorf(`Isseu when creating row.`)
+		t.Errorf(`Issue when creating row.`)
+	}
+}
+
+func TestGetNewRowWithUuid(t *testing.T) {
+	row := GetNewRowWithUuid()
+	if row == nil || row.Uuid == "" {
+		t.Errorf(`Issue when creating row Uuid.`)
 	}
 }
 
@@ -96,30 +103,35 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	grid4.Uuid = UuidColumns
 	grid4.Owners[user1] = true
 	grid5 := GetNewGrid(UuidGrids)
+	grid6 := GetNewGrid(UuidUsers)
 	tests := []struct {
 		test             string
 		grid             *Grid
-		uuid             string
+		userUuid         string
+		rowUuid          string
 		expectCanViewRow bool
 		expectCanEditRow bool
 	}{
-		{"1", grid1, "aaaa", false, false},
-		{"2", grid2, "aaaa", true, false},
-		{"3", grid3, "aaaa", true, true},
-		{"4", grid4, "aaaa", true, true},
-		{"5", grid4, "bbbb", true, false},
-		{"6", grid5, "bbbb", true, false},
-		{"7", nil, "aaaa", true, true},
-		{"8", nil, "bbbb", false, false},
+		{"1", grid1, "aaaa", "xxx", false, false},
+		{"2", grid2, "aaaa", "xxx", true, false},
+		{"3", grid3, "aaaa", "xxx", true, true},
+		{"4", grid4, "aaaa", "xxx", true, true},
+		{"5", grid4, "bbbb", "xxx", true, false},
+		{"6", grid5, "bbbb", "xxx", true, false},
+		{"7", grid6, "bbbb", "xxx", false, false},
+		{"8", grid6, "xxx", "xxx", true, true},
+		{"9", nil, "aaaa", "xxx", true, true},
+		{"10", nil, "bbbb", "xxx", false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
-			row := GetNewRowWithUuid()
+			row := GetNewRow()
+			row.Uuid = tt.rowUuid
 			if tt.grid != nil {
 				row.GridUuid = tt.grid.Uuid
 			}
 			row.CreatedBy = &user1
-			row.SetViewEditAccessFlags(tt.grid, tt.uuid)
+			row.SetViewEditAccessFlags(tt.grid, tt.userUuid)
 			if row.CanViewRow != tt.expectCanViewRow {
 				t.Errorf(`Got row.CanViewRow=%v instead of %v.`, row.CanViewRow, tt.expectCanViewRow)
 			}

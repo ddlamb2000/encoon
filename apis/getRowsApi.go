@@ -30,7 +30,7 @@ func getGridsRows(ct context.Context, uri string, p htmlParameters) apiResponse 
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		canViewRows, canEditRows, canEditOwnedRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
+		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
 		if !canViewRows {
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
@@ -45,14 +45,13 @@ func getGridsRows(ct context.Context, uri string, p htmlParameters) apiResponse 
 			return
 		}
 		r.ctxChan <- apiResponse{
-			Grid:             grid,
-			Rows:             rowSet,
-			CountRows:        rowSetCount,
-			CanViewRows:      canViewRows,
-			CanEditRows:      canEditRows,
-			CanEditOwnedRows: canEditOwnedRows,
-			CanAddRows:       canAddRows,
-			CanEditGrid:      canEditGrid}
+			Grid:        grid,
+			Rows:        rowSet,
+			CountRows:   rowSetCount,
+			CanViewRows: canViewRows,
+			CanEditRows: canEditRows,
+			CanAddRows:  canAddRows,
+			CanEditGrid: canEditGrid}
 		r.trace("getGridsRows() - Done")
 	}()
 	select {

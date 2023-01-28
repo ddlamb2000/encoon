@@ -28,7 +28,7 @@ func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gri
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		canViewRows, canEditRows, canEditOwnedRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
+		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
 		if !canViewRows {
 			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
@@ -86,7 +86,6 @@ func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gri
 			CountRows:              rowSetCount,
 			CanViewRows:            canViewRows,
 			CanEditRows:            canEditRows,
-			CanEditOwnedRows:       canEditOwnedRows,
 			CanAddRows:             canAddRows,
 			CanEditGrid:            canEditGrid,
 			RowsAdded:              payload.RowsAdded,

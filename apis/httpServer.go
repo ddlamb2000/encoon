@@ -154,7 +154,6 @@ type apiResponse struct {
 	Forbidden              bool                `json:"forbidden,omitempty"`
 	CanViewRows            bool                `json:"canViewRows"`
 	CanEditRows            bool                `json:"canEditRows"`
-	CanEditOwnedRows       bool                `json:"canEditOwnedRows"`
 	CanAddRows             bool                `json:"canAddRows"`
 	CanEditGrid            bool                `json:"canEditGrid"`
 }
