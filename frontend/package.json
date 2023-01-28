@@ -3,7 +3,7 @@
     "version": "2.0.0",
     "bin": "./encoon",
     "scripts": {
-        "build": "babel react -d javascript"
+        "build": "babel react --out-file javascript/encoon.js --presets minify"
     },
     "devDependencies": {
         "@babel/cli": "^7.20.7",

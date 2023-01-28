@@ -19,6 +19,7 @@ FROM node:18.13.0 as node-builder
 WORKDIR /usr/src/encoon
 COPY frontend/package.json frontend/babel.config.json ./
 RUN npm install --save-dev @babel/core @babel/cli
+RUN npm install --save-dev babel-preset-minify
 COPY frontend/javascript javascript
 COPY frontend/react react
 RUN npm run build
@@ -36,6 +37,6 @@ COPY frontend/lib frontend/lib
 COPY frontend/templates frontend/templates
 COPY frontend/encoon.css frontend/encoon.css
 COPY frontend/favicon.ico frontend/favicon.ico
-COPY seedData.json .
 COPY --from=node-builder /usr/src/encoon/javascript frontend/javascript
+COPY seedData.json .
 CMD ["sh", "-c", "./encoon"]
