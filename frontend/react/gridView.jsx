@@ -48,7 +48,7 @@ class GridView extends React.Component {
 							aria-selected="true">
 						Definition
 					</a>
-					{columnsUsage &&
+					{columnsUsage && columnsUsage.length > 0 &&
 						<a className="nav-link" 
 								id="usages-tab"
 								data-bs-toggle="tab"
@@ -145,7 +145,7 @@ class GridView extends React.Component {
 										innerGrid={true} />
 						</div>
 					}
-					{columnsUsage &&
+					{columnsUsage && columnsUsage.length > 0 &&
 						<div className="tab-pane fade"
 								id="usages-tab-pane"
 								role="tabpanel"

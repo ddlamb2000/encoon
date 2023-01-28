@@ -39,6 +39,9 @@ class GridTable extends React.Component {
 										dbName={this.props.dbName}
 										token={this.props.token}
 										grid={this.props.grid}
+										filterColumnOwned={this.props.filterColumnOwned}
+										filterColumnName={this.props.filterColumnName}
+										filterColumnGridUuid={this.props.filterColumnGridUuid}
 										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
 										createRichTextField={(id, value, display) => this.props.createRichTextField(id, value, display)}
 										deleteRichTextField={id => this.props.deleteRichTextField(id)}
