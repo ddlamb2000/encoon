@@ -25,7 +25,7 @@ func persistGridRowData(r apiRequest, grid *model.Grid, rows []*model.Row, f per
 }
 
 func postInsertGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
-	_, _, _, canAddRows := grid.GetViewEditAccessFlags(r.p.userUuid)
+	_, _, _, canAddRows, _ := grid.GetViewEditAccessFlags(r.p.userUuid)
 	if !canAddRows {
 		r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to create rows.")

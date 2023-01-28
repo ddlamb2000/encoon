@@ -95,6 +95,7 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	grid4 := GetNewGrid("")
 	grid4.Uuid = UuidColumns
 	grid4.Owners[user1] = true
+	grid5 := GetNewGrid(UuidGrids)
 	tests := []struct {
 		test             string
 		grid             *Grid
@@ -104,15 +105,19 @@ func TestRowSetViewEditAccessFlags(t *testing.T) {
 	}{
 		{"1", grid1, "aaaa", false, false},
 		{"2", grid2, "aaaa", true, false},
-		{"3", grid3, "aaaa", true, false},
+		{"3", grid3, "aaaa", true, true},
 		{"4", grid4, "aaaa", true, true},
 		{"5", grid4, "bbbb", true, false},
-		{"6", nil, "aaaa", true, true},
-		{"7", nil, "bbbb", false, false},
+		{"6", grid5, "bbbb", true, false},
+		{"7", nil, "aaaa", true, true},
+		{"8", nil, "bbbb", false, false},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			row := GetNewRowWithUuid()
+			if tt.grid != nil {
+				row.GridUuid = tt.grid.Uuid
+			}
 			row.CreatedBy = &user1
 			row.SetViewEditAccessFlags(tt.grid, tt.uuid)
 			if row.CanViewRow != tt.expectCanViewRow {

@@ -156,6 +156,7 @@ type apiResponse struct {
 	CanEditRows            bool                `json:"canEditRows"`
 	CanEditOwnedRows       bool                `json:"canEditOwnedRows"`
 	CanAddRows             bool                `json:"canAddRows"`
+	CanEditGrid            bool                `json:"canEditGrid"`
 }
 
 func createContextAndApiRequest(ct context.Context, p htmlParameters, uri string) (request apiRequest, cancelFunc context.CancelFunc, error error) {

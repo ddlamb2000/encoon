@@ -156,7 +156,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringContains(t, responseData, `"canEditOwnedRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":false`)
+		jsonStringContains(t, responseData, `"canEditRows":true`)
 	})
 
 	t.Run("User01CanGetRow17Grid01", func(t *testing.T) {
@@ -521,17 +521,6 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		jsonStringContains(t, responseData, `"text1":"test-23 {2}"`)
 	})
 
-	t.Run("User03CannotUpdateRowGrid03", func(t *testing.T) {
-		postStr := `{"rowsEdited":` +
-			`[` +
-			`{"uuid":"` + row23Uuid + `","text1":"test-23 {7}","text2":"test-24 {7}","text3":"test-25 {7}","text4":"test-26 {7}","int1":27,"int2":28,"int3":29,"int4":30}` +
-			`]` +
-			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
-	})
-
 	t.Run("User03CanAddRowsGrid03", func(t *testing.T) {
 		postStr := `{"rowsAdded":` +
 			`[` +
@@ -548,19 +537,6 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusCreated)
 		jsonStringContains(t, responseData, `"text1":"test-47","text2":"test-48","text3":"test-49","text4":"test-50","int1":51,"int2":52,"int3":53,"int4":54`)
 		jsonStringContains(t, responseData, `"text1":"test-55","text2":"test-56","text3":"test-57","text4":"test-58","int1":59,"int2":60,"int3":61,"int4":62`)
-	})
-
-	t.Run("User03CannotDeleteRowsGrid03", func(t *testing.T) {
-		var row55Uuid string
-		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-55").Scan(&row55Uuid)
-		postStr := `{"rowsDeleted":` +
-			`[` +
-			`{"uuid":"` + row55Uuid + `"}` +
-			`]` +
-			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
 	})
 
 	t.Run("User01CannotCreateUser", func(t *testing.T) {

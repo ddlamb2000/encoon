@@ -70,22 +70,22 @@ func (grid *Grid) CopyAccessToOtherGrid(otherGrid *Grid) {
 	}
 }
 
-func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditRows, canEditOwnedRows, canAddRows bool) {
+func (grid *Grid) GetViewEditAccessFlags(userUuid string) (canViewRows, canEditRows, canEditOwnedRows, canAddRows, canEditGrid bool) {
 	switch {
 	case grid.Owners[userUuid] && grid.Uuid == UuidTransactions:
-		return true, false, false, false
+		return true, false, false, false, false
 	case grid.Owners[userUuid]:
-		return true, true, true, true
+		return true, true, true, true, true
 	case grid.EditAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelWriteAccess]:
-		return true, false, true, true
+		return true, true, true, true, false
 	case grid.ViewAccess[userUuid] || grid.DefaultAccess[UuidAccessLevelReadAccess]:
-		return true, false, false, false
+		return true, false, false, false, false
 	case grid.Uuid == UuidGrids || grid.Uuid == UuidRelationships || grid.Uuid == UuidColumns:
-		return true, false, true, true
+		return true, false, true, true, false
 	case grid.Uuid == UuidAccessLevels || grid.Uuid == UuidUsers || grid.Uuid == UuidColumnTypes:
-		return true, false, false, false
+		return true, false, false, false, false
 	}
-	return false, false, false, false
+	return false, false, false, false, false
 }
 
 func (grid *Grid) HasOwnership(userUuid string) bool {
