@@ -162,7 +162,8 @@ class GridView extends React.Component {
 										filterColumnGridUuid={column.gridUuid}
 										filterColumnValue={this.props.row.uuid}
 										filterColumnDisplayString={this.props.row.displayString}
-										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)} />
+										navigateToGrid={(gridUuid, uuid) => this.props.navigateToGrid(gridUuid, uuid)}
+										noEdit={true} />
 							)}
 						</div>
 					}
