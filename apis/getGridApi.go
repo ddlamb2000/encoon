@@ -15,6 +15,15 @@ var getGridForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error
 	if ok && grid != nil {
 		return grid, nil
 	}
+	grid, err := getGridInstanceWithColumnsForGridsApi(r, gridUuid)
+	if err != nil || grid == nil {
+		return nil, err
+	}
+	cacheGrid(grid)
+	return grid, nil
+}
+
+var getGridInstanceWithColumnsForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error) {
 	grid, err := getGridInstanceForGridsApi(r, gridUuid)
 	if err != nil || grid == nil {
 		return nil, err
@@ -23,7 +32,6 @@ var getGridForGridsApi = func(r apiRequest, gridUuid string) (*model.Grid, error
 	if err != nil {
 		return nil, err
 	}
-	cacheGrid(grid)
 	return grid, nil
 }
 
@@ -194,6 +202,7 @@ func getColumnsRowsForGridsApi(r apiRequest, grid *model.Grid, setUsages bool, q
 // function is available for mocking
 var getGridColumsOwnedQueryForGridsApi = func() string {
 	return "SELECT col.uuid, " +
+		"col.int1, " +
 		"col.text1, " +
 		"col.text2, " +
 		"col.text3 = 'true' bidirectional, " +
@@ -266,6 +275,7 @@ var getGridColumsNotOwnedQueryForGridsApi = func(bidirectional bool) string {
 		bidirectionalCondition = "AND (col.text3 IS NULL OR col.text3 != 'true') "
 	}
 	return "SELECT col.uuid, " +
+		"col.int1, " +
 		"col.text1, " +
 		"col.text2, " +
 		"col.text3 = 'true' bidirectional, " +
@@ -329,6 +339,7 @@ func getGridColumsNotOwnedQueryParametersForGridsApi(grid *model.Grid) []any {
 var getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any {
 	output := make([]any, 0)
 	output = append(output, &column.Uuid)
+	output = append(output, &column.OrderNumber)
 	output = append(output, &column.Label)
 	output = append(output, &column.Name)
 	output = append(output, &column.Bidirectional)

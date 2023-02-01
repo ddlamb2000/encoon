@@ -65,6 +65,10 @@ func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gri
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
+		if err := persistUpdateColumnDefaults(r, grid, payload); err != nil {
+			r.ctxChan <- apiResponse{Err: err, System: true}
+			return
+		}
 		if err := postGridSetOwnership(r, grid, payload.RowsAdded); err != nil {
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
