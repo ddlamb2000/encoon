@@ -155,8 +155,8 @@ var getGridForOwnership = func(r apiRequest, grid *model.Grid, row *model.Row) (
 var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string, enabledOnly bool) string {
 	columns := ""
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() && col.Name != "" {
-			columns += "rows." + col.Name + ", "
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil && *col.Name != "" {
+			columns += "rows." + *col.Name + ", "
 		}
 	}
 	return "SELECT rows.uuid, " +
@@ -204,8 +204,8 @@ var getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any
 	output = append(output, &row.Uuid)
 	output = append(output, &row.GridUuid)
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() && col.Name != "" {
-			output = appendRowAttribute(output, row, col.Name)
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil && *col.Name != "" {
+			output = appendRowAttribute(output, row, *col.Name)
 		}
 	}
 	output = append(output, &row.Enabled)

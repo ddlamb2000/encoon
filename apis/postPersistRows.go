@@ -17,7 +17,6 @@ func persistGridRowData(r apiRequest, grid *model.Grid, rows []*model.Row, f per
 		row.GridUuid = grid.Uuid
 		err := f(r, grid, row)
 		if err != nil {
-			_ = r.rollbackTransaction()
 			return err
 		}
 	}
@@ -47,8 +46,8 @@ var getInsertStatementForGridsApi = func(grid *model.Grid) string {
 	parameterIndex := 4
 	columns, parameters := "", ""
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() {
-			columns += ", " + col.Name
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil {
+			columns += ", " + *col.Name
 			parameters += fmt.Sprintf(", $%d", parameterIndex)
 			parameterIndex += 1
 		}
@@ -82,8 +81,8 @@ func getInsertValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	values = append(values, userUuid)
 	values = append(values, grid.Uuid)
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() {
-			values = appendRowParameter(values, row, col.Name)
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil {
+			values = appendRowParameter(values, row, *col.Name)
 		}
 	}
 	return values
@@ -200,8 +199,8 @@ var getUpdateStatementForGridsApi = func(grid *model.Grid) string {
 	parameterIndex := 4
 	columns := ""
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() {
-			columns += fmt.Sprintf(", %s = $%d", col.Name, parameterIndex)
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil {
+			columns += fmt.Sprintf(", %s = $%d", *col.Name, parameterIndex)
 			parameterIndex += 1
 		}
 	}
@@ -221,8 +220,8 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
 	for _, col := range grid.Columns {
-		if col.IsOwned() && col.IsAttribute() {
-			values = appendRowParameter(values, row, col.Name)
+		if col.IsOwned() && col.IsAttribute() && col.Name != nil {
+			values = appendRowParameter(values, row, *col.Name)
 		}
 	}
 	return values

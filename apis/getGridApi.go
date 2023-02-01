@@ -184,10 +184,10 @@ func getColumnsRowsForGridsApi(r apiRequest, grid *model.Grid, setUsages bool, q
 	for rows.Next() {
 		column := model.GetNewColumn()
 		if err := rows.Scan(getGridColumnQueryOutputForGridsApi(column)...); err != nil {
-			return r.logAndReturnError("Error when scanning columns for: %v.", err)
+			return r.logAndReturnError("Error when scanning columns for %v: %v.", grid, err)
 		}
-		if !column.Owned {
-			column.Grid, _ = getGridInstanceForGridsApi(r, column.GridUuid)
+		if !column.Owned && column.GridUuid != nil {
+			column.Grid, _ = getGridInstanceForGridsApi(r, *column.GridUuid)
 		}
 		r.trace("Got column for %s: %s.", grid, column)
 		if setUsages {

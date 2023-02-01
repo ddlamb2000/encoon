@@ -28,13 +28,37 @@ func persistUpdateColumnDefaults(r apiRequest, grid *model.Grid, payload gridPos
 func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload gridPost) ([]string, error) {
 	gridUuids := make([]string, 0)
 	var mapGridUuids = make(map[string]bool)
+	allRows := make([]*model.Row, 0)
+	allRows = append(allRows, payload.RowsAdded...)
+	allRows = append(allRows, payload.RowsEdited...)
+	allRows = append(allRows, payload.RowsDeleted...)
 	if grid.Uuid == model.UuidGrids {
-		gridUuids = append(gridUuids, grid.Uuid)
+		allRows := make([]gridReferencePost, 0)
+		allRows = append(allRows, payload.ReferenceValuesAdded...)
+		allRows = append(allRows, payload.ReferenceValuesRemoved...)
+		for _, ref := range allRows {
+			if ref.ColumnName == "relationship1" && ref.ToGridUuid == model.UuidColumns {
+				gridUuid := getUuidFromRowsForTmpUuid(r, payload.RowsAdded, ref.FromUuid)
+				if gridUuid != "" && !mapGridUuids[gridUuid] {
+					gridUuids = append(gridUuids, gridUuid)
+					mapGridUuids[gridUuid] = true
+				}
+			}
+		}
+	} else if grid.Uuid == model.UuidRelationships {
+		for _, row := range allRows {
+			if row.Text1 != nil && *row.Text1 == "relationship1" &&
+				row.Text2 != nil && *row.Text2 == model.UuidGrids &&
+				row.Text4 != nil && *row.Text4 == model.UuidColumns &&
+				row.Text3 != nil {
+				gridUuid := *row.Text3
+				if gridUuid != "" && !mapGridUuids[gridUuid] {
+					gridUuids = append(gridUuids, gridUuid)
+					mapGridUuids[gridUuid] = true
+				}
+			}
+		}
 	} else if grid.Uuid == model.UuidColumns {
-		allRows := make([]*model.Row, 0)
-		allRows = append(allRows, payload.RowsAdded...)
-		allRows = append(allRows, payload.RowsEdited...)
-		allRows = append(allRows, payload.RowsDeleted...)
 		columnUuids := make([]string, 0)
 		var mapColumnUuids = make(map[string]bool)
 		for _, row := range allRows {
@@ -83,7 +107,7 @@ func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
 			}
 			maxOrderNumber += 1
 		}
-		if expectedPrefix != "" && (column.Name == "" || prefix != expectedPrefix) {
+		if expectedPrefix != "" && (column.Name == nil || *column.Name == "" || prefix != expectedPrefix) {
 			newIndex := mapColumnIndexes[expectedPrefix] + 1
 			newName := fmt.Sprintf("%s%d", expectedPrefix, newIndex)
 			r.log("setGridsColumnDefaults - set column %q with name %s", column.Label, newName)

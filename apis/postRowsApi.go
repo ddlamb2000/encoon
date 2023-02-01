@@ -42,34 +42,42 @@ func postGridsRows(ct context.Context, uri string, p htmlParameters, payload gri
 			return
 		}
 		if err := persistGridRowData(r, grid, payload.RowsAdded, postInsertGridRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistGridRowData(r, grid, payload.RowsEdited, postUpdateGridRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistGridRowData(r, grid, payload.RowsDeleted, postDeleteGridRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistGridReferenceData(r, grid, payload.RowsAdded, defaultReferenceValues(r, payload), postInsertReferenceRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistGridReferenceData(r, grid, payload.RowsAdded, payload.ReferenceValuesAdded, postInsertReferenceRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistGridReferenceData(r, grid, payload.RowsAdded, payload.ReferenceValuesRemoved, postDeleteReferenceRow); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := persistUpdateColumnDefaults(r, grid, payload); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}
 		if err := postGridSetOwnership(r, grid, payload.RowsAdded); err != nil {
+			_ = r.rollbackTransaction()
 			r.ctxChan <- apiResponse{Err: err, System: true}
 			return
 		}

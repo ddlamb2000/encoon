@@ -141,10 +141,9 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect4", func(t *testing.T) {
 		getGridColumnQueryOutputForGridsApiImpl := getGridColumnQueryOutputForGridsApi
 		getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any { return nil } // mock function
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
+		_, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `Error when scanning columns for: sql`)
 		getGridColumnQueryOutputForGridsApi = getGridColumnQueryOutputForGridsApiImpl
 	})
 

@@ -15,19 +15,19 @@ func getRelationshipsForRow(r apiRequest, grid *model.Grid, row *model.Row) ([]*
 	for _, col := range grid.Columns {
 		var referencedRows []model.Row
 		var err error
-		if col.IsReference() {
+		if col.IsReference() && col.Name != nil && col.GridUuid != nil {
 			r.trace("getRelationshipsForRow() - col=%s", col)
-			referencedRows, err = getReferencedRowsForRow(r, row, col.Name, col.GridUuid, col.IsOwned())
+			referencedRows, err = getReferencedRowsForRow(r, row, *col.Name, *col.GridUuid, col.IsOwned())
 			if err != nil {
 				return nil, r.logAndReturnError("Error when retrieving referenced rows: %v.", err)
 			}
 		}
-		if len(referencedRows) > 0 {
+		if len(referencedRows) > 0 && col.Name != nil && col.Label != nil && col.GridUuid != nil {
 			reference := model.GetNewReference()
 			reference.Owned = col.Owned
-			reference.Name = col.Name
-			reference.Label = col.Label
-			reference.GridUuid = col.GridUuid
+			reference.Name = *col.Name
+			reference.Label = *col.Label
+			reference.GridUuid = *col.GridUuid
 			reference.Rows = referencedRows
 			references = append(references, reference)
 		}

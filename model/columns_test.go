@@ -10,12 +10,13 @@ import (
 func TestGetNewColumn(t *testing.T) {
 	column := GetNewColumn()
 	if column == nil {
-		t.Errorf(`Isse when creating column.`)
+		t.Errorf(`Issue when creating column.`)
 	}
 }
 
 func TestColumnString(t *testing.T) {
-	column := Column{Name: "text1", Label: "Label"}
+	name, label := "text1", "Label"
+	column := Column{Name: &name, Label: &label}
 	got := column.String()
 	expect := `text1 "Label"`
 	if got != expect {
@@ -23,8 +24,18 @@ func TestColumnString(t *testing.T) {
 	}
 }
 
+func TestColumnString2(t *testing.T) {
+	column := GetNewColumn()
+	got := column.String()
+	expect := ``
+	if got != expect {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
 func TestIsAttribute(t *testing.T) {
-	column := Column{TypeUuid: UuidTextColumnType}
+	typeUuid := UuidTextColumnType
+	column := Column{TypeUuid: &typeUuid}
 	got := column.IsAttribute()
 	expect := true
 	if got != expect {
@@ -33,7 +44,8 @@ func TestIsAttribute(t *testing.T) {
 }
 
 func TestIsAttribute2(t *testing.T) {
-	column := Column{TypeUuid: UuidReferenceColumnType}
+	typeUuid := UuidReferenceColumnType
+	column := Column{TypeUuid: &typeUuid}
 	got := column.IsAttribute()
 	expect := false
 	if got != expect {
@@ -42,7 +54,8 @@ func TestIsAttribute2(t *testing.T) {
 }
 
 func TestIsReference(t *testing.T) {
-	column := Column{TypeUuid: UuidReferenceColumnType}
+	typeUuid := UuidReferenceColumnType
+	column := Column{TypeUuid: &typeUuid}
 	got := column.IsReference()
 	expect := true
 	if got != expect {
@@ -51,7 +64,8 @@ func TestIsReference(t *testing.T) {
 }
 
 func TestIsReference2(t *testing.T) {
-	column := Column{TypeUuid: UuidTextColumnType}
+	typeUuid := UuidTextColumnType
+	column := Column{TypeUuid: &typeUuid}
 	got := column.IsReference()
 	expect := false
 	if got != expect {
@@ -74,6 +88,7 @@ func TestGetColumnNamePrefixFromType(t *testing.T) {
 		columnType string
 		expect     string
 	}{
+		{"0", "", ""},
 		{"1", UuidBooleanColumnType, "text"},
 		{"2", UuidIntColumnType, "int"},
 		{"3", UuidPasswordColumnType, "text"},
@@ -85,7 +100,9 @@ func TestGetColumnNamePrefixFromType(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			column := GetNewColumn()
-			column.TypeUuid = tt.columnType
+			if tt.columnType != "" {
+				column.TypeUuid = &tt.columnType
+			}
 			got := column.GetColumnNamePrefixFromType()
 			if got != tt.expect {
 				t.Errorf(`Got %v instead of %v.`, got, tt.expect)
@@ -118,7 +135,7 @@ func TestGetColumnNamePrefixAndIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
 			column := GetNewColumn()
-			column.Name = tt.name
+			column.Name = &tt.name
 			gotPrefix, gotIndex := column.GetColumnNamePrefixAndIndex()
 			if gotPrefix != tt.expectPrefix {
 				t.Errorf(`Got prefix %s instead of %s from %s.`, gotPrefix, tt.expectPrefix, tt.name)

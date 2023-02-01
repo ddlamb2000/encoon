@@ -13,9 +13,10 @@ import (
 
 func TestGetInsertStatementForGridsApi(t *testing.T) {
 	grid := model.GetNewGrid(model.UuidUsers)
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
+	text2, text5, int8 := "text2", "text5", "int8"
+	grid.Columns = append(grid.Columns, &model.Column{Name: &text2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &text5, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &int8, Owned: true})
 	got := getInsertStatementForGridsApi(grid)
 	expect := "INSERT INTO users (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text2, text5, int8) VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6)"
 	if got != expect {
@@ -25,9 +26,10 @@ func TestGetInsertStatementForGridsApi(t *testing.T) {
 
 func TestGetInsertValuesForGridsApi(t *testing.T) {
 	grid := model.GetNewGrid(model.UuidUsers)
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
+	ntext2, ntext5, nint8 := "text2", "text5", "int8"
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext5, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint8, Owned: true})
 	uuid := "aaa"
 	text2 := "yyy"
 	text5 := "zzz"
@@ -54,24 +56,28 @@ func TestGetInsertValuesForGridsApi(t *testing.T) {
 
 func TestGetInsertValuesForGridsApi2(t *testing.T) {
 	grid := model.GetNewGrid(model.UuidUsers)
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text1", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text3", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text4", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text6", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text7", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text8", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text9", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text10", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int1", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int3", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int4", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int5", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int6", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int7", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int9", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int10", Owned: true})
+	ntext1, ntext2, ntext3, ntext4 := "text1", "text2", "text3", "text4"
+	ntext6, ntext7, ntext8, ntext9, ntext10 := "text6", "text7", "text8", "text9", "text10"
+	nint1, nint2, nint3, nint4, nint5 := "int1", "int2", "int3", "int4", "int5"
+	nint6, nint7, nint9, nint10 := "int6", "int7", "int9", "int10"
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext1, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext3, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext4, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext6, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext7, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext8, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext9, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext10, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint1, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint3, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint4, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint5, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint6, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint7, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint9, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint10, Owned: true})
 	uuid := "aaa"
 	text1 := "yyy"
 	int1 := int64(10)
@@ -127,9 +133,10 @@ func TestGetInsertValuesForGridsApi2(t *testing.T) {
 
 func TestGetUpdateStatementForGridsApi(t *testing.T) {
 	grid := model.GetNewGrid(model.UuidUsers)
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
+	text2, text5, int8 := "text2", "text5", "int8"
+	grid.Columns = append(grid.Columns, &model.Column{Name: &text2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &text5, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &int8, Owned: true})
 	got := getUpdateStatementForGridsApi(grid)
 	expect := "UPDATE users SET revision = revision + 1, updated = NOW(), updatedBy = $3, text2 = $4, text5 = $5, int8 = $6 WHERE gridUuid = $1 AND uuid = $2"
 	if got != expect {
@@ -139,9 +146,10 @@ func TestGetUpdateStatementForGridsApi(t *testing.T) {
 
 func TestGetUpdateValuesForGridsApi(t *testing.T) {
 	grid := model.GetNewGrid(model.UuidUsers)
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text2", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "text5", Owned: true})
-	grid.Columns = append(grid.Columns, &model.Column{Name: "int8", Owned: true})
+	ntext2, ntext5, nint8 := "text2", "text5", "int8"
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext2, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &ntext5, Owned: true})
+	grid.Columns = append(grid.Columns, &model.Column{Name: &nint8, Owned: true})
 	uuid := "aaa"
 	text2 := "yyy"
 	text5 := "zzz"

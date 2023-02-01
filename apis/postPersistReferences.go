@@ -14,7 +14,6 @@ func persistGridReferenceData(r apiRequest, grid *model.Grid, addedRows []*model
 	for _, ref := range refs {
 		err := f(r, grid, addedRows, ref)
 		if err != nil {
-			_ = r.rollbackTransaction()
 			return err
 		}
 	}
@@ -107,7 +106,6 @@ func postGridSetOwnership(r apiRequest, grid *model.Grid, addedRows []*model.Row
 			}
 			err := postInsertReferenceRow(r, grid, addedRows, ref)
 			if err != nil {
-				_ = r.rollbackTransaction()
 				return err
 			}
 		}
