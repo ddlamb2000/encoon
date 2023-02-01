@@ -11,9 +11,9 @@ import (
 
 func persistUpdateColumnDefaults(r apiRequest, grid *model.Grid, payload gridPost) error {
 	gridUuids, _ := getGridsToUpdateWithColumnDefaults(r, grid, payload)
-	r.log("persistUpdateColumnDefaults - gridUuids=%v", gridUuids)
+	r.trace("persistUpdateColumnDefaults - gridUuids=%v", gridUuids)
 	for _, gridUuid := range gridUuids {
-		grid, err := getGridInstanceWithColumnsForGridsApi(r, gridUuid)
+		grid, err := getGridInstanceWithColumnsForUpdateColumnDefaults(r, gridUuid)
 		if err != nil || grid == nil {
 			return err
 		}
@@ -23,6 +23,10 @@ func persistUpdateColumnDefaults(r apiRequest, grid *model.Grid, payload gridPos
 		}
 	}
 	return nil
+}
+
+var getGridInstanceWithColumnsForUpdateColumnDefaults = func(r apiRequest, gridUuid string) (*model.Grid, error) {
+	return getGridInstanceWithColumnsForGridsApi(r, gridUuid)
 }
 
 func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload gridPost) ([]string, error) {
@@ -69,7 +73,7 @@ func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload 
 		}
 		for _, columnUuid := range columnUuids {
 			r.trace("getGridsToUpdateWithColumnDefaults - columnUuid=%v", columnUuid)
-			gridUuid, err := getGridUuidAttachedToColumn(r, columnUuid)
+			gridUuid, err := getGridUuidAttachedToColumnToUpdateWithColumnDefaults(r, columnUuid)
 			if err != nil {
 				return nil, err
 			}
@@ -80,6 +84,10 @@ func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload 
 		}
 	}
 	return gridUuids, nil
+}
+
+var getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(r apiRequest, uuid string) (string, error) {
+	return getGridUuidAttachedToColumn(r, uuid)
 }
 
 func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
@@ -94,13 +102,13 @@ func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
 			maxOrderNumber = *column.OrderNumber
 		}
 	}
-	r.log("setGridsColumnDefaults(%v) - maxOrderNumber=%d, mapColumnIndexes = %v", grid, maxOrderNumber, mapColumnIndexes)
+	r.trace("setGridsColumnDefaults(%v) - maxOrderNumber=%d, mapColumnIndexes = %v", grid, maxOrderNumber, mapColumnIndexes)
 	for _, column := range grid.Columns {
 		prefix, _ := column.GetColumnNamePrefixAndIndex()
 		expectedPrefix := column.GetColumnNamePrefixFromType()
 		r.trace("setGridsColumnDefaults - column %q ; prefix %q ; expectedPrefix %q", column.Label, prefix, expectedPrefix)
 		if column.OrderNumber == nil || *column.OrderNumber == (int64)(0) {
-			r.log("setGridsColumnDefaults - set column %q with order number %d", column.Label, maxOrderNumber+1)
+			r.trace("setGridsColumnDefaults - set column %q with order number %d", column.Label, maxOrderNumber+1)
 			err := updateColumnOrderNumber(r, column.Uuid, maxOrderNumber+1)
 			if err != nil {
 				return err
@@ -110,7 +118,7 @@ func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
 		if expectedPrefix != "" && (column.Name == nil || *column.Name == "" || prefix != expectedPrefix) {
 			newIndex := mapColumnIndexes[expectedPrefix] + 1
 			newName := fmt.Sprintf("%s%d", expectedPrefix, newIndex)
-			r.log("setGridsColumnDefaults - set column %q with name %s", column.Label, newName)
+			r.trace("setGridsColumnDefaults - set column %q with name %s", column.Label, newName)
 			err := updateColumnName(r, column.Uuid, newName)
 			if err != nil {
 				return err
