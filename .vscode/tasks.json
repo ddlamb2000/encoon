@@ -4,19 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Start local web server",
+            "label": "Start web server",
             "type": "shell",
             "command": "go run . -configuration ./testData/local-development.yml",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Export data from master",
-            "type": "shell",
-            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData.json",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -34,9 +24,9 @@
             "problemMatcher": []
         },
         {
-            "label": "Open all test coverage",
+            "label": "Export data from master",
             "type": "shell",
-            "command": "./testData/open_test_coverage.sh",
+            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData.json",
             "group": {
                 "kind": "build",
                 "isDefault": true
