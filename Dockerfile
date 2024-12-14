@@ -2,7 +2,7 @@
 # Copyright David Lambert 2023
 
 # Go build
-FROM golang:1.19-buster as go-builder
+FROM golang:1.20-buster as go-builder
 WORKDIR /usr/src/encoon
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
