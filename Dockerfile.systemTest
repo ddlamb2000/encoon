@@ -1,8 +1,0 @@
-# εncooη : data structuration, presentation and navigation.
-# Copyright David Lambert 2023
-
-# Go build container
-FROM golang:1.19-buster
-WORKDIR /usr/src/encoon
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify

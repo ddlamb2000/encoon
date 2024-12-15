@@ -1,4 +1,3 @@
-version: "3.9"
 name: "encoon-development"
 services:
   db:
@@ -23,7 +22,10 @@ services:
   devcontainer:
     build:
       context: .
-      dockerfile: ./Dockerfile.devcontainer
+      dockerfile_inline: |
+        FROM golang:1.20-buster
+        WORKDIR /usr/src/encoon
+        CMD ["sh", "-c", "go run . -configuration ./testData/local-development.yml"]
     container_name: encoon-devcontainer
     image: encoon-devcontainer
     volumes:
@@ -38,15 +40,20 @@ services:
     depends_on:
       - db
   testsvelte:
-    container_name: testsvelte
-    image: node:18.13.0
+    build:
+      context: .
+      dockerfile_inline: |
+        FROM node:18.13.0
+        WORKDIR /usr/src/encoon/my-app
+        CMD ["sh", "-c", "npm run dev -- --host"]
+    container_name: encoon-webdevcontainer
+    image: encoon-webdevcontainer
     volumes:
       - ./:/usr/src/encoon
     ports:
       - "5173:5173"
     networks:
       - encoon
-    command: sh -c "tail -f /dev/null"
   web-test:
     build: .
     container_name: encoon-web-test
@@ -64,7 +71,11 @@ services:
   system-test:
     build:
       context: .
-      dockerfile: ./Dockerfile.systemTest
+      dockerfile_inline: |
+        FROM golang:1.20-buster
+        WORKDIR /usr/src/encoon
+        COPY go.mod go.sum ./
+        RUN go mod download && go mod verify
     container_name: encoon-system-test
     image: encoon-system-test
     networks:

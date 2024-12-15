@@ -1,7 +1,0 @@
-# εncooη : data structuration, presentation and navigation.
-# Copyright David Lambert 2023
-
-# Go build container
-FROM golang:1.20-buster
-WORKDIR /usr/src/encoon
-CMD ["sh", "-c", "tail -f /dev/null"]
