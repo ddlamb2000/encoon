@@ -39,21 +39,6 @@ services:
       - ENCOON_MOCK_DB_LOCALHOST=db
     depends_on:
       - db
-  testsvelte:
-    build:
-      context: .
-      dockerfile_inline: |
-        FROM node:18.13.0
-        WORKDIR /usr/src/encoon/my-app
-        CMD ["sh", "-c", "npm run dev -- --host"]
-    container_name: encoon-webdevcontainer
-    image: encoon-webdevcontainer
-    volumes:
-      - ./:/usr/src/encoon
-    ports:
-      - "5173:5173"
-    networks:
-      - encoon
   web-test:
     build: .
     container_name: encoon-web-test
