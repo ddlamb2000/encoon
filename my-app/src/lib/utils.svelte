@@ -2,9 +2,6 @@
 
 	export function newUuid() { return crypto.randomUUID() }
 
-	/**
-     * @param {number} num
-     */
 	export function numberToLetters(num) {
 		let letters = ''
 		while (num >= 0) {
