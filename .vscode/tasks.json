@@ -46,7 +46,7 @@
         {
             "label": "Build and start docker containers (development)",
             "type": "shell",
-            "command": "docker compose up --build -d",
+            "command": "docker compose -f docker-compose.development.yml up --build -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

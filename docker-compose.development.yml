@@ -19,17 +19,17 @@ services:
       POSTGRES_USER: encoon
       POSTGRES_DB: master
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
-  devcontainer:
+  apis:
     build:
       context: .
       dockerfile_inline: |
-        FROM golang:1.20-buster
-        WORKDIR /usr/src/encoon
+        FROM golang:1.23.4
+        WORKDIR /usr/src/encoon/apis
         CMD ["sh", "-c", "go run . -configuration ./testData/local-development.yml"]
-    container_name: encoon-devcontainer
-    image: encoon-devcontainer
+    container_name: encoon-apis-development
+    image: encoon-apis-development
     volumes:
-      - ./:/usr/src/encoon
+      - ./apis:/usr/src/encoon/apis
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -39,42 +39,28 @@ services:
       - ENCOON_MOCK_DB_LOCALHOST=db
     depends_on:
       - db
-  testsvelte:
+  ui:
     build:
       context: .
       dockerfile_inline: |
-        FROM node:18.13.0
-        WORKDIR /usr/src/encoon/my-app
-        CMD ["sh", "-c", "npm run dev -- --host"]
-    container_name: encoon-webdevcontainer
-    image: encoon-webdevcontainer
+        FROM node:22.12.0-alpine
+        WORKDIR /usr/src/encoon/ui
+        CMD ["sh", "-c", "npm install && npm run dev -- --host"]
+    container_name: encoon-ui-development
+    image: encoon-ui-development
     volumes:
-      - ./:/usr/src/encoon
+      - ./ui:/usr/src/encoon/ui
     ports:
       - "5173:5173"
     networks:
       - encoon
-  web-test:
-    build: .
-    container_name: encoon-web-test
-    image: encoon
-    restart: unless-stopped
-    ports:
-      - "8081:8080"
-    networks:
-      - encoon
-    configs:
-      - source: encoon-configuration
-        target: /usr/encoon/configuration.yml
-    depends_on:
-      - db
   system-test:
     build:
       context: .
       dockerfile_inline: |
-        FROM golang:1.20-buster
-        WORKDIR /usr/src/encoon
-        COPY go.mod go.sum ./
+        FROM golang:1.23.4
+        WORKDIR /usr/src/encoon/apis
+        COPY apis/go.mod apis/go.sum .
         RUN go mod download && go mod verify
     container_name: encoon-system-test
     image: encoon-system-test
