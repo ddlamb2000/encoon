@@ -1,8 +1,0 @@
-{
-	"name": "Encoon Dev Container",
-	"dockerComposeFile" : ["../docker-compose.yml"],
-	"service": "devcontainer",
-	"shutdownAction": "none",
-	"workspaceFolder": "/usr/src/encoon/",
-	"forwardPorts": [8080]
-}

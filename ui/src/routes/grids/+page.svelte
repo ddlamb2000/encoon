@@ -1,12 +1,10 @@
-<script>
+<script  lang="ts">
   import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
-
+  import Info from './Info.svelte';
 
   const grids = $state(seedData)
   let focus = $state({grid: null, i: -1, j: -1})
-
-  $inspect(focus)
 
   function pushTransaction(payload) {
     console.log(payload)
@@ -31,7 +29,7 @@
   async function newGrid() {
     const grid = {uuid: newUuid(), title: 'Untitled', 
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
-                  rows: [{uuid: newUuid(), data: ['***']}]
+                  rows: [{uuid: newUuid(), data: ['']}]
                  }
     initGrid(grid)
     grids.push(grid)
@@ -80,10 +78,6 @@
   
   const coltypesGrid = findGrid('coltypes')
 </script>
-
-<nav>
-  POC grids
-</nav>
 
 <div class="layout">
   <main>
@@ -155,22 +149,7 @@
       <button onclick={() => newGrid()}>New Grid</button>
     </ul>	
   </main>
-  <aside>
-    <h2>Infos</h2>
-    {#if focus.grid !== null}
-      <ul>
-        <li>Grid: {focus.grid.title}</li>
-        <li>Columns
-          <ul>
-            {#each focus.grid.cols as col}
-              <li>{col.title}</li>
-            {/each}
-          </ul>
-        </li>
-        <li>Content: {focus.grid.rows[focus.i].data[focus.j]}</li>
-      </ul>
-    {/if}
-  </aside>
+  <Info focus={focus}/>
 </div>
 
 <style>
