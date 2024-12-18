@@ -22,6 +22,7 @@ services:
   dbadmin:
     container_name: encoon-dbadmin-development
     image: dpage/pgadmin4
+    restart: unless-stopped
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@admin.com
       PGADMIN_DEFAULT_PASSWORD: root
@@ -33,6 +34,77 @@ services:
       - "5050:80"
     depends_on:
       - db
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: encoon-zookeeper-development
+    restart: unless-stopped
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - "2181:2181"
+    networks:
+      - encoon
+  kafka1:
+    image: confluentinc/cp-kafka:latest
+    container_name: encoon-kafka1-development
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    ports:
+      - "9092:9092"
+    networks:
+      - encoon
+  kafka2:
+    image: confluentinc/cp-kafka:latest
+    container_name: encoon-kafka2-development
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    ports:
+      - "9093:9093"
+    networks:
+      - encoon
+  kafka3:
+    image: confluentinc/cp-kafka:latest
+    container_name: encoon-kafka3-development
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:39092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+    ports:
+      - "9094:9094"
+    networks:
+      - encoon
   apis:
     build:
       context: ./apis
@@ -56,6 +128,7 @@ services:
       dockerfile: Dockerfile.development
     container_name: encoon-ui-development
     image: encoon-ui-development
+    restart: unless-stopped
     volumes:
       - ./ui:/usr/src/encoon/ui
     ports:
@@ -64,12 +137,8 @@ services:
       - encoon
   system-test:
     build:
-      context: .
-      dockerfile_inline: |
-        FROM golang:1.23.4
-        WORKDIR /usr/src/encoon/apis
-        COPY apis/go.mod apis/go.sum .
-        RUN go mod download && go mod verify
+      context: ./apis
+      dockerfile: Dockerfile.systemTest
     container_name: encoon-system-test
     image: encoon-system-test
     networks:

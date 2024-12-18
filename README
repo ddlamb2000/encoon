@@ -105,3 +105,7 @@ npm
 
 nvm
     https://github.com/nvm-sh/nvm
+
+
+Confluent (zookeeper, kafka)
+    https://www.confluent.io/ 
