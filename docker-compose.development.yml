@@ -60,7 +60,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
     ports:
       - "9092:9092"
     networks:
@@ -80,7 +80,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
     ports:
       - "9093:9093"
     networks:
@@ -100,7 +100,7 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: false
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
     ports:
       - "9094:9094"
     networks:
@@ -148,6 +148,10 @@ services:
       - ./ui:/usr/src/encoon/ui
     ports:
       - "5173:5173"
+    environment:
+      KAFKA_CLIENT_ID: encoon-development
+      KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
+      USER_TEXT_MESSAGES_TOPIC: encoon
     networks:
       - encoon
   system-test:
