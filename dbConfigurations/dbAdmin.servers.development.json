@@ -7,6 +7,14 @@
       "Port": 5432,
       "MaintenanceDB": "master",
       "Username": "encoon"
+    },
+    "2": {
+      "Name": "Encoon development test",
+      "Group": "Servers",
+      "Host": "db",
+      "Port": 5432,
+      "MaintenanceDB": "test",
+      "Username": "encoon"
     }
   }
 }

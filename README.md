@@ -1,5 +1,4 @@
-εncooη
-Copyright David Lambert 2024
+# εncooη
 
 For the time being, εncooη is an experimental web-based application 
 oriented toward data management.
@@ -21,6 +20,7 @@ in an easy and natural way, using one Internet browser only.
 εncooη is also the foundation for the development of a true business-oriented 
 application development toolkit.
 
+Copyright David Lambert 2024
 
 # Notes and references
 
