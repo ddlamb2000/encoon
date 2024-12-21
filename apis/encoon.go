@@ -10,11 +10,13 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
+	"github.com/segmentio/kafka-go"
 
 	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
@@ -43,6 +45,7 @@ const (
 
 func main() {
 	handleFlags()
+
 	router.Use(gin.Logger())
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		if exportDb != "" && exportFileName != "" {
@@ -57,6 +60,7 @@ func main() {
 				configuration.Log("", "", "Stopping.")
 				doneChan <- true
 			}()
+			go setAndStartKafkaReader()
 			go setAndStartHttpServer()
 			go apis.InitializeCaches()
 			<-doneChan
@@ -76,6 +80,30 @@ func handleFlags() {
 	flag.StringVar(&exportDb, exportDbFlag, defaultDbExport, usageDbExport)
 	flag.StringVar(&exportFileName, exportFileNameFlag, defaultExportFileName, usageExportFileName)
 	flag.Parse()
+}
+
+func setAndStartKafkaReader() {
+	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
+	userTextMessagesTopic := os.Getenv("USER_TEXT_MESSAGES_TOPIC")
+	groupID := os.Getenv("KAFKA_GROUP_ID")
+
+	r := kafka.NewReader(kafka.ReaderConfig{
+		Brokers: strings.Split(kafkaBrokers, ","),
+		Topic:   userTextMessagesTopic,
+		GroupID: groupID,
+	})
+
+	configuration.Log("", "", "Connected to Kafka topic %s, located on Kafka brokers %s.", userTextMessagesTopic, kafkaBrokers)
+
+	for {
+		m, err := r.FetchMessage(context.Background())
+		if err != nil {
+			configuration.LogError("", "", "could not read message: %v", err)
+			continue
+		}
+
+		configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
+	}
 }
 
 func setAndStartHttpServer() error {

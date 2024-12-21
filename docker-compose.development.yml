@@ -23,9 +23,6 @@ services:
     container_name: encoon-dbadmin-development
     image: dpage/pgadmin4
     restart: unless-stopped
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
     networks:
       - encoon
     volumes:
@@ -131,12 +128,18 @@ services:
     restart: unless-stopped
     ports:
       - "8080:8080"
+    environment:
+      ENCOON_MOCK_DB_LOCALHOST: db
+      KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
+      KAFKA_GROUP_ID: encoon-apis-development
+      USER_TEXT_MESSAGES_TOPIC: encoon
     networks:
       - encoon
-    environment:
-      - ENCOON_MOCK_DB_LOCALHOST=db
     depends_on:
       - db
+      - kafka1
+      - kafka2
+      - kafka3
   ui:
     build:
       context: ./ui
@@ -149,11 +152,15 @@ services:
     ports:
       - "5173:5173"
     environment:
-      KAFKA_CLIENT_ID: encoon-development
       KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
+      KAFKA_CLIENT_ID: encoon-ui-development
       USER_TEXT_MESSAGES_TOPIC: encoon
     networks:
       - encoon
+    depends_on:
+      - kafka1
+      - kafka2
+      - kafka3
   system-test:
     build:
       context: ./apis
@@ -163,8 +170,8 @@ services:
     networks:
       - encoon
     environment:
-      - ENCOON_MOCK_DB_LOCALHOST=db
-      - ENCOON_KEEP_ALIVE_AFTER_SECONDS=900
+      ENCOON_MOCK_DB_LOCALHOST: db
+      ENCOON_KEEP_ALIVE_AFTER_SECONDS: 900
     volumes:
       - ./:/usr/src/encoon
     depends_on:
