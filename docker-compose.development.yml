@@ -130,9 +130,6 @@ services:
       - "8080:8080"
     environment:
       ENCOON_MOCK_DB_LOCALHOST: db
-      KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
-      KAFKA_GROUP_ID: encoon-apis-development
-      USER_TEXT_MESSAGES_TOPIC: encoon
     networks:
       - encoon
     depends_on:

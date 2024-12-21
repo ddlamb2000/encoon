@@ -1,5 +1,5 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2023
+// Copyright David Lambert 2024
 
 package configuration
 
@@ -26,12 +26,19 @@ type Configuration struct {
 	GridCacheSize       int                      `yaml:"gridCacheSize"`
 	SeedDataFile        string                   `yaml:"seedDataFile"`
 	HttpServer          HttpServerConfiguration  `yaml:"httpServer"`
+	Kafka               KafkaConfiguration       `yaml:"kafka"`
 	Databases           []*DatabaseConfiguration `yaml:"database"`
 }
 
 type HttpServerConfiguration struct {
 	Port          int `yaml:"port"`
 	JwtExpiration int `yaml:"jwtExpiration"`
+}
+
+type KafkaConfiguration struct {
+	Brokers string `yaml:"brokers"`
+	GroupID string `yaml:"groupID"`
+	Topic   string `yaml:"topic"`
 }
 
 type DatabaseConfiguration struct {

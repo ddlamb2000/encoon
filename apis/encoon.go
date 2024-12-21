@@ -10,17 +10,16 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"strings"
 	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	_ "github.com/lib/pq"
-	"github.com/segmentio/kafka-go"
 
 	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
+	"d.lambert.fr/encoon/kafka"
 )
 
 var (
@@ -53,16 +52,16 @@ func main() {
 		} else {
 			configuration.Log("", "", "Starting...")
 			configuration.WatchConfigurationChanges(configurationFileName)
-			quitChan, doneChan := make(chan os.Signal), make(chan bool, 1)
+			quitChan, doneChan := make(chan os.Signal, 1), make(chan bool, 1)
 			signal.Notify(quitChan, syscall.SIGINT, syscall.SIGTERM)
 			go func() {
 				<-quitChan
-				configuration.Log("", "", "Stopping.")
+				configuration.Log("", "", "Stopping...")
 				doneChan <- true
 			}()
-			go setAndStartKafkaReader()
 			go setAndStartHttpServer()
 			go apis.InitializeCaches()
+			go kafka.SetAndStartKafkaReader()
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
@@ -80,30 +79,6 @@ func handleFlags() {
 	flag.StringVar(&exportDb, exportDbFlag, defaultDbExport, usageDbExport)
 	flag.StringVar(&exportFileName, exportFileNameFlag, defaultExportFileName, usageExportFileName)
 	flag.Parse()
-}
-
-func setAndStartKafkaReader() {
-	kafkaBrokers := os.Getenv("KAFKA_BROKERS")
-	userTextMessagesTopic := os.Getenv("USER_TEXT_MESSAGES_TOPIC")
-	groupID := os.Getenv("KAFKA_GROUP_ID")
-
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(kafkaBrokers, ","),
-		Topic:   userTextMessagesTopic,
-		GroupID: groupID,
-	})
-
-	configuration.Log("", "", "Connected to Kafka topic %s, located on Kafka brokers %s.", userTextMessagesTopic, kafkaBrokers)
-
-	for {
-		m, err := r.FetchMessage(context.Background())
-		if err != nil {
-			configuration.LogError("", "", "could not read message: %v", err)
-			continue
-		}
-
-		configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
-	}
 }
 
 func setAndStartHttpServer() error {

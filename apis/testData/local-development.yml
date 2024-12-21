@@ -1,5 +1,5 @@
 #  εncooη : data structuration, presentation and navigation.
-#  Copyright David Lambert 2023
+#  Copyright David Lambert 2024
 
 appName: "εncooη (local)" # Application name to be displayed
 appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
@@ -17,6 +17,12 @@ seedDataFile: ./seedData.json
 httpServer:
   port: 8080 # http Tcp port
   jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
+
+# Kafka configuration
+kafka:
+  brokers: kafka1:19092,kafka2:29092,kafka3:39092 # Kafka brokers, separated with a comma
+  groupID: encoon-apis-development # GroupId for Kafka consumer
+  topic: encoon # Kafka topic
 
 # Database configuration
 database:
