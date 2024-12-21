@@ -1,13 +1,17 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
+	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types';
   import Info from './Info.svelte';
 
   const grids = $state(seedData)
   let focus = $state({grid: null, i: -1, j: -1})
+  let isSending = $state(false)
+	let messageStatus = $state('');
 
   function pushTransaction(payload) {
     console.log(payload)
+    postMessage({ messageKey: newUuid(), message: JSON.stringify(payload), headers: [], selectedPartitions: [] });
   }
 
   function initGrid(grid) {
@@ -77,10 +81,32 @@
   function findGrid(uuid) { return grids.find((grid) => grid.uuid === uuid) }
   
   const coltypesGrid = findGrid('coltypes')
+
+	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
+		isSending = true;
+		messageStatus = 'Sending...';
+		const response = await fetch('/kafka/api/messages', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(messageRequest)
+		});
+		const data: KafkaMessageResponse = await response.json();
+		isSending = false;
+
+		if (!response.ok) {
+			messageStatus = data.error || 'Failed to send message.';
+		} else {
+			messageStatus = data.message;
+		}
+	}
+
 </script>
 
 <div class="layout">
   <main>
+    <div>{isSending} {messageStatus}</div>
     <ul>
       {#each grids as grid}
         {#key grid.uuid}
