@@ -30,6 +30,12 @@ func SetAndStartKafkaReader() {
 			continue
 		}
 
-		configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
+		err = r.CommitMessages(context.Background(), m)
+		if err != nil {
+			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
+		} else {
+			WriteMessage(m.Key)
+			configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
+		}
 	}
 }
