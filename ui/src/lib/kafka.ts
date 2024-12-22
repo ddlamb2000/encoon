@@ -17,12 +17,9 @@ export const consumer = kafka.consumer({
 	groupId: env.KAFKA_GROUP_ID
 });
 
-export const admin = kafka.admin();
-
 export function connect() {
 	return Promise.all([
 		producer.connect(),
-		consumer.connect(),
-		admin.connect()
+		consumer.connect()
 	]);
 }

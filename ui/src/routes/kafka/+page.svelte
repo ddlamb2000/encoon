@@ -54,7 +54,7 @@
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
 		isSending = true;
 		messageStatus = 'Sending...';
-		const response = await fetch('/kafka/api/messages', {
+		const response = await fetch('/kafka/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'

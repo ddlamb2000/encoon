@@ -85,7 +85,7 @@
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
 		isSending = true;
 		messageStatus = 'Sending...';
-		const response = await fetch('/kafka/api/messages', {
+		const response = await fetch('/kafka/api', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -102,21 +102,11 @@
 		}
 	}
 
-	async function fetchMessages() {
-		const response = await fetch(`/kafka/api/kafka`);
-		if (!response.ok) {
-			console.error('Failed to fetch partitions');
-			return;
-		}
-
-	}
-
 </script>
 
 <div class="layout">
   <main>
     <div>{isSending} {messageStatus}</div>
-    <button onclick={() => fetchMessages()}>Fetch</button>
     <ul>
       {#each grids as grid}
         {#key grid.uuid}
