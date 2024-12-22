@@ -150,8 +150,9 @@ services:
       - "5173:5173"
     environment:
       KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
-      KAFKA_CLIENT_ID: encoon-ui-development
-      USER_TEXT_MESSAGES_TOPIC: encoon
+      KAFKA_CLIENT_ID: encoon-development-ui
+      KAFKA_GROUP_ID: encoon-development-ui
+      TOPIC_PREFIX: encoon-development
     networks:
       - encoon
     depends_on:

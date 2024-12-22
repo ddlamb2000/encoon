@@ -111,4 +111,5 @@ Confluent (zookeeper, kafka)
     https://www.confluent.io/ 
 
 Kafka
-    https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme 
+    Go library: https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme 
+    Svelte library: https://kafka.js.org/

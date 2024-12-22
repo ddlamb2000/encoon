@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -16,18 +17,18 @@ func WriteMessage(payload []byte) {
 	configuration.Log("", "", "WriteMessage %s.", payload)
 
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	topic := configuration.GetConfiguration().Kafka.Topic
+	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-responses"
 
 	w := kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
-		Topic:                  topic + "-4",
+		Topic:                  topic,
 		AllowAutoTopicCreation: true,
 	}
 
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Key:   payload,
-			Value: []byte("Hello World!"),
+			Key:   []byte(utils.GetNewUUID()),
+			Value: payload,
 		},
 	)
 

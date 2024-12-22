@@ -21,8 +21,8 @@ httpServer:
 # Kafka configuration
 kafka:
   brokers: kafka1:19092,kafka2:29092,kafka3:39092 # Kafka brokers, separated with a comma
-  groupID: encoon-apis-development # GroupId for Kafka consumer
-  topic: encoon # Kafka topic
+  groupID: encoon-development-backend # GroupId for Kafka consumer
+  topicPrefix: encoon-development # Kafka topic
 
 # Database configuration
 database:

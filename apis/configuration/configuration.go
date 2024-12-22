@@ -36,9 +36,9 @@ type HttpServerConfiguration struct {
 }
 
 type KafkaConfiguration struct {
-	Brokers string `yaml:"brokers"`
-	GroupID string `yaml:"groupID"`
-	Topic   string `yaml:"topic"`
+	Brokers     string `yaml:"brokers"`
+	GroupID     string `yaml:"groupID"`
+	TopicPrefix string `yaml:"topicPrefix"`
 }
 
 type DatabaseConfiguration struct {

@@ -13,7 +13,7 @@ import (
 
 func SetAndStartKafkaReader() {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	topic := configuration.GetConfiguration().Kafka.Topic
+	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-requests"
 	groupID := configuration.GetConfiguration().Kafka.GroupID
 
 	r := kafka.NewReader(kafka.ReaderConfig{
@@ -34,7 +34,7 @@ func SetAndStartKafkaReader() {
 		if err != nil {
 			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
 		} else {
-			WriteMessage(m.Key)
+			WriteMessage(m.Value)
 			configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
 		}
 	}

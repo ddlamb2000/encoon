@@ -1,12 +1,14 @@
 // src/routes/api/partitions/[topic].js
-import { admin } from '$lib/kafka';
+import { admin, consumer } from '$lib/kafka';
 import { env } from '$env/dynamic/private';
 import type { TopicInfo } from '$lib/types';
 
 export async function GET() {
 
+	console.log('Kafka GET');
+
 	try {
-		await admin.connect();
+		await consumer.connect();
 	} catch (error) {
 		console.error('Error connecting to Kafka:', error);
 		return new Response(JSON.stringify({ error: 'Failed to connect to Kafka.' }), {
@@ -17,21 +19,35 @@ export async function GET() {
 		});
 	}
 
-	try {
-		// Fetch metadata for the specific topic
-		const metadata = await admin.fetchTopicMetadata({ topics: [env.USER_TEXT_MESSAGES_TOPIC] });
-		const partitions = metadata.topics[0].partitions
-			.map((partition) => +partition.partitionId);
-		
-		partitions.sort((a, b) => a - b);
+	const topic = env.TOPIC_PREFIX + '-master-responses'
 
-		return new Response(JSON.stringify({ partitions } as TopicInfo), {
+	try {
+		await consumer.subscribe({
+			topics: [topic]
+		});
+
+		console.log(`Kafka consumer.subscribe`);
+
+		await consumer.run({
+			eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
+				console.log({
+					key: message.key.toString(),
+					value: message.value.toString(),
+					headers: message.headers,
+				})
+			},
+		})
+
+		return new Response("OK", {
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			status: 200
 		});
+		
 	} catch (error) {
+
+		console.error(`Error subscribe`, error);
 
 		return new Response(JSON.stringify({ error }), {
 			headers: {

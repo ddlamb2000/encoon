@@ -14,6 +14,8 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: 'Failed to connect to Kafka.' } as KafkaMessageResponse, { status: 500 });
 	}
 
+	const topic = env.TOPIC_PREFIX + '-master-requests'
+
 	try {
 		const data: KafkaMessageRequest = await request.json();
 
@@ -24,14 +26,14 @@ export const POST: RequestHandler = async ({ request }) => {
 		}
 
 		await producer.send({
-			topic: env.USER_TEXT_MESSAGES_TOPIC,
+			topic: topic,
 			messages: getMessages(data),
 			acks: -1
 		});
 
 		return json({ message: 'Message sent successfully.' } as KafkaMessageResponse);
 	} catch (error) {
-		console.error(`Error sending message to Kafka topic ${env.USER_TEXT_MESSAGES_TOPIC}:`, error);
+		console.error(`Error sending message to Kafka topic ${topic}:`, error);
 		return json({ error: 'Failed to send message.' } as KafkaMessageResponse, { status: 500 });
 	} finally { 
 		await producer.disconnect();
