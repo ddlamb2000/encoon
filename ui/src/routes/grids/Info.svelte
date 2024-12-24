@@ -1,8 +1,15 @@
 <script lang="ts">
-  let { focus } = $props();
+  let { focus, data } = $props();
 </script>
 <aside>
   <h2>Infos</h2>
+  {#await data.quote}
+    <p class="quote placeholder">Loading inspiring quote<span class="loading-dots"></span></p>
+  {:then quote}
+    <p class="quote">{quote}</p>
+  {:catch error}
+    <p class="quote error">Failed to load quote: {error.message}</p>
+  {/await}
   {#if focus.grid !== null}
     <ul>
       <li>Grid: {focus.grid.title}</li>

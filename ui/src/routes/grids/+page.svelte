@@ -2,12 +2,35 @@
   import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types';
+  import type { PageData } from './$types';
+  import { onMount } from 'svelte';
+  import { onDestroy } from 'svelte';
+  import { tick } from 'svelte';
   import Info from './Info.svelte';
 
+  onMount(() => {
+		console.log('the component has mounted');
+    getStream()
+	});  
+
+  onDestroy(() => {
+		console.log('the component is being destroyed');
+	});
+
+  $effect.pre(() => {
+		console.log('the component is about to update');
+		tick().then(() => {
+				console.log('the component just updated');
+		});
+	});
+
+  let { data }: { data: PageData } = $props();
+  
   const grids = $state(seedData)
   let focus = $state({grid: null, i: -1, j: -1})
   let isSending = $state(false)
 	let messageStatus = $state('');
+  let isStreaming = $state(false)
 
   function pushTransaction(payload) {
     console.log(payload)
@@ -102,11 +125,30 @@
 		}
 	}
 
+  async function getStream() {
+    if(!isStreaming) {
+      console.log("start streaming...")
+      isStreaming = true
+      const response = await fetch(`/kafka/stream`);
+      if (!response.ok) {
+        console.error('Failed to fetch stream');
+        return;
+      }
+
+      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+      while (true) {
+        const { value, done } = await reader.read();
+        console.log("resp", done, value);
+        if (done) break;
+      }
+    }
+  }
+
 </script>
 
 <div class="layout">
   <main>
-    <div>{isSending} {messageStatus}</div>
+    <div>sending:{isSending} {messageStatus} streaming:{isStreaming}</div>
     <ul>
       {#each grids as grid}
         {#key grid.uuid}
@@ -175,7 +217,7 @@
       <button onclick={() => newGrid()}>New Grid</button>
     </ul>	
   </main>
-  <Info focus={focus}/>
+  <Info focus={focus} data={data}/>
 </div>
 
 <style>
