@@ -5,23 +5,15 @@
   import type { PageData } from './$types';
   import { onMount } from 'svelte';
   import { onDestroy } from 'svelte';
-  import { tick } from 'svelte';
   import Info from './Info.svelte';
 
   onMount(() => {
-		console.log('the component has mounted');
     getStream()
 	});  
 
   onDestroy(() => {
+    stopStreaming = true
 		console.log('the component is being destroyed');
-	});
-
-  $effect.pre(() => {
-		console.log('the component is about to update');
-		tick().then(() => {
-				console.log('the component just updated');
-		});
 	});
 
   let { data }: { data: PageData } = $props();
@@ -31,6 +23,8 @@
   let isSending = $state(false)
 	let messageStatus = $state('');
   let isStreaming = $state(false)
+  let stopStreaming = $state(false)
+  const streams = $state([])
 
   function pushTransaction(payload) {
     console.log(payload)
@@ -129,17 +123,28 @@
     if(!isStreaming) {
       console.log("start streaming...")
       isStreaming = true
-      const response = await fetch(`/kafka/stream`);
-      if (!response.ok) {
-        console.error('Failed to fetch stream');
-        return;
-      }
+      try {
+        const response = await fetch(`/kafka/stream`)
+        if (!response.ok) {
+          console.error('Failed to fetch stream')
+          return
+        }
 
-      const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-      while (true) {
-        const { value, done } = await reader.read();
-        console.log("resp", done, value);
-        if (done) break;
+        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+        reader.read().then(function processText({ done, value }) {
+          if (done) {
+            console.log("Stream complete");
+            return;
+          }
+          const json = JSON.parse(value)
+          const action = JSON.parse(json.userText)
+          console.log(action)
+          streams.push(action)
+
+          return reader.read().then(processText);
+        })
+      } catch (error) {
+        console.error(`streaming stopped with error:`, error);
       }
     }
   }
@@ -217,7 +222,7 @@
       <button onclick={() => newGrid()}>New Grid</button>
     </ul>	
   </main>
-  <Info focus={focus} data={data}/>
+  <Info focus={focus} data={data} streams={streams}/>
 </div>
 
 <style>

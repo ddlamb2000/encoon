@@ -14,14 +14,21 @@ export async function GET() {
           eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
             console.log(topic,{
               headers: message.headers,
+              partition: partition,
               key: message.key.toString(),
               value: message.value.toString()
             })
-            controller.enqueue(message.value)
+            controller.enqueue(message.value.toString())
           },
         })
       } catch (error) {
         console.error(`Error subscribe to Kafka:`, error);
+        return new Response(JSON.stringify({ error }), {
+          headers: {
+            'Content-Type': 'text/event-stream'
+          },
+          status: 500
+        })
       }
     },
     cancel() {

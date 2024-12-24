@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { focus, data } = $props();
+  let { focus, data, streams } = $props();
 </script>
 <aside>
   <h2>Infos</h2>
@@ -10,6 +10,9 @@
   {:catch error}
     <p class="quote error">Failed to load quote: {error.message}</p>
   {/await}
+  {#each streams as stream}
+  <p>{stream.action} {stream.griduuid} {stream.rowuuid}</p>
+  {/each}
   {#if focus.grid !== null}
     <ul>
       <li>Grid: {focus.grid.title}</li>
