@@ -1,7 +1,7 @@
 name: "encoon-development"
 services:
   db:
-    container_name: encoon-db-development
+    container_name: db-encoon-development
     image: postgres
     restart: unless-stopped
     ports:
@@ -20,7 +20,7 @@ services:
       POSTGRES_DB: master
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   dbadmin:
-    container_name: encoon-dbadmin-development
+    container_name: dbadmin-encoon-development
     image: dpage/pgadmin4
     restart: unless-stopped
     networks:
@@ -31,9 +31,12 @@ services:
       - "5050:80"
     depends_on:
       - db
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: root
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: encoon-zookeeper-development
+    container_name: zookeeper-encoon-development
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -42,9 +45,9 @@ services:
       - "2181:2181"
     networks:
       - encoon
-  kafka1:
+  broker1:
     image: confluentinc/cp-kafka:latest
-    container_name: encoon-kafka1-development
+    container_name: broker1-encoon-development
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -52,7 +55,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka1:19092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker1:19092,PLAINTEXT_HOST://localhost:9092
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -62,9 +65,9 @@ services:
       - "9092:9092"
     networks:
       - encoon
-  kafka2:
+  broker2:
     image: confluentinc/cp-kafka:latest
-    container_name: encoon-kafka2-development
+    container_name: broker2-encoon-development
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -72,7 +75,7 @@ services:
       KAFKA_BROKER_ID: 2
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka2:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker2:29092,PLAINTEXT_HOST://localhost:9093
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -82,9 +85,9 @@ services:
       - "9093:9093"
     networks:
       - encoon
-  kafka3:
+  broker3:
     image: confluentinc/cp-kafka:latest
-    container_name: encoon-kafka3-development
+    container_name: broker3-encoon-development
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -92,7 +95,7 @@ services:
       KAFKA_BROKER_ID: 3
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka3:39092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker3:39092,PLAINTEXT_HOST://localhost:9094
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
@@ -104,27 +107,27 @@ services:
       - encoon
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: encoon-kafka-ui-development
+    container_name: kafka-ui-encoon-development
     restart: unless-stopped
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
+      - broker1
+      - broker2
+      - broker3
     ports:
       - "8088:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka1:19092,kafka2:29092,kafka3:39092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker1:19092,broker2:29092,broker3:39092
     networks:
       - encoon
-  apis:
+  v2:
     build:
-      context: ./apis
+      context: ./v2
       dockerfile: Dockerfile.development
-    container_name: encoon-apis-development
-    image: encoon-apis-development
+    container_name: encoon-v2-development
+    image: encoon-v2-development
     volumes:
-      - ./apis:/usr/src/encoon/apis
+      - ./v2:/usr/src/encoon/v2
     restart: unless-stopped
     ports:
       - "8080:8080"
@@ -134,37 +137,52 @@ services:
       - encoon
     depends_on:
       - db
-      - kafka1
-      - kafka2
-      - kafka3
-  ui:
+  backend:
     build:
-      context: ./ui
+      context: ./backend
       dockerfile: Dockerfile.development
-    container_name: encoon-ui-development
-    image: encoon-ui-development
+    container_name: backend-encoon-development
+    image: backend-encoon-development
+    volumes:
+      - ./backend:/usr/src/encoon/backend
+    restart: unless-stopped
+    environment:
+      ENCOON_MOCK_DB_LOCALHOST: db
+    networks:
+      - encoon
+    depends_on:
+      - db
+      - broker1
+      - broker2
+      - broker3
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.development
+    container_name: frontend-encoon-development
+    image: frontend-encoon-development
     restart: unless-stopped
     volumes:
-      - ./ui:/usr/src/encoon/ui
+      - ./frontend:/usr/src/encoon/frontend
     ports:
       - "5173:5173"
     environment:
-      KAFKA_BROKERS: kafka1:19092,kafka2:29092,kafka3:39092
-      KAFKA_CLIENT_ID: encoon-development-ui
-      KAFKA_GROUP_ID: encoon-development-ui
+      KAFKA_BROKERS: broker1:19092,broker2:29092,broker3:39092
+      KAFKA_CLIENT_ID: frontend-encoon-development
+      KAFKA_GROUP_ID: frontend-encoon-development
       TOPIC_PREFIX: encoon-development
     networks:
       - encoon
     depends_on:
-      - kafka1
-      - kafka2
-      - kafka3
+      - broker1
+      - broker2
+      - broker3
   system-test:
     build:
-      context: ./apis
+      context: ./backend
       dockerfile: Dockerfile.systemTest
-    container_name: encoon-system-test
-    image: encoon-system-test
+    container_name: system-test-encoon
+    image: system-test-encoon
     networks:
       - encoon
     environment:
@@ -177,7 +195,7 @@ services:
     command: sh -c "./testData/run_all_tests.sh"
 configs:
   encoon-configuration:
-    file: ./apis/testData/docker.testing.yml
+    file: ./backend/testData/docker.testing.yml
   db-init:
     file: ./dbConfigurations/docker.testing.sql
 networks:

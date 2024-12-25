@@ -1,0 +1,4 @@
+FROM golang:1.23.4
+WORKDIR /usr/src/encoon/v2
+RUN go install github.com/air-verse/air@latest
+CMD ["sh", "-c", "air"]

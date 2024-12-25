@@ -19,7 +19,6 @@ import (
 	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/kafka"
 )
 
 var (
@@ -61,7 +60,6 @@ func main() {
 			}()
 			go setAndStartHttpServer()
 			go apis.InitializeCaches()
-			go kafka.SetAndStartKafkaReader()
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()

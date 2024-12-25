@@ -1,0 +1,33 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2023
+
+appName: "invalid" # Application name to be displayed
+appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
+
+# Http Server configuration
+httpServer:
+  port: 8080
+
+# Database configuration
+database:
+
+- name: "test"
+  host: "localhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "encoon"
+  jwtsecret: "$2a$08$dcn22vRFIZmywvdYBFv5yORcOiGU.ZtqB9S1dTcxspVlzaelmZUPa"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  testSleepTime: 500
+  timeOutThreshold: 1000
+
+- name: "sandbox"
+  host: "localhost"
+  port: 5432
+  role: "encoon"
+  rolePassword: "encoon"
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000

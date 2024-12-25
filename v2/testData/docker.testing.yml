@@ -1,0 +1,40 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2023
+appName: "εncooη (testing)"
+appTag: "Data structuration, presentation and navigation."
+log: true
+trace: false
+showTiming: false
+gridCacheSize: 50
+seedDataFile: /usr/encoon/seedData.json
+httpServer:
+  port: 8080
+  jwtExpiration: 1440
+database:
+- name: "master"
+  host: "db"
+  port: 5432
+  role: "encoon"
+  rolePassword: "ZW5jb29u"
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000
+- name: "test"
+  host: "db"
+  port: 5432
+  role: "encoon"
+  rolePassword: "ZW5jb29u"
+  jwtsecret: "$2a$08$gI0CqdhzX.Ke.y.77AzGweKGGiXql7n9YJPEXtTAcnDQnTe4/AcGy"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000
+- name: "sandbox"
+  host: "db"
+  port: 5432
+  role: "encoon"
+  rolePassword: "ZW5jb29u"
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 1000

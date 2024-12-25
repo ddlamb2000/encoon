@@ -1,0 +1,22 @@
+#  εncooη : data structuration, presentation and navigation.
+#  Copyright David Lambert 2023
+appName: "εncooη (sandbox)"
+appTag: "Data structuration, presentation and navigation."
+log: false
+trace: false
+showTiming: false
+gridCacheSize: 500
+seedDataFile: /usr/encoon/seedData.json
+httpServer:
+  port: 8080
+  jwtExpiration: 1440
+database:
+- name: "sandbox"
+  host: "db"
+  port: 5432
+  role: "encoon"
+  rolePassword: "dGhpc2lzZW5jb29ucHJvZHVjdGlvbmxpa2U="
+  jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
+  root: "root"
+  rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
+  timeOutThreshold: 5000
