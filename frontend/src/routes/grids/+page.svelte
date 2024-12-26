@@ -150,10 +150,11 @@
           }
           const json = JSON.parse(value)
           const fromHeader = utf16Decoder.decode(Int32Array.from(json.headers.from.data))
+          const requestKey = utf16Decoder.decode(Int32Array.from(json.headers.requestKey.data))
 
           const message = JSON.parse(json.value)
           const messageValue = JSON.parse(message.userText)
-          console.log(`[Received] topic: ${json.topic}, key: ${json.key}, value:`, messageValue, `, headers: ${fromHeader}`)
+          console.log(`[Received] topic: ${json.topic}, key: ${json.key}, value:`, messageValue, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
           streams.push(messageValue)
 
           return reader.read().then(processText)

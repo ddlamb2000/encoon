@@ -1,14 +1,16 @@
 import { env } from "$env/dynamic/private";
 import { kafka } from '$lib/kafka';
+import { newUuid } from "$lib/utils.svelte"
 
 export async function GET() {
   const topic = env.TOPIC_PREFIX + '-master-responses'
   const ac = new AbortController()
-  console.log("GET Kafak stream: Start stream")
+  const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
+  console.log(`GET Kafak stream: Start stream using groupId ${groupId}`)
   const stream = new ReadableStream({
     start(controller) {
       const consumer = kafka.consumer({
-        groupId: env.KAFKA_GROUP_ID,
+        groupId: groupId,
         minBytes: 20,
         maxBytes: 1024,
         maxWaitTimeInMs: 10,
@@ -33,6 +35,7 @@ export async function GET() {
             }
             console.log("GET Kafak stream: Received from Kafka", received)
             controller.enqueue(JSON.stringify(received))
+            await heartbeat()
           },
         })
       } catch (error) {

@@ -38,7 +38,7 @@ func SetAndStartKafkaReader() {
 			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
 		} else {
 			configuration.Log("", "", "Got: topic: %s, key: %s, value: %s, headers: %s", m.Topic, m.Key, m.Value, m.Headers)
-			WriteMessage(m.Value)
+			WriteMessage(m.Key, m.Value)
 		}
 	}
 
