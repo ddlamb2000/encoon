@@ -131,11 +131,13 @@
   async function getStream() {
     const uri = "/kafka/stream"
     const utf16Decoder = new TextDecoder('UTF-16')
+    const ac = new AbortController()
+    const signal = ac.signal
     if(!isStreaming) {
       console.log(`Streaming from ${uri}...`)
       isStreaming = true
       try {
-        const response = await fetch(uri)
+        const response = await fetch(uri, {signal})
         if (!response.ok) {
           console.error('Failed to fetch stream')
           return
