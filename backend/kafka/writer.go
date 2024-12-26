@@ -12,7 +12,7 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-func WriteMessage(requestKey []byte, payload []byte) {
+func WriteMessage(requestKey []byte, response []byte) {
 
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-responses"
@@ -28,11 +28,11 @@ func WriteMessage(requestKey []byte, payload []byte) {
 		{Key: "from", Value: []byte("backend")},
 		{Key: "requestKey", Value: requestKey},
 	}
-	configuration.Log("", "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, payload, headers)
+	configuration.Log("", "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, response, headers)
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
-			Value:   payload,
+			Value:   response,
 			Headers: headers,
 		},
 	)

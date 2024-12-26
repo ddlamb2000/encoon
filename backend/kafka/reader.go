@@ -5,12 +5,30 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
 	"strings"
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
 	"github.com/segmentio/kafka-go"
 )
+
+type messageUserText struct {
+	UserText string `json:"userText"`
+}
+
+type requestContent struct {
+	Action   string `json:"action"`
+	GridUuid string `json:"griduuid,omitempty"`
+	RowUuid  string `json:"rowuuid,omitempty"`
+}
+
+type responseContent struct {
+	Status   string `json:"status"`
+	Action   string `json:"action"`
+	GridUuid string `json:"griduuid,omitempty"`
+	RowUuid  string `json:"rowuuid,omitempty"`
+}
 
 func SetAndStartKafkaReader() {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
@@ -38,7 +56,43 @@ func SetAndStartKafkaReader() {
 			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
 		} else {
 			configuration.Log("", "", "Got: topic: %s, key: %s, value: %s, headers: %s", m.Topic, m.Key, m.Value, m.Headers)
-			WriteMessage(m.Key, m.Value)
+
+			var text messageUserText
+			var content requestContent
+			if err = json.Unmarshal(m.Value, &text); err != nil {
+				configuration.LogError("", "", "error unmarshal m.Value:", err)
+				continue
+			}
+			if err = json.Unmarshal([]byte(text.UserText), &content); err != nil {
+				configuration.LogError("", "", "error unmarshal messageText.UserText:", err)
+				continue
+			}
+
+			configuration.Log("", "", "content: %s", content)
+
+			response := responseContent{
+				Status:   "OK",
+				Action:   content.Action,
+				GridUuid: content.GridUuid,
+				RowUuid:  content.RowUuid,
+			}
+
+			responseEncoded, err := json.Marshal(response)
+			if err != nil {
+				configuration.LogError("", "", "error marshal response:", err)
+				continue
+			}
+
+			responseMessage := messageUserText{
+				UserText: string(responseEncoded),
+			}
+			messageUserTextEncoded, err := json.Marshal(responseMessage)
+			if err != nil {
+				configuration.LogError("", "", "error marshal responseMessage:", err)
+				continue
+			}
+
+			WriteMessage(m.Key, messageUserTextEncoded)
 		}
 	}
 
