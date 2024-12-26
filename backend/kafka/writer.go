@@ -14,8 +14,6 @@ import (
 
 func WriteMessage(payload []byte) {
 
-	configuration.Log("", "", "WriteMessage %s.", payload)
-
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-responses"
 
@@ -25,10 +23,14 @@ func WriteMessage(payload []byte) {
 		AllowAutoTopicCreation: true,
 	}
 
+	key := utils.GetNewUUID()
+	headers := []kafka.Header{{Key: "from", Value: []byte("backend")}}
+	configuration.Log("", "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, payload, headers)
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
-			Key:   []byte(utils.GetNewUUID()),
-			Value: payload,
+			Key:     []byte(key),
+			Value:   payload,
+			Headers: headers,
 		},
 	)
 

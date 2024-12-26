@@ -114,6 +114,8 @@ Kafka
     Go library: https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme 
     Svelte library: https://kafka.js.org/
 
+    https://www.redpanda.com/guides/kafka-cloud-kafka-headers
+
     Streaming:
         https://svelte.dev/docs/kit/load#Streaming-with-promises
         https://khromov.se/sveltekit-streaming-the-complete-guide/

@@ -1,6 +1,6 @@
 import type { RequestHandler } from '@sveltejs/kit';
 import { json } from '@sveltejs/kit';
-import { type Message } from 'kafkajs';
+import { type Message, CompressionTypes } from 'kafkajs';
 import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types';
 import { env } from '$env/dynamic/private';
 import { producer } from '$lib/kafka';
@@ -27,6 +27,7 @@ export const POST: RequestHandler = async ({ request }) => {
 
 		await producer.send({
 			topic: topic,
+			compression: CompressionTypes.GZIP,
 			messages: getMessages(data),
 			acks: -1
 		});

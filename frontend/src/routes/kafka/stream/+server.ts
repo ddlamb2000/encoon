@@ -12,13 +12,15 @@ export async function GET() {
         console.log(`Kafka consumer subscribed to ${topic}`);
         consumer.run({
           eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
-            console.log(topic,{
+            const received = {
+              topic: topic,
               headers: message.headers,
               partition: partition,
               key: message.key.toString(),
               value: message.value.toString()
-            })
-            controller.enqueue(message.value.toString())
+            }
+            console.log("Received from Kafka", received)
+            controller.enqueue(JSON.stringify(received))
           },
         })
       } catch (error) {

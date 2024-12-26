@@ -26,11 +26,6 @@
   let stopStreaming = $state(false)
   const streams = $state([])
 
-  function pushTransaction(payload) {
-    console.log(payload)
-    postMessage({ messageKey: newUuid(), message: JSON.stringify(payload), headers: [], selectedPartitions: [] });
-  }
-
   function initGrid(grid) {
     grid.search = ''
     grid.columnSeq = grid.cols.length
@@ -99,8 +94,20 @@
   
   const coltypesGrid = findGrid('coltypes')
 
+  async function pushTransaction(payload) {
+    postMessage({
+      messageKey: newUuid(),
+      message: JSON.stringify(payload),
+      headers: [
+        {'key': 'from', 'value': 'frontend'}
+      ],
+      selectedPartitions: [] 
+    });
+  }
+
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
 		isSending = true;
+    console.log("Send to Kafka", messageRequest)
 		messageStatus = 'Sending...';
 		const response = await fetch('/kafka/api', {
 			method: 'POST',
@@ -120,16 +127,17 @@
 	}
 
   async function getStream() {
+    const uri = "/kafka/stream"
+    const utf16Decoder = new TextDecoder('UTF-16')
     if(!isStreaming) {
-      console.log("start streaming...")
+      console.log(`Streaming from ${uri}...`)
       isStreaming = true
       try {
-        const response = await fetch(`/kafka/stream`)
+        const response = await fetch(uri)
         if (!response.ok) {
           console.error('Failed to fetch stream')
           return
         }
-
         const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
         reader.read().then(function processText({ done, value }) {
           if (done) {
@@ -137,9 +145,12 @@
             return;
           }
           const json = JSON.parse(value)
-          const action = JSON.parse(json.userText)
-          console.log(action)
-          streams.push(action)
+          const fromHeader = utf16Decoder.decode(Int32Array.from(json.headers.from.data))
+          console.log(`Received from ${fromHeader}`, json)
+
+          const message = JSON.parse(json.value)
+          const messageValue = JSON.parse(message.userText)
+          streams.push(messageValue)
 
           return reader.read().then(processText);
         })

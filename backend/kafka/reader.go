@@ -22,7 +22,7 @@ func SetAndStartKafkaReader() {
 		GroupID: groupID,
 	})
 
-	configuration.Log("", "", "Connected to Kafka topic %s through brokers %s.", topic, kafkaBrokers)
+	configuration.Log("", "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
 	for {
 		m, err := r.FetchMessage(context.Background())
 		if err != nil {
@@ -34,8 +34,12 @@ func SetAndStartKafkaReader() {
 		if err != nil {
 			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
 		} else {
+			configuration.Log("", "", "Got: topic: %s, key: %s, value: %s, headers: %s", m.Topic, m.Key, m.Value, m.Headers)
 			WriteMessage(m.Value)
-			configuration.Log("", "", "Message from topic %s, partition %d and offset %d: key %s value %s", m.Topic, m.Partition, m.Offset, m.Key, m.Value)
 		}
+	}
+
+	if err := r.Close(); err != nil {
+		configuration.LogError("", "", "failed to close reader:", err)
 	}
 }

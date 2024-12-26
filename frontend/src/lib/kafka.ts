@@ -7,9 +7,10 @@ const kafka = new Kafka({
 });
 
 export const producer = kafka.producer({
-	idempotent: true,
+	maxInFlightRequests: 50,
 	retry: {
-		retries: 10
+		retries: 5,
+		initialRetryTime: 100
 	}
 });
 
