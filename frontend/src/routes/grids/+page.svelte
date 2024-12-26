@@ -7,15 +7,6 @@
   import { onDestroy } from 'svelte';
   import Info from './Info.svelte';
 
-  onMount(() => {
-    getStream()
-	});  
-
-  onDestroy(() => {
-    stopStreaming = true
-		console.log('the component is being destroyed');
-	});
-
   let { data }: { data: PageData } = $props();
   
   const grids = $state(seedData)
@@ -25,6 +16,17 @@
   let isStreaming = $state(false)
   let stopStreaming = $state(false)
   const streams = $state([])
+  let reader = $state()
+
+  onMount(() => {
+    getStream()
+	});  
+
+  onDestroy(() => {
+    stopStreaming = true
+    if(reader !== undefined) reader.cancel()
+		console.log('the component is being destroyed');
+	});
 
   function initGrid(grid) {
     grid.search = ''
@@ -107,7 +109,7 @@
 
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
 		isSending = true;
-    console.log("Send to Kafka", messageRequest)
+    console.log("[Send]", messageRequest)
 		messageStatus = 'Sending...';
 		const response = await fetch('/kafka/api', {
 			method: 'POST',
@@ -138,24 +140,24 @@
           console.error('Failed to fetch stream')
           return
         }
-        const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+        reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
         reader.read().then(function processText({ done, value }) {
           if (done) {
-            console.log("Stream complete");
-            return;
+            console.log("Stream complete")
+            return
           }
           const json = JSON.parse(value)
           const fromHeader = utf16Decoder.decode(Int32Array.from(json.headers.from.data))
-          console.log(`Received from ${fromHeader}`, json)
 
           const message = JSON.parse(json.value)
           const messageValue = JSON.parse(message.userText)
+          console.log(`[Received] topic: ${json.topic}, key: ${json.key}, value:`, messageValue, `, headers: ${fromHeader}`)
           streams.push(messageValue)
 
-          return reader.read().then(processText);
+          return reader.read().then(processText)
         })
       } catch (error) {
-        console.error(`streaming stopped with error:`, error);
+        console.error(`streaming stopped with error:`, error)
       }
     }
   }

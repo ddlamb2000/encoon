@@ -1,21 +1,33 @@
-// src/routes/api/partitions/[topic].js
-import { consumer } from '$lib/kafka';
-import { env } from '$env/dynamic/private';
+import { env } from "$env/dynamic/private";
+import { kafka } from '$lib/kafka';
 
-const topic = env.TOPIC_PREFIX + '-master-responses'
 export async function GET() {
   const ac = new AbortController()
   const stream = new ReadableStream({
     start(controller) {
+      console.log("start controller")
+
+      const topic = env.TOPIC_PREFIX + '-master-responses'
+      const consumer = kafka.consumer({
+        groupId: env.KAFKA_GROUP_ID,
+        minBytes: 20,
+        maxBytes: 1024,
+        maxWaitTimeInMs: 10,
+        maxInFlightRequests: 50,
+        retry: {
+          retries: 5
+        }
+      })
+
+      consumer.connect(),
+      consumer.subscribe({ topics: [topic] })
+
       try {
-        consumer.subscribe({ topics: [topic] })
-        console.log(`Kafka consumer subscribed to ${topic}`);
         consumer.run({
           eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
             const received = {
               topic: topic,
               headers: message.headers,
-              partition: partition,
               key: message.key.toString(),
               value: message.value.toString()
             }
@@ -35,6 +47,8 @@ export async function GET() {
     },
     cancel() {
       console.log("cancel and abort")
+      consumer.stop();
+      consumer.disconnect();
       ac.abort()
     },
   })

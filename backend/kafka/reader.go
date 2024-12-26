@@ -6,6 +6,7 @@ package kafka
 import (
 	"context"
 	"strings"
+	"time"
 
 	"d.lambert.fr/encoon/configuration"
 	"github.com/segmentio/kafka-go"
@@ -17,9 +18,11 @@ func SetAndStartKafkaReader() {
 	groupID := configuration.GetConfiguration().Kafka.GroupID
 
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: strings.Split(kafkaBrokers, ","),
-		Topic:   topic,
-		GroupID: groupID,
+		Brokers:  strings.Split(kafkaBrokers, ","),
+		Topic:    topic,
+		GroupID:  groupID,
+		MaxBytes: 10e3,
+		MaxWait:  10 * time.Millisecond,
 	})
 
 	configuration.Log("", "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)

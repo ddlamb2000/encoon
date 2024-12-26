@@ -3,10 +3,19 @@ import { json } from '@sveltejs/kit';
 import { type Message, CompressionTypes } from 'kafkajs';
 import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types';
 import { env } from '$env/dynamic/private';
-import { producer } from '$lib/kafka';
+import { kafka } from '$lib/kafka';
 import type { UserTextMessage } from '$lib/server';
 
 export const POST: RequestHandler = async ({ request }) => {
+
+	const producer = kafka.producer({
+		maxInFlightRequests: 50,
+		allowAutoTopicCreation: true,
+		retry: {
+			retries: 5
+		}
+	})
+
 	try {
 		await producer.connect();
 	} catch (error) {
