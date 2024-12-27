@@ -1,17 +1,12 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
-  import { newUuid, numberToLetters } from "$lib/utils.svelte"
+  import { newUuid, numberToLetters, ActionAuthentication, ActionLogout, SuccessStatus } from "$lib/utils.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
   import Info from './Info.svelte'
   
   let { data }: { data: PageData } = $props()
-
-  const ActionAuthentication = "AUTHENTICATION"
-  const ActionLogout = "LOGOUT"
-	const SuccessStatus = "SUCCESS"
-	const FailedStatus  = "FAILED"
 
   const dbname = data.dbname
   const url = data.url
@@ -22,6 +17,7 @@
   let isStreaming = $state(false)
   let stopStreaming = $state(false)
   let loggedIn = $state(false)
+  let token = $state()
   
   const requests = $state([])
   const responses = $state([])
@@ -128,13 +124,15 @@
 	async function postMessage(request: KafkaMessageRequest): Promise<void> {
 		isSending = true
     const uri = "/kafka/pushMessage/" + dbname
+    getToken()
     console.log(`[Send] to ${uri}`, request)
     requests.push(request)
 		messageStatus = 'Sending'
 		const response = await fetch("/kafka/pushMessage/" + dbname, {
 			method: 'POST',
 			headers: {
-				'Content-Type': 'application/json'
+				'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + token
 			},
 			body: JSON.stringify(request)
 		})
@@ -147,11 +145,18 @@
 		}
 	}
 
+  function getToken() {
+    token = localStorage.getItem(`access_token_${dbname}`)
+    if(token !== null) loggedIn = true
+    else loggedIn = false
+  }
+
   async function getStream() {
     const uri = "/kafka/pullMessages/" + dbname
     const ac = new AbortController()
     const signal = ac.signal
     if(!isStreaming) {
+      getToken()
       console.log(`Start streaming from ${uri}`)
       isStreaming = true
       try {
@@ -167,6 +172,7 @@
             return
           }
           const json = JSON.parse(value)
+          const message = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)
           const requestKey = String.fromCharCode(...json.headers.requestKey.data)
           const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
@@ -174,17 +180,25 @@
           const nowDate = Date.parse(now)
           const initiatedOnDate = Date.parse(initiatedOn)
           const elapsedMs = nowDate - initiatedOnDate
-          const message = JSON.parse(json.value)
           console.log(`[Received] from ${uri} (${elapsedMs} ms)topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
           responses.push(message)
           if(message.action == ActionAuthentication) {
             if(message.status == SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname} ${message.jwt}`)
               loggedIn = true
+              localStorage.setItem(`access_token_${dbname}`, message.jwt)
             } else {
+              localStorage.removeItem(`access_token_${dbname}`)
               loginPassword = ""
               loggedIn = false
+              token = null
             }
+          } if(message.action == ActionLogout) {
+            localStorage.removeItem(`access_token_${dbname}`)
+            loginPassword = ""
+            loggedIn = false
+          } else {
+            getToken()
           }
           return reader.read().then(processText)
         })
@@ -194,13 +208,13 @@
     }
   }
 
-  let loginButton: Element
   async function authentication() {
-    pushTransaction(loginButton, {action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)})
+    pushTransaction(null, {action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)})
   }
 
   async function logout() {
     pushTransaction(null, {action: ActionLogout})
+    localStorage.removeItem(`access_token_${dbname}`)
     loginId = ""
     loginPassword = ""
     loggedIn = false
@@ -286,7 +300,7 @@
       <form>
         <label>Username<input bind:value={loginId} /></label>
         <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
-        <button type="submit" bind:this={loginButton} onclick={() => authentication()}>Log in</button>
+        <button type="submit" onclick={() => authentication()}>Log in</button>
       </form>
     {/if}
   </main>

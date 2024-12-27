@@ -11,4 +11,8 @@
     return letters
   }
 
+  export const ActionAuthentication = "AUTHENTICATION"
+  export const ActionLogout = "LOGOUT"
+	export const SuccessStatus = "SUCCESS"
+	export const FailedStatus  = "FAILED"
 </script>
