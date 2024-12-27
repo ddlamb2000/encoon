@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -29,7 +30,7 @@ type responseContent struct {
 func SetAndStartKafkaReader() {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-requests"
-	groupID := configuration.GetConfiguration().Kafka.GroupID
+	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + utils.GetNewUUID()
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  strings.Split(kafkaBrokers, ","),
@@ -55,7 +56,6 @@ func SetAndStartKafkaReader() {
 
 			initiatedOn := []byte("")
 			for _, header := range m.Headers {
-				configuration.Log("", "", "Got: header key: %s, valu: %s", header.Key, header.Value)
 				if header.Key == "initiatedOn" {
 					initiatedOn = header.Value
 				}

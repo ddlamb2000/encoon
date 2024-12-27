@@ -7,7 +7,16 @@ import { kafka } from '$lib/kafka'
 
 export const POST: RequestHandler = async ({ params, request, url, cookies }) => {
 
+	const MyPartitioner = () => {
+		return ({ topic, partitionMetadata, message }) => {
+			// select a partition based on some logic
+			// return the partition number
+			return 0
+		}
+	}
+
 	const producer = kafka.producer({
+		createPartitioner: MyPartitioner,
 		maxInFlightRequests: 50,
 		allowAutoTopicCreation: true,
 		retry: {
@@ -16,21 +25,21 @@ export const POST: RequestHandler = async ({ params, request, url, cookies }) =>
 	})
 
 	try {
-		await producer.connect();
+		await producer.connect()
 	} catch (error) {
-		console.error('Error connecting to Kafka:', error);
-		return json({ error: 'Failed to connect to Kafka.' } as KafkaMessageResponse, { status: 500 });
+		console.error('Error connecting to Kafka:', error)
+		return json({ error: 'Failed to connect to Kafka.' } as KafkaMessageResponse, { status: 500 })
 	}
 
 	const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-requests"
 
 	try {
-		const data: KafkaMessageRequest = await request.json();
+		const data: KafkaMessageRequest = await request.json()
 
 		// Validate the data before sending to Kafka
 		if (!data.message.trim() || data.headers.some((h) => !h.key.trim())) {
-			await producer.disconnect();
-			return json({ error: 'Message or headers are invalid.' }, { status: 400 });
+			await producer.disconnect()
+			return json({ error: 'Message or headers are invalid.' }, { status: 400 })
 		}
 
 		await producer.send({
@@ -38,20 +47,20 @@ export const POST: RequestHandler = async ({ params, request, url, cookies }) =>
 			compression: CompressionTypes.GZIP,
 			messages: getMessages(data),
 			acks: -1
-		});
+		})
 
-		return json({ message: 'Message sent successfully.' } as KafkaMessageResponse);
+		return json({ message: 'Message sent successfully.' } as KafkaMessageResponse)
 	} catch (error) {
-		console.error(`Error sending message to Kafka topic ${topic}:`, error);
-		return json({ error: 'Failed to send message.' } as KafkaMessageResponse, { status: 500 });
+		console.error(`Error sending message to Kafka topic ${topic}:`, error)
+		return json({ error: 'Failed to send message.' } as KafkaMessageResponse, { status: 500 })
 	} finally { 
-		await producer.disconnect();
+		await producer.disconnect()
 	}
-};
+}
 
 function getMessages(req: KafkaMessageRequest): Message[] {
-	const messageKey = req.messageKey?.trim();
-	const headers = Object.fromEntries(req.headers.map((h) => [ h.key + "", h.value + ""]));
+	const messageKey = req.messageKey?.trim()
+	const headers = Object.fromEntries(req.headers.map((h) => [ h.key + "", h.value + ""]))
 
 	if(req.selectedPartitions && req.selectedPartitions.length > 0) {
 		return req.selectedPartitions.map((pId) => ({
@@ -65,7 +74,7 @@ function getMessages(req: KafkaMessageRequest): Message[] {
 			{
 				key: messageKey || null,
 				value: req.message,
-				headers: headers
+				headers: headers,
 			} as Message
 		]
 	}

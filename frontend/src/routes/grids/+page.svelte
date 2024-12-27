@@ -109,7 +109,7 @@
         {'key': 'from', 'value': 'frontend'},
         {'key': 'initiatedOn', 'value': now}
       ],
-      selectedPartitions: [] 
+      selectedPartitions: []
     })
   }
 
