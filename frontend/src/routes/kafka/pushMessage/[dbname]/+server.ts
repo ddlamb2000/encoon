@@ -7,16 +7,7 @@ import { kafka } from '$lib/kafka'
 
 export const POST: RequestHandler = async ({ params, request, url, cookies }) => {
 
-	const MyPartitioner = () => {
-		return ({ topic, partitionMetadata, message }) => {
-			// select a partition based on some logic
-			// return the partition number
-			return 0
-		}
-	}
-
 	const producer = kafka.producer({
-		createPartitioner: MyPartitioner,
 		maxInFlightRequests: 50,
 		allowAutoTopicCreation: true,
 		retry: {

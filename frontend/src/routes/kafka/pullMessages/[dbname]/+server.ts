@@ -6,6 +6,8 @@ export const GET = async ({ params, request, url, cookies }) => {
   const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-responses"
   const ac = new AbortController()
   const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
+  cookies.set('topic', topic, { path: '/' })
+  cookies.set('groupId', groupId, { path: '/' })
   console.log(`GET Kafak stream: Create Kafka consumer using groupId ${groupId}`)
   const consumer = kafka.consumer({
     groupId: groupId,

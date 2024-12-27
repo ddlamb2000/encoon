@@ -1,17 +1,27 @@
 <script lang="ts">
-  let { focus, data, streams } = $props();
+  let { focus, data, requests, responses, isSending, messageStatus, isStreaming } = $props()
 </script>
 <aside>
   <h1>{data.dbname}</h1>
-  {#each streams as stream}
-  <p>{stream.action}:
-      {stream.status}
-      {stream.textmessage}
-      {stream.griduuid}
-      {stream.rowuuid}
-      {stream.firstname}
-      {stream.lastname}
-      {stream.jwt}</p>
+  <div>
+    <p>{#if isStreaming}Streaming messages{/if}</p>
+    <p>{#if isSending}Sending message{/if} {#if messageStatus}{messageStatus}{/if}</p>
+  </div>
+  {#each requests as request}
+    <p>
+      Request {request.messageKey}
+    </p>
+  {/each}
+  {#each responses as response}
+    <p>
+      Response {response.action}:
+      {response.status}
+      {response.textmessage}
+      {response.griduuid}
+      {response.rowuuid}
+      {response.firstname}
+      {response.lastname}
+    </p>
   {/each}
   {#if focus.grid !== null}
     <ul>
