@@ -17,7 +17,7 @@
   let isStreaming = $state(false)
   let stopStreaming = $state(false)
   let loggedIn = $state(false)
-  let token = $state()
+  let token = $state("")
   let userUuid = $state("")
   let userFirstName = $state("")
   let userLastName = $state("")
@@ -137,7 +137,8 @@
         messageKey: newUuid(),
         headers: [
           {'key': 'from', 'value': url},
-          {'key': 'initiatedOn', 'value': (new Date).toISOString()}
+          {'key': 'initiatedOn', 'value': (new Date).toISOString()},
+          {'key': 'jwt', 'value': token}
         ],
         message: JSON.stringify(payload),
         selectedPartitions: []
