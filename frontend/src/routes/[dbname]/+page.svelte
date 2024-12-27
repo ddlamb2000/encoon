@@ -18,6 +18,9 @@
   let stopStreaming = $state(false)
   let loggedIn = $state(false)
   let token = $state()
+  let userUuid = $state("")
+  let userFirstName = $state("")
+  let userLastName = $state("")
   
   const requests = $state([])
   const responses = $state([])
@@ -124,7 +127,7 @@
 	async function postMessage(request: KafkaMessageRequest): Promise<void> {
 		isSending = true
     const uri = "/kafka/pushMessage/" + dbname
-    getToken()
+    checkToken()
     console.log(`[Send] to ${uri}`, request)
     requests.push(request)
 		messageStatus = 'Sending'
@@ -145,10 +148,27 @@
 		}
 	}
 
-  function getToken() {
+  function checkToken(): boolean {
     token = localStorage.getItem(`access_token_${dbname}`)
-    if(token !== null) loggedIn = true
-    else loggedIn = false
+    if(token !== null && token !== undefined) {
+      const arrayToken = token.split('.')
+      const tokenPayload = JSON.parse(atob(arrayToken[1]))
+      const now = (new Date).toISOString()
+      const nowDate = Date.parse(now)
+      const tokenExpirationDate = Date.parse(tokenPayload.expires)
+      if(nowDate < tokenExpirationDate) {
+        loggedIn = true
+        userUuid = tokenPayload.userUuid
+        userFirstName = tokenPayload.userFirstName
+        userLastName = tokenPayload.userLastName
+        return true
+      }
+    }
+    loggedIn = false
+    userUuid = ""
+    userFirstName = ""
+    userLastName = ""
+    return false
   }
 
   async function getStream() {
@@ -156,7 +176,7 @@
     const ac = new AbortController()
     const signal = ac.signal
     if(!isStreaming) {
-      getToken()
+      checkToken()
       console.log(`Start streaming from ${uri}`)
       isStreaming = true
       try {
@@ -198,7 +218,7 @@
             loginPassword = ""
             loggedIn = false
           } else {
-            getToken()
+            checkToken()
           }
           return reader.read().then(processText)
         })
@@ -228,6 +248,7 @@
 <div class="layout">
   <main>
     {#if loggedIn}
+      {userUuid} ; {userFirstName} ; {userLastName}
       <ul>
         {#each grids as grid}
           {#key grid.uuid}
