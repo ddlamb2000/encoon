@@ -7,7 +7,9 @@
   import { onDestroy } from 'svelte';
   import Info from './Info.svelte';
   
-  let { data }: { data: PageData } = $props();
+  let { data }: { data: PageData } = $props()
+
+  const dbname = data.dbname
   
   const grids = $state(seedData)
   let focus = $state({grid: null, i: -1, j: -1})
@@ -18,21 +20,17 @@
   const streams = $state([])
   let reader = $state()
 
-  let loginDbName = $state("")
   let loginId = $state("")
   let loginPassword = $state("")
 
-  let dbName = $state("master")
-
   onMount(() => {
     getStream()
-	});  
+	})
 
   onDestroy(() => {
     stopStreaming = true
     if(reader !== undefined) reader.cancel()
-		console.log('the component is being destroyed');
-	});
+	})
 
   function initGrid(grid) {
     grid.search = ''
@@ -117,7 +115,7 @@
 
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
 		isSending = true
-    const uri = "/kafka/api/" + dbName
+    const uri = "/kafka/api/" + dbname
     console.log("[Send]", messageRequest)
 		messageStatus = 'Sending...';
 		const response = await fetch(uri, {
@@ -138,7 +136,7 @@
 	}
 
   async function getStream() {
-    const uri = "/kafka/stream/" + dbName
+    const uri = "/kafka/stream/" + dbname
     const utf16Decoder = new TextDecoder('UTF-16')
     const ac = new AbortController()
     const signal = ac.signal
@@ -177,16 +175,18 @@
   }
 
   async function logIn() {
-    pushTransaction({action: 'login', dbname: loginDbName, userid: loginId, password: btoa(loginPassword)})
+    pushTransaction({action: 'login', dbname: dbname, userid: loginId, password: btoa(loginPassword)})
   }
 
 </script>
 
+<svelte:head>
+	<title>εncooη - {data.dbname}</title>
+</svelte:head>
 <div class="layout">
   <main>
-    <h1>{dbName}</h1>
+    <h1>{data.dbname}</h1>
     <form>
-      <label>Database<input bind:value={loginDbName} /></label>
       <label>Username<input bind:value={loginId} /></label>
       <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
       <button type="submit" onclick={() => logIn()}>Log in</button>

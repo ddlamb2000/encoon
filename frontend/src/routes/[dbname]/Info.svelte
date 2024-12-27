@@ -2,14 +2,7 @@
   let { focus, data, streams } = $props();
 </script>
 <aside>
-  <h2>Infos</h2>
-  {#await data.quote}
-    <p class="quote placeholder">Loading inspiring quote<span class="loading-dots"></span></p>
-  {:then quote}
-    <p class="quote">{quote}</p>
-  {:catch error}
-    <p class="quote error">Failed to load quote: {error.message}</p>
-  {/await}
+  <h1>{data.dbname}</h1>
   {#each streams as stream}
   <p>{stream.status} {stream.action} {stream.griduuid} {stream.rowuuid}</p>
   {/each}
