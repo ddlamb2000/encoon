@@ -11,7 +11,6 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
-	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -33,16 +32,25 @@ type responseContent struct {
 }
 
 func SetAndStartKafkaReader() {
+	for _, dbConfig := range configuration.GetConfiguration().Databases {
+		configuration.Log("", "", "%s.", dbConfig.Name)
+		go SetAndStartKafkaReaderForDatabase(dbConfig.Name)
+	}
+}
+
+func SetAndStartKafkaReaderForDatabase(dbName string) {
+
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-requests"
-	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + utils.GetNewUUID()
+	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
+	groupID := configuration.GetConfiguration().Kafka.GroupID
 
 	consumer := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:  strings.Split(kafkaBrokers, ","),
-		Topic:    topic,
-		GroupID:  groupID,
-		MaxBytes: 10e3,
-		MaxWait:  10 * time.Millisecond,
+		Brokers:          strings.Split(kafkaBrokers, ","),
+		Topic:            topic,
+		GroupID:          groupID,
+		MaxBytes:         10e3,
+		MaxWait:          10 * time.Millisecond,
+		RebalanceTimeout: 2 * time.Second,
 	})
 
 	configuration.Log("", "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
@@ -109,7 +117,7 @@ func SetAndStartKafkaReader() {
 				configuration.LogError("", "", "error marshal response:", err)
 				continue
 			}
-			WriteMessage(m.Key, initiatedOn, responseEncoded)
+			WriteMessage(dbName, m.Key, initiatedOn, responseEncoded)
 		}
 	}
 

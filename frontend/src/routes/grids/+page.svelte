@@ -22,6 +22,8 @@
   let loginId = $state("")
   let loginPassword = $state("")
 
+  let dbName = $state("master")
+
   onMount(() => {
     getStream()
 	});  
@@ -114,10 +116,11 @@
   }
 
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
-		isSending = true;
+		isSending = true
+    const uri = "/kafka/api/" + dbName
     console.log("[Send]", messageRequest)
 		messageStatus = 'Sending...';
-		const response = await fetch('/kafka/api/master', {
+		const response = await fetch(uri, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
@@ -135,7 +138,7 @@
 	}
 
   async function getStream() {
-    const uri = "/kafka/stream/master"
+    const uri = "/kafka/stream/" + dbName
     const utf16Decoder = new TextDecoder('UTF-16')
     const ac = new AbortController()
     const signal = ac.signal
@@ -174,7 +177,6 @@
   }
 
   async function logIn() {
-    console.log('logIn()')
     pushTransaction({action: 'login', dbname: loginDbName, userid: loginId, password: btoa(loginPassword)})
   }
 
@@ -182,6 +184,7 @@
 
 <div class="layout">
   <main>
+    <h1>{dbName}</h1>
     <form>
       <label>Database<input bind:value={loginDbName} /></label>
       <label>Username<input bind:value={loginId} /></label>
@@ -193,7 +196,7 @@
       {#each grids as grid}
         {#key grid.uuid}
           <li>
-            <h1>{grid.title}</h1>
+            <h2>{grid.title}</h2>
             Filter: 
             <span
               bind:innerHTML={grid.search}

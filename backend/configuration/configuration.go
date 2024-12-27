@@ -26,8 +26,8 @@ type Configuration struct {
 	GridCacheSize       int                      `yaml:"gridCacheSize"`
 	SeedDataFile        string                   `yaml:"seedDataFile"`
 	HttpServer          HttpServerConfiguration  `yaml:"httpServer"`
-	Kafka               KafkaConfiguration       `yaml:"kafka"`
 	Databases           []*DatabaseConfiguration `yaml:"database"`
+	Kafka               KafkaConfiguration       `yaml:"kafka"`
 }
 
 type HttpServerConfiguration struct {

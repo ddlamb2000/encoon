@@ -6,21 +6,29 @@ package kafka
 import (
 	"context"
 	"strings"
+	"time"
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
+	"github.com/segmentio/kafka-go/compress"
 )
 
-func WriteMessage(requestKey []byte, initiatedOn []byte, response []byte) {
+func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response []byte) {
 
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-responses"
+	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 
 	w := kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
+		MaxAttempts:            3,
+		WriteBackoffMax:        5 * time.Millisecond,
+		BatchSize:              10,
+		BatchTimeout:           100 * time.Millisecond,
+		RequiredAcks:           -1,
+		Compression:            compress.Gzip,
 	}
 
 	key := utils.GetNewUUID()
