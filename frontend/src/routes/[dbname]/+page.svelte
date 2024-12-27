@@ -138,6 +138,9 @@
         headers: [
           {'key': 'from', 'value': url},
           {'key': 'initiatedOn', 'value': (new Date).toISOString()},
+          {'key': 'userUuid', 'value': userUuid},
+          {'key': 'userFirstName', 'value': userFirstName},
+          {'key': 'userLastName', 'value': userLastName},
           {'key': 'jwt', 'value': token}
         ],
         message: JSON.stringify(payload),
