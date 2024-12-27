@@ -11,7 +11,7 @@
     <p class="quote error">Failed to load quote: {error.message}</p>
   {/await}
   {#each streams as stream}
-  <p>{stream.action} {stream.griduuid} {stream.rowuuid}</p>
+  <p>{stream.status} {stream.action} {stream.griduuid} {stream.rowuuid}</p>
   {/each}
   {#if focus.grid !== null}
     <ul>

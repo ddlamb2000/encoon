@@ -5,7 +5,7 @@ import { newUuid } from "$lib/utils.svelte"
 export async function GET() {
   const topic = env.TOPIC_PREFIX + '-master-responses'
   const ac = new AbortController()
-  const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
+  const groupId = env.KAFKA_GROUP_ID
   console.log(`GET Kafak stream: Start stream using groupId ${groupId}`)
   const stream = new ReadableStream({
     start(controller) {
@@ -27,14 +27,16 @@ export async function GET() {
         consumer.subscribe({ topics: [topic] })
         consumer.run({
           eachMessage: async ({ topic, partition, message, heartbeat, pause }) => {
-            const received = {
-              topic: topic,
-              headers: message.headers,
-              key: message.key.toString(),
-              value: message.value.toString()
+            if(message.key !== null && message.value !== null) {
+              const received = {
+                topic: topic,
+                headers: message.headers,
+                key: message.key.toString(),
+                value: message.value.toString()
+              }
+              console.log("GET Kafak stream: Received from Kafka", received)
+              controller.enqueue(JSON.stringify(received))
             }
-            console.log("GET Kafak stream: Received from Kafka", received)
-            controller.enqueue(JSON.stringify(received))
             await heartbeat()
           },
         })
