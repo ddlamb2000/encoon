@@ -1,15 +1,11 @@
-import type { RequestHandler } from '@sveltejs/kit';
-import { json } from '@sveltejs/kit';
-import { type Message, CompressionTypes } from 'kafkajs';
-import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types';
-import { env } from '$env/dynamic/private';
-import { kafka } from '$lib/kafka';
-import type { UserTextMessage } from '$lib/server';
+import type { RequestHandler } from '@sveltejs/kit'
+import { json } from '@sveltejs/kit'
+import { type Message, CompressionTypes } from 'kafkajs'
+import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
+import { env } from '$env/dynamic/private'
+import { kafka } from '$lib/kafka'
 
 export const POST: RequestHandler = async ({ params, request, url, cookies }) => {
-
-	console.log("params", params)
-	console.log("params.dbname", params.dbname)
 
 	const producer = kafka.producer({
 		maxInFlightRequests: 50,
@@ -55,28 +51,22 @@ export const POST: RequestHandler = async ({ params, request, url, cookies }) =>
 
 function getMessages(req: KafkaMessageRequest): Message[] {
 	const messageKey = req.messageKey?.trim();
-
-	const value = JSON.stringify({
-			userText: req.message
-		} as UserTextMessage
-	);
-
 	const headers = Object.fromEntries(req.headers.map((h) => [ h.key + "", h.value + ""]));
 
-	if (req.selectedPartitions && req.selectedPartitions.length > 0) {
+	if(req.selectedPartitions && req.selectedPartitions.length > 0) {
 		return req.selectedPartitions.map((pId) => ({
 			partition: pId,
 			key: messageKey || null,
-			value: value,
+			value: req.message,
 			headers: headers
-		}));
+		}))
 	} else {
 		return [
 			{
 				key: messageKey || null,
-				value: value,
+				value: req.message,
 				headers: headers
 			} as Message
-		];
+		]
 	}
 }

@@ -13,10 +13,6 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
-type messageUserText struct {
-	UserText string `json:"userText"`
-}
-
 type requestContent struct {
 	Action   string `json:"action"`
 	GridUuid string `json:"griduuid,omitempty"`
@@ -35,7 +31,7 @@ func SetAndStartKafkaReader() {
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-master-requests"
 	groupID := configuration.GetConfiguration().Kafka.GroupID
 
-	r := kafka.NewReader(kafka.ReaderConfig{
+	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:  strings.Split(kafkaBrokers, ","),
 		Topic:    topic,
 		GroupID:  groupID,
@@ -45,26 +41,29 @@ func SetAndStartKafkaReader() {
 
 	configuration.Log("", "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
 	for {
-		m, err := r.FetchMessage(context.Background())
+		m, err := consumer.FetchMessage(context.Background())
 		if err != nil {
 			configuration.LogError("", "", "could not read message: %v", err)
 			continue
 		}
 
-		err = r.CommitMessages(context.Background(), m)
+		err = consumer.CommitMessages(context.Background(), m)
 		if err != nil {
 			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", m.Topic, m.Partition, m.Offset)
 		} else {
 			configuration.Log("", "", "Got: topic: %s, key: %s, value: %s, headers: %s", m.Topic, m.Key, m.Value, m.Headers)
 
-			var text messageUserText
-			var content requestContent
-			if err = json.Unmarshal(m.Value, &text); err != nil {
-				configuration.LogError("", "", "error unmarshal m.Value:", err)
-				continue
+			initiatedOn := []byte("")
+			for _, header := range m.Headers {
+				configuration.Log("", "", "Got: header key: %s, valu: %s", header.Key, header.Value)
+				if header.Key == "initiatedOn" {
+					initiatedOn = header.Value
+				}
 			}
-			if err = json.Unmarshal([]byte(text.UserText), &content); err != nil {
-				configuration.LogError("", "", "error unmarshal messageText.UserText:", err)
+
+			var content requestContent
+			if err = json.Unmarshal(m.Value, &content); err != nil {
+				configuration.LogError("", "", "Error unmarshal message value", err)
 				continue
 			}
 
@@ -83,20 +82,11 @@ func SetAndStartKafkaReader() {
 				continue
 			}
 
-			responseMessage := messageUserText{
-				UserText: string(responseEncoded),
-			}
-			messageUserTextEncoded, err := json.Marshal(responseMessage)
-			if err != nil {
-				configuration.LogError("", "", "error marshal responseMessage:", err)
-				continue
-			}
-
-			WriteMessage(m.Key, messageUserTextEncoded)
+			WriteMessage(m.Key, initiatedOn, responseEncoded)
 		}
 	}
 
-	if err := r.Close(); err != nil {
-		configuration.LogError("", "", "failed to close reader:", err)
+	if err := consumer.Close(); err != nil {
+		configuration.LogError("", "", "Failed to close reader:", err)
 	}
 }

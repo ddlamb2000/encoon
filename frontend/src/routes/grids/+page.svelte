@@ -101,14 +101,16 @@
   const coltypesGrid = findGrid('coltypes')
 
   async function pushTransaction(payload) {
+    const now = (new Date).toISOString()
     postMessage({
       messageKey: newUuid(),
       message: JSON.stringify(payload),
       headers: [
-        {'key': 'from', 'value': 'frontend'}
+        {'key': 'from', 'value': 'frontend'},
+        {'key': 'initiatedOn', 'value': now}
       ],
       selectedPartitions: [] 
-    });
+    })
   }
 
 	async function postMessage(messageRequest: KafkaMessageRequest): Promise<void> {
@@ -153,14 +155,16 @@
             return
           }
           const json = JSON.parse(value)
-          const fromHeader = utf16Decoder.decode(Int32Array.from(json.headers.from.data))
-          const requestKey = utf16Decoder.decode(Int32Array.from(json.headers.requestKey.data))
-
+          const fromHeader = String.fromCharCode(...json.headers.from.data)
+          const requestKey = String.fromCharCode(...json.headers.requestKey.data)
+          const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
+          const now = (new Date).toISOString()
+          const nowDate = Date.parse(now)
+          const initiatedOnDate = Date.parse(initiatedOn)
+          const elapsedMs = nowDate - initiatedOnDate
           const message = JSON.parse(json.value)
-          const messageValue = JSON.parse(message.userText)
-          console.log(`[Received] topic: ${json.topic}, key: ${json.key}, value:`, messageValue, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
-          streams.push(messageValue)
-
+          console.log(`[Received] (${elapsedMs} ms)topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
+          streams.push(message)
           return reader.read().then(processText)
         })
       } catch (error) {
