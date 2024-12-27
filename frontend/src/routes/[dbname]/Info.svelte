@@ -4,7 +4,14 @@
 <aside>
   <h1>{data.dbname}</h1>
   {#each streams as stream}
-  <p>{stream.status} {stream.action} {stream.griduuid} {stream.rowuuid}</p>
+  <p>{stream.action}:
+      {stream.status}
+      {stream.textmessage}
+      {stream.griduuid}
+      {stream.rowuuid}
+      {stream.firstname}
+      {stream.lastname}
+      {stream.jwt}</p>
   {/each}
   {#if focus.grid !== null}
     <ul>

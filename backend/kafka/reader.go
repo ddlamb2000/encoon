@@ -10,40 +10,19 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
-	"d.lambert.fr/encoon/database"
 	"github.com/segmentio/kafka-go"
 )
 
-type requestContent struct {
-	Action   string `json:"action"`
-	GridUuid string `json:"griduuid,omitempty"`
-	RowUuid  string `json:"rowuuid,omitempty"`
-	Dbname   string `json:"dbname,omitempty"`
-	Userid   string `json:"userid,omitempty"`
-	Password string `json:"password,omitempty"`
-}
-
-type responseContent struct {
-	Status       string `json:"status"`
-	Action       string `json:"action"`
-	GridUuid     string `json:"griduuid,omitempty"`
-	RowUuid      string `json:"rowuuid,omitempty"`
-	ErrorMessage string `json:"errormessage,omitempty"`
-}
-
 func SetAndStartKafkaReader() {
+	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
+	groupID := configuration.GetConfiguration().Kafka.GroupID
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
-		configuration.Log("", "", "%s.", dbConfig.Name)
-		go SetAndStartKafkaReaderForDatabase(dbConfig.Name)
+		topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbConfig.Name + "-requests"
+		go SetAndStartKafkaReaderForDatabase(dbConfig.Name, kafkaBrokers, groupID, topic)
 	}
 }
 
-func SetAndStartKafkaReaderForDatabase(dbName string) {
-
-	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
-	groupID := configuration.GetConfiguration().Kafka.GroupID
-
+func SetAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, groupID string, topic string) {
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
@@ -53,28 +32,28 @@ func SetAndStartKafkaReaderForDatabase(dbName string) {
 		RebalanceTimeout: 2 * time.Second,
 	})
 
-	configuration.Log("", "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
+	configuration.Log(dbName, "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
 	for {
 		message, err := consumer.FetchMessage(context.Background())
 		if err != nil {
-			configuration.LogError("", "", "could not read message: %v", err)
+			configuration.LogError(dbName, "", "could not read message: %v", err)
 			continue
 		}
 		err = consumer.CommitMessages(context.Background(), message)
 		if err != nil {
-			configuration.LogError("", "", "failed to commit message from topic %s, partition %d and offset %d", message.Topic, message.Partition, message.Offset)
+			configuration.LogError(dbName, "", "failed to commit message from topic %s, partition %d and offset %d", message.Topic, message.Partition, message.Offset)
 		} else {
 			handleMessage(dbName, message)
 		}
 	}
 
 	if err := consumer.Close(); err != nil {
-		configuration.LogError("", "", "Failed to close reader:", err)
+		configuration.LogError(dbName, "", "Failed to close reader:", err)
 	}
 }
 
 func handleMessage(dbName string, message kafka.Message) {
-	configuration.Log("", "", "Got: topic: %s, key: %s, value: %s, headers: %s", message.Topic, message.Key, message.Value, message.Headers)
+	configuration.Log(dbName, "", "Got: topic: %s, key: %s, value: %s, headers: %s", message.Topic, message.Key, message.Value, message.Headers)
 
 	initiatedOn := []byte("")
 	for _, header := range message.Headers {
@@ -85,36 +64,16 @@ func handleMessage(dbName string, message kafka.Message) {
 
 	var content requestContent
 	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError("", "", "Error unmarshal message value", err)
+		configuration.LogError(dbName, "", "Error unmarshal message value", err)
 		return
 	}
 
 	var response responseContent
-	if content.Action == "login" {
-		configuration.Log("", "", "try to login %s, %s, %s", content.Dbname, content.Userid, content.Password)
-		userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(context.Background(), content.Dbname, content.Userid, content.Password)
-		configuration.Log("", "", " %s, %s, %s", userUuid, firstName, lastName)
-		if err != nil || userUuid == "" {
-			if timeOut {
-				response = responseContent{
-					Status:       "KO",
-					ErrorMessage: "Timeout",
-				}
-
-			} else {
-				response = responseContent{
-					Status:       "KO",
-					ErrorMessage: "Invalid username or passphrase",
-				}
-			}
-		} else {
-			response = responseContent{
-				Status: "OK",
-			}
-		}
+	if content.Action == ActionAuthentication {
+		response = authentication(dbName, content.Action, content)
 	} else {
 		response = responseContent{
-			Status:   "OK",
+			Status:   SuccessStatus,
 			Action:   content.Action,
 			GridUuid: content.GridUuid,
 			RowUuid:  content.RowUuid,
@@ -123,7 +82,7 @@ func handleMessage(dbName string, message kafka.Message) {
 
 	responseEncoded, err := json.Marshal(response)
 	if err != nil {
-		configuration.LogError("", "", "error marshal response:", err)
+		configuration.LogError(dbName, "", "error marshal response:", err)
 		return
 	}
 	WriteMessage(dbName, message.Key, initiatedOn, responseEncoded)

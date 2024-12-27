@@ -37,7 +37,7 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 		{Key: "requestKey", Value: requestKey},
 		{Key: "initiatedOn", Value: initiatedOn},
 	}
-	configuration.Log("", "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, response, headers)
+	configuration.Log(dbName, "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, response, headers)
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
@@ -47,10 +47,9 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 	)
 
 	if err != nil {
-		configuration.LogError("", "", "failed to write messages:", err)
+		configuration.LogError(dbName, "", "failed to write messages:", err)
 	}
-
 	if err := w.Close(); err != nil {
-		configuration.LogError("", "", "failed to close writer:", err)
+		configuration.LogError(dbName, "", "failed to close writer:", err)
 	}
 }

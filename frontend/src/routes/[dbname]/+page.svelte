@@ -9,6 +9,9 @@
   
   let { data }: { data: PageData } = $props()
 
+  const ActionAuthentication = "AUTHENTICATION"
+
+
   const dbname = data.dbname
   
   const grids = $state(seedData)
@@ -175,7 +178,7 @@
   }
 
   async function logIn() {
-    pushTransaction({action: 'login', dbname: dbname, userid: loginId, password: btoa(loginPassword)})
+    pushTransaction({action: ActionAuthentication, dbname: dbname, userid: loginId, password: btoa(loginPassword)})
   }
 
 </script>
