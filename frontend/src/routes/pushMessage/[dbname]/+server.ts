@@ -1,0 +1,24 @@
+import type { RequestHandler } from '@sveltejs/kit'
+import { postMessage } from '$lib/kafka'
+
+export const POST: RequestHandler = async ({ params, request }) => {
+	const auth = request.headers.get("Authorization")
+	if(auth === "" || auth === undefined || auth.length < 10) {
+		console.error('Not authorized')
+		return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
+	}
+	const tokenString = auth?.substring(7)
+	try {
+		const arrayToken = tokenString.split('.')
+		const tokenPayload = JSON.parse(atob(arrayToken[1]))
+		const now = (new Date).toISOString()
+		const nowDate = Date.parse(now)
+		const tokenExpirationDate = Date.parse(tokenPayload.expires)
+		if(nowDate > tokenExpirationDate) {
+			return json({ error: 'Authorization expided' } as KafkaMessageResponse, { status: 401 })
+		}
+	} catch (error) {
+		return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
+	}
+	return postMessage(params, request)
+}

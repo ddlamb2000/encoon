@@ -62,7 +62,7 @@
                  }
     initGrid(grid)
     grids.push(grid)
-    pushTransaction(null, {action: 'newgrid', griduuid: grid.uuid})
+    pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
   async function addRow(grid) {
@@ -70,12 +70,12 @@
     const data = []
     grid.cols.forEach(() => data.push(''))
     grid.rows.push({uuid: uuid, data: data, filtered: true})
-    pushTransaction(null, {action: 'addrow', griduuid: grid.uuid, rowuuid: uuid})
+    pushTransaction({action: 'addrow', griduuid: grid.uuid, rowuuid: uuid})
   }
 
   async function removeRow(grid, rowuuid) {
     grid.rows = grid.rows.filter((t) => t.uuid !== rowuuid)
-    pushTransaction(null, {action: 'delrow', griduuid: grid.uuid, rowuuid: rowuuid})
+    pushTransaction({action: 'delrow', griduuid: grid.uuid, rowuuid: rowuuid})
   }
 
   async function addColumn(grid) {
@@ -83,23 +83,45 @@
     grid.cols.push(col)
     grid.columnSeq += 1
     grid.rows.forEach((row) => row.data.push(''))
-    pushTransaction(null, {action: 'addcol', griduuid: grid.uuid, col: col})
+    pushTransaction({action: 'addcol', griduuid: grid.uuid, col: col})
   }
 
   async function removeColumn(grid, coluuid) {
     const colindex = grid.cols.findIndex((col) => col.uuid === coluuid)
     grid.cols.splice(colindex, 1)
     grid.rows.forEach((row) => row.data.splice(colindex, 1))
-    pushTransaction(null, {action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
+    pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
   async function changeCell(grid, rowuuid, coluuid, value) {
-    pushTransaction(null, 
-                    {action: 'chgcell',
+    pushTransaction({action: 'chgcell',
                      griduuid: grid.uuid,
                      rowuuid: rowuuid,
                      coluuid: coluuid,
                      value: value})
+  }
+
+  async function logout() {
+    pushTransaction({action: ActionLogout})
+    localStorage.removeItem(`access_token_${dbname}`)
+    loginId = ""
+    loginPassword = ""
+    loggedIn = false
+  }
+
+  async function authentication() {
+    postMessage(
+      true,
+      {
+        messageKey: newUuid(),
+        headers: [
+          {'key': 'from', 'value': url},
+          {'key': 'initiatedOn', 'value': (new Date).toISOString()}
+        ],
+        message: JSON.stringify({action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
+        selectedPartitions: []
+      }
+    )
   }
 
   function changeFocus(grid, i, j) { focus = {grid: grid, i: i, j: j} }
@@ -108,30 +130,34 @@
   
   const coltypesGrid = findGrid('coltypes')
 
-  function pushTransaction(element, payload) {
-    const messageId = newUuid()
-    postMessage({
-      messageKey: messageId,
-      headers: [
-        {'key': 'from', 'value': url},
-        {'key': 'initiatedOn', 'value': (new Date).toISOString()}
-      ],
-      message: JSON.stringify(payload),
-      selectedPartitions: []
-    })
-    if(element !== null) {
-      element.setAttribute("messageId", messageId)
-    }
+  function pushTransaction(payload) {
+    postMessage(
+      false,
+      {
+        messageKey: newUuid(),
+        headers: [
+          {'key': 'from', 'value': url},
+          {'key': 'initiatedOn', 'value': (new Date).toISOString()}
+        ],
+        message: JSON.stringify(payload),
+        selectedPartitions: []
+      }
+    )
   }
 
-	async function postMessage(request: KafkaMessageRequest): Promise<void> {
+	async function postMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
 		isSending = true
-    const uri = "/kafka/pushMessage/" + dbname
-    checkToken()
+    const uri = authMessage ? "/authentication/" + dbname : "/pushMessage/" + dbname
+    if(!authMessage) {
+      if(!checkToken()) {
+        messageStatus = "Not authorized to send message"
+        return
+      }
+    }
     console.log(`[Send] to ${uri}`, request)
     requests.push(request)
 		messageStatus = 'Sending'
-		const response = await fetch("/kafka/pushMessage/" + dbname, {
+		const response = await fetch(uri, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
@@ -141,27 +167,28 @@
 		})
 		const data: KafkaMessageResponse = await response.json()
 		isSending = false
-		if (!response.ok) {
-			messageStatus = data.error || 'Failed to send message'
-		} else {
-			messageStatus = data.message
-		}
+		if (!response.ok) messageStatus = data.error || 'Failed to send message'
+		else messageStatus = data.message
 	}
 
   function checkToken(): boolean {
     token = localStorage.getItem(`access_token_${dbname}`)
     if(token !== null && token !== undefined) {
-      const arrayToken = token.split('.')
-      const tokenPayload = JSON.parse(atob(arrayToken[1]))
-      const now = (new Date).toISOString()
-      const nowDate = Date.parse(now)
-      const tokenExpirationDate = Date.parse(tokenPayload.expires)
-      if(nowDate < tokenExpirationDate) {
-        loggedIn = true
-        userUuid = tokenPayload.userUuid
-        userFirstName = tokenPayload.userFirstName
-        userLastName = tokenPayload.userLastName
-        return true
+      try {
+        const arrayToken = token.split('.')
+        const tokenPayload = JSON.parse(atob(arrayToken[1]))
+        const now = (new Date).toISOString()
+        const nowDate = Date.parse(now)
+        const tokenExpirationDate = Date.parse(tokenPayload.expires)
+        if(nowDate < tokenExpirationDate) {
+          loggedIn = true
+          userUuid = tokenPayload.userUuid
+          userFirstName = tokenPayload.userFirstName
+          userLastName = tokenPayload.userLastName
+          return true
+        }
+      } catch (error) {
+        console.error(`Error checking token:`, error)
       }
     }
     loggedIn = false
@@ -172,7 +199,7 @@
   }
 
   async function getStream() {
-    const uri = "/kafka/pullMessages/" + dbname
+    const uri = "/pullMessages/" + dbname
     const ac = new AbortController()
     const signal = ac.signal
     if(!isStreaming) {
@@ -204,7 +231,7 @@
           responses.push(message)
           if(message.action == ActionAuthentication) {
             if(message.status == SuccessStatus) {
-              console.log(`Logged in: ${message.firstname} ${message.lastname} ${message.jwt}`)
+              console.log(`Logged in: ${message.firstname} ${message.lastname}`)
               loggedIn = true
               localStorage.setItem(`access_token_${dbname}`, message.jwt)
             } else {
@@ -223,21 +250,9 @@
           return reader.read().then(processText)
         })
       } catch (error) {
-        console.error(`Streaming from ${uri} stopped with error:`, error)
+        console.log(`Streaming from ${uri} stopped`)
       }
     }
-  }
-
-  async function authentication() {
-    pushTransaction(null, {action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)})
-  }
-
-  async function logout() {
-    pushTransaction(null, {action: ActionLogout})
-    localStorage.removeItem(`access_token_${dbname}`)
-    loginId = ""
-    loginPassword = ""
-    loggedIn = false
   }
 
 </script>
@@ -248,7 +263,7 @@
 <div class="layout">
   <main>
     {#if loggedIn}
-      {userUuid} ; {userFirstName} ; {userLastName}
+      {userUuid} ; {userFirstName} ; {userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
         {#each grids as grid}
           {#key grid.uuid}
@@ -315,7 +330,6 @@
           {/key}
         {/each}
         <button onclick={() => newGrid()}>New Grid</button>
-        <button onclick={() => logout()}>Log out</button>
       </ul>	
     {:else}
       <form>
