@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
+	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
 )
@@ -18,13 +19,17 @@ type requestContent struct {
 	Action   string `json:"action"`
 	GridUuid string `json:"griduuid,omitempty"`
 	RowUuid  string `json:"rowuuid,omitempty"`
+	Dbname   string `json:"dbname,omitempty"`
+	Userid   string `json:"userid,omitempty"`
+	Password string `json:"password,omitempty"`
 }
 
 type responseContent struct {
-	Status   string `json:"status"`
-	Action   string `json:"action"`
-	GridUuid string `json:"griduuid,omitempty"`
-	RowUuid  string `json:"rowuuid,omitempty"`
+	Status       string `json:"status"`
+	Action       string `json:"action"`
+	GridUuid     string `json:"griduuid,omitempty"`
+	RowUuid      string `json:"rowuuid,omitempty"`
+	ErrorMessage string `json:"errormessage,omitempty"`
 }
 
 func SetAndStartKafkaReader() {
@@ -67,13 +72,36 @@ func SetAndStartKafkaReader() {
 				continue
 			}
 
-			configuration.Log("", "", "content: %s", content)
+			var response responseContent
+			if content.Action == "login" {
+				configuration.Log("", "", "try to login %s, %s, %s", content.Dbname, content.Userid, content.Password)
+				userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(context.Background(), content.Dbname, content.Userid, content.Password)
+				configuration.Log("", "", " %s, %s, %s", userUuid, firstName, lastName)
+				if err != nil || userUuid == "" {
+					if timeOut {
+						response = responseContent{
+							Status:       "KO",
+							ErrorMessage: "Timeout",
+						}
 
-			response := responseContent{
-				Status:   "OK",
-				Action:   content.Action,
-				GridUuid: content.GridUuid,
-				RowUuid:  content.RowUuid,
+					} else {
+						response = responseContent{
+							Status:       "KO",
+							ErrorMessage: "Invalid username or passphrase",
+						}
+					}
+				} else {
+					response = responseContent{
+						Status: "OK",
+					}
+				}
+			} else {
+				response = responseContent{
+					Status:   "OK",
+					Action:   content.Action,
+					GridUuid: content.GridUuid,
+					RowUuid:  content.RowUuid,
+				}
 			}
 
 			responseEncoded, err := json.Marshal(response)
@@ -81,7 +109,6 @@ func SetAndStartKafkaReader() {
 				configuration.LogError("", "", "error marshal response:", err)
 				continue
 			}
-
 			WriteMessage(m.Key, initiatedOn, responseEncoded)
 		}
 	}

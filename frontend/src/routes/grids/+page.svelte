@@ -175,7 +175,7 @@
 
   async function logIn() {
     console.log('logIn()')
-    pushTransaction({action: 'login', dbName: loginDbName, id: loginId, password: btoa(loginPassword)})
+    pushTransaction({action: 'login', dbname: loginDbName, userid: loginId, password: btoa(loginPassword)})
   }
 
 </script>
