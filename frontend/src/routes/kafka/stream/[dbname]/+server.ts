@@ -1,25 +1,25 @@
 import { env } from "$env/dynamic/private";
 import { kafka } from '$lib/kafka';
-import { newUuid } from "$lib/utils.svelte"
 
-export async function GET() {
-  const topic = env.TOPIC_PREFIX + '-master-responses'
+export const GET = async ({ params, request, url, cookies }) => {
+  
+  const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-responses"
   const ac = new AbortController()
   const groupId = env.KAFKA_GROUP_ID
-  console.log(`GET Kafak stream: Start stream using groupId ${groupId}`)
+  console.log(`GET Kafak stream: Create Kafka consumer using groupId ${groupId}`)
+  const consumer = kafka.consumer({
+    groupId: groupId,
+    minBytes: 20,
+    maxBytes: 1024,
+    maxWaitTimeInMs: 10,
+    maxInFlightRequests: 50,
+    retry: {
+      retries: 5
+    }
+  })
+  console.log(`GET Kafak stream: Start stream`)
   const stream = new ReadableStream({
     start(controller) {
-      const consumer = kafka.consumer({
-        groupId: groupId,
-        minBytes: 20,
-        maxBytes: 1024,
-        maxWaitTimeInMs: 10,
-        maxInFlightRequests: 50,
-        retry: {
-          retries: 5
-        }
-      })
-
       try {
         console.log("GET Kafak stream: Connect Kafka consumer")
         consumer.connect()
@@ -55,8 +55,6 @@ export async function GET() {
       consumer.stop()
       console.log("GET Kafak stream: Disconnect Kafka consumer")
       consumer.disconnect()
-      console.log("GET Kafak stream: Cancel stream")
-      stream.cancel()
       console.log("GET Kafak stream: Abort")
       ac.abort()
     },

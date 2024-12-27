@@ -6,7 +6,7 @@
   import { onMount } from 'svelte';
   import { onDestroy } from 'svelte';
   import Info from './Info.svelte';
-
+  
   let { data }: { data: PageData } = $props();
   
   const grids = $state(seedData)
@@ -17,6 +17,10 @@
   let stopStreaming = $state(false)
   const streams = $state([])
   let reader = $state()
+
+  let loginDbName = $state("")
+  let loginId = $state("")
+  let loginPassword = $state("")
 
   onMount(() => {
     getStream()
@@ -111,13 +115,13 @@
 		isSending = true;
     console.log("[Send]", messageRequest)
 		messageStatus = 'Sending...';
-		const response = await fetch('/kafka/api', {
+		const response = await fetch('/kafka/api/master', {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json'
 			},
 			body: JSON.stringify(messageRequest)
-		});
+		})
 		const data: KafkaMessageResponse = await response.json();
 		isSending = false;
 
@@ -129,7 +133,7 @@
 	}
 
   async function getStream() {
-    const uri = "/kafka/stream"
+    const uri = "/kafka/stream/master"
     const utf16Decoder = new TextDecoder('UTF-16')
     const ac = new AbortController()
     const signal = ac.signal
@@ -165,10 +169,21 @@
     }
   }
 
+  async function logIn() {
+    console.log('logIn()')
+    pushTransaction({action: 'login', dbName: loginDbName, id: loginId, password: btoa(loginPassword)})
+  }
+
 </script>
 
 <div class="layout">
   <main>
+    <form>
+      <label>Database<input bind:value={loginDbName} /></label>
+      <label>Username<input bind:value={loginId} /></label>
+      <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
+      <button type="submit" onclick={() => logIn()}>Log in</button>
+    </form>
     <div>sending:{isSending} {messageStatus} streaming:{isStreaming}</div>
     <ul>
       {#each grids as grid}

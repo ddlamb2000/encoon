@@ -6,7 +6,10 @@ import { env } from '$env/dynamic/private';
 import { kafka } from '$lib/kafka';
 import type { UserTextMessage } from '$lib/server';
 
-export const POST: RequestHandler = async ({ request }) => {
+export const POST: RequestHandler = async ({ params, request, url, cookies }) => {
+
+	console.log("params", params)
+	console.log("params.dbname", params.dbname)
 
 	const producer = kafka.producer({
 		maxInFlightRequests: 50,
@@ -23,7 +26,7 @@ export const POST: RequestHandler = async ({ request }) => {
 		return json({ error: 'Failed to connect to Kafka.' } as KafkaMessageResponse, { status: 500 });
 	}
 
-	const topic = env.TOPIC_PREFIX + '-master-requests'
+	const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-requests"
 
 	try {
 		const data: KafkaMessageRequest = await request.json();
