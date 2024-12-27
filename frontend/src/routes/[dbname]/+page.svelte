@@ -188,7 +188,6 @@
 </svelte:head>
 <div class="layout">
   <main>
-    <h1>{data.dbname}</h1>
     <form>
       <label>Username<input bind:value={loginId} /></label>
       <label>Passphrase<input bind:value={loginPassword} type="password" /></label>

@@ -14,18 +14,25 @@ import (
 )
 
 func authentication(dbName string, action string, content requestContent) responseContent {
-	configuration.Log(dbName, "*", "try to login %s, %s", content.Userid, content.Password)
+	if dbName == "" || content.Userid == "" || content.Password == "" {
+		return responseContent{
+			Status:      FailedStatus,
+			Action:      action,
+			TextMessage: "Authentication: missing username or passphrase",
+		}
+	}
+	configuration.Log(dbName, "*", "Authentication: %s try to login", content.Userid)
 	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(context.Background(), dbName, content.Userid, content.Password)
-	configuration.Log(dbName, "*", " %s, %s, %s", userUuid, firstName, lastName)
 	if err != nil || userUuid == "" {
 		if timeOut {
+			configuration.LogError(dbName, "*", "Authentication: time out ", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      action,
-				TextMessage: "Authentication: timed out " + err.Error(),
+				TextMessage: "Authentication: time out " + err.Error(),
 			}
-
 		} else {
+			configuration.LogError(dbName, "*", "Authentication: failed ", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      action,
@@ -36,6 +43,7 @@ func authentication(dbName string, action string, content requestContent) respon
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, err := getNewToken(dbName, content.Userid, userUuid, firstName, lastName, expiration)
 	if err != nil {
+		configuration.LogError(dbName, "*", "Authentication: creation of JWT failed ", err)
 		return responseContent{
 			Status:      FailedStatus,
 			Action:      action,
