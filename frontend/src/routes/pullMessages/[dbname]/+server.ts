@@ -8,22 +8,22 @@ export const GET = async ({ params, request, url, cookies }) => {
   const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
   cookies.set('topic', topic, { path: '/' })
   cookies.set('groupId', groupId, { path: '/' })
-  console.log(`GET Kafak stream: Create Kafka consumer using groupId ${groupId}`)
+  console.log(`GET ${url}: Create Kafka consumer using groupId ${groupId}`)
   const consumer = kafka.consumer({
     groupId: groupId,
     minBytes: 20,
-    maxBytes: 1024,
-    maxWaitTimeInMs: 10,
+    maxBytes: 10240,
+    maxWaitTimeInMs: 100,
     maxInFlightRequests: 50,
     retry: {
       retries: 5
     }
   })
-  console.log(`GET Kafak stream: Start stream`)
+  console.log(`GET stream: Start stream`)
   const stream = new ReadableStream({
     start(controller) {
       try {
-        console.log(`GET Kafak stream: Subscribe Kafka consumer to ${topic}`)
+        console.log(`GET ${url}: Subscribe Kafka consumer to ${topic}`)
         consumer.connect()
         consumer.subscribe({ topics: [topic] })
         consumer.run({
@@ -51,7 +51,7 @@ export const GET = async ({ params, request, url, cookies }) => {
                       key: message.key.toString(),
                       value: message.value.toString()
                     }
-                    console.log("GET Kafak stream: Received from Kafka", received)
+                    console.log("GET ${url}: Received from Kafka", received)
                     controller.enqueue(JSON.stringify(received))
                   }
                   resolveOffset(message.offset)
@@ -60,7 +60,7 @@ export const GET = async ({ params, request, url, cookies }) => {
             },
         })
       } catch (error) {
-        console.error(`GET Kafak stream: Error subscribe to Kafka:`, error)
+        console.error(`GET ${url}: Error subscribe to Kafka:`, error)
         return new Response(JSON.stringify({ error }), {
           headers: { 'Content-Type': 'text/event-stream' },
           status: 500
@@ -68,7 +68,7 @@ export const GET = async ({ params, request, url, cookies }) => {
       }
     },
     cancel() {
-      console.log("GET Kafak stream: Abort")
+      console.log("GET ${url}: Abort")
       consumer.stop()
       consumer.disconnect()
       ac.abort()

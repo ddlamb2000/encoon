@@ -1,7 +1,10 @@
 <script lang="ts">
-	import { page } from '$app/stores';
-	import logo from '$lib/images/svelte-logo.svg';
-	import github from '$lib/images/github.svg';
+	import { page } from '$app/stores'
+	import logo from '$lib/images/svelte-logo.svg'
+	import github from '$lib/images/github.svg'
+	import { UuidGrids } from "$lib/metadata.svelte"
+
+	const dbs = ['master', 'test', 'sandbox']
 </script>
 
 <header>
@@ -19,12 +22,11 @@
 			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
 				<a href="/">Home</a>
 			</li>
-			<li aria-current={$page.url.pathname === '/master' ? 'page' : undefined}>
-				<a href="/master">Encoon POC (master)</a>
-			</li>
-			<li aria-current={$page.url.pathname === '/test' ? 'page' : undefined}>
-				<a href="/test">Encoon (test)</a>
-			</li>
+			{#each dbs as dbname}
+				<li aria-current={$page.url.pathname.startsWith('/' + dbname) ? 'page' : undefined}>
+					<a href={"/" + dbname + "/" + UuidGrids}>{dbname}</a>
+				</li>
+			{/each}
 			<li aria-current={$page.url.pathname === '/about' ? 'page' : undefined}>
 				<a href="/about">About</a>
 			</li>

@@ -2,7 +2,8 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url, params }) => {
   return {
-    dbname: params.dbname,
+    dbName: params.dbName,
+    gridUuid: params.gridUuid,
     url: url.toString()
   }
 }

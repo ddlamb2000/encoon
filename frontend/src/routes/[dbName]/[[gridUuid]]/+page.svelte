@@ -1,7 +1,7 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
-  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, UuidGrids } from "$lib/metadata.svelte"
+  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -9,7 +9,8 @@
   
   let { data }: { data: PageData } = $props()
 
-  const dbname = data.dbname
+  const dbName = data.dbName
+  const gridUuid = data.gridUuid
   const url = data.url
   const grids = $state(seedData)
   let focus = $state({grid: null, i: -1, j: -1})
@@ -32,7 +33,7 @@
 
   onMount(() => {
     getStream()
-    pushTransaction({action: ActionGetGrid, griduuid: UuidGrids})
+    pushTransaction({action: ActionGetGrid, griduuid: gridUuid})
   })
 
   onDestroy(() => {
@@ -104,7 +105,7 @@
 
   async function logout() {
     pushTransaction({action: ActionLogout})
-    localStorage.removeItem(`access_token_${dbname}`)
+    localStorage.removeItem(`access_token_${dbName}`)
     loginId = ""
     loginPassword = ""
     loggedIn = false
@@ -152,7 +153,7 @@
 
 	async function postMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
 		isSending = true
-    const uri = authMessage ? "/authentication/" + dbname : "/pushMessage/" + dbname
+    const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
       if(!checkToken()) {
         messageStatus = "Not authorized to send message"
@@ -177,7 +178,7 @@
 	}
 
   function checkToken(): boolean {
-    token = localStorage.getItem(`access_token_${dbname}`)
+    token = localStorage.getItem(`access_token_${dbName}`)
     if(token !== null && token !== undefined) {
       try {
         const arrayToken = token.split('.')
@@ -204,7 +205,7 @@
   }
 
   async function getStream() {
-    const uri = "/pullMessages/" + dbname
+    const uri = "/pullMessages/" + dbName
     const ac = new AbortController()
     const signal = ac.signal
     if(!isStreaming) {
@@ -243,15 +244,15 @@
             if(message.status == SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname}`)
               loggedIn = true
-              localStorage.setItem(`access_token_${dbname}`, message.jwt)
+              localStorage.setItem(`access_token_${dbName}`, message.jwt)
             } else {
-              localStorage.removeItem(`access_token_${dbname}`)
+              localStorage.removeItem(`access_token_${dbName}`)
               loginPassword = ""
               loggedIn = false
-              token = null
+              token = ""
             }
           } if(message.action == ActionLogout) {
-            localStorage.removeItem(`access_token_${dbname}`)
+            localStorage.removeItem(`access_token_${dbName}`)
             loginPassword = ""
             loggedIn = false
           } else {
@@ -268,11 +269,11 @@
 </script>
 
 <svelte:head>
-	<title>εncooη - {data.dbname}</title>
+	<title>εncooη - {data.dbName}</title>
 </svelte:head>
 <div class="layout">
   <main>
-    <h1>{dbname}</h1>
+    <h1>{dbName}</h1>
     {#if loggedIn}
       {userUuid} ; {userFirstName} ; {userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
