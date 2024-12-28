@@ -23,8 +23,7 @@
   let userFirstName = $state("")
   let userLastName = $state("")
   
-  const requests = $state([])
-  const responses = $state([])
+  const messageStack = $state([{}])
   
   let reader = $state()
 
@@ -161,7 +160,7 @@
       }
     }
     console.log(`[Send] to ${uri}`, request)
-    requests.push(request)
+    messageStack.push({'request' : request})
 		messageStatus = 'Sending'
 		const response = await fetch(uri, {
 			method: 'POST',
@@ -234,7 +233,12 @@
           const initiatedOnDate = Date.parse(initiatedOn)
           const elapsedMs = nowDate - initiatedOnDate
           console.log(`[Received] from ${uri} (${elapsedMs} ms)topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
-          responses.push(message)
+          messageStack.push({
+            'response' : {
+              'messageKey': json.key,
+              'message': json.value
+            }
+          })
           if(message.action == ActionAuthentication) {
             if(message.status == SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname}`)
@@ -346,7 +350,7 @@
       </form>
     {/if}
   </main>
-  <Info focus={focus} responses={responses} requests={requests} isSending={isSending} messageStatus={messageStatus} isStreaming={isStreaming}/>
+  <Info focus={focus} messageStack={messageStack} isSending={isSending} messageStatus={messageStatus} isStreaming={isStreaming}/>
 </div>
 
 <style>

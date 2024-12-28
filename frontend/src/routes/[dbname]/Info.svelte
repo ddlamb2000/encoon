@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { focus, requests, responses, isSending, messageStatus, isStreaming } = $props()
+  let { focus, messageStack, isSending, messageStatus, isStreaming } = $props()
 </script>
 <aside>
   <div>
@@ -21,18 +21,26 @@
       <li>Content: {focus.grid.rows[focus.i].data[focus.j]}</li>
     </ul>
   {/if}
-  {#each requests as request}
-    <p>Request {request.messageKey}</p>
-  {/each}
-  {#each responses as response}
-    <p>
-      Response {response.action}:
-      {response.status}
-      {response.textmessage}
-      {response.griduuid}
-      {response.uuid}
-      {response.firstname}
-      {response.lastname}
-    </p>
-  {/each}
+  <ul>
+    {#each messageStack as message}
+      {#if message.request}
+        <li class="request">
+          → {message.request.messageKey} {message.request.message.substring(0, 200)}
+        </li>
+      {/if}
+      {#if message.response}
+        <li>
+          ← {message.response.messageKey} {message.response.message.substring(0, 200)}
+        </li>
+      {/if}
+    {/each}
+  </ul>
 </aside>
+<style>
+  li {
+    list-style: none;
+    font-size: small;
+  }
+
+  .request { color: gray; }
+</style>

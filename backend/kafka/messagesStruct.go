@@ -32,5 +32,5 @@ const (
 	FailedStatus  = "FAILED"
 
 	ActionAuthentication = "AUTHENTICATION"
-	ActionGetGrid        = "GETGRID"
+	ActionGetGrid        = "LOAD"
 )
