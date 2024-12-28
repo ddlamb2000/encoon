@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { getCellValue } from "$lib/utils.svelte"
   let { focus, messageStack, isSending, messageStatus, isStreaming } = $props()
 </script>
 <aside>
@@ -6,19 +7,14 @@
     <p>{#if isStreaming}Streaming messages{/if}</p>
     <p>{#if isSending}Sending message{/if} {#if messageStatus}{messageStatus}{/if}</p>
   </div>
-  {#if focus.grid !== null}
+  {#if focus.grid}
     <ul>
-      <li>Grid: {focus.grid.title}</li>
-      <li>i: {focus.i}</li>
-      <li>j: {focus.j}</li>
-      <li>Columns
-        <ul>
-          {#each focus.grid.cols as col}
-            <li>{col.title}</li>
-          {/each}
-        </ul>
-      </li>
-      <li>Content: {focus.grid.rows[focus.i].data[focus.j]}</li>
+      <li>Grid: {focus.grid.text1} ({focus.grid.uuid})</li>
+      <li>Column: {focus.column.label} ({focus.column.type}) ({focus.column.uuid})</li>
+      <li>Row: {focus.row.displayString} ({focus.row.uuid})</li>
+      <li>Value: {getCellValue(focus.row, focus.column)}</li>
+      <li>Created on {focus.row.created}</li>
+      <li>Updated on {focus.row.updated}</li>
     </ul>
   {/if}
   <ul>

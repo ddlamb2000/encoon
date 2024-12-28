@@ -1,6 +1,6 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
-  import { newUuid, numberToLetters } from "$lib/utils.svelte"
+  import { newUuid, numberToLetters, getCellValue } from "$lib/utils.svelte"
   import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
@@ -14,8 +14,7 @@
   const url = data.url
   const grids = $state(seedData)
   const dataSet = $state([{}])
-  $inspect(dataSet)
-  let focus = $state({grid: null, i: -1, j: -1})
+  let focus = $state({})
   let isSending = $state(false)
 	let messageStatus = $state('');
   let isStreaming = $state(false)
@@ -128,7 +127,13 @@
     )
   }
 
-  function changeFocus(grid, i, j) { focus = {grid: grid, i: i, j: j} }
+  function changeFocus(grid, row, column) { 
+    focus = {grid: grid, row: row, column: column}
+    pushTransaction({action: 'focus',
+                     gridUuid: grid.uuid,
+                     rowUuid: row.uuid,
+                     columnUuid: column.uuid})
+  }
 
   function findGrid(uuid) { return grids.find((grid) => grid.uuid === uuid) }
   
@@ -277,10 +282,6 @@
     }
   }
 
-  function getCellValue(row, column) {
-    return row[column.name]
-  }
-
 </script>
 
 <svelte:head>
@@ -321,10 +322,14 @@
                           <button onclick={() => addRow(grid)}>+</button>
                         </td>
                         {#each set.grid.columns as column, j}
-                          <td class="cell" contenteditable
+                          <td
                               oninput={() => changeCell(set.grid, row.uuid, set.grid.cols[j].uuid, set.grid.rows[i].data[j])}
-                              onfocus={() => changeFocus(set.grid, i, j)}
-                          >
+                              onfocus={() => changeFocus(set.grid, row, column)}
+                              class={
+                                (focus.grid && focus.grid.uuid === set.grid.uuid
+                                && focus.row.uuid === row.uuid && focus.column.uuid === column.uuid) 
+                                ? 'focus' : 'cell'}  
+                              contenteditable>
                             {getCellValue(row, column)}
                           </td>
                         {/each}
@@ -337,7 +342,7 @@
             {/key}
           {/if}
         {/each}
-        {#each grids as grid}
+        <!-- {#each grids as grid}
           {#key grid.uuid}
             <li>
               <h2>{grid.title}</h2>
@@ -400,7 +405,7 @@
               {grid.rows.length} rows in total
             </li>
           {/key}
-        {/each}
+        {/each} -->
         <button onclick={() => newGrid()}>New Grid</button>
       </ul>	
     {:else}

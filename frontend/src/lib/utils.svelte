@@ -9,4 +9,9 @@
     }
     return letters
   }
+
+  export function getCellValue(row, column) {
+    return row[column.name]
+  }
+
 </script>
