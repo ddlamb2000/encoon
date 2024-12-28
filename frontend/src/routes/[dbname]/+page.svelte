@@ -1,6 +1,7 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
-  import { newUuid, numberToLetters, ActionAuthentication, ActionLogout, SuccessStatus } from "$lib/utils.svelte"
+  import { newUuid, numberToLetters } from "$lib/utils.svelte"
+  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, UuidGrids } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -32,7 +33,8 @@
 
   onMount(() => {
     getStream()
-	})
+    pushTransaction({action: ActionGetGrid, griduuid: UuidGrids})
+  })
 
   onDestroy(() => {
     stopStreaming = true
@@ -70,12 +72,12 @@
     const data = []
     grid.cols.forEach(() => data.push(''))
     grid.rows.push({uuid: uuid, data: data, filtered: true})
-    pushTransaction({action: 'addrow', griduuid: grid.uuid, rowuuid: uuid})
+    pushTransaction({action: 'addrow', griduuid: grid.uuid, uuid: uuid})
   }
 
-  async function removeRow(grid, rowuuid) {
-    grid.rows = grid.rows.filter((t) => t.uuid !== rowuuid)
-    pushTransaction({action: 'delrow', griduuid: grid.uuid, rowuuid: rowuuid})
+  async function removeRow(grid, uuid) {
+    grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
+    pushTransaction({action: 'delrow', griduuid: grid.uuid, uuid: uuid})
   }
 
   async function addColumn(grid) {
@@ -93,10 +95,10 @@
     pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
-  async function changeCell(grid, rowuuid, coluuid, value) {
+  async function changeCell(grid, uuid, coluuid, value) {
     pushTransaction({action: 'chgcell',
                      griduuid: grid.uuid,
-                     rowuuid: rowuuid,
+                     uuid: uuid,
                      coluuid: coluuid,
                      value: value})
   }
@@ -266,13 +268,14 @@
 </svelte:head>
 <div class="layout">
   <main>
+    <h1>{dbname}</h1>
     {#if loggedIn}
       {userUuid} ; {userFirstName} ; {userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
         {#each grids as grid}
           {#key grid.uuid}
             <li>
-              <h1>{grid.title}</h1>
+              <h2>{grid.title}</h2>
               Filter: 
               <span
                 bind:innerHTML={grid.search}
@@ -343,7 +346,7 @@
       </form>
     {/if}
   </main>
-  <Info focus={focus} data={data} responses={responses} requests={requests} isSending={isSending} messageStatus={messageStatus} isStreaming={isStreaming}/>
+  <Info focus={focus} responses={responses} requests={requests} isSending={isSending} messageStatus={messageStatus} isStreaming={isStreaming}/>
 </div>
 
 <style>
@@ -355,28 +358,19 @@
     }
   }
 
-  table, th, td {
-    border-collapse: collapse;
-  }
-  
-  li {
-    list-style: none;
-  }
+  table, th, td { border-collapse: collapse; }  
+  li { list-style: none; }
   
   div {
     position: relative;
     display: inline-block;
   }
 
-  .header {
-    border: 1px dotted gray;
-  }
+  .header { border: 1px dotted gray; }
+  .cell { border: 0.5px dotted gray; }
   
-  .cell {
-    border: 0.5px dotted gray;
-  }
-
   .focus {
-    border: 0.5px solid;
+    border: 0.5px solid; 
+    background-color: lightyellow;
   }
 </style>

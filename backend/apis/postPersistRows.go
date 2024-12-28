@@ -10,9 +10,9 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-type persistGridRowDataFunc func(apiRequest, *model.Grid, *model.Row) error
+type persistGridRowDataFunc func(ApiRequest, *model.Grid, *model.Row) error
 
-func persistGridRowData(r apiRequest, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
+func persistGridRowData(r ApiRequest, grid *model.Grid, rows []*model.Row, f persistGridRowDataFunc) error {
 	for _, row := range rows {
 		row.GridUuid = grid.Uuid
 		err := f(r, grid, row)
@@ -23,10 +23,10 @@ func persistGridRowData(r apiRequest, grid *model.Grid, rows []*model.Row, f per
 	return nil
 }
 
-func postInsertGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
+func postInsertGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 	_, _, canAddRows, _ := grid.GetViewEditAccessFlags(r.p.userUuid)
 	if !canAddRows {
-		r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to create rows.")
 	}
 	row.TmpUuid = row.Uuid
@@ -134,13 +134,13 @@ func appendRowParameter(output []any, row *model.Row, attributeName string) []an
 	return output
 }
 
-func postUpdateGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
+func postUpdateGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before update: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
-		r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getUpdateStatementForGridsApi(grid)
@@ -157,7 +157,7 @@ func postUpdateGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
 }
 
 // function is available for mocking
-var removeAssociatedGridFromCache = func(r apiRequest, grid *model.Grid, uuid string) error {
+var removeAssociatedGridFromCache = func(r ApiRequest, grid *model.Grid, uuid string) error {
 	r.trace("removeAssociatedGridFromCache(%s, %v)", grid, uuid)
 	if grid.Uuid == model.UuidGrids {
 		r.trace("removeAssociatedGridFromCache() - Grid")
@@ -185,12 +185,12 @@ var removeAssociatedGridFromCache = func(r apiRequest, grid *model.Grid, uuid st
 }
 
 // function is available for mocking
-var removeAssociatedGridNotOwnedColumnFromCache = func(r apiRequest, grid *model.Grid, uuid string) error {
+var removeAssociatedGridNotOwnedColumnFromCache = func(r ApiRequest, grid *model.Grid, uuid string) error {
 	return removeAssociatedGridFromCache(r, grid, uuid)
 }
 
 // function is available for mocking
-var getGridUuidAttachedToColumnForCache = func(r apiRequest, uuid string) (string, error) {
+var getGridUuidAttachedToColumnForCache = func(r ApiRequest, uuid string) (string, error) {
 	return getGridUuidAttachedToColumn(r, uuid)
 }
 
@@ -227,13 +227,13 @@ func getUpdateValuesForGridsApi(userUuid string, grid *model.Grid, row *model.Ro
 	return values
 }
 
-func postDeleteGridRow(r apiRequest, grid *model.Grid, row *model.Row) error {
+func postDeleteGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 	rows, rowCount, err := getRowSetForGridsApi(r, grid, row.Uuid, false, true)
 	if err != nil || rowCount != 1 {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before delete: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
-		r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getDeleteGridReferencedRowQuery(grid)

@@ -238,7 +238,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 
 	t.Run("User01CreateAnotherColumnsWithDefaultFor6thGridDefect3", func(t *testing.T) {
 		getGridInstanceWithColumnsForGridsApiImpl := getGridInstanceWithColumnsForGridsApi
-		getGridInstanceWithColumnsForGridsApi = func(apiRequest, string) (*model.Grid, error) { return nil, errors.New("xxx") }
+		getGridInstanceWithColumnsForGridsApi = func(ApiRequest, string) (*model.Grid, error) { return nil, errors.New("xxx") }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
 
@@ -261,7 +261,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 
 	t.Run("User01CreateAnotherColumnsWithDefaultFor6thGridDefect4", func(t *testing.T) {
 		getGridUuidAttachedToColumnToUpdateWithColumnDefaultsImpl := getGridUuidAttachedToColumnToUpdateWithColumnDefaults
-		getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(apiRequest, string) (string, error) { return "", errors.New("xxx") }
+		getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(ApiRequest, string) (string, error) { return "", errors.New("xxx") }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
 

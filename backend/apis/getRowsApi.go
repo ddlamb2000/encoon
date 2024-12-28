@@ -11,40 +11,40 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getGridsRows(ct context.Context, uri string, p htmlParameters) apiResponse {
+func GetGridsRows(ct context.Context, uri string, p HtmlParameters) ApiResponse {
 	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
 	t := r.startTiming()
 	defer r.stopTiming("getGridsRows()", t)
 	if err != nil {
-		return apiResponse{Err: err}
+		return ApiResponse{Err: err}
 	}
 	go func() {
 		r.trace("getGridsRows()")
-		database.Sleep(r.ctx, p.dbName, p.userName, r.db)
-		grid, err := getGridForGridsApi(r, p.gridUuid)
+		database.Sleep(r.ctx, p.DbName, p.userName, r.db)
+		grid, err := getGridForGridsApi(r, p.GridUuid)
 		if err != nil {
-			r.ctxChan <- apiResponse{Err: err, System: true}
+			r.ctxChan <- ApiResponse{Err: err, System: true}
 			return
 		} else if grid == nil {
-			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Data not found.")}
+			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
 		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
 		if !canViewRows {
-			r.ctxChan <- apiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
 		}
-		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, p.uuid, true, true)
+		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, p.Uuid, true, true)
 		if err != nil {
-			r.ctxChan <- apiResponse{Err: err, System: true}
+			r.ctxChan <- ApiResponse{Err: err, System: true}
 			return
 		}
-		if p.uuid != "" && rowSetCount == 0 {
-			r.ctxChan <- apiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
+		if p.Uuid != "" && rowSetCount == 0 {
+			r.ctxChan <- ApiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- apiResponse{
+		r.ctxChan <- ApiResponse{
 			Grid:        grid,
 			Rows:        rowSet,
 			CountRows:   rowSetCount,
@@ -57,14 +57,14 @@ func getGridsRows(ct context.Context, uri string, p htmlParameters) apiResponse 
 	select {
 	case <-r.ctx.Done():
 		r.trace("getGridsRows() - Cancelled")
-		return apiResponse{Err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), TimeOut: true}
+		return ApiResponse{Err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), TimeOut: true}
 	case response := <-r.ctxChan:
 		r.trace("getGridsRows() - OK")
 		return response
 	}
 }
 
-func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getReferences bool, enabledOnly bool) ([]model.Row, int, error) {
+func getRowSetForGridsApi(r ApiRequest, grid *model.Grid, uuid string, getReferences bool, enabledOnly bool) ([]model.Row, int, error) {
 	r.trace("getRowSetForGridsApi(%s, %s, %v)", grid, uuid, getReferences)
 	t := r.startTiming()
 	defer r.stopTiming("getRowSetForGridsApi()", t)
@@ -87,7 +87,7 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 		if err != nil {
 			return nil, 0, err
 		}
-		row.SetDisplayString(r.p.dbName)
+		row.SetDisplayString(r.p.DbName)
 		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.DisplayString=%s", grid, uuid, getReferences, row.DisplayString)
 		row.SetViewEditAccessFlags(gridForOwnership, r.p.userUuid)
 		if row.CanViewRow {
@@ -114,7 +114,7 @@ func getRowSetForGridsApi(r apiRequest, grid *model.Grid, uuid string, getRefere
 	return rows, len(rows), nil
 }
 
-func matchesFilterColumn(r apiRequest, references []*model.Reference) bool {
+func matchesFilterColumn(r ApiRequest, references []*model.Reference) bool {
 	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
 		return true
 	}
@@ -132,7 +132,7 @@ func matchesFilterColumn(r apiRequest, references []*model.Reference) bool {
 }
 
 // function is available for mocking
-var getGridForOwnership = func(r apiRequest, grid *model.Grid, row *model.Row) (*model.Grid, error) {
+var getGridForOwnership = func(r ApiRequest, grid *model.Grid, row *model.Row) (*model.Grid, error) {
 	r.trace("getGridForOwnership(%v, %v)", grid, row)
 	if row.GridUuid == model.UuidGrids {
 		return getGridForGridsApi(r, row.Uuid)
@@ -264,7 +264,7 @@ func appendRowAttribute(output []any, row *model.Row, attributeName string) []an
 }
 
 // function is available for mocking
-var getGridUuidAttachedToColumn = func(r apiRequest, uuid string) (string, error) {
+var getGridUuidAttachedToColumn = func(r ApiRequest, uuid string) (string, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridUuidAttachedToColumn()", t)
 	var gridUuuid string
@@ -303,7 +303,7 @@ func getRowsQueryParametersGridUuidAttachedToColumn(uuid string) []any {
 }
 
 // function is available for mocking
-var getGridUuidReferencedByColumn = func(r apiRequest, uuid string) (string, error) {
+var getGridUuidReferencedByColumn = func(r ApiRequest, uuid string) (string, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getGridUuidReferencedByColumn()", t)
 	var gridUuuid string

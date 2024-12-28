@@ -27,16 +27,16 @@ func SetApiRoutes(r *gin.Engine) {
 	}
 }
 
-func getParameters(c *gin.Context) (htmlParameters, error) {
+func getParameters(c *gin.Context) (HtmlParameters, error) {
 	dbName, gridUuid, uuid := c.Param("dbName"), c.Param("gridUuid"), c.Param("uuid")
 	userUuid, userName := c.GetString("userUuid"), c.GetString("user")
 	auth, exists := c.Get("authorized")
-	p := htmlParameters{
-		dbName:   dbName,
+	p := HtmlParameters{
+		DbName:   dbName,
 		userUuid: userUuid,
 		userName: userName,
-		gridUuid: gridUuid,
-		uuid:     uuid,
+		GridUuid: gridUuid,
+		Uuid:     uuid,
 	}
 	if dbName == "" || gridUuid == "" || len(userUuid) != len(model.UuidUsers) || userName == "" || !exists || auth == false {
 		return p, configuration.LogAndReturnError(dbName, userName, "User not authorized.")
@@ -48,56 +48,56 @@ func getParameters(c *gin.Context) (htmlParameters, error) {
 	return p, nil
 }
 
-type htmlParameters struct {
-	dbName               string
+type HtmlParameters struct {
+	DbName               string
 	userUuid             string
 	userName             string
-	gridUuid             string
-	uuid                 string
+	GridUuid             string
+	Uuid                 string
 	filterColumnOwned    bool
 	filterColumnName     string
 	filterColumnGridUuid string
 	filterColumnValue    string
 }
 
-type apiRequest struct {
+type ApiRequest struct {
 	ctx         context.Context
-	p           htmlParameters
+	p           HtmlParameters
 	db          *sql.DB
-	ctxChan     chan apiResponse
+	ctxChan     chan ApiResponse
 	transaction *model.Row
 }
 
-func (r apiRequest) log(format string, a ...any) {
-	configuration.Log(r.p.dbName, r.p.userName, format, a...)
+func (r ApiRequest) log(format string, a ...any) {
+	configuration.Log(r.p.DbName, r.p.userName, format, a...)
 }
 
-func (r apiRequest) trace(format string, a ...any) {
-	configuration.Trace(r.p.dbName, r.p.userName, format, a...)
+func (r ApiRequest) trace(format string, a ...any) {
+	configuration.Trace(r.p.DbName, r.p.userName, format, a...)
 }
 
-func (r apiRequest) startTiming() time.Time {
+func (r ApiRequest) startTiming() time.Time {
 	return configuration.StartTiming()
 }
 
-func (r apiRequest) stopTiming(funcName string, start time.Time) {
-	configuration.StopTiming(r.p.dbName, r.p.userName, funcName, start)
+func (r ApiRequest) stopTiming(funcName string, start time.Time) {
+	configuration.StopTiming(r.p.DbName, r.p.userName, funcName, start)
 }
 
-func (r apiRequest) logAndReturnError(format string, a ...any) error {
-	return configuration.LogAndReturnError(r.p.dbName, r.p.userName, format, a...)
+func (r ApiRequest) logAndReturnError(format string, a ...any) error {
+	return configuration.LogAndReturnError(r.p.DbName, r.p.userName, format, a...)
 }
 
-func (r apiRequest) execContext(query string, args ...any) error {
+func (r ApiRequest) execContext(query string, args ...any) error {
 	_, err := r.db.ExecContext(r.ctx, query, args...)
 	return err
 }
 
-func (r apiRequest) queryContext(query string, args ...any) (*sql.Rows, error) {
+func (r ApiRequest) queryContext(query string, args ...any) (*sql.Rows, error) {
 	return r.db.QueryContext(r.ctx, query, args...)
 }
 
-func (r apiRequest) beginTransaction() error {
+func (r ApiRequest) beginTransaction() error {
 	r.trace("beginTransaction()")
 	if err := r.execContext(getBeginTransactionQuery()); err != nil {
 		return r.logAndReturnError("Begin transaction error: %v.", err)
@@ -111,7 +111,7 @@ var getBeginTransactionQuery = func() string {
 	return "BEGIN"
 }
 
-func (r apiRequest) commitTransaction() error {
+func (r ApiRequest) commitTransaction() error {
 	r.trace("commitTransaction()")
 	if err := r.execContext(getCommitTransactionQuery()); err != nil {
 		return r.logAndReturnError("Commit transaction error: %v.", err)
@@ -125,7 +125,7 @@ var getCommitTransactionQuery = func() string {
 	return "COMMIT"
 }
 
-func (r apiRequest) rollbackTransaction() error {
+func (r ApiRequest) rollbackTransaction() error {
 	r.trace("rollbackTransaction()")
 	if err := r.execContext(getRollbackTransactionQuery()); err != nil {
 		return r.logAndReturnError("Rollback transaction error: %v.", err)
@@ -139,7 +139,7 @@ var getRollbackTransactionQuery = func() string {
 	return "ROLLBACK"
 }
 
-type apiResponse struct {
+type ApiResponse struct {
 	Grid                   *model.Grid         `json:"grid"`
 	CountRows              int                 `json:"countRows"`
 	Rows                   []model.Row         `json:"rows"`
@@ -158,20 +158,20 @@ type apiResponse struct {
 	CanEditGrid            bool                `json:"canEditGrid"`
 }
 
-func createContextAndApiRequest(ct context.Context, p htmlParameters, uri string) (request apiRequest, cancelFunc context.CancelFunc, error error) {
-	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.dbName)
-	db, err := database.GetDbByName(p.dbName)
-	r := apiRequest{
+func createContextAndApiRequest(ct context.Context, p HtmlParameters, uri string) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
+	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.DbName)
+	db, err := database.GetDbByName(p.DbName)
+	r := ApiRequest{
 		ctx:         ctx,
 		p:           p,
 		db:          db,
-		ctxChan:     make(chan apiResponse, 1),
+		ctxChan:     make(chan ApiResponse, 1),
 		transaction: model.GetNewRowWithUuid(),
 	}
 	return r, cancel, err
 }
 
-func getHttpErrorCode(response apiResponse) int {
+func getHttpErrorCode(response ApiResponse) int {
 	switch {
 	case response.System:
 		return http.StatusInternalServerError
@@ -191,7 +191,7 @@ func GetGridsRowsApi(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
-	response := getGridsRows(c.Request.Context(), c.Request.RequestURI, p)
+	response := GetGridsRows(c.Request.Context(), c.Request.RequestURI, p)
 	if response.Err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.Err.Error()})

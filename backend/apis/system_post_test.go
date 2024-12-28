@@ -558,7 +558,7 @@ func RunSystemTestPost(t *testing.T) {
 
 	t.Run("GetSingleGridDefect9", func(t *testing.T) {
 		getGridForOwnershipImpl := getGridForOwnership
-		getGridForOwnership = func(apiRequest, *model.Grid, *model.Row) (*model.Grid, error) {
+		getGridForOwnership = func(ApiRequest, *model.Grid, *model.Row) (*model.Grid, error) {
 			return nil, errors.New("xxx")
 		}
 		var uuidGrid, uuidRow string

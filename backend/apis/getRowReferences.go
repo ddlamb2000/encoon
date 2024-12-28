@@ -7,7 +7,7 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func getRelationshipsForRow(r apiRequest, grid *model.Grid, row *model.Row) ([]*model.Reference, error) {
+func getRelationshipsForRow(r ApiRequest, grid *model.Grid, row *model.Row) ([]*model.Reference, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getRelationshipsForRow()", t)
 	r.trace("getRelationshipsForRow(%s, %s)", grid, row)
@@ -35,7 +35,7 @@ func getRelationshipsForRow(r apiRequest, grid *model.Grid, row *model.Row) ([]*
 	return references, nil
 }
 
-func getReferencedRowsForRow(r apiRequest, parentRow *model.Row, referenceName, referenceColumnUuid string, owned bool) ([]model.Row, error) {
+func getReferencedRowsForRow(r ApiRequest, parentRow *model.Row, referenceName, referenceColumnUuid string, owned bool) ([]model.Row, error) {
 	t := r.startTiming()
 	defer r.stopTiming("getReferencedRowsForRow()", t)
 	query := getQueryReferencedRowsForRow(owned)

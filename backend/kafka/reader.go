@@ -20,11 +20,11 @@ func SetAndStartKafkaReader() {
 	groupID := configuration.GetConfiguration().Kafka.GroupID
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
 		topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbConfig.Name + "-requests"
-		go SetAndStartKafkaReaderForDatabase(dbConfig.Name, kafkaBrokers, groupID, topic)
+		go setAndStartKafkaReaderForDatabase(dbConfig.Name, kafkaBrokers, groupID, topic)
 	}
 }
 
-func SetAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, groupID string, topic string) {
+func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, groupID string, topic string) {
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
@@ -48,10 +48,6 @@ func SetAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 			handleMessage(dbName, message)
 		}
 	}
-
-	if err := consumer.Close(); err != nil {
-		configuration.LogError(dbName, "", "Failed to close reader:", err)
-	}
 }
 
 func handleMessage(dbName string, message kafka.Message) {
@@ -73,7 +69,7 @@ func handleMessage(dbName string, message kafka.Message) {
 	}
 	var response responseContent
 	if content.Action == ActionAuthentication {
-		response = authentication(dbName, content.Action, content)
+		response = authentication(dbName, content)
 	} else {
 		token, err := jwt.Parse(string(tokenString), getTokenParsingHandler(dbName))
 		if token == nil {
@@ -94,11 +90,15 @@ func handleMessage(dbName string, message kafka.Message) {
 			configuration.LogError(dbName, "", "Invalid request: %v.", err)
 			return
 		}
-		response = responseContent{
-			Status:   SuccessStatus,
-			Action:   content.Action,
-			GridUuid: content.GridUuid,
-			RowUuid:  content.RowUuid,
+		if content.Action == ActionGetGrid {
+			response = getGrid(dbName, content)
+		} else {
+			response = responseContent{
+				Status:   FailedStatus,
+				Action:   content.Action,
+				GridUuid: content.GridUuid,
+				Uuid:     content.Uuid,
+			}
 		}
 	}
 

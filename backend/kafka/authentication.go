@@ -13,11 +13,11 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func authentication(dbName string, action string, content requestContent) responseContent {
+func authentication(dbName string, content requestContent) responseContent {
 	if dbName == "" || content.Userid == "" || content.Password == "" {
 		return responseContent{
 			Status:      FailedStatus,
-			Action:      action,
+			Action:      content.Action,
 			TextMessage: "Authentication: missing username or passphrase",
 		}
 	}
@@ -28,14 +28,14 @@ func authentication(dbName string, action string, content requestContent) respon
 			configuration.LogError(dbName, "*", "Authentication: time out ", err)
 			return responseContent{
 				Status:      FailedStatus,
-				Action:      action,
+				Action:      content.Action,
 				TextMessage: "Authentication: time out " + err.Error(),
 			}
 		} else {
 			configuration.LogError(dbName, "*", "Authentication: failed ", err)
 			return responseContent{
 				Status:      FailedStatus,
-				Action:      action,
+				Action:      content.Action,
 				TextMessage: "Authentication: failed " + err.Error(),
 			}
 		}
@@ -46,14 +46,14 @@ func authentication(dbName string, action string, content requestContent) respon
 		configuration.LogError(dbName, "*", "Authentication: creation of JWT failed ", err)
 		return responseContent{
 			Status:      FailedStatus,
-			Action:      action,
+			Action:      content.Action,
 			TextMessage: "Authentication: creation of JWT failed " + err.Error(),
 		}
 	}
 	configuration.Log(dbName, content.Userid, "Connected.")
 	return responseContent{
 		Status:      SuccessStatus,
-		Action:      action,
+		Action:      content.Action,
 		FirstName:   firstName,
 		LastName:    lastName,
 		TextMessage: "User authenticated",

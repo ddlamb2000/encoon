@@ -8,9 +8,9 @@ import (
 	"d.lambert.fr/encoon/utils"
 )
 
-type persistGridReferenceDataFunc func(apiRequest, *model.Grid, []*model.Row, gridReferencePost) error
+type persistGridReferenceDataFunc func(ApiRequest, *model.Grid, []*model.Row, gridReferencePost) error
 
-func persistGridReferenceData(r apiRequest, grid *model.Grid, addedRows []*model.Row, refs []gridReferencePost, f persistGridReferenceDataFunc) error {
+func persistGridReferenceData(r ApiRequest, grid *model.Grid, addedRows []*model.Row, refs []gridReferencePost, f persistGridReferenceDataFunc) error {
 	for _, ref := range refs {
 		err := f(r, grid, addedRows, ref)
 		if err != nil {
@@ -20,7 +20,7 @@ func persistGridReferenceData(r apiRequest, grid *model.Grid, addedRows []*model
 	return nil
 }
 
-func postInsertReferenceRow(r apiRequest, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
+func postInsertReferenceRow(r ApiRequest, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	query := getInsertStatementForReferenceRow()
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
 	parms := getInsertStatementParametersForReferenceRow(r, grid, ref, rowUuid)
@@ -73,7 +73,7 @@ var getInsertStatementForReferenceRow = func() string {
 		"$8)"
 }
 
-func getInsertStatementParametersForReferenceRow(r apiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
+func getInsertStatementParametersForReferenceRow(r ApiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, utils.GetNewUUID())
 	parameters = append(parameters, r.p.userUuid)
@@ -93,7 +93,7 @@ func getInsertStatementParametersForReferenceRow(r apiRequest, grid *model.Grid,
 	return parameters
 }
 
-func postGridSetOwnership(r apiRequest, grid *model.Grid, addedRows []*model.Row) error {
+func postGridSetOwnership(r ApiRequest, grid *model.Grid, addedRows []*model.Row) error {
 	if grid.Uuid == model.UuidGrids {
 		r.trace("postGridSetOwnership(%s, %v)", grid, addedRows)
 		for _, row := range addedRows {
@@ -113,7 +113,7 @@ func postGridSetOwnership(r apiRequest, grid *model.Grid, addedRows []*model.Row
 	return nil
 }
 
-func postDeleteReferenceRow(r apiRequest, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
+func postDeleteReferenceRow(r ApiRequest, grid *model.Grid, addedRows []*model.Row, ref gridReferencePost) error {
 	query := getDeleteReferenceRowStatement()
 	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
 	parms := getDeleteReferenceRowStatementParameters(r, grid, ref, rowUuid)
@@ -145,7 +145,7 @@ var getDeleteReferenceRowStatement = func() string {
 		"AND text5 = $7"
 }
 
-func getDeleteReferenceRowStatementParameters(r apiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
+func getDeleteReferenceRowStatementParameters(r ApiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, r.p.userUuid)
 	parameters = append(parameters, model.UuidRelationships)
@@ -164,7 +164,7 @@ func getDeleteReferenceRowStatementParameters(r apiRequest, grid *model.Grid, re
 	return parameters
 }
 
-func getUuidFromRowsForTmpUuid(r apiRequest, addedRows []*model.Row, tmpUuid string) string {
+func getUuidFromRowsForTmpUuid(r ApiRequest, addedRows []*model.Row, tmpUuid string) string {
 	for _, row := range addedRows {
 		r.trace("getUuidFromRowsForTmpUuid() - row.TmpUuid=%v, row.Uuid=%v", row.TmpUuid, row.Uuid)
 		if row.TmpUuid == tmpUuid {
@@ -174,7 +174,7 @@ func getUuidFromRowsForTmpUuid(r apiRequest, addedRows []*model.Row, tmpUuid str
 	return tmpUuid
 }
 
-func defaultReferenceValues(r apiRequest, payload gridPost) []gridReferencePost {
+func defaultReferenceValues(r ApiRequest, payload gridPost) []gridReferencePost {
 	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
 		return nil
 	}

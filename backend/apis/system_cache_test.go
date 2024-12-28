@@ -97,7 +97,7 @@ func RunSystemTestCache(t *testing.T) {
 
 	t.Run("User01AddColumnsTo5thSingleGridDefect", func(t *testing.T) {
 		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
-		removeAssociatedGridFromCache = func(apiRequest, *model.Grid, string) error { return errors.New("xxx") }
+		removeAssociatedGridFromCache = func(ApiRequest, *model.Grid, string) error { return errors.New("xxx") }
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
 		var column25Uuid, column26Uuid string
@@ -146,7 +146,7 @@ func RunSystemTestCache(t *testing.T) {
 
 	t.Run("User01RemoveColumnFrom5thSingleGridDefect", func(t *testing.T) {
 		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
-		removeAssociatedGridFromCache = func(apiRequest, *model.Grid, string) error { return errors.New("xxx") }
+		removeAssociatedGridFromCache = func(ApiRequest, *model.Grid, string) error { return errors.New("xxx") }
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
 		var column25Uuid, column26Uuid string
@@ -193,7 +193,7 @@ func RunSystemTestCache(t *testing.T) {
 
 	t.Run("User01Rename5thSingleGridDefect", func(t *testing.T) {
 		removeAssociatedGridFromCacheImpl := removeAssociatedGridFromCache
-		removeAssociatedGridFromCache = func(apiRequest, *model.Grid, string) error { return errors.New("xxx") }
+		removeAssociatedGridFromCache = func(ApiRequest, *model.Grid, string) error { return errors.New("xxx") }
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
 		postStr := `{"rowsEdited":` +
@@ -235,7 +235,7 @@ func RunSystemTestCache(t *testing.T) {
 
 	t.Run("User01RenameColumnFor5thSingleGridDefect", func(t *testing.T) {
 		getGridUuidAttachedToColumnImpl := getGridUuidAttachedToColumn
-		getGridUuidAttachedToColumn = func(apiRequest, string) (string, error) { return "", errors.New("xxx") }
+		getGridUuidAttachedToColumn = func(ApiRequest, string) (string, error) { return "", errors.New("xxx") }
 		var column26Uuid string
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26").Scan(&column26Uuid)
 		postStr := `{"rowsEdited":` +
@@ -300,7 +300,7 @@ func RunSystemTestCache(t *testing.T) {
 
 	t.Run("User01DeleteColumnFor5thSingleGridDefect", func(t *testing.T) {
 		getGridUuidAttachedToColumnForCacheImpl := getGridUuidAttachedToColumnForCache
-		getGridUuidAttachedToColumnForCache = func(apiRequest, string) (string, error) { return "", errors.New("xxx") }
+		getGridUuidAttachedToColumnForCache = func(ApiRequest, string) (string, error) { return "", errors.New("xxx") }
 		var column26Uuid string
 		db.QueryRow("SELECT uuid FROM columns WHERE gridUuid = $1 and text1= $2", model.UuidColumns, "Test Column 26 {2}").Scan(&column26Uuid)
 		postStr := `{"rowsDeleted":` +

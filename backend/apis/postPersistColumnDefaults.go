@@ -9,7 +9,7 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func persistUpdateColumnDefaults(r apiRequest, grid *model.Grid, payload gridPost) error {
+func persistUpdateColumnDefaults(r ApiRequest, grid *model.Grid, payload gridPost) error {
 	gridUuids, _ := getGridsToUpdateWithColumnDefaults(r, grid, payload)
 	r.trace("persistUpdateColumnDefaults - gridUuids=%v", gridUuids)
 	for _, gridUuid := range gridUuids {
@@ -25,11 +25,11 @@ func persistUpdateColumnDefaults(r apiRequest, grid *model.Grid, payload gridPos
 	return nil
 }
 
-var getGridInstanceWithColumnsForUpdateColumnDefaults = func(r apiRequest, gridUuid string) (*model.Grid, error) {
+var getGridInstanceWithColumnsForUpdateColumnDefaults = func(r ApiRequest, gridUuid string) (*model.Grid, error) {
 	return getGridInstanceWithColumnsForGridsApi(r, gridUuid)
 }
 
-func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload gridPost) ([]string, error) {
+func getGridsToUpdateWithColumnDefaults(r ApiRequest, grid *model.Grid, payload gridPost) ([]string, error) {
 	gridUuids := make([]string, 0)
 	var mapGridUuids = make(map[string]bool)
 	allRows := make([]*model.Row, 0)
@@ -86,11 +86,11 @@ func getGridsToUpdateWithColumnDefaults(r apiRequest, grid *model.Grid, payload 
 	return gridUuids, nil
 }
 
-var getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(r apiRequest, uuid string) (string, error) {
+var getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(r ApiRequest, uuid string) (string, error) {
 	return getGridUuidAttachedToColumn(r, uuid)
 }
 
-func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
+func setGridsColumnDefaults(r ApiRequest, grid *model.Grid) error {
 	var mapColumnIndexes = make(map[string]int64)
 	var maxOrderNumber int64 = 0
 	for _, column := range grid.Columns {
@@ -129,7 +129,7 @@ func setGridsColumnDefaults(r apiRequest, grid *model.Grid) error {
 	return nil
 }
 
-func updateColumnOrderNumber(r apiRequest, columnUuid string, orderNumber int64) error {
+func updateColumnOrderNumber(r ApiRequest, columnUuid string, orderNumber int64) error {
 	query := getUpdateColumnOrderNumberQuery()
 	r.trace("updateColumnOrderNumber(%s, %d) - query=%s", columnUuid, orderNumber, query)
 	if err := r.execContext(query, model.UuidColumns, columnUuid, orderNumber, r.p.userUuid); err != nil {
@@ -147,7 +147,7 @@ var getUpdateColumnOrderNumberQuery = func() string {
 		"AND uuid = $2"
 }
 
-func updateColumnName(r apiRequest, columnUuid string, name string) error {
+func updateColumnName(r ApiRequest, columnUuid string, name string) error {
 	query := getUpdateColumnNameQuery()
 	r.trace("updateColumnName(%s, %s) - query=%s", columnUuid, name, query)
 	if err := r.execContext(query, model.UuidColumns, columnUuid, name, r.p.userUuid); err != nil {
