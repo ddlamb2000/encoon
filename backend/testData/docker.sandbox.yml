@@ -11,9 +11,9 @@ httpServer:
   port: 8080
   jwtExpiration: 1440
 kafka:
-  brokers: broker1:19092,broker2:29092,broker3:39092 # Kafka brokers, separated with a comma
-  groupID: backend-encoon-sandbox # GroupId for Kafka consumer
-  topicPrefix: encoon-sandbox # Kafka topic
+  brokers: broker1:19092,broker2:29092,broker3:39092
+  groupID: backend-encoon-sandbox
+  topicPrefix: encoon
 database:
 - name: "sandbox"
   host: "db"

@@ -8,7 +8,7 @@ export const GET = async ({ params, request, url, cookies }) => {
   const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
   cookies.set('topic', topic, { path: '/' })
   cookies.set('groupId', groupId, { path: '/' })
-  console.log(`GET ${url}: Create Kafka consumer using groupId ${groupId}`)
+  console.log(`GET ${url}: Create consumer using groupId ${groupId}`)
   const consumer = kafka.consumer({
     groupId: groupId,
     minBytes: 20,
@@ -23,7 +23,7 @@ export const GET = async ({ params, request, url, cookies }) => {
   const stream = new ReadableStream({
     start(controller) {
       try {
-        console.log(`GET ${url}: Subscribe Kafka consumer to ${topic}`)
+        console.log(`GET ${url}: Subscribe consumer to ${topic}`)
         consumer.connect()
         consumer.subscribe({ topics: [topic] })
         consumer.run({
@@ -51,7 +51,7 @@ export const GET = async ({ params, request, url, cookies }) => {
                       key: message.key.toString(),
                       value: message.value.toString()
                     }
-                    console.log("GET ${url}: Received from Kafka", received)
+                    console.log(`GET ${url}: `, received)
                     controller.enqueue(JSON.stringify(received))
                   }
                   resolveOffset(message.offset)
@@ -68,7 +68,7 @@ export const GET = async ({ params, request, url, cookies }) => {
       }
     },
     cancel() {
-      console.log("GET ${url}: Abort")
+      console.log(`GET ${url}: Abort`)
       consumer.stop()
       consumer.disconnect()
       ac.abort()

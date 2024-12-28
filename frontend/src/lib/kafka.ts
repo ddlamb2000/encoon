@@ -13,7 +13,7 @@ export const kafka = new Kafka({
 	}
 })
 
-export async function postMessage(params, request) {
+export async function postMessage(params, request, url) {
 	const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-requests"
 	const producer = kafka.producer({
 		maxInFlightRequests: 50,
@@ -30,7 +30,7 @@ export async function postMessage(params, request) {
 		const data: KafkaMessageRequest = await request.json()
 		if (!data.message.trim() || data.headers.some((h) => !h.key.trim())) {
 			await producer.disconnect()
-			return json({ error: 'Message or headers are invalid.' }, { status: 400 })
+			return json({ error: 'Message or headers are invalid' }, { status: 400 })
 		}
 		await producer.send({
 			topic: topic,
@@ -38,10 +38,11 @@ export async function postMessage(params, request) {
 			messages: getMessages(data),
 			acks: -1
 		})
-		return json({ message: 'Message sent successfully.' } as KafkaMessageResponse)
+		console.log(`POST ${url} to ${topic}: `, data)
+		return json({ message: 'Message sent successfully' } as KafkaMessageResponse)
 	} catch (error) {
 		console.error(`Error sending message to Kafka topic ${topic}:`, error)
-		return json({ error: 'Failed to send message.' } as KafkaMessageResponse, { status: 500 })
+		return json({ error: 'Failed to send message' } as KafkaMessageResponse, { status: 500 })
 	} finally { 
 		await producer.disconnect()
 	}

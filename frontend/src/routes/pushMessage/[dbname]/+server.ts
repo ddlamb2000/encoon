@@ -1,7 +1,7 @@
 import type { RequestHandler } from '@sveltejs/kit'
 import { postMessage } from '$lib/kafka'
 
-export const POST: RequestHandler = async ({ params, request }) => {
+export const POST: RequestHandler = async ({ params, request, url }) => {
 	const auth = request.headers.get("Authorization")
 	if(auth === "" || auth === undefined || auth.length < 10) {
 		console.error('Not authorized')
@@ -20,5 +20,5 @@ export const POST: RequestHandler = async ({ params, request }) => {
 	} catch (error) {
 		return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
 	}
-	return postMessage(params, request)
+	return postMessage(params, request, url)
 }
