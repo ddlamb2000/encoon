@@ -1,0 +1,2 @@
+CREATE DATABASE test WITH OWNER = encoon;
+CREATE DATABASE sandbox WITH OWNER = encoon;

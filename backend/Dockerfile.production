@@ -1,0 +1,25 @@
+# Go build
+FROM golang:1.23.4 AS go-builder
+WORKDIR /usr/src/encoon
+COPY go.mod go.sum ./
+RUN go mod download && go mod verify
+COPY apis apis
+COPY configuration configuration
+COPY database database
+COPY model model
+COPY utils utils
+COPY kafka kafka
+COPY encoon.go .
+RUN go build -v
+
+# Image
+FROM almalinux:9.1
+LABEL application="εncooη"
+LABEL description="Data structuration, presentation and navigation."
+LABEL version="2.0"
+RUN useradd -ms /bin/bash encoon
+USER encoon
+WORKDIR /usr/encoon
+COPY --from=go-builder /usr/src/encoon/encoon /usr/encoon
+COPY seedData.json .
+CMD ["sh", "-c", "./encoon"]

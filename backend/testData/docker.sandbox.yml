@@ -2,7 +2,7 @@
 #  Copyright David Lambert 2023
 appName: "εncooη (sandbox)"
 appTag: "Data structuration, presentation and navigation."
-log: false
+log: true
 trace: false
 showTiming: false
 gridCacheSize: 500
@@ -10,13 +10,17 @@ seedDataFile: /usr/encoon/seedData.json
 httpServer:
   port: 8080
   jwtExpiration: 1440
+kafka:
+  brokers: broker1:19092,broker2:29092,broker3:39092 # Kafka brokers, separated with a comma
+  groupID: backend-encoon-sandbox # GroupId for Kafka consumer
+  topicPrefix: encoon-sandbox # Kafka topic
 database:
 - name: "sandbox"
   host: "db"
   port: 5432
   role: "encoon"
-  rolePassword: "dGhpc2lzZW5jb29ucHJvZHVjdGlvbmxpa2U="
+  rolePassword: "ZW5jb29u"
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 5000
+  timeOutThreshold: 1000

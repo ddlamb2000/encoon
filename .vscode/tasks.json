@@ -4,19 +4,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build and start docker containers (development)",
+            "label": "Build and start docker containers",
             "type": "shell",
-            "command": "docker compose -f docker-compose.development.yml up --build -d",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Start docker containers (sandbox)",
-            "type": "shell",
-            "command": "docker compose -f docker-compose.sandbox.yml up -d",
+            "command": "docker compose -f docker-compose.yml up --build -d",
             "group": {
                 "kind": "build",
                 "isDefault": true

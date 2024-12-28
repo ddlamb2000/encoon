@@ -1,7 +1,7 @@
-name: "encoon-development"
+name: "encoon"
 services:
   db:
-    container_name: db-encoon-development
+    container_name: database
     image: postgres
     restart: unless-stopped
     ports:
@@ -20,7 +20,7 @@ services:
       POSTGRES_DB: master
       POSTGRES_PASSWORD_FILE: /run/secrets/db-password
   dbadmin:
-    container_name: dbadmin-encoon-development
+    container_name: database-admin
     image: dpage/pgadmin4
     restart: unless-stopped
     networks:
@@ -36,7 +36,7 @@ services:
       PGADMIN_DEFAULT_PASSWORD: root
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
-    container_name: zookeeper-encoon-development
+    container_name: zookeeper
     restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
@@ -47,7 +47,7 @@ services:
       - encoon
   broker1:
     image: confluentinc/cp-kafka:latest
-    container_name: broker1-encoon-development
+    container_name: kafka-broker1
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -68,7 +68,7 @@ services:
       - encoon
   broker2:
     image: confluentinc/cp-kafka:latest
-    container_name: broker2-encoon-development
+    container_name: kafka-broker2
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -89,7 +89,7 @@ services:
       - encoon
   broker3:
     image: confluentinc/cp-kafka:latest
-    container_name: broker3-encoon-development
+    container_name: kafka-broker3
     depends_on:
       - zookeeper
     restart: unless-stopped
@@ -110,7 +110,7 @@ services:
       - encoon
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui-encoon-development
+    container_name: kafka-admin
     restart: unless-stopped
     depends_on:
       - broker1
@@ -127,7 +127,7 @@ services:
     build:
       context: ./v2
       dockerfile: Dockerfile.development
-    container_name: encoon-v2-development
+    container_name: encoon-v2
     image: encoon-v2-development
     volumes:
       - ./v2:/usr/src/encoon/v2
@@ -144,7 +144,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.development
-    container_name: backend-encoon-development
+    container_name: backend-development
     image: backend-encoon-development
     volumes:
       - ./backend:/usr/src/encoon/backend
@@ -158,11 +158,28 @@ services:
       - broker1
       - broker2
       - broker3
+  backend-sandbox1:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    container_name: backend-sandbox1
+    image: backend-encoon-production
+    restart: unless-stopped
+    configs:
+      - source: encoon-configuration-sandbox
+        target: /usr/encoon/configuration.yml
+    networks:
+      - encoon
+    depends_on:
+      - db
+      - broker1
+      - broker2
+      - broker3
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.development
-    container_name: frontend-encoon-development
+    container_name: frontend-development
     image: frontend-encoon-development
     restart: unless-stopped
     volumes:
@@ -184,7 +201,7 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile.systemTest
-    container_name: system-test-encoon
+    container_name: system-test
     image: system-test-encoon
     networks:
       - encoon
@@ -197,16 +214,16 @@ services:
       - db
     command: sh -c "./testData/run_all_tests.sh"
 configs:
-  encoon-configuration:
-    file: ./backend/testData/docker.testing.yml
+  encoon-configuration-sandbox:
+    file: ./backend/testData/docker.sandbox.yml
   db-init:
-    file: ./.dbConfiguration/docker.testing.sql
+    file: ./.dbConfiguration/docker.sql
 networks:
   encoon:
     driver: bridge
 secrets:
   db-password:
-    file: ./.dbConfiguration/.db_password.development
+    file: ./.dbConfiguration/.db_password
 volumes:
   db:
     driver: local
