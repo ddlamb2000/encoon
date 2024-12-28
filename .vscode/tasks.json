@@ -4,46 +4,6 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Start web server",
-            "type": "shell",
-            "command": "go run . -configuration ./testData/local-development.yml",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Start web server (NEW: Svelte version)",
-            "type": "shell",
-            "command": "cd my-app ; npm run dev -- --host",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Run all tests",
-            "type": "shell",
-            "command": "./testData/run_all_tests.sh",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
-            "label": "Export data from master",
-            "type": "shell",
-            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData.json",
-            "group": {
-                "kind": "build",
-                "isDefault": true
-            },
-            "problemMatcher": []
-        },
-        {
             "label": "Build and start docker containers (development)",
             "type": "shell",
             "command": "docker compose -f docker-compose.development.yml up --build -d",
