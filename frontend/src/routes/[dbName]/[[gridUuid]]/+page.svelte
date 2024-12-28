@@ -13,6 +13,8 @@
   const gridUuid = data.gridUuid
   const url = data.url
   const grids = $state(seedData)
+  const dataSet = $state([{}])
+  $inspect(dataSet)
   let focus = $state({grid: null, i: -1, j: -1})
   let isSending = $state(false)
 	let messageStatus = $state('');
@@ -251,12 +253,21 @@
               loggedIn = false
               token = ""
             }
-          } if(message.action == ActionLogout) {
+          } else if(message.action == ActionLogout) {
             localStorage.removeItem(`access_token_${dbName}`)
             loginPassword = ""
             loggedIn = false
-          } else {
-            checkToken()
+          } else if(checkToken()) {
+            if(message.status == SuccessStatus) {
+              if(message.action == ActionGetGrid) {
+                if(message.dataSet && message.dataSet.grid) {
+                  console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                  dataSet.push(message.dataSet)
+                }
+              }
+            } else {
+              console.log("Error:", message.textMessage)
+            }
           }
           return reader.read().then(processText)
         })
@@ -264,6 +275,10 @@
         console.log(`Streaming from ${uri} stopped`)
       }
     }
+  }
+
+  function getCellValue(row, column) {
+    return row[column.name]
   }
 
 </script>
@@ -277,6 +292,51 @@
     {#if loggedIn}
       {userUuid} ; {userFirstName} ; {userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
+        {#each dataSet as set}
+          {#if set.grid && set.grid.gridUuid}
+            {#key set.grid.gridUuid}
+              <li>
+                <strong>{set.grid.text1}</strong>
+                <small>{set.grid.text2}</small>
+              </li>
+              <table>
+                <thead>
+                  <tr>
+                    <th></th>
+                    {#each set.grid.columns as column, j}
+                      <th class='header'>
+                        {column.label} <small>{column.name}</small>
+                        <button onclick={() => removeColumn(grid, col.uuid)}>-</button>
+                      </th>
+                    {/each}
+                    <th><button onclick={() => addColumn(grid)}>+</button></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {#each set.rows as row, i}
+                    {#key row.uuid}
+                      <tr>
+                        <td>
+                          <button onclick={() => removeRow(grid, row.uuid)}>-</button>
+                          <button onclick={() => addRow(grid)}>+</button>
+                        </td>
+                        {#each set.grid.columns as column, j}
+                          <td class="cell" contenteditable
+                              oninput={() => changeCell(set.grid, row.uuid, set.grid.cols[j].uuid, set.grid.rows[i].data[j])}
+                              onfocus={() => changeFocus(set.grid, i, j)}
+                          >
+                            {getCellValue(row, column)}
+                          </td>
+                        {/each}
+                      </tr>
+                    {/key}
+                  {/each}
+                </tbody>
+              </table>
+              {set.countRows} rows
+            {/key}
+          {/if}
+        {/each}
         {#each grids as grid}
           {#key grid.uuid}
             <li>

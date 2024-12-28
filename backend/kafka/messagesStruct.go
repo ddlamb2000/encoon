@@ -9,22 +9,22 @@ import (
 
 type requestContent struct {
 	Action   string `json:"action"`
-	GridUuid string `json:"griduuid,omitempty"`
+	GridUuid string `json:"gridUuid,omitempty"`
 	Uuid     string `json:"uuid,omitempty"`
-	Userid   string `json:"userid,omitempty"`
+	Userid   string `json:"userId,omitempty"`
 	Password string `json:"password,omitempty"`
 }
 
 type responseContent struct {
 	Status      string           `json:"status"`
 	Action      string           `json:"action"`
-	GridUuid    string           `json:"griduuid,omitempty"`
+	GridUuid    string           `json:"gridUuid,omitempty"`
 	Uuid        string           `json:"uuid,omitempty"`
-	TextMessage string           `json:"textmessage,omitempty"`
-	FirstName   string           `json:"firstname,omitempty"`
-	LastName    string           `json:"lastname,omitempty"`
+	TextMessage string           `json:"textMessage,omitempty"`
+	FirstName   string           `json:"firstName,omitempty"`
+	LastName    string           `json:"lastName,omitempty"`
 	JWT         string           `json:"jwt,omitempty"`
-	DataSet     apis.ApiResponse `json:"dataset,omitempty"`
+	DataSet     apis.ApiResponse `json:"dataSet,omitempty"`
 }
 
 const (
