@@ -1,5 +1,4 @@
 <script  lang="ts">
-  import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
   import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
@@ -116,7 +115,8 @@
       {
         messageKey: newUuid(),
         headers: [
-          {'key': 'from', 'value': url},
+          {'key': 'from', 'value': 'εncooη frontend'},
+          {'key': 'url', 'value': url},
           {'key': 'initiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify({action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
@@ -155,7 +155,8 @@
       {
         messageKey: newUuid(),
         headers: [
-          {'key': 'from', 'value': url},
+          {'key': 'from', 'value': 'εncooη frontend'},
+          {'key': 'url', 'value': url},
           {'key': 'initiatedOn', 'value': (new Date).toISOString()},
           {'key': 'userUuid', 'value': userUuid},
           {'key': 'userFirstName', 'value': userFirstName},

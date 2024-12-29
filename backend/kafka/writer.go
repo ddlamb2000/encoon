@@ -48,7 +48,8 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 
 	key := utils.GetNewUUID()
 	headers := []kafka.Header{
-		{Key: "from", Value: []byte("backend-" + hostname)},
+		{Key: "hostName", Value: []byte(hostname)},
+		{Key: "from", Value: []byte("εncooη backend")},
 		{Key: "requestKey", Value: requestKey},
 		{Key: "initiatedOn", Value: initiatedOn},
 	}

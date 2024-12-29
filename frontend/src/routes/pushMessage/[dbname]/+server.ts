@@ -15,7 +15,7 @@ export const POST: RequestHandler = async ({ params, request, url }) => {
 		const nowDate = Date.parse(now)
 		const tokenExpirationDate = Date.parse(tokenPayload.expires)
 		if(nowDate > tokenExpirationDate) {
-			return json({ error: 'Authorization expided' } as KafkaMessageResponse, { status: 401 })
+			return json({ error: 'Authorization expired' } as KafkaMessageResponse, { status: 401 })
 		}
 	} catch (error) {
 		return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
