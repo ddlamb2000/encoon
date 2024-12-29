@@ -42,16 +42,14 @@ export const GET = async ({ params, request, url, cookies }) => {
                 for (let message of batch.messages) {
                   if (!isRunning() || isStale()) break
                   if(message.key !== null && message.value !== null) {
+                    const valueString = message.value.toString()
                     const received = {
                       topic: batch.topic,
-                      partition: batch.partition,
-                      highWatermark: batch.highWatermark,
-                      offset: message.offset,
                       headers: message.headers,
                       key: message.key.toString(),
-                      value: message.value.toString()
+                      value: valueString
                     }
-                    console.log(`GET ${url}: `, received)
+                    console.log(`GET ${url}: ${valueString.length} bytes`, received)
                     controller.enqueue(JSON.stringify(received))
                   }
                   resolveOffset(message.offset)

@@ -51,7 +51,7 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 }
 
 func handleMessage(dbName string, message kafka.Message) {
-	configuration.Log(dbName, "", "Got: topic: %s, key: %s, value: %s, headers: %s", message.Topic, message.Key, message.Value, message.Headers)
+	configuration.Log(dbName, "", "{PULL} %d bytes, topic: %s, key: %s, value: %s", len(message.Value), message.Topic, message.Key, message.Value)
 	initiatedOn := []byte("")
 	tokenString := []byte("")
 	for _, header := range message.Headers {
@@ -87,17 +87,24 @@ func handleMessage(dbName string, message kafka.Message) {
 				return
 			}
 		} else {
-			configuration.LogError(dbName, "", "Invalid request: %v.", err)
+			configuration.Log(dbName, "", "Invalid token: %v.", err)
+			response = responseContent{
+				Status:      FailedStatus,
+				Action:      content.Action,
+				TextMessage: "Invalid request",
+			}
 			return
 		}
 		if content.Action == ActionGetGrid {
 			response = getGrid(dbName, content)
+		} else if content.Action == ActionLocateGrid {
+			response = locate(dbName, content)
 		} else {
+			configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
 			response = responseContent{
-				Status:   FailedStatus,
-				Action:   content.Action,
-				GridUuid: content.GridUuid,
-				Uuid:     content.Uuid,
+				Status:      FailedStatus,
+				Action:      content.Action,
+				TextMessage: "Invalid action (" + content.Action + ")",
 			}
 		}
 	}

@@ -38,7 +38,8 @@ export async function postMessage(params, request, url) {
 			messages: getMessages(data),
 			acks: -1
 		})
-		console.log(`POST ${url} to ${topic}: `, data)
+		const dataLength = JSON.stringify(data).length
+		console.log(`POST ${url} to ${topic}: ${dataLength} bytes`, data)
 		return json({ message: 'Message sent successfully' } as KafkaMessageResponse)
 	} catch (error) {
 		console.error(`Error sending message to Kafka topic ${topic}:`, error)

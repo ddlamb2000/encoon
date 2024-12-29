@@ -1,7 +1,7 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
   import { newUuid, numberToLetters, getCellValue } from "$lib/utils.svelte"
-  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid } from "$lib/metadata.svelte"
+  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -129,7 +129,7 @@
 
   function changeFocus(grid, row, column) { 
     focus = {grid: grid, row: row, column: column}
-    pushTransaction({action: 'focus',
+    pushTransaction({action: ActionLocateGrid,
                      gridUuid: grid.uuid,
                      rowUuid: row.uuid,
                      columnUuid: column.uuid})
@@ -232,52 +232,56 @@
             return
           }
           const json = JSON.parse(value)
-          const message = JSON.parse(json.value)
-          const fromHeader = String.fromCharCode(...json.headers.from.data)
-          const requestKey = String.fromCharCode(...json.headers.requestKey.data)
-          const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
-          const now = (new Date).toISOString()
-          const nowDate = Date.parse(now)
-          const initiatedOnDate = Date.parse(initiatedOn)
-          const elapsedMs = nowDate - initiatedOnDate
-          console.log(`[Received] from ${uri} (${elapsedMs} ms)topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
-          messageStack.push({
-            'response' : {
-              'messageKey': json.key,
-              'message': json.value
-            }
-          })
-          if(message.action == ActionAuthentication) {
-            if(message.status == SuccessStatus) {
-              console.log(`Logged in: ${message.firstname} ${message.lastname}`)
-              loggedIn = true
-              localStorage.setItem(`access_token_${dbName}`, message.jwt)
-            } else {
+          if(json.value && json.headers) {
+            const message = JSON.parse(json.value)
+            const fromHeader = String.fromCharCode(...json.headers.from.data)
+            const requestKey = String.fromCharCode(...json.headers.requestKey.data)
+            const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
+            const now = (new Date).toISOString()
+            const nowDate = Date.parse(now)
+            const initiatedOnDate = Date.parse(initiatedOn)
+            const elapsedMs = nowDate - initiatedOnDate
+            console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
+            messageStack.push({
+              'response' : {
+                'messageKey': json.key,
+                'message': json.value
+              }
+            })
+            if(message.action == ActionAuthentication) {
+              if(message.status == SuccessStatus) {
+                console.log(`Logged in: ${message.firstname} ${message.lastname}`)
+                loggedIn = true
+                localStorage.setItem(`access_token_${dbName}`, message.jwt)
+              } else {
+                localStorage.removeItem(`access_token_${dbName}`)
+                loginPassword = ""
+                loggedIn = false
+                token = ""
+              }
+            } else if(message.action == ActionLogout) {
               localStorage.removeItem(`access_token_${dbName}`)
               loginPassword = ""
               loggedIn = false
-              token = ""
-            }
-          } else if(message.action == ActionLogout) {
-            localStorage.removeItem(`access_token_${dbName}`)
-            loginPassword = ""
-            loggedIn = false
-          } else if(checkToken()) {
-            if(message.status == SuccessStatus) {
-              if(message.action == ActionGetGrid) {
-                if(message.dataSet && message.dataSet.grid) {
-                  console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-                  dataSet.push(message.dataSet)
+            } else if(checkToken()) {
+              if(message.status == SuccessStatus) {
+                if(message.action == ActionGetGrid) {
+                  if(message.dataSet && message.dataSet.grid) {
+                    console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                    dataSet.push(message.dataSet)
+                  }
                 }
+              } else {
+                console.log(`[Received] from ${uri} (${elapsedMs} ms) - error: ${message.textMessage}`, )
               }
-            } else {
-              console.log("Error:", message.textMessage)
             }
+          } else {
+            console.error(`Invalid message from ${uri}`, value)
           }
           return reader.read().then(processText)
         })
       } catch (error) {
-        console.log(`Streaming from ${uri} stopped`)
+        console.log(`Error during streaming from ${uri}`, error)
       }
     }
   }

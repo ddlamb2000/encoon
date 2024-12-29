@@ -8,17 +8,21 @@ import (
 )
 
 type requestContent struct {
-	Action   string `json:"action"`
-	GridUuid string `json:"gridUuid,omitempty"`
-	Uuid     string `json:"uuid,omitempty"`
-	Userid   string `json:"userId,omitempty"`
-	Password string `json:"password,omitempty"`
+	Action     string `json:"action"`
+	GridUuid   string `json:"gridUuid,omitempty"`
+	ColumnUuid string `json:"columnUuid,omitempty"`
+	RowUuid    string `json:"rowUuid,omitempty"`
+	Uuid       string `json:"uuid,omitempty"`
+	Userid     string `json:"userId,omitempty"`
+	Password   string `json:"password,omitempty"`
 }
 
 type responseContent struct {
 	Status      string           `json:"status"`
 	Action      string           `json:"action"`
 	GridUuid    string           `json:"gridUuid,omitempty"`
+	ColumnUuid  string           `json:"columnUuid,omitempty"`
+	RowUuid     string           `json:"rowUuid,omitempty"`
 	Uuid        string           `json:"uuid,omitempty"`
 	TextMessage string           `json:"textMessage,omitempty"`
 	FirstName   string           `json:"firstName,omitempty"`
@@ -33,4 +37,5 @@ const (
 
 	ActionAuthentication = "AUTHENTICATION"
 	ActionGetGrid        = "LOAD"
+	ActionLocateGrid     = "LOCATE"
 )

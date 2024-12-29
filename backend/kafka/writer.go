@@ -15,7 +15,6 @@ import (
 )
 
 func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response []byte) {
-
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 
@@ -37,7 +36,7 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 		{Key: "requestKey", Value: requestKey},
 		{Key: "initiatedOn", Value: initiatedOn},
 	}
-	configuration.Log(dbName, "", "Send: topic: %s, key: %s, value: %s, headers: %s", topic, key, response, headers)
+	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s, value: %s", len(response), topic, key, response)
 	err := w.WriteMessages(context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
