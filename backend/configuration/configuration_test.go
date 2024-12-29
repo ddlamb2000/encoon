@@ -87,14 +87,6 @@ func TestGetRootAndPassword(t *testing.T) {
 	}
 }
 
-func TestIsFrontEndDevelopment(t *testing.T) {
-	got := IsFrontEndDevelopment()
-	expect := false
-	if got != expect {
-		t.Errorf("Got %v instead of %v.", got, expect)
-	}
-}
-
 func TestValidateConfiguration1(t *testing.T) {
 	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)

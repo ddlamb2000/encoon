@@ -209,10 +209,6 @@ func StopTiming(dbName, userName, funcName string, start time.Time) {
 	}
 }
 
-func IsFrontEndDevelopment() bool {
-	return appConfiguration.FrontEndDevelopment
-}
-
 func GetSeedDataFile() string {
 	return appConfiguration.SeedDataFile
 }
