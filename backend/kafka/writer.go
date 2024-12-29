@@ -28,6 +28,7 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 		BatchTimeout:           100 * time.Millisecond,
 		RequiredAcks:           -1,
 		Compression:            compress.Gzip,
+		Balancer:               &kafka.RoundRobin{},
 	}
 
 	key := utils.GetNewUUID()
@@ -37,7 +38,8 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 		{Key: "initiatedOn", Value: initiatedOn},
 	}
 	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s, value: %s", len(response), topic, key, response)
-	err := w.WriteMessages(context.Background(),
+	err := w.WriteMessages(
+		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
 			Value:   response,
