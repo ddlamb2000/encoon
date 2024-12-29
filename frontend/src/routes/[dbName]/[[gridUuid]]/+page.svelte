@@ -1,7 +1,7 @@
 <script  lang="ts">
   import { seedData } from '$lib/data.js'
-  import { newUuid, numberToLetters, getCellValue } from "$lib/utils.svelte"
-  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid } from "$lib/metadata.svelte"
+  import { newUuid, numberToLetters } from "$lib/utils.svelte"
+  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -12,7 +12,6 @@
   const dbName = data.dbName
   const gridUuid = data.gridUuid
   const url = data.url
-  const grids = $state(seedData)
   const dataSet = $state([{}])
   let focus = $state({})
   let isSending = $state(false)
@@ -56,15 +55,12 @@
     }
   }
 
-  grids.forEach((grid) => initGrid(grid))
-
   async function newGrid() {
     const grid = {uuid: newUuid(), title: 'Untitled', 
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
                   rows: [{uuid: newUuid(), data: ['']}]
                  }
     initGrid(grid)
-    grids.push(grid)
     pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
@@ -96,12 +92,14 @@
     pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
-  async function changeCell(grid, uuid, coluuid, value) {
-    pushTransaction({action: 'chgcell',
-                     griduuid: grid.uuid,
-                     uuid: uuid,
-                     coluuid: coluuid,
-                     value: value})
+  async function changeCell(grid, row, column, value) {
+    pushTransaction({
+      action: ActionUpdateValue,
+      gridUuid: grid.uuid,
+      rowUuid: row.uuid,
+      columnUuid: column.uuid,
+      value: value
+    })
   }
 
   async function logout() {
@@ -128,17 +126,29 @@
   }
 
   function changeFocus(grid, row, column) { 
-    focus = {grid: grid, row: row, column: column}
-    pushTransaction({action: ActionLocateGrid,
-                     gridUuid: grid.uuid,
-                     rowUuid: row.uuid,
-                     columnUuid: column.uuid})
+    pushTransaction({
+      action: ActionLocateGrid,
+      gridUuid: grid.uuid,
+      rowUuid: row.uuid,
+      columnUuid: column.uuid
+    })
   }
 
-  function findGrid(uuid) { return grids.find((grid) => grid.uuid === uuid) }
+  function locateGrid(gridUuid: string, columnUuid: string, rowUuid: string) {
+    console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
+    const set = dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
+    if(set && set.grid) {
+      const grid = set.grid
+      const column = grid.columns.find((column) => column.uuid === columnUuid)
+      if(column) {
+        const row = set.rows.find((row) => row.uuid === rowUuid)
+        focus = {grid: grid, column: column, row: row}
+        return
+      }
+    }
+    focus = {}
+  }
   
-  const coltypesGrid = findGrid('coltypes')
-
   function pushTransaction(payload) {
     postMessage(
       false,
@@ -270,6 +280,10 @@
                     console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                     dataSet.push(message.dataSet)
                   }
+                } else if(message.action == ActionLocateGrid) {
+                  if(message.gridUuid && message.columnUuid && message.rowUuid) {
+                    locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
+                  }
                 }
               } else {
                 console.log(`[Received] from ${uri} (${elapsedMs} ms) - error: ${message.textMessage}`, )
@@ -285,7 +299,6 @@
       }
     }
   }
-
 </script>
 
 <svelte:head>
@@ -327,14 +340,15 @@
                         </td>
                         {#each set.grid.columns as column, j}
                           <td
-                              oninput={() => changeCell(set.grid, row.uuid, set.grid.cols[j].uuid, set.grid.rows[i].data[j])}
+                              bind:innerHTML={set.rows[i][column.name]}
                               onfocus={() => changeFocus(set.grid, row, column)}
+                              oninput={() => changeCell(set.grid, row, column, set.rows[i][column.name])}
                               class={
                                 (focus.grid && focus.grid.uuid === set.grid.uuid
                                 && focus.row.uuid === row.uuid && focus.column.uuid === column.uuid) 
                                 ? 'focus' : 'cell'}  
                               contenteditable>
-                            {getCellValue(row, column)}
+                            {row[column.name]}
                           </td>
                         {/each}
                       </tr>
@@ -346,70 +360,6 @@
             {/key}
           {/if}
         {/each}
-        <!-- {#each grids as grid}
-          {#key grid.uuid}
-            <li>
-              <h2>{grid.title}</h2>
-              Filter: 
-              <span
-                bind:innerHTML={grid.search}
-                oninput={() => applyFilters(grid)}
-                contenteditable>				
-              </span>
-              <table>
-                <thead>
-                  <tr>
-                    <th></th>
-                    {#each grid.cols as col, j}
-                      <th class='header'>
-                        <span bind:innerHTML={grid.cols[j].title} contenteditable>{col}</span>
-                        <select bind:value={col.type} onchange={() => console.log(col.type)}>
-                          {#each coltypesGrid.rows as row}
-                            <option value={row.uuid}>{row.data[0]}</option>
-                          {/each}
-                        </select>
-                        <button onclick={() => removeColumn(grid, col.uuid)}>-</button>
-                      </th>
-                    {/each}
-                    <th><button onclick={() => addColumn(grid)}>+</button></th>
-                  </tr>
-                </thead>
-                <tbody>
-                {#each grid.rows as row, i}
-                  {#if row.filtered}
-                    {#key row.uuid}
-                      <tr>
-                        <td>
-                          <button onclick={() => removeRow(grid, row.uuid)}>-</button>
-                          <button onclick={() => addRow(grid)}>+</button>
-                        </td>
-                        {#each grid.cols as col, j}
-                          <td
-                            class={
-                              (focus.grid !== null && focus.grid.uuid === grid.uuid
-                              && focus.i === i && focus.j === j) 
-                              ? 'focus' : 'cell'}
-                            >
-                            <div>
-                              <span
-                                bind:innerHTML={grid.rows[i].data[j]}
-                                oninput={() => changeCell(grid, row.uuid, grid.cols[j].uuid, grid.rows[i].data[j])}
-                                onfocus={() => changeFocus(grid, i, j)}
-                                contenteditable>
-                              </span>
-                            </div>
-                          </td>
-                        {/each}
-                      </tr>
-                    {/key}
-                  {/if}
-                {/each}
-                </tbody>
-              </table>
-              {grid.rows.length} rows in total
-            </li>
-          {/key}
-        {/each} -->
         <button onclick={() => newGrid()}>New Grid</button>
       </ul>	
     {:else}

@@ -38,4 +38,5 @@ const (
 	ActionAuthentication = "AUTHENTICATION"
 	ActionGetGrid        = "LOAD"
 	ActionLocateGrid     = "LOCATE"
+	ActionUpdateValue    = "UPDATE"
 )
