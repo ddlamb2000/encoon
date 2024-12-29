@@ -4,9 +4,59 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Build and start docker containers",
+            "label": "Build and start all containers",
             "type": "shell",
-            "command": "docker compose -f docker-compose.yml up --build -d",
+            "command": "docker compose -f docker-compose.yml up -d --build",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start infra containers",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.yml up -d --build db dbadmin zookeeper broker1 broker2 broker3 kafka-ui",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start v2 container",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.yml up -d --build v2",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Run system test",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.yml up -d --build system-test",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start development containers",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.yml up -d --build backend frontend",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
+        {
+            "label": "Start sandbox containers",
+            "type": "shell",
+            "command": "docker compose -f docker-compose.yml up -d --build backend-sandbox1 frontend-sandbox",
             "group": {
                 "kind": "build",
                 "isDefault": true
