@@ -221,82 +221,110 @@
     return false
   }
 
+  async function* getStreamIteration(uri: string) {
+    let response = await fetch(uri)
+    if(!response.ok) {
+        console.error(`Failed to fetch stream from ${uri}`)
+        return
+      }
+    const utf8Decoder = new TextDecoder("utf-8")
+    let reader = response.body.getReader()
+    let { value: chunk, done: readerDone } = await reader.read()
+    chunk = chunk ? utf8Decoder.decode(chunk, { stream: true }) : ""
+    let re = /\r\n|\n|\r/gm
+    let startIndex = 0
+    let charsReceived = 0
+
+    for (;;) {
+      try {
+        const chunkLength = chunk.length
+        const json = JSON.parse(chunk.toString())
+        charsReceived += chunkLength
+        if(json.value && json.headers) {
+          chunk = ""
+          const message = JSON.parse(json.value)
+          const fromHeader = String.fromCharCode(...json.headers.from.data)
+          const requestKey = String.fromCharCode(...json.headers.requestKey.data)
+          const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
+          const now = (new Date).toISOString()
+          const nowDate = Date.parse(now)
+          const initiatedOnDate = Date.parse(initiatedOn)
+          const elapsedMs = nowDate - initiatedOnDate
+          console.log(`[Received] from ${uri} (${elapsedMs} ms) (${chunkLength} bytes, ${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
+          messageStack.push({
+            'response' : {
+              'messageKey': json.key,
+              'message': json.value
+            }
+          })
+          if(message.action == ActionAuthentication) {
+            if(message.status == SuccessStatus) {
+              console.log(`Logged in: ${message.firstname} ${message.lastname}`)
+              loggedIn = true
+              localStorage.setItem(`access_token_${dbName}`, message.jwt)
+            } else {
+              localStorage.removeItem(`access_token_${dbName}`)
+              loginPassword = ""
+              loggedIn = false
+              token = ""
+            }
+          } else if(message.action == ActionLogout) {
+            localStorage.removeItem(`access_token_${dbName}`)
+            loginPassword = ""
+            loggedIn = false
+          } else if(checkToken()) {
+            if(message.status == SuccessStatus) {
+              if(message.action == ActionGetGrid) {
+                if(message.dataSet && message.dataSet.grid) {
+                  console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                  dataSet.push(message.dataSet)
+                }
+              } else if(message.action == ActionLocateGrid) {
+                if(message.gridUuid && message.columnUuid && message.rowUuid) {
+                  locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
+                }
+              }
+            } else {
+              console.log(`[Received] from ${uri} (${elapsedMs} ms) - error: ${message.textMessage}`, )
+            }
+          }
+        } else {
+          console.error(`Invalid message from ${uri}`, chunk)
+        }
+      } 
+      catch(error) {
+        console.log(`Data from stream from ${uri} isn't Json`)
+      }
+      let result = re.exec(chunk)
+      if (!result) {
+        if (readerDone) {
+          break
+        }
+        let remainder = chunk.substr(startIndex)
+        {
+          ({ value: chunk, done: readerDone } = await reader.read())
+        }
+        chunk = remainder + (chunk ? utf8Decoder.decode(chunk, { stream: true }) : "")
+        startIndex = re.lastIndex = 0
+        continue
+      }
+      yield chunk.substring(startIndex, result.index)
+      startIndex = re.lastIndex
+    }
+    if (startIndex < chunk.length) {
+      yield chunk.substr(startIndex)
+    }
+  }
+
   async function getStream() {
     const uri = "/pullMessages/" + dbName
     const ac = new AbortController()
     const signal = ac.signal
-    if(!isStreaming) {
-      checkToken()
-      console.log(`Start streaming from ${uri}`)
-      isStreaming = true
-      try {
-        const response = await fetch(uri, {signal})
-        if(!response.ok) {
-          console.error(`Failed to fetch stream from ${uri}`)
-          return
-        }
-        reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
-        reader.read().then(function processText({ done, value }) {
-          if(done) {
-            console.log(`Streaming from ${uri} stopped`)
-            return
-          }
-          const json = JSON.parse(value)
-          if(json.value && json.headers) {
-            const message = JSON.parse(json.value)
-            const fromHeader = String.fromCharCode(...json.headers.from.data)
-            const requestKey = String.fromCharCode(...json.headers.requestKey.data)
-            const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
-            const now = (new Date).toISOString()
-            const nowDate = Date.parse(now)
-            const initiatedOnDate = Date.parse(initiatedOn)
-            const elapsedMs = nowDate - initiatedOnDate
-            console.log(`[Received] from ${uri} (${elapsedMs} ms) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
-            messageStack.push({
-              'response' : {
-                'messageKey': json.key,
-                'message': json.value
-              }
-            })
-            if(message.action == ActionAuthentication) {
-              if(message.status == SuccessStatus) {
-                console.log(`Logged in: ${message.firstname} ${message.lastname}`)
-                loggedIn = true
-                localStorage.setItem(`access_token_${dbName}`, message.jwt)
-              } else {
-                localStorage.removeItem(`access_token_${dbName}`)
-                loginPassword = ""
-                loggedIn = false
-                token = ""
-              }
-            } else if(message.action == ActionLogout) {
-              localStorage.removeItem(`access_token_${dbName}`)
-              loginPassword = ""
-              loggedIn = false
-            } else if(checkToken()) {
-              if(message.status == SuccessStatus) {
-                if(message.action == ActionGetGrid) {
-                  if(message.dataSet && message.dataSet.grid) {
-                    console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-                    dataSet.push(message.dataSet)
-                  }
-                } else if(message.action == ActionLocateGrid) {
-                  if(message.gridUuid && message.columnUuid && message.rowUuid) {
-                    locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
-                  }
-                }
-              } else {
-                console.log(`[Received] from ${uri} (${elapsedMs} ms) - error: ${message.textMessage}`, )
-              }
-            }
-          } else {
-            console.error(`Invalid message from ${uri}`, value)
-          }
-          return reader.read().then(processText)
-        })
-      } catch (error) {
-        console.log(`Error during streaming from ${uri}`, error)
-      }
+    checkToken()
+    console.log(`Start streaming from ${uri}`)
+    isStreaming = true
+    for await (let line of getStreamIteration(uri)) {
+      console.log(`Get from ${uri}`, line)
     }
   }
 </script>
