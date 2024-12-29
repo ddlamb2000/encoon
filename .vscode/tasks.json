@@ -16,7 +16,7 @@
         {
             "label": "Start infra containers",
             "type": "shell",
-            "command": "docker compose -f docker-compose.yml up -d --build db dbadmin zookeeper broker1 broker2 broker3 kafka-ui",
+            "command": "docker compose -f docker-compose.yml up -d --build db dbadmin zookeeper broker1 kafka-ui",
             "group": {
                 "kind": "build",
                 "isDefault": true

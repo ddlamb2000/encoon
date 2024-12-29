@@ -20,7 +20,7 @@ httpServer:
 
 # Kafka configuration
 kafka:
-  brokers: broker1:19092,broker2:29092,broker3:39092 # Kafka brokers, separated with a comma
+  brokers: broker1:19092 # Kafka brokers, separated with a comma
   groupID: backend-encoon-development # GroupId for Kafka consumer
   topicPrefix: encoon # Kafka topic
 

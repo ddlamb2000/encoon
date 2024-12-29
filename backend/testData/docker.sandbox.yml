@@ -11,7 +11,7 @@ httpServer:
   port: 8080
   jwtExpiration: 1440
 kafka:
-  brokers: broker1:19092,broker2:29092,broker3:39092
+  brokers: broker1:19092
   groupID: backend-encoon-sandbox
   topicPrefix: encoon
 database:
