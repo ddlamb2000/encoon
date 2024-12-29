@@ -10,7 +10,7 @@ import (
 
 func postInsertTransaction(r ApiRequest) error {
 	query := getInsertStatementForTransaction()
-	parms := getInsertValuesForTransaction(r.p.userUuid, r.transaction)
+	parms := getInsertValuesForTransaction(r.p.UserUuid, r.transaction)
 	r.trace("postInsertTransaction() - query=%s, parms=%s", query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		_ = r.rollbackTransaction()
@@ -99,7 +99,7 @@ var getInsertStatementForTransactionReferenceRow = func() string {
 func getInsertStatementParametersForTransactionReferenceRow(r ApiRequest, grid *model.Grid, row *model.Row, relationship string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, utils.GetNewUUID())
-	parameters = append(parameters, r.p.userUuid)
+	parameters = append(parameters, r.p.UserUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, relationship)
 	parameters = append(parameters, model.UuidTransactions)

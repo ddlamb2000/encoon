@@ -21,7 +21,7 @@ func GetGridsRows(ct context.Context, uri string, p HtmlParameters) ApiResponse 
 	}
 	go func() {
 		r.trace("getGridsRows()")
-		database.Sleep(r.ctx, p.DbName, p.userName, r.db)
+		database.Sleep(r.ctx, p.DbName, p.UserName, r.db)
 		grid, err := getGridForGridsApi(r, p.GridUuid)
 		if err != nil {
 			r.ctxChan <- ApiResponse{Err: err, System: true}
@@ -30,7 +30,7 @@ func GetGridsRows(ct context.Context, uri string, p HtmlParameters) ApiResponse 
 			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
+		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.UserUuid)
 		if !canViewRows {
 			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
@@ -89,7 +89,7 @@ func getRowSetForGridsApi(r ApiRequest, grid *model.Grid, uuid string, getRefere
 		}
 		row.SetDisplayString(r.p.DbName)
 		r.trace("getRowSetForGridsApi(%s, %s, %v) - row.DisplayString=%s", grid, uuid, getReferences, row.DisplayString)
-		row.SetViewEditAccessFlags(gridForOwnership, r.p.userUuid)
+		row.SetViewEditAccessFlags(gridForOwnership, r.p.UserUuid)
 		if row.CanViewRow {
 			if getReferences {
 				references, err := getRelationshipsForRow(r, grid, row)

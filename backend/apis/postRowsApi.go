@@ -19,7 +19,7 @@ func postGridsRows(ct context.Context, uri string, p HtmlParameters, payload gri
 	}
 	go func() {
 		r.trace("postGridsRows()")
-		database.Sleep(r.ctx, p.DbName, p.userName, r.db)
+		database.Sleep(r.ctx, p.DbName, p.UserName, r.db)
 		grid, err := getGridForGridsApi(r, p.GridUuid)
 		if err != nil {
 			r.ctxChan <- ApiResponse{Err: err, System: true}
@@ -28,7 +28,7 @@ func postGridsRows(ct context.Context, uri string, p HtmlParameters, payload gri
 			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.userUuid)
+		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.UserUuid)
 		if !canViewRows {
 			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return

@@ -33,8 +33,8 @@ func getParameters(c *gin.Context) (HtmlParameters, error) {
 	auth, exists := c.Get("authorized")
 	p := HtmlParameters{
 		DbName:   dbName,
-		userUuid: userUuid,
-		userName: userName,
+		UserUuid: userUuid,
+		UserName: userName,
 		GridUuid: gridUuid,
 		Uuid:     uuid,
 	}
@@ -50,8 +50,8 @@ func getParameters(c *gin.Context) (HtmlParameters, error) {
 
 type HtmlParameters struct {
 	DbName               string
-	userUuid             string
-	userName             string
+	UserUuid             string
+	UserName             string
 	GridUuid             string
 	Uuid                 string
 	filterColumnOwned    bool
@@ -69,11 +69,11 @@ type ApiRequest struct {
 }
 
 func (r ApiRequest) log(format string, a ...any) {
-	configuration.Log(r.p.DbName, r.p.userName, format, a...)
+	configuration.Log(r.p.DbName, r.p.UserName, format, a...)
 }
 
 func (r ApiRequest) trace(format string, a ...any) {
-	configuration.Trace(r.p.DbName, r.p.userName, format, a...)
+	configuration.Trace(r.p.DbName, r.p.UserName, format, a...)
 }
 
 func (r ApiRequest) startTiming() time.Time {
@@ -81,11 +81,11 @@ func (r ApiRequest) startTiming() time.Time {
 }
 
 func (r ApiRequest) stopTiming(funcName string, start time.Time) {
-	configuration.StopTiming(r.p.DbName, r.p.userName, funcName, start)
+	configuration.StopTiming(r.p.DbName, r.p.UserName, funcName, start)
 }
 
 func (r ApiRequest) logAndReturnError(format string, a ...any) error {
-	return configuration.LogAndReturnError(r.p.DbName, r.p.userName, format, a...)
+	return configuration.LogAndReturnError(r.p.DbName, r.p.UserName, format, a...)
 }
 
 func (r ApiRequest) execContext(query string, args ...any) error {

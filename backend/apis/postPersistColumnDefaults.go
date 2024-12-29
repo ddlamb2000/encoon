@@ -132,7 +132,7 @@ func setGridsColumnDefaults(r ApiRequest, grid *model.Grid) error {
 func updateColumnOrderNumber(r ApiRequest, columnUuid string, orderNumber int64) error {
 	query := getUpdateColumnOrderNumberQuery()
 	r.trace("updateColumnOrderNumber(%s, %d) - query=%s", columnUuid, orderNumber, query)
-	if err := r.execContext(query, model.UuidColumns, columnUuid, orderNumber, r.p.userUuid); err != nil {
+	if err := r.execContext(query, model.UuidColumns, columnUuid, orderNumber, r.p.UserUuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	return nil
@@ -150,7 +150,7 @@ var getUpdateColumnOrderNumberQuery = func() string {
 func updateColumnName(r ApiRequest, columnUuid string, name string) error {
 	query := getUpdateColumnNameQuery()
 	r.trace("updateColumnName(%s, %s) - query=%s", columnUuid, name, query)
-	if err := r.execContext(query, model.UuidColumns, columnUuid, name, r.p.userUuid); err != nil {
+	if err := r.execContext(query, model.UuidColumns, columnUuid, name, r.p.UserUuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	return nil

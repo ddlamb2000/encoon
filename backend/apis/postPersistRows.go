@@ -24,7 +24,7 @@ func persistGridRowData(r ApiRequest, grid *model.Grid, rows []*model.Row, f per
 }
 
 func postInsertGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
-	_, _, canAddRows, _ := grid.GetViewEditAccessFlags(r.p.userUuid)
+	_, _, canAddRows, _ := grid.GetViewEditAccessFlags(r.p.UserUuid)
 	if !canAddRows {
 		r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to create rows.")
@@ -32,7 +32,7 @@ func postInsertGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 	row.TmpUuid = row.Uuid
 	row.Uuid = utils.GetNewUUID()
 	query := getInsertStatementForGridsApi(grid)
-	parms := getInsertValuesForGridsApi(r.p.userUuid, grid, row)
+	parms := getInsertValuesForGridsApi(r.p.UserUuid, grid, row)
 	r.trace("postInsertGridRow(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Insert row error: %v.", err)
@@ -144,7 +144,7 @@ func postUpdateGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getUpdateStatementForGridsApi(grid)
-	parms := getUpdateValuesForGridsApi(r.p.userUuid, grid, row)
+	parms := getUpdateValuesForGridsApi(r.p.UserUuid, grid, row)
 	r.trace("postUpdateGridRow(%s, %s) - query=%s ; parms=%s", grid, row, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Update row error: %v.", err)
@@ -244,7 +244,7 @@ func postDeleteGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 
 	query = getDeleteGridRowQuery(grid)
 	r.trace("postDeleteGridRow(%s, %s) - query=%s", grid, row, query)
-	if err := r.execContext(query, grid.Uuid, row.Uuid, r.p.userUuid); err != nil {
+	if err := r.execContext(query, grid.Uuid, row.Uuid, r.p.UserUuid); err != nil {
 		return r.logAndReturnError("Delete row error: %v.", err)
 	}
 	if err := removeAssociatedGridFromCache(r, grid, row.Uuid); err != nil {

@@ -78,13 +78,27 @@ func handleMessage(dbName string, message kafka.Message) {
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			user := claims["user"]
+			userUuid := claims["userUuid"]
 			today := time.Now()
 			expiration := claims["expires"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
 			userName := fmt.Sprintf("%v", user)
+			userUuidName := fmt.Sprintf("%v", userUuid)
 			if today.After(expirationDate) {
 				configuration.Log(dbName, userName, "Authorization expired (%v).", expirationDate)
 				return
+			}
+			if content.Action == ActionGetGrid {
+				response = getGrid(dbName, userUuidName, userName, content)
+			} else if content.Action == ActionLocateGrid {
+				response = locate(dbName, content)
+			} else {
+				configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
+				response = responseContent{
+					Status:      FailedStatus,
+					Action:      content.Action,
+					TextMessage: "Invalid action (" + content.Action + ")",
+				}
 			}
 		} else {
 			configuration.Log(dbName, "", "Invalid token: %v.", err)
@@ -94,18 +108,6 @@ func handleMessage(dbName string, message kafka.Message) {
 				TextMessage: "Invalid request",
 			}
 			return
-		}
-		if content.Action == ActionGetGrid {
-			response = getGrid(dbName, content)
-		} else if content.Action == ActionLocateGrid {
-			response = locate(dbName, content)
-		} else {
-			configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
-			response = responseContent{
-				Status:      FailedStatus,
-				Action:      content.Action,
-				TextMessage: "Invalid action (" + content.Action + ")",
-			}
 		}
 	}
 

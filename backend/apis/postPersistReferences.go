@@ -76,7 +76,7 @@ var getInsertStatementForReferenceRow = func() string {
 func getInsertStatementParametersForReferenceRow(r ApiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, utils.GetNewUUID())
-	parameters = append(parameters, r.p.userUuid)
+	parameters = append(parameters, r.p.UserUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, ref.ColumnName)
 	if ref.Owned {
@@ -102,7 +102,7 @@ func postGridSetOwnership(r ApiRequest, grid *model.Grid, addedRows []*model.Row
 				ColumnName: "relationship3",
 				FromUuid:   row.Uuid,
 				ToGridUuid: model.UuidUsers,
-				ToUuid:     r.p.userUuid,
+				ToUuid:     r.p.UserUuid,
 			}
 			err := postInsertReferenceRow(r, grid, addedRows, ref)
 			if err != nil {
@@ -147,7 +147,7 @@ var getDeleteReferenceRowStatement = func() string {
 
 func getDeleteReferenceRowStatementParameters(r ApiRequest, grid *model.Grid, ref gridReferencePost, rowUuid string) []any {
 	parameters := make([]any, 0)
-	parameters = append(parameters, r.p.userUuid)
+	parameters = append(parameters, r.p.UserUuid)
 	parameters = append(parameters, model.UuidRelationships)
 	parameters = append(parameters, ref.ColumnName)
 	if ref.Owned {

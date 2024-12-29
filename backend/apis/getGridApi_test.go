@@ -17,7 +17,7 @@ func TestGetGridForGridsApi(t *testing.T) {
 	p := HtmlParameters{
 		DbName:   "test",
 		GridUuid: model.UuidUsers,
-		userName: "root",
+		UserName: "root",
 	}
 	r, cancel, _ := createContextAndApiRequest(context.Background(), p, "test")
 	defer cancel()

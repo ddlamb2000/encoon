@@ -9,9 +9,9 @@ import (
 	"d.lambert.fr/encoon/apis"
 )
 
-func getGrid(dbName string, content requestContent) responseContent {
-	p := getParameters(dbName, content)
-	response := apis.GetGridsRows(context.Background(), "", p)
+func getGrid(dbName string, userUuid string, userName string, content requestContent) responseContent {
+	parameters := getParameters(dbName, userUuid, userName, content)
+	response := apis.GetGridsRows(context.Background(), "", parameters)
 	if response.Err != nil {
 		return responseContent{
 			Status:      FailedStatus,
@@ -27,10 +27,12 @@ func getGrid(dbName string, content requestContent) responseContent {
 	}
 }
 
-func getParameters(dbName string, content requestContent) apis.HtmlParameters {
+func getParameters(dbName string, userUuid string, userName string, content requestContent) apis.HtmlParameters {
 	gridUuid, uuid := content.GridUuid, content.Uuid
 	return apis.HtmlParameters{
 		DbName:   dbName,
+		UserUuid: userUuid,
+		UserName: userName,
 		GridUuid: gridUuid,
 		Uuid:     uuid,
 	}

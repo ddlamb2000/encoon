@@ -39,7 +39,7 @@ var getGridInstanceForGridsApi = func(r ApiRequest, gridUuid string) (*model.Gri
 	t := r.startTiming()
 	defer r.stopTiming("getGridInstanceForGridsApi()", t)
 	query := getGridQueryForGridsApi()
-	parms := getGridQueryParametersForGridsApi(gridUuid, r.p.userUuid)
+	parms := getGridQueryParametersForGridsApi(gridUuid, r.p.UserUuid)
 	r.trace("getGridInstanceForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
 	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
