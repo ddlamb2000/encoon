@@ -5,6 +5,8 @@ package kafka
 
 import (
 	"context"
+	"hash/fnv"
+	"os"
 	"strings"
 	"time"
 
@@ -14,9 +16,22 @@ import (
 	"github.com/segmentio/kafka-go/compress"
 )
 
+type RoundRobin struct {
+}
+
+func (b *RoundRobin) Balance(msg kafka.Message, partitions ...int) (partition int) {
+	algorithm := fnv.New32a()
+	algorithm.Write([]byte(msg.Key))
+	nbPartitions := uint32(len(partitions))
+	hash := algorithm.Sum32()
+	balance := int(hash % nbPartitions)
+	return balance
+}
+
 func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response []byte) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
+	hostname, _ := os.Hostname()
 
 	w := kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
@@ -28,12 +43,12 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 		BatchTimeout:           100 * time.Millisecond,
 		RequiredAcks:           -1,
 		Compression:            compress.Gzip,
-		Balancer:               &kafka.RoundRobin{},
+		Balancer:               &RoundRobin{},
 	}
 
 	key := utils.GetNewUUID()
 	headers := []kafka.Header{
-		{Key: "from", Value: []byte("backend")},
+		{Key: "from", Value: []byte("backend-" + hostname)},
 		{Key: "requestKey", Value: requestKey},
 		{Key: "initiatedOn", Value: initiatedOn},
 	}
