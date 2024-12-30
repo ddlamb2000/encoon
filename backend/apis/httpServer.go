@@ -48,26 +48,6 @@ func getParameters(c *gin.Context) (ApiParameters, error) {
 	return p, nil
 }
 
-type ApiParameters struct {
-	DbName               string
-	UserUuid             string
-	UserName             string
-	GridUuid             string
-	Uuid                 string
-	filterColumnOwned    bool
-	filterColumnName     string
-	filterColumnGridUuid string
-	filterColumnValue    string
-}
-
-type ApiRequest struct {
-	ctx         context.Context
-	p           ApiParameters
-	db          *sql.DB
-	ctxChan     chan ApiResponse
-	transaction *model.Row
-}
-
 func (r ApiRequest) log(format string, a ...any) {
 	configuration.Log(r.p.DbName, r.p.UserName, format, a...)
 }
@@ -139,25 +119,6 @@ var getRollbackTransactionQuery = func() string {
 	return "ROLLBACK"
 }
 
-type ApiResponse struct {
-	Grid                   *model.Grid         `json:"grid"`
-	CountRows              int                 `json:"countRows"`
-	Rows                   []model.Row         `json:"rows"`
-	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
-	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
-	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
-	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded,omitempty"`
-	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved,omitempty"`
-	Err                    error               `json:"err,omitempty"`
-	TimeOut                bool                `json:"timeOut,omitempty"`
-	System                 bool                `json:"system,omitempty"`
-	Forbidden              bool                `json:"forbidden,omitempty"`
-	CanViewRows            bool                `json:"canViewRows"`
-	CanEditRows            bool                `json:"canEditRows"`
-	CanAddRows             bool                `json:"canAddRows"`
-	CanEditGrid            bool                `json:"canEditGrid"`
-}
-
 func createContextAndApiRequest(ct context.Context, p ApiParameters, uri string) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.DbName)
 	db, err := database.GetDbByName(p.DbName)
@@ -198,23 +159,6 @@ func GetGridsRowsApi(c *gin.Context) {
 		return
 	}
 	c.JSON(http.StatusOK, gin.H{"response": response})
-}
-
-type gridPost struct {
-	RowsAdded              []*model.Row        `json:"rowsAdded"`
-	RowsEdited             []*model.Row        `json:"rowsEdited"`
-	RowsDeleted            []*model.Row        `json:"rowsDeleted"`
-	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded"`
-	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved"`
-}
-
-type gridReferencePost struct {
-	ColumnName string `json:"columnName"`
-	ColumnUuid string `json:"columnUuid"`
-	FromUuid   string `json:"fromUuid"`
-	ToGridUuid string `json:"toGridUuid"`
-	ToUuid     string `json:"uuid"`
-	Owned      bool   `json:"owned"`
 }
 
 func PostGridsRowsApi(c *gin.Context) {
