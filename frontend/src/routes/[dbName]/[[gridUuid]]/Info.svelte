@@ -19,14 +19,10 @@
   <ul>
     {#each messageStack as message}
       {#if message.request}
-        <li class="request">
-          → {message.request.messageKey} {message.request.message.substring(0, 200)}
-        </li>
+        <li class="request">→ {message.request.messageKey} {message.request.message.substring(0, 200)}</li>
       {/if}
       {#if message.response}
-        <li>
-          ← {message.response.messageKey} {message.response.message.substring(0, 200)}
-        </li>
+        <li>← {message.response.messageKey} {message.response.message.substring(0, 200)}</li>
       {/if}
     {/each}
   </ul>

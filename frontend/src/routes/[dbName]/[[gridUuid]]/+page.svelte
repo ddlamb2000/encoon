@@ -5,6 +5,7 @@
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
   import Info from './Info.svelte'
+  import Row from './Row.svelte'
   
   let { data }: { data: PageData } = $props()
 
@@ -12,24 +13,15 @@
   const gridUuid = data.gridUuid
   const url = data.url
   const dataSet = $state([{}])
-  let focus = $state({})
-  let isSending = $state(false)
-	let messageStatus = $state('');
-  let isStreaming = $state(false)
-  let loggedIn = $state(false)
-  let token = $state("")
-  let userUuid = $state("")
-  let user = $state("")
-  let userFirstName = $state("")
-  let userLastName = $state("")
-  
-  const messageStack = $state([{}])
-  
+  const messageStack = $state([{}])  
   let reader = $state()
 
-  let loginId = $state("")
-  let loginPassword = $state("")
-
+  let context = $state({ focus: {}, isSending: false, messageStatus: '', isStreaming: false })
+  
+  let user = $state({ user: '', token: '',
+                      userUuid: '', userFirstName: '', userLastName: '',
+                      loggedIn: false, loginId: '', loginPassword: '' })
+  
   onMount(() => {
     getStream()
     pushTransaction({action: ActionGetGrid, griduuid: gridUuid})
@@ -92,9 +84,9 @@
   async function logout() {
     pushTransaction({action: ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
-    loginId = ""
-    loginPassword = ""
-    loggedIn = false
+    user.loginId = ""
+    user.loginPassword = ""
+    user.loggedIn = false
   }
 
   async function authentication() {
@@ -107,7 +99,7 @@
           {'key': 'url', 'value': url},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify({action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
+        message: JSON.stringify({action: ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
         selectedPartitions: []
       }
     )
@@ -130,11 +122,11 @@
       const column = grid.columns.find((column) => column.uuid === columnUuid)
       if(column) {
         const row = set.rows.find((row) => row.uuid === rowUuid)
-        focus = {grid: grid, column: column, row: row}
+        context.focus = {grid: grid, column: column, row: row}
         return
       }
     }
-    focus = {}
+    context.focus = {}
   }
   
   function pushTransaction(payload) {
@@ -146,9 +138,9 @@
           {'key': 'from', 'value': 'εncooη frontend'},
           {'key': 'url', 'value': url},
           {'key': 'dbName', 'value': dbName},
-          {'key': 'userUuid', 'value': userUuid},
-          {'key': 'user', 'value': user},
-          {'key': 'jwt', 'value': token},
+          {'key': 'userUuid', 'value': user.userUuid},
+          {'key': 'user', 'value': user.user},
+          {'key': 'jwt', 'value': user.token},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify(payload),
@@ -158,57 +150,57 @@
   }
 
 	async function sendMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
-		isSending = true
+		context.isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
       if(!checkToken()) {
-        messageStatus = "Not authorized to send message"
+        context.messageStatus = "Not authorized to send message"
         return
       }
     }
     console.log(`[Send] to ${uri}`, request)
     messageStack.push({'request' : request})
-		messageStatus = 'Sending'
+		context.messageStatus = 'Sending'
 		const response = await fetch(uri, {
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + token
+        'Authorization': 'Bearer ' + user.token
 			},
 			body: JSON.stringify(request)
 		})
 		const data: KafkaMessageResponse = await response.json()
-		isSending = false
-		if (!response.ok) messageStatus = data.error || 'Failed to send message'
-		else messageStatus = data.message
+		context.isSending = false
+		if (!response.ok) context.messageStatus = data.error || 'Failed to send message'
+		else context.messageStatus = data.message
 	}
 
   function checkToken(): boolean {
-    token = localStorage.getItem(`access_token_${dbName}`)
-    if(token !== null && token !== undefined) {
+    user.token = localStorage.getItem(`access_token_${dbName}`)
+    if(user.token !== null && user.token !== undefined) {
       try {
-        const arrayToken = token.split('.')
+        const arrayToken = user.token.split('.')
         const tokenPayload = JSON.parse(atob(arrayToken[1]))
         const now = (new Date).toISOString()
         const nowDate = Date.parse(now)
         const tokenExpirationDate = Date.parse(tokenPayload.expires)
         if(nowDate < tokenExpirationDate) {
-          loggedIn = true
-          userUuid = tokenPayload.userUuid
-          user = tokenPayload.user
-          userFirstName = tokenPayload.userFirstName
-          userLastName = tokenPayload.userLastName
+          user.loggedIn = true
+          user.userUuid = tokenPayload.userUuid
+          user.user = tokenPayload.user
+          user.userFirstName = tokenPayload.userFirstName
+          user.userLastName = tokenPayload.userLastName
           return true
         }
       } catch (error) {
         console.error(`Error checking token:`, error)
       }
     }
-    loggedIn = false
-    userUuid = ""
-    user = ""
-    userFirstName = ""
-    userLastName = ""
+    user.loggedIn = false
+    user.userUuid = ""
+    user.user = ""
+    user.userFirstName = ""
+    user.userLastName = ""
     return false
   }
 
@@ -250,18 +242,18 @@
           if(message.action == ActionAuthentication) {
             if(message.status == SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname}`)
-              loggedIn = true
+              user.loggedIn = true
               localStorage.setItem(`access_token_${dbName}`, message.jwt)
             } else {
               localStorage.removeItem(`access_token_${dbName}`)
-              loginPassword = ""
-              loggedIn = false
-              token = ""
+              user.loginPassword = ""
+              user.loggedIn = false
+              user.token = ""
             }
           } else if(message.action == ActionLogout) {
             localStorage.removeItem(`access_token_${dbName}`)
-            loginPassword = ""
-            loggedIn = false
+            user.loginPassword = ""
+            user.loggedIn = false
           } else if(checkToken()) {
             if(message.status == SuccessStatus) {
               if(message.action == ActionGetGrid) {
@@ -310,16 +302,16 @@
     const signal = ac.signal
     checkToken()
     console.log(`Start streaming from ${uri}`)
-    isStreaming = true
+    context.isStreaming = true
     for await (let line of getStreamIteration(uri)) {
       console.log(`Get from ${uri}`, line)
     }
   }
 
   function isFocused(set, column, row): boolean {
-    return focus.grid && focus.grid.uuid === set.grid.uuid 
-            && focus.row && focus.row.uuid === row.uuid 
-            && focus.column && focus.column.uuid === column.uuid
+    return context.focus.grid && context.focus.grid.uuid === set.grid.uuid 
+            && context.focus.row && context.focus.row.uuid === row.uuid 
+            && context.focus.column && context.focus.column.uuid === column.uuid
   }
 
 </script>
@@ -330,8 +322,8 @@
 <div class="layout">
   <main>
     <h1>{dbName}</h1>
-    {#if loggedIn}
-      {userFirstName} {userLastName} <button onclick={() => logout()}>Log out</button>
+    {#if user.loggedIn}
+      {user.userFirstName} {user.userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
         {#each dataSet as set}
           {#if set.grid && set.grid.gridUuid}
@@ -344,7 +336,7 @@
                 <thead>
                   <tr>
                     <th></th>
-                    {#each set.grid.columns as column, j}
+                    {#each set.grid.columns as column}
                       <th class='header'>
                         {column.label}
                         <button onclick={() => removeColumn(grid, col.uuid)}>-</button>
@@ -354,28 +346,15 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {#each set.rows as row, i}
-                    {#key row.uuid}
-                      <tr>
-                        <td>
-                          <button onclick={() => removeRow(grid, row.uuid)}>-</button>
-                          <button onclick={() => addRow(set)}>+</button>
-                        </td>
-                        {#each set.grid.columns as column, j}
-                          <td class={isFocused(set, column, row) ? 'focus' : 'cell'}  
-                              bind:innerHTML={set.rows[i][column.name]}
-                              onfocus={() => changeFocus(set, row, column)}
-                              oninput={() => changeCell(set, row)}
-                              contenteditable>
-                            {row[column.name]}
-                          </td>
-                        {/each}
-                      </tr>
-                    {/key}
+                  {#each set.rows as row, rowIndex}
+                    <Row set={set} row={row}
+                          addRow={addRow} removeRow={removeRow}
+                          bind:innerHTML={set.rows[rowIndex]}
+                          isFocused={isFocused} changeFocus={changeFocus} changeCell={changeCell} />
                   {/each}
                 </tbody>
               </table>
-              {set.countRows} rows
+              {set.countRows} {set.countRows === 1 ? 'row' : 'rows'}
             {/key}
           {/if}
         {/each}
@@ -385,13 +364,13 @@
       </ul>	
     {:else}
       <form>
-        <label>Username<input bind:value={loginId} /></label>
-        <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
+        <label>Username<input bind:value={user.loginId} /></label>
+        <label>Passphrase<input bind:value={user.loginPassword} type="password" /></label>
         <button type="submit" onclick={() => authentication()}>Log in</button>
       </form>
     {/if}
   </main>
-  <Info focus={focus} messageStack={messageStack} isSending={isSending} messageStatus={messageStatus} isStreaming={isStreaming}/>
+  <Info {...context} messageStack={messageStack} />
 </div>
 
 <style>
@@ -411,11 +390,5 @@
     display: inline-block;
   }
 
-  .header { border: 1px dotted gray; }
-  .cell { border: 0.5px dotted gray; }
-  
-  .focus {
-    border: 0.5px solid; 
-    background-color: lightyellow;
-  }
+  .header { border: 1px dotted gray; }  
 </style>
