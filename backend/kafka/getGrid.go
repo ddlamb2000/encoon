@@ -27,9 +27,9 @@ func getGrid(dbName string, userUuid string, userName string, content requestCon
 	}
 }
 
-func getParameters(dbName string, userUuid string, userName string, content requestContent) apis.HtmlParameters {
+func getParameters(dbName string, userUuid string, userName string, content requestContent) apis.ApiParameters {
 	gridUuid, uuid := content.GridUuid, content.Uuid
-	return apis.HtmlParameters{
+	return apis.ApiParameters{
 		DbName:   dbName,
 		UserUuid: userUuid,
 		UserName: userName,

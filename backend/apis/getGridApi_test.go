@@ -14,7 +14,7 @@ import (
 
 func TestGetGridForGridsApi(t *testing.T) {
 	configuration.LoadConfiguration("../testData/validConfiguration1.yml")
-	p := HtmlParameters{
+	p := ApiParameters{
 		DbName:   "test",
 		GridUuid: model.UuidUsers,
 		UserName: "root",

@@ -27,11 +27,11 @@ func SetApiRoutes(r *gin.Engine) {
 	}
 }
 
-func getParameters(c *gin.Context) (HtmlParameters, error) {
+func getParameters(c *gin.Context) (ApiParameters, error) {
 	dbName, gridUuid, uuid := c.Param("dbName"), c.Param("gridUuid"), c.Param("uuid")
 	userUuid, userName := c.GetString("userUuid"), c.GetString("user")
 	auth, exists := c.Get("authorized")
-	p := HtmlParameters{
+	p := ApiParameters{
 		DbName:   dbName,
 		UserUuid: userUuid,
 		UserName: userName,
@@ -48,7 +48,7 @@ func getParameters(c *gin.Context) (HtmlParameters, error) {
 	return p, nil
 }
 
-type HtmlParameters struct {
+type ApiParameters struct {
 	DbName               string
 	UserUuid             string
 	UserName             string
@@ -62,7 +62,7 @@ type HtmlParameters struct {
 
 type ApiRequest struct {
 	ctx         context.Context
-	p           HtmlParameters
+	p           ApiParameters
 	db          *sql.DB
 	ctxChan     chan ApiResponse
 	transaction *model.Row
@@ -158,7 +158,7 @@ type ApiResponse struct {
 	CanEditGrid            bool                `json:"canEditGrid"`
 }
 
-func createContextAndApiRequest(ct context.Context, p HtmlParameters, uri string) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
+func createContextAndApiRequest(ct context.Context, p ApiParameters, uri string) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.DbName)
 	db, err := database.GetDbByName(p.DbName)
 	r := ApiRequest{
