@@ -91,7 +91,7 @@ func handleMessage(dbName string, message kafka.Message) {
 			}
 			if content.Action == ActionGetGrid {
 				response = getGrid(dbName, userUuid, user, content)
-			} else if content.Action == ActionAddRow {
+			} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue {
 				response = postGridsRows(dbName, userUuid, user, content)
 			} else if content.Action == ActionLocateGrid {
 				response = locate(dbName, content)

@@ -63,6 +63,16 @@
     })
   }
 
+  async function changeCell(set, row) {
+    pushTransaction({
+      action: ActionUpdateValue,
+      gridUuid: set.grid.uuid,
+      dataSet: {
+        rowsEdited: [row]
+      }
+    })
+  }
+
   async function removeRow(grid, uuid) {
     grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
     pushTransaction({action: 'delrow', griduuid: grid.uuid, uuid: uuid})
@@ -81,16 +91,6 @@
     grid.cols.splice(colindex, 1)
     grid.rows.forEach((row) => row.data.splice(colindex, 1))
     pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
-  }
-
-  async function changeCell(grid, row, column, value) {
-    pushTransaction({
-      action: ActionUpdateValue,
-      gridUuid: grid.uuid,
-      rowUuid: row.uuid,
-      columnUuid: column.uuid,
-      value: value
-    })
   }
 
   async function logout() {
@@ -117,10 +117,10 @@
     )
   }
 
-  function changeFocus(grid, row, column) { 
+  function changeFocus(set, row, column) { 
     pushTransaction({
       action: ActionLocateGrid,
-      gridUuid: grid.uuid,
+      gridUuid: set.grid.uuid,
       rowUuid: row.uuid,
       columnUuid: column.uuid
     })
@@ -319,6 +319,12 @@
       console.log(`Get from ${uri}`, line)
     }
   }
+
+  function isFocused(set, column, row): boolean {
+    return focus.grid && focus.grid.uuid === set.grid.uuid 
+            && focus.row && focus.row.uuid === row.uuid 
+            && focus.column && focus.column.uuid === column.uuid
+  }
 </script>
 
 <svelte:head>
@@ -343,7 +349,7 @@
                     <th></th>
                     {#each set.grid.columns as column, j}
                       <th class='header'>
-                        {column.label} <small>{column.name}</small>
+                        {column.label}
                         <button onclick={() => removeColumn(grid, col.uuid)}>-</button>
                       </th>
                     {/each}
@@ -359,14 +365,10 @@
                           <button onclick={() => addRow(set)}>+</button>
                         </td>
                         {#each set.grid.columns as column, j}
-                          <td
+                          <td class={isFocused(set, column, row) ? 'focus' : 'cell'}  
                               bind:innerHTML={set.rows[i][column.name]}
-                              onfocus={() => changeFocus(set.grid, row, column)}
-                              oninput={() => changeCell(set.grid, row, column, set.rows[i][column.name])}
-                              class={
-                                (focus.grid && focus.grid.uuid === set.grid.uuid
-                                && focus.row.uuid === row.uuid && focus.column.uuid === column.uuid) 
-                                ? 'focus' : 'cell'}  
+                              onfocus={() => changeFocus(set, row, column)}
+                              oninput={() => changeCell(set, row)}
                               contenteditable>
                             {row[column.name]}
                           </td>
@@ -380,7 +382,9 @@
             {/key}
           {/if}
         {/each}
-        <button onclick={() => newGrid()}>New Grid</button>
+        <li>
+          <button onclick={() => newGrid()}>New Grid</button>
+        </li>
       </ul>	
     {:else}
       <form>
