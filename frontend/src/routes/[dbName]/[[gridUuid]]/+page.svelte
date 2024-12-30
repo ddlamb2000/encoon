@@ -1,5 +1,5 @@
 <script  lang="ts">
-  import { newUuid, numberToLetters } from "$lib/utils.svelte"
+  import { newUuid, numberToLetters, debounce } from "$lib/utils.svelte"
   import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue, ActionAddRow } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
@@ -47,31 +47,27 @@
     pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
-  async function addRow(set) {
+  const addRow = async (set) => {
     const uuid = newUuid()
-    const row = {
-      uuid: uuid,
-      text1: uuid
-    }
+    const row = { uuid: uuid }
     set.rows.push(row)
     pushTransaction({
       action: ActionAddRow,
       gridUuid: set.grid.uuid,
-      dataSet: {
-        rowsAdded: [row]
-      }
+      dataSet: { rowsAdded: [row] }
     })
   }
 
-  async function changeCell(set, row) {
-    pushTransaction({
-      action: ActionUpdateValue,
-      gridUuid: set.grid.uuid,
-      dataSet: {
-        rowsEdited: [row]
-      }
-    })
-  }
+  const changeCell = debounce(
+    async (set, row) => {
+      pushTransaction({
+        action: ActionUpdateValue,
+        gridUuid: set.grid.uuid,
+        dataSet: { rowsEdited: [row] }
+      })
+    },
+    500
+  )
 
   async function removeRow(grid, uuid) {
     grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
@@ -102,7 +98,7 @@
   }
 
   async function authentication() {
-    postMessage(
+    sendMessage(
       true,
       {
         messageKey: newUuid(),
@@ -142,7 +138,7 @@
   }
   
   function pushTransaction(payload) {
-    postMessage(
+    sendMessage(
       false,
       {
         messageKey: newUuid(),
@@ -161,7 +157,7 @@
     )
   }
 
-	async function postMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
+	async function sendMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
 		isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
@@ -325,6 +321,7 @@
             && focus.row && focus.row.uuid === row.uuid 
             && focus.column && focus.column.uuid === column.uuid
   }
+
 </script>
 
 <svelte:head>
