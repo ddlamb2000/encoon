@@ -37,8 +37,8 @@ type ApiResponse struct {
 	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
 	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
 	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
-	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded,omitempty"`
-	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved,omitempty"`
+	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded,omitempty"`
+	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved,omitempty"`
 	Err                    error               `json:"err,omitempty"`
 	TimeOut                bool                `json:"timeOut,omitempty"`
 	System                 bool                `json:"system,omitempty"`
@@ -49,15 +49,15 @@ type ApiResponse struct {
 	CanEditGrid            bool                `json:"canEditGrid"`
 }
 
-type gridPost struct {
+type GridPost struct {
 	RowsAdded              []*model.Row        `json:"rowsAdded"`
 	RowsEdited             []*model.Row        `json:"rowsEdited"`
 	RowsDeleted            []*model.Row        `json:"rowsDeleted"`
-	ReferenceValuesAdded   []gridReferencePost `json:"referencedValuesAdded"`
-	ReferenceValuesRemoved []gridReferencePost `json:"referencedValuesRemoved"`
+	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded"`
+	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved"`
 }
 
-type gridReferencePost struct {
+type GridReferencePost struct {
 	ColumnName string `json:"columnName"`
 	ColumnUuid string `json:"columnUuid"`
 	FromUuid   string `json:"fromUuid"`

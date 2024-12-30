@@ -167,9 +167,9 @@ func PostGridsRowsApi(c *gin.Context) {
 		c.Abort()
 		c.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 	}
-	var payload gridPost
+	var payload GridPost
 	c.ShouldBindJSON(&payload)
-	response := postGridsRows(c.Request.Context(), c.Request.RequestURI, p, payload)
+	response := PostGridsRows(c.Request.Context(), c.Request.RequestURI, p, payload)
 	if response.Err != nil {
 		c.Abort()
 		c.JSON(getHttpErrorCode(response), gin.H{"error": response.Err.Error()})

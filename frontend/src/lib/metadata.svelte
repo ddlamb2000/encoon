@@ -2,6 +2,7 @@
     export const ActionAuthentication = "AUTHENTICATION"
     export const ActionLogout = "LOGOUT"
     export const ActionGetGrid = "LOAD"
+    export const ActionAddRow = "NEWROW"
     export const ActionLocateGrid = "LOCATE"
     export const ActionUpdateValue = "UPDATE"
     export const SuccessStatus = "SUCCESS"

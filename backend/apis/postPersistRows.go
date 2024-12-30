@@ -30,7 +30,9 @@ func postInsertGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 		return r.logAndReturnError("User isn't allowed to create rows.")
 	}
 	row.TmpUuid = row.Uuid
-	row.Uuid = utils.GetNewUUID()
+	if len(row.Uuid) != 36 {
+		row.Uuid = utils.GetNewUUID()
+	}
 	query := getInsertStatementForGridsApi(grid)
 	parms := getInsertValuesForGridsApi(r.p.UserUuid, grid, row)
 	r.trace("postInsertGridRow(%s, %s) - query=%s, parms=%s", grid, row, query, parms)

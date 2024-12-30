@@ -9,7 +9,7 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func persistUpdateColumnDefaults(r ApiRequest, grid *model.Grid, payload gridPost) error {
+func persistUpdateColumnDefaults(r ApiRequest, grid *model.Grid, payload GridPost) error {
 	gridUuids, _ := getGridsToUpdateWithColumnDefaults(r, grid, payload)
 	r.trace("persistUpdateColumnDefaults - gridUuids=%v", gridUuids)
 	for _, gridUuid := range gridUuids {
@@ -29,7 +29,7 @@ var getGridInstanceWithColumnsForUpdateColumnDefaults = func(r ApiRequest, gridU
 	return getGridInstanceWithColumnsForGridsApi(r, gridUuid)
 }
 
-func getGridsToUpdateWithColumnDefaults(r ApiRequest, grid *model.Grid, payload gridPost) ([]string, error) {
+func getGridsToUpdateWithColumnDefaults(r ApiRequest, grid *model.Grid, payload GridPost) ([]string, error) {
 	gridUuids := make([]string, 0)
 	var mapGridUuids = make(map[string]bool)
 	allRows := make([]*model.Row, 0)
@@ -37,7 +37,7 @@ func getGridsToUpdateWithColumnDefaults(r ApiRequest, grid *model.Grid, payload 
 	allRows = append(allRows, payload.RowsEdited...)
 	allRows = append(allRows, payload.RowsDeleted...)
 	if grid.Uuid == model.UuidGrids {
-		allRows := make([]gridReferencePost, 0)
+		allRows := make([]GridReferencePost, 0)
 		allRows = append(allRows, payload.ReferenceValuesAdded...)
 		allRows = append(allRows, payload.ReferenceValuesRemoved...)
 		for _, ref := range allRows {

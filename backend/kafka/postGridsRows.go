@@ -9,9 +9,9 @@ import (
 	"d.lambert.fr/encoon/apis"
 )
 
-func getGrid(dbName string, userUuid string, userName string, content requestContent) responseContent {
+func postGridsRows(dbName string, userUuid string, userName string, content requestContent) responseContent {
 	parameters := getParameters(dbName, userUuid, userName, content)
-	response := apis.GetGridsRows(context.Background(), "", parameters)
+	response := apis.PostGridsRows(context.Background(), "", parameters, content.DataSet)
 	if response.Err != nil {
 		return responseContent{
 			Status:      FailedStatus,

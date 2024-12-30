@@ -1,6 +1,6 @@
 <script  lang="ts">
   import { newUuid, numberToLetters } from "$lib/utils.svelte"
-  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue } from "$lib/metadata.svelte"
+  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue, ActionAddRow } from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -16,7 +16,6 @@
   let isSending = $state(false)
 	let messageStatus = $state('');
   let isStreaming = $state(false)
-  let stopStreaming = $state(false)
   let loggedIn = $state(false)
   let token = $state("")
   let userUuid = $state("")
@@ -37,39 +36,31 @@
   })
 
   onDestroy(() => {
-    stopStreaming = true
     if(reader !== undefined) reader.cancel()
 	})
-
-  function initGrid(grid) {
-    grid.search = ''
-    grid.columnSeq = grid.cols.length
-    applyFilters(grid)
-  }
-
-  function applyFilters(grid) {
-    if (grid.search === '') grid.rows.forEach((row) => row.filtered = true)
-    else {
-      const regex = new RegExp(grid.search, 'i')
-      grid.rows.forEach((row) => row.filtered = regex.test(row.data[0]))
-    }
-  }
 
   async function newGrid() {
     const grid = {uuid: newUuid(), title: 'Untitled', 
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
                   rows: [{uuid: newUuid(), data: ['']}]
                  }
-    initGrid(grid)
     pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
-  async function addRow(grid) {
+  async function addRow(set) {
     const uuid = newUuid()
-    const data = []
-    grid.cols.forEach(() => data.push(''))
-    grid.rows.push({uuid: uuid, data: data, filtered: true})
-    pushTransaction({action: 'addrow', griduuid: grid.uuid, uuid: uuid})
+    const row = {
+      uuid: uuid,
+      text1: uuid
+    }
+    set.rows.push(row)
+    pushTransaction({
+      action: ActionAddRow,
+      gridUuid: set.grid.uuid,
+      dataSet: {
+        rowsAdded: [row]
+      }
+    })
   }
 
   async function removeRow(grid, uuid) {
@@ -365,7 +356,7 @@
                       <tr>
                         <td>
                           <button onclick={() => removeRow(grid, row.uuid)}>-</button>
-                          <button onclick={() => addRow(grid)}>+</button>
+                          <button onclick={() => addRow(set)}>+</button>
                         </td>
                         {#each set.grid.columns as column, j}
                           <td

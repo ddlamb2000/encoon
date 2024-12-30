@@ -9,7 +9,7 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func postGridsRows(ct context.Context, uri string, p ApiParameters, payload gridPost) ApiResponse {
+func PostGridsRows(ct context.Context, uri string, p ApiParameters, payload GridPost) ApiResponse {
 	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
 	t := r.startTiming()
