@@ -1,4 +1,4 @@
-export interface Header {
+export interface KafkaMessageHeader {
 	key: string
 	value: string
 }
@@ -6,7 +6,7 @@ export interface Header {
 export interface KafkaMessageRequest {
 	messageKey?: string
 	message: string
-	headers: Header[]
+	headers: KafkaMessageHeader[]
 	selectedPartitions: number[]
 }
 
