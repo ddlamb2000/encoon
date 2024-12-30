@@ -20,6 +20,7 @@
   let loggedIn = $state(false)
   let token = $state("")
   let userUuid = $state("")
+  let user = $state("")
   let userFirstName = $state("")
   let userLastName = $state("")
   
@@ -117,7 +118,7 @@
         headers: [
           {'key': 'from', 'value': 'εncooη frontend'},
           {'key': 'url', 'value': url},
-          {'key': 'initiatedOn', 'value': (new Date).toISOString()}
+          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify({action: ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
         selectedPartitions: []
@@ -157,11 +158,11 @@
         headers: [
           {'key': 'from', 'value': 'εncooη frontend'},
           {'key': 'url', 'value': url},
-          {'key': 'initiatedOn', 'value': (new Date).toISOString()},
+          {'key': 'dbName', 'value': dbName},
           {'key': 'userUuid', 'value': userUuid},
-          {'key': 'userFirstName', 'value': userFirstName},
-          {'key': 'userLastName', 'value': userLastName},
-          {'key': 'jwt', 'value': token}
+          {'key': 'user', 'value': user},
+          {'key': 'jwt', 'value': token},
+          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify(payload),
         selectedPartitions: []
@@ -207,6 +208,7 @@
         if(nowDate < tokenExpirationDate) {
           loggedIn = true
           userUuid = tokenPayload.userUuid
+          user = tokenPayload.user
           userFirstName = tokenPayload.userFirstName
           userLastName = tokenPayload.userLastName
           return true
@@ -217,6 +219,7 @@
     }
     loggedIn = false
     userUuid = ""
+    user = ""
     userFirstName = ""
     userLastName = ""
     return false
@@ -238,20 +241,19 @@
 
     for (;;) {
       try {
-        const chunkLength = chunk.length
+        charsReceived += chunk.length
         const json = JSON.parse(chunk.toString())
-        charsReceived += chunkLength
         if(json.value && json.headers) {
           chunk = ""
           const message = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)
           const requestKey = String.fromCharCode(...json.headers.requestKey.data)
-          const initiatedOn = String.fromCharCode(...json.headers.initiatedOn.data)
+          const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
           const now = (new Date).toISOString()
           const nowDate = Date.parse(now)
-          const initiatedOnDate = Date.parse(initiatedOn)
-          const elapsedMs = nowDate - initiatedOnDate
-          console.log(`[Received] from ${uri} (${elapsedMs} ms) (${chunkLength} bytes, ${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}, initiatedOn: ${initiatedOn}}`)
+          const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
+          const elapsedMs = nowDate - requestInitiatedOnDate
+          console.log(`[Received] from ${uri} (${elapsedMs} ms) (${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
           messageStack.push({
             'response' : {
               'messageKey': json.key,
@@ -298,9 +300,7 @@
       }
       let result = re.exec(chunk)
       if (!result) {
-        if (readerDone) {
-          break
-        }
+        if (readerDone) break
         let remainder = chunk.substr(startIndex)
         {
           ({ value: chunk, done: readerDone } = await reader.read())
@@ -337,7 +337,7 @@
   <main>
     <h1>{dbName}</h1>
     {#if loggedIn}
-      {userUuid} ; {userFirstName} ; {userLastName} <button onclick={() => logout()}>Log out</button>
+      {userFirstName} {userLastName} <button onclick={() => logout()}>Log out</button>
       <ul>
         {#each dataSet as set}
           {#if set.grid && set.grid.gridUuid}

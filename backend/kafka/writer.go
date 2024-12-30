@@ -28,10 +28,11 @@ func (b *RoundRobin) Balance(msg kafka.Message, partitions ...int) (partition in
 	return balance
 }
 
-func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response []byte) {
+func WriteMessage(dbName string, userUuid string, user string, requestKey []byte, requestInitiatedOn []byte, receivedOn []byte, response []byte) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	hostname, _ := os.Hostname()
+	responseInitiatedOn := []byte(time.Now().UTC().Format(time.RFC3339Nano))
 
 	w := kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
@@ -48,10 +49,15 @@ func WriteMessage(dbName string, requestKey []byte, initiatedOn []byte, response
 
 	key := utils.GetNewUUID()
 	headers := []kafka.Header{
-		{Key: "hostName", Value: []byte(hostname)},
 		{Key: "from", Value: []byte("εncooη backend")},
+		{Key: "hostName", Value: []byte(hostname)},
+		{Key: "dbName", Value: []byte(dbName)},
+		{Key: "userUuid", Value: []byte(userUuid)},
+		{Key: "user", Value: []byte(user)},
 		{Key: "requestKey", Value: requestKey},
-		{Key: "initiatedOn", Value: initiatedOn},
+		{Key: "requestInitiatedOn", Value: requestInitiatedOn},
+		{Key: "requestReceivedOn", Value: receivedOn},
+		{Key: "responseInitiatedOn", Value: responseInitiatedOn},
 	}
 	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s, value: %s", len(response), topic, key, response)
 	err := w.WriteMessages(

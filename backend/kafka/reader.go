@@ -52,12 +52,13 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 
 func handleMessage(dbName string, message kafka.Message) {
 	configuration.Log(dbName, "", "{PULL} %d bytes, topic: %s, key: %s, value: %s", len(message.Value), message.Topic, message.Key, message.Value)
-	initiatedOn := []byte("")
+	requestInitiatedOn := []byte("")
 	tokenString := []byte("")
+	requestReceivedOn := []byte(time.Now().UTC().Format(time.RFC3339Nano))
 	for _, header := range message.Headers {
 		switch header.Key {
-		case "initiatedOn":
-			initiatedOn = header.Value
+		case "requestInitiatedOn":
+			requestInitiatedOn = header.Value
 		case "jwt":
 			tokenString = header.Value
 		}
@@ -68,6 +69,8 @@ func handleMessage(dbName string, message kafka.Message) {
 		return
 	}
 	var response responseContent
+	user := ""
+	userUuid := ""
 	if content.Action == ActionAuthentication {
 		response = authentication(dbName, content)
 	} else {
@@ -77,19 +80,17 @@ func handleMessage(dbName string, message kafka.Message) {
 			return
 		}
 		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			user := claims["user"]
-			userUuid := claims["userUuid"]
 			today := time.Now()
 			expiration := claims["expires"]
 			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
-			userName := fmt.Sprintf("%v", user)
-			userUuidName := fmt.Sprintf("%v", userUuid)
+			user = fmt.Sprintf("%v", claims["user"])
+			userUuid = fmt.Sprintf("%v", claims["userUuid"])
 			if today.After(expirationDate) {
-				configuration.Log(dbName, userName, "Authorization expired (%v).", expirationDate)
+				configuration.Log(dbName, user, "Authorization expired (%v).", expirationDate)
 				return
 			}
 			if content.Action == ActionGetGrid {
-				response = getGrid(dbName, userUuidName, userName, content)
+				response = getGrid(dbName, userUuid, user, content)
 			} else if content.Action == ActionLocateGrid {
 				response = locate(dbName, content)
 			} else {
@@ -116,7 +117,7 @@ func handleMessage(dbName string, message kafka.Message) {
 		configuration.LogError(dbName, "", "error marshal response:", err)
 		return
 	}
-	WriteMessage(dbName, message.Key, initiatedOn, responseEncoded)
+	WriteMessage(dbName, userUuid, user, message.Key, requestInitiatedOn, requestReceivedOn, responseEncoded)
 }
 
 func getTokenParsingHandler(dbName string) jwt.Keyfunc {
