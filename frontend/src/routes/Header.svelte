@@ -24,7 +24,7 @@
 			</li>
 			{#each dbs as dbname}
 				<li aria-current={$page.url.pathname.startsWith('/' + dbname) ? 'page' : undefined}>
-					<a href={"/" + dbname + "/" + UuidGrids}>{dbname}</a>
+					<a href={"/" + dbname + "/" + UuidGrids} data-sveltekit-reload>{dbname}</a>
 				</li>
 			{/each}
 		</ul>
