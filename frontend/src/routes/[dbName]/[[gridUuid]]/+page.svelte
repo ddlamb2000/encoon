@@ -11,7 +11,7 @@
 
   const context = new Context(data.dbName, data.url, data.gridUuid)
 
-  let reader: ReadableStreamDefaultReader<string> = $state()
+  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
 
   onMount(() => {
     getStream()
@@ -19,7 +19,7 @@
   })
 
   onDestroy(() => {
-    if(reader !== null && reader !== undefined) reader.cancel()
+    if(reader && reader !== undefined) reader.cancel()
 	})
 
   const newGrid = async () => {
@@ -78,22 +78,6 @@
     context.pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(`access_token_${context.dbName}`)
     context.user.reset()
-  }
-
-  const authentication = async (loginId: string, loginPassword: string) => {
-    context.sendMessage(
-      true,
-      {
-        messageKey: newUuid(),
-        headers: [
-          {'key': 'from', 'value': 'εncooη frontend'},
-          {'key': 'url', 'value': url},
-          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
-        ],
-        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
-        selectedPartitions: []
-      }
-    )
   }
 
   const locateGrid = async (gridUuid: string, columnUuid: string, rowUuid: string) => {
@@ -246,7 +230,7 @@
       <form>
         <label>Username<input bind:value={loginId} /></label>
         <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
-        <button type="submit" onclick={() => authentication(loginId, loginPassword)}>Log in</button>
+        <button type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</button>
       </form>
     {/if}
   </main>

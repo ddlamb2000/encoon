@@ -21,6 +21,22 @@ export class Context {
     this.gridUuid = gridUuid
   }
 
+  async authentication(loginId: string, loginPassword: string) {
+    this.sendMessage(
+      true,
+      {
+        messageKey: newUuid(),
+        headers: [
+          {'key': 'from', 'value': 'εncooη frontend'},
+          {'key': 'url', 'value': this.url},
+          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
+        ],
+        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
+        selectedPartitions: []
+      }
+    )
+  }
+
   async pushTransaction(payload) {
     return this.sendMessage(
       false,
