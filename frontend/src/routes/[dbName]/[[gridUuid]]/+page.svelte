@@ -6,6 +6,7 @@
   import { onMount, onDestroy } from 'svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
+  import { User } from './user.svelte.ts'
   
   let { data }: { data: PageData } = $props()
 
@@ -17,10 +18,10 @@
   let reader: ReadableStreamDefaultReader<string> = $state()
 
   let context = $state({ focus: {}, isSending: false, messageStatus: '', isStreaming: false })
-  
-  let user = $state({ user: '', token: '',
-                      userUuid: '', userFirstName: '', userLastName: '',
-                      loggedIn: false, loginId: '', loginPassword: '' })
+  const user = new User()
+
+  let loginId = ""
+  let loginPassword = ""
   
   onMount(() => {
     getStream()
@@ -84,8 +85,7 @@
   const logout = async () => {
     pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
-    user.loginPassword = ""
-    user.loggedIn = false
+    user.reset()
   }
 
   const authentication = async () => {
@@ -98,7 +98,7 @@
           {'key': 'url', 'value': url},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify({action: metadata.ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
+        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
         selectedPartitions: []
       }
     )
@@ -137,9 +137,9 @@
           {'key': 'from', 'value': 'εncooη frontend'},
           {'key': 'url', 'value': url},
           {'key': 'dbName', 'value': dbName},
-          {'key': 'userUuid', 'value': user.userUuid},
-          {'key': 'user', 'value': user.user},
-          {'key': 'jwt', 'value': user.token},
+          {'key': 'userUuid', 'value': user.getUserUuid()},
+          {'key': 'user', 'value': user.getUser()},
+          {'key': 'jwt', 'value': user.getToken()},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify(payload),
@@ -152,7 +152,7 @@
 		context.isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
-      if(!checkToken()) {
+      if(!user.checkToken(localStorage.getItem(`access_token_${dbName}`))) {
         context.messageStatus = "Not authorized to send message"
         return
       }
@@ -164,7 +164,7 @@
 			method: 'POST',
 			headers: {
 				'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + user.token
+        'Authorization': 'Bearer ' + user.getToken()
 			},
 			body: JSON.stringify(request)
 		})
@@ -173,37 +173,6 @@
 		if (!response.ok) context.messageStatus = data.error || 'Failed to send message'
 		else context.messageStatus = data.message
 	}
-
-  const checkToken = (): boolean => {
-    const localToken = localStorage.getItem(`access_token_${dbName}`)
-    if(localToken) {
-      user.token = localToken
-      try {
-        const arrayToken = user.token.split('.')
-        const tokenPayload = JSON.parse(atob(arrayToken[1]))
-        const now = (new Date).toISOString()
-        const nowDate = Date.parse(now)
-        const tokenExpirationDate = Date.parse(tokenPayload.expires)
-        if(nowDate < tokenExpirationDate) {
-          user.loggedIn = true
-          user.userUuid = tokenPayload.userUuid
-          user.user = tokenPayload.user
-          user.userFirstName = tokenPayload.userFirstName
-          user.userLastName = tokenPayload.userLastName
-          return true
-        }
-      } catch (error) {
-        console.error(`Error checking token:`, error)
-      }
-    }
-    user.token = ""
-    user.loggedIn = false
-    user.userUuid = ""
-    user.user = ""
-    user.userFirstName = ""
-    user.userLastName = ""
-    return false
-  }
 
   async function* getStreamIteration(uri: string) {
     let response = await fetch(uri)
@@ -242,20 +211,20 @@
           })
           if(message.action == metadata.ActionAuthentication) {
             if(message.status == metadata.SuccessStatus) {
-              console.log(`Logged in: ${message.firstname} ${message.lastname}`)
-              user.loggedIn = true
-              localStorage.setItem(`access_token_${dbName}`, message.jwt)
+              if(user.checkToken(message.jwt)) {
+                console.log(`Logged in: ${message.firstName} ${message.lastName}`)
+                localStorage.setItem(`access_token_${dbName}`, message.jwt)
+              } else {
+                console.error(`Invalid token for ${message.firstName}`)
+              }
             } else {
               localStorage.removeItem(`access_token_${dbName}`)
-              user.loginPassword = ""
-              user.loggedIn = false
-              user.token = ""
+              user.reset()
             }
           } else if(message.action == metadata.ActionLogout) {
             localStorage.removeItem(`access_token_${dbName}`)
-            user.loginPassword = ""
-            user.loggedIn = false
-          } else if(checkToken()) {
+            user.reset()
+          } else if(user.checkToken(localStorage.getItem(`access_token_${dbName}`))) {
             if(message.status == metadata.SuccessStatus) {
               if(message.action == metadata.ActionGetGrid) {
                 if(message.dataSet && message.dataSet.grid) {
@@ -299,7 +268,7 @@
     const uri = "/pullMessages/" + dbName
     const ac = new AbortController()
     const signal = ac.signal
-    checkToken()
+    user.checkToken(localStorage.getItem(`access_token_${dbName}`))
     console.log(`Start streaming from ${uri}`)
     context.isStreaming = true
     for await (let line of getStreamIteration(uri)) {
@@ -319,8 +288,8 @@
 <div class="layout">
   <main>
     <h1>{dbName}</h1>
-    {#if user.loggedIn}
-      {user.userFirstName} {user.userLastName} <button onclick={() => logout()}>Log out</button>
+    {#if user.getIsLoggedIn()}
+      {user.getFirstName()} {user.getLastName()} <button onclick={() => logout()}>Log out</button>
       <ul>
         {#each dataSet as set}
           {#if set.grid && set.grid.gridUuid}
@@ -340,8 +309,8 @@
       </ul>	
     {:else}
       <form>
-        <label>Username<input bind:value={user.loginId} /></label>
-        <label>Passphrase<input bind:value={user.loginPassword} type="password" /></label>
+        <label>Username<input bind:value={loginId} /></label>
+        <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
         <button type="submit" onclick={() => authentication()}>Log in</button>
       </form>
     {/if}
