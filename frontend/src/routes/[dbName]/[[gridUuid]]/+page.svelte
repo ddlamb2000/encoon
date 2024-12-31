@@ -39,11 +39,11 @@
     pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
-  const addRow = async (set) => {
+  const addRow = async (set): Promise<void> => {
     const uuid = newUuid()
     const row = { uuid: uuid }
     set.rows.push(row)
-    pushTransaction({
+    return pushTransaction({
       action: ActionAddRow,
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
@@ -81,15 +81,14 @@
     pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
-  async function logout() {
+  const logout = async (): Promise<void> => {
     pushTransaction({action: ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
-    user.loginId = ""
     user.loginPassword = ""
     user.loggedIn = false
   }
 
-  async function authentication() {
+  const authentication = async (): Promise<void> => {
     sendMessage(
       true,
       {
@@ -105,7 +104,7 @@
     )
   }
 
-  function changeFocus(set, row, column) { 
+  const changeFocus = async (set, row, column): Promise<void> => { 
     pushTransaction({
       action: ActionLocateGrid,
       gridUuid: set.grid.uuid,
@@ -114,7 +113,7 @@
     })
   }
 
-  function locateGrid(gridUuid: string, columnUuid: string, rowUuid: string) {
+  const locateGrid = async (gridUuid: string, columnUuid: string, rowUuid: string) => {
     console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
     const set = dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
     if(set && set.grid) {
@@ -129,8 +128,8 @@
     context.focus = {}
   }
   
-  function pushTransaction(payload) {
-    sendMessage(
+  const pushTransaction = async (payload): Promise<void> => {
+    return sendMessage(
       false,
       {
         messageKey: newUuid(),
@@ -149,7 +148,7 @@
     )
   }
 
-	async function sendMessage(authMessage: boolean, request: KafkaMessageRequest): Promise<void> {
+	const sendMessage = async (authMessage: boolean, request: KafkaMessageRequest): Promise<void> => {
 		context.isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
@@ -175,7 +174,7 @@
 		else context.messageStatus = data.message
 	}
 
-  function checkToken(): boolean {
+  const checkToken = async (): boolean => {
     user.token = localStorage.getItem(`access_token_${dbName}`)
     if(user.token !== null && user.token !== undefined) {
       try {
@@ -291,9 +290,7 @@
       yield chunk.substring(startIndex, result.index)
       startIndex = re.lastIndex
     }
-    if (startIndex < chunk.length) {
-      yield chunk.substr(startIndex)
-    }
+    if (startIndex < chunk.length) yield chunk.substr(startIndex)
   }
 
   async function getStream() {
@@ -308,11 +305,12 @@
     }
   }
 
-  function isFocused(set, column, row): boolean {
-    return context.focus.grid && context.focus.grid.uuid === set.grid.uuid 
-            && context.focus.row && context.focus.row.uuid === row.uuid 
-            && context.focus.column && context.focus.column.uuid === column.uuid
-  }
+  const isFocused = (set, column, row): boolean => context.focus.grid
+                                                    && context.focus.grid.uuid === set.grid.uuid 
+                                                    && context.focus.row
+                                                    && context.focus.row.uuid === row.uuid 
+                                                    && context.focus.column
+                                                    && context.focus.column.uuid === column.uuid
 
 </script>
 
