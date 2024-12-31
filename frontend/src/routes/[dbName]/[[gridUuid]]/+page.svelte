@@ -25,7 +25,7 @@
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
                   rows: [{uuid: newUuid(), data: ['']}]
                  }
-    context.pushTransaction({action: 'newgrid', griduuid: grid.uuid})
+    context.pushTransaction({action: 'newgrid', gridUuid: grid.uuid})
   }
 
   const addRow = async (set) => {
@@ -54,7 +54,7 @@
 
   const removeRow = async (grid, uuid: string) => {
     grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
-    context.pushTransaction({action: 'delrow', griduuid: grid.uuid, uuid: uuid})
+    context.pushTransaction({action: 'delrow', gridUuid: grid.uuid, uuid: uuid})
   }
 
   const addColumn = async (grid) => {
@@ -62,14 +62,14 @@
     grid.cols.push(col)
     grid.columnSeq += 1
     grid.rows.forEach((row) => row.data.push(''))
-    context.pushTransaction({action: 'addcol', griduuid: grid.uuid, col: col})
+    context.pushTransaction({action: 'addcol', gridUuid: grid.uuid, col: col})
   }
 
   const removeColumn = async (grid, coluuid: string) => {
     const colindex = grid.cols.findIndex((col) => col.uuid === coluuid)
     grid.cols.splice(colindex, 1)
     grid.rows.forEach((row) => row.data.splice(colindex, 1))
-    context.pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
+    context.pushTransaction({action: 'delcol', gridUuid: grid.uuid, columnUuid: coluuid})
   }
 
   let loginId = $state("")

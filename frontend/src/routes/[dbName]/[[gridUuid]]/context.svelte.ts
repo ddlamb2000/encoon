@@ -1,4 +1,4 @@
-import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
+import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridPost, RowType, ColumnType } from '$lib/types'
 import { newUuid } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
@@ -15,11 +15,13 @@ export class Context {
   dataSet = $state([{}])
   messageStack = $state([{}])
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
+  #tokenName = ""
 
   constructor(dbName: string, url: string, gridUuid: string) {
     this.dbName = dbName
     this.url = url
     this.gridUuid = gridUuid
+    this.#tokenName = `access_token_${this.dbName}`
   }
 
   destroy() {
@@ -44,11 +46,11 @@ export class Context {
 
   async logout() {
     this.pushTransaction({action: metadata.ActionLogout})
-    localStorage.removeItem(`access_token_${this.dbName}`)
+    localStorage.removeItem(this.#tokenName)
     this.user.reset()
   }
 
-  async pushTransaction(payload) {
+  async pushTransaction(request: RequestContent) {
     return this.sendMessage(
       false,
       {
@@ -62,7 +64,7 @@ export class Context {
           {'key': 'jwt', 'value': this.user.getToken()},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify(payload),
+        message: JSON.stringify(request),
         selectedPartitions: []
       }
     )
@@ -72,7 +74,7 @@ export class Context {
 		this.isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + this.dbName
     if(!authMessage) {
-      if(!this.user.checkToken(localStorage.getItem(`access_token_${this.dbName}`))) {
+      if(!this.user.checkToken(localStorage.getItem(this.#tokenName))) {
         this.messageStatus = "Not authorized to send message"
         return
       }
@@ -94,7 +96,7 @@ export class Context {
 		else this.messageStatus = data.message
 	}
 
-  isFocused(set, column, row): boolean {
+  isFocused(set, column: ColumnType, row: RowType): boolean {
     return this.focus
             && this.focus.grid
             && this.focus.grid.uuid === set.grid.uuid 
@@ -104,7 +106,7 @@ export class Context {
             && this.focus.column.uuid === column.uuid
   }
 
-  async changeFocus(set, row, column) { 
+  async changeFocus(set, row: RowType, column: ColumnType) { 
     if(set.grid) {
       await this.pushTransaction(
         {
@@ -156,18 +158,18 @@ export class Context {
             if(message.status == metadata.SuccessStatus) {
               if(this.user.checkToken(message.jwt)) {
                 console.log(`Logged in: ${message.firstName} ${message.lastName}`)
-                localStorage.setItem(`access_token_${this.dbName}`, message.jwt)
+                localStorage.setItem(this.#tokenName, message.jwt)
               } else {
                 console.error(`Invalid token for ${message.firstName}`)
               }
             } else {
-              localStorage.removeItem(`access_token_${this.dbName}`)
+              localStorage.removeItem(this.#tokenName)
               this.user.reset()
             }
           } else if(message.action == metadata.ActionLogout) {
-            localStorage.removeItem(`access_token_${this.dbName}`)
+            localStorage.removeItem(this.#tokenName)
             this.user.reset()
-          } else if(this.user.checkToken(localStorage.getItem(`access_token_${this.dbName}`))) {
+          } else if(this.user.checkToken(localStorage.getItem(this.#tokenName))) {
             if(message.status == metadata.SuccessStatus) {
               if(message.action == metadata.ActionGetGrid) {
                 if(message.dataSet && message.dataSet.grid) {
@@ -211,7 +213,7 @@ export class Context {
     const uri = "/pullMessages/" + this.dbName
     const ac = new AbortController()
     const signal = ac.signal
-    this.user.checkToken(localStorage.getItem(`access_token_${this.dbName}`))
+    this.user.checkToken(localStorage.getItem(this.#tokenName))
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
     for await (let line of this.getStreamIteration(uri)) {
