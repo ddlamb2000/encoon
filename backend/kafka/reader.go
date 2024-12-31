@@ -51,7 +51,7 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 }
 
 func handleMessage(dbName string, message kafka.Message) {
-	configuration.Log(dbName, "", "{PULL} %d bytes, topic: %s, key: %s, value: %s", len(message.Value), message.Topic, message.Key, message.Value)
+	configuration.Log(dbName, "", "{PULL} %d bytes, topic: %s, key: %s", len(message.Value), message.Topic, message.Key)
 	requestInitiatedOn := []byte("")
 	tokenString := []byte("")
 	requestReceivedOn := []byte(time.Now().UTC().Format(time.RFC3339Nano))
@@ -102,7 +102,7 @@ func handleMessage(dbName string, message kafka.Message) {
 				} else {
 					if content.Action == ActionGetGrid {
 						response = getGrid(dbName, userUuid, user, content)
-					} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue {
+					} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue || content.Action == ActionAddColumn {
 						response = postGridsRows(dbName, userUuid, user, content)
 					} else if content.Action == ActionLocateGrid {
 						response = locate(dbName, content)

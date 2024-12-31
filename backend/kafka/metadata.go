@@ -10,6 +10,7 @@ const (
 	ActionAuthentication = "AUTHENTICATION"
 	ActionGetGrid        = "LOAD"
 	ActionAddRow         = "NEWROW"
+	ActionAddColumn      = "NEWCOL"
 	ActionLocateGrid     = "LOCATE"
 	ActionUpdateValue    = "UPDATE"
 )

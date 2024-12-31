@@ -39,6 +39,47 @@
     })
   }
 
+  const addColumn = async (set) => {
+    const uuidColumn = newUuid()
+    const nbColumns = set.grid.columns ? set.grid.columns.length : 0
+    const newLabel = numberToLetters(nbColumns)
+    const newText = 'text' + (nbColumns + 1)
+    const column = { uuid: uuidColumn,
+                      orderNumber: 5,
+                      owned: true,
+                      label: newLabel,
+                      name: newText,
+                      type: 'Text',
+                      typeUuid: metadata.UuidTextColumnType,
+                      gridUuid: set.grid.uuid}
+    if(set.grid.columns) set.grid.columns.push(column)
+    else set.grid.columns = [column]
+    return context.pushTransaction({
+      action: metadata.ActionAddColumn,
+      gridUuid: metadata.UuidColumns,
+      dataSet: {
+        rowsAdded: [
+          { uuid: uuidColumn,
+            text1: newLabel,
+            text2: newText,
+            int1: 6 } 
+        ],
+        referencedValuesAdded: [
+          { owned: false,
+            columnName: "relationship1",
+            fromUuid: uuidColumn,
+            toGridUuid: metadata.UuidGrids,
+            uuid: set.grid.uuid },
+          { owned: true,
+            columnName: "relationship1",
+            fromUuid: uuidColumn,
+            toGridUuid: metadata.UuidColumnTypes,
+            uuid: metadata.UuidTextColumnType }
+        ] 
+      }
+    })
+  }
+
   const changeCell = debounce(
     async (set, row) => {
       context.pushTransaction(
@@ -55,14 +96,6 @@
   const removeRow = async (grid, uuid: string) => {
     grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
     context.pushTransaction({action: 'delrow', gridUuid: grid.uuid, uuid: uuid})
-  }
-
-  const addColumn = async (grid) => {
-    const col = {uuid: newUuid(), title: numberToLetters(grid.columnSeq), type: 'coltypes-row-1'}
-    grid.cols.push(col)
-    grid.columnSeq += 1
-    grid.rows.forEach((row) => row.data.push(''))
-    context.pushTransaction({action: 'addcol', gridUuid: grid.uuid, col: col})
   }
 
   const removeColumn = async (grid, coluuid: string) => {

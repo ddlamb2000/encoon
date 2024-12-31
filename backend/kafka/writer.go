@@ -59,7 +59,7 @@ func WriteMessage(dbName string, userUuid string, user string, requestKey []byte
 		{Key: "requestReceivedOn", Value: receivedOn},
 		{Key: "responseInitiatedOn", Value: responseInitiatedOn},
 	}
-	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s, value: %s", len(response), topic, key, response)
+	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s", len(response), topic, key)
 	err := w.WriteMessages(
 		context.Background(),
 		kafka.Message{

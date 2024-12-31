@@ -9,7 +9,7 @@
   {#if context.focus.grid}
     <ul>
       <li>Grid: {context.focus.grid.text1} ({context.focus.grid.uuid})</li>
-      <li>Column: {context.focus.column.label} ({context.focus.column.type}) ({context.focus.column.uuid})</li>
+      <li>Column: {context.focus.column.label} ({context.focus.column.type}:{context.focus.column.int1}) ({context.focus.column.uuid})</li>
       <li>Row: {context.focus.row.displayString} ({context.focus.row.uuid})</li>
       <li>Value: {context.focus.row[context.focus.column.name]}</li>
       <li>Created on {context.focus.row.created}</li>

@@ -1,18 +1,18 @@
 export interface KafkaMessageHeader {
-	key: string
-	value: string
+  key: string
+  value: string
 }
 
 export interface KafkaMessageRequest {
-	messageKey?: string
-	message: string
-	headers: KafkaMessageHeader[]
-	selectedPartitions: number[]
+  messageKey?: string
+  message: string
+  headers: KafkaMessageHeader[]
+  selectedPartitions: number[]
 }
 
 export interface KafkaMessageResponse {
-	message: string
-	error?: string
+  message: string
+  error?: string
 }
 
 export type Partition = number
@@ -22,17 +22,17 @@ export interface GridType {
 }
 
 export interface ColumnType {
-	uuid: string
-	orderNumber: number
-	owned: boolean
-	label: string
-	name: string
-	type: string
-	typeUuid: string
-	gridUuid: string
-	grid: GridType
-	gridPromptUuid: string
-	bidirectional: boolean
+  uuid: string
+  orderNumber: number
+  owned: boolean
+  label: string
+  name: string
+  type: string
+  typeUuid: string
+  gridUuid: string
+  grid: GridType
+  gridPromptUuid: string
+  bidirectional: boolean
 }
 
 export interface RowType {
@@ -42,15 +42,26 @@ export interface RowType {
 export interface GridPost {
   rowsAdded?: RowType[]
   rowsEdited?: RowType[]
+  rowsDeleted?: RowType[]
+	referencedValuesAdded?: GridReferencePost[]
+	referencedValuesRemoved?: GridReferencePost[]
+}
+
+export interface GridReferencePost {
+	columnName: string
+	fromUuid: string
+	toGridUuid: string
+	uuid: string
+	owned: boolean
 }
 
 export interface RequestContent {
-	action: string
+  action: string
   gridUuid?: string
-	columnUuid?: string
+  columnUuid?: string
   rowUuid?: string
-	uuid?: string
-	userid?: string
-	password?: string
+  uuid?: string
+  userid?: string
+  password?: string
   dataSet?: GridPost
 }

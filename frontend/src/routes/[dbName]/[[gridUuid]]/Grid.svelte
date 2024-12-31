@@ -18,6 +18,12 @@
   <tbody>
     {#each set.rows as row, rowIndex}
       <Row {set} {row} bind:value={value[rowIndex]} {addRow} {removeRow} {isFocused} {changeFocus} {changeCell} />
+    {:else}
+      <tr>
+        <td>
+          <button onclick={() => addRow(set)}>+</button>
+        </td>
+      </tr>
     {/each}
   </tbody>
 </table>

@@ -59,7 +59,6 @@ type GridPost struct {
 
 type GridReferencePost struct {
 	ColumnName string `json:"columnName"`
-	ColumnUuid string `json:"columnUuid"`
 	FromUuid   string `json:"fromUuid"`
 	ToGridUuid string `json:"toGridUuid"`
 	ToUuid     string `json:"uuid"`
