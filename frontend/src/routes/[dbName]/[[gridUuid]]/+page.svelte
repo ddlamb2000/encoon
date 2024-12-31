@@ -1,6 +1,6 @@
 <script  lang="ts">
   import { newUuid, numberToLetters, debounce } from "$lib/utils.svelte"
-  import * as action from "$lib/metadata.svelte"
+  import * as metadata from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -14,7 +14,7 @@
   const url = data.url
   const dataSet = $state([{}])
   const messageStack = $state([{}])  
-  let reader = $state()
+  let reader: ReadableStreamDefaultReader<string> = $state()
 
   let context = $state({ focus: {}, isSending: false, messageStatus: '', isStreaming: false })
   
@@ -24,11 +24,11 @@
   
   onMount(() => {
     getStream()
-    pushTransaction({action: action.ActionGetGrid, griduuid: gridUuid})
+    pushTransaction({action: metadata.ActionGetGrid, griduuid: gridUuid})
   })
 
   onDestroy(() => {
-    if(reader !== undefined) reader.cancel()
+    if(reader !== null && reader !== undefined) reader.cancel()
 	})
 
   const newGrid = async () => {
@@ -44,7 +44,7 @@
     const row = { uuid: uuid }
     set.rows.push(row)
     return pushTransaction({
-      action: action.ActionAddRow,
+      action: metadata.ActionAddRow,
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
     })
@@ -53,7 +53,7 @@
   const changeCell = debounce(
     async (set, row) => {
       pushTransaction({
-        action: action.ActionUpdateValue,
+        action: metadata.ActionUpdateValue,
         gridUuid: set.grid.uuid,
         dataSet: { rowsEdited: [row] }
       })
@@ -82,7 +82,7 @@
   }
 
   const logout = async () => {
-    pushTransaction({action: action.ActionLogout})
+    pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
     user.loginPassword = ""
     user.loggedIn = false
@@ -98,7 +98,7 @@
           {'key': 'url', 'value': url},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify({action: action.ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
+        message: JSON.stringify({action: metadata.ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
         selectedPartitions: []
       }
     )
@@ -106,7 +106,7 @@
 
   const changeFocus = async (set, row, column) => { 
     await pushTransaction({
-      action: action.ActionLocateGrid,
+      action: metadata.ActionLocateGrid,
       gridUuid: set.grid.uuid,
       rowUuid: row.uuid,
       columnUuid: column.uuid
@@ -174,9 +174,10 @@
 		else context.messageStatus = data.message
 	}
 
-  const checkToken = async (): boolean => {
-    user.token = localStorage.getItem(`access_token_${dbName}`)
-    if(user.token !== null && user.token !== undefined) {
+  const checkToken = (): boolean => {
+    const localToken = localStorage.getItem(`access_token_${dbName}`)
+    if(localToken) {
+      user.token = localToken
       try {
         const arrayToken = user.token.split('.')
         const tokenPayload = JSON.parse(atob(arrayToken[1]))
@@ -195,6 +196,7 @@
         console.error(`Error checking token:`, error)
       }
     }
+    user.token = ""
     user.loggedIn = false
     user.userUuid = ""
     user.user = ""
@@ -238,8 +240,8 @@
               'message': json.value
             }
           })
-          if(message.action == action.ActionAuthentication) {
-            if(message.status == SuccessStatus) {
+          if(message.action == metadata.ActionAuthentication) {
+            if(message.status == metadata.SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname}`)
               user.loggedIn = true
               localStorage.setItem(`access_token_${dbName}`, message.jwt)
@@ -249,18 +251,18 @@
               user.loggedIn = false
               user.token = ""
             }
-          } else if(message.action == action.ActionLogout) {
+          } else if(message.action == metadata.ActionLogout) {
             localStorage.removeItem(`access_token_${dbName}`)
             user.loginPassword = ""
             user.loggedIn = false
           } else if(checkToken()) {
-            if(message.status == action.SuccessStatus) {
-              if(message.action == action.ActionGetGrid) {
+            if(message.status == metadata.SuccessStatus) {
+              if(message.action == metadata.ActionGetGrid) {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                   dataSet.push(message.dataSet)
                 }
-              } else if(message.action == action.ActionLocateGrid) {
+              } else if(message.action == metadata.ActionLocateGrid) {
                 if(message.gridUuid && message.columnUuid && message.rowUuid) {
                   locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
                 }
