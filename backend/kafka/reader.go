@@ -64,53 +64,65 @@ func handleMessage(dbName string, message kafka.Message) {
 		}
 	}
 	var content requestContent
-	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error unmarshal message value", err)
-		return
-	}
 	var response responseContent
 	user := ""
 	userUuid := ""
-	if content.Action == ActionAuthentication {
-		response = authentication(dbName, content)
-	} else {
-		token, err := jwt.Parse(string(tokenString), getTokenParsingHandler(dbName))
-		if token == nil {
-			configuration.LogError(dbName, "", "No authorization")
-			return
+	if err := json.Unmarshal(message.Value, &content); err != nil {
+		configuration.LogError(dbName, "", "Error unmarshal message value", err)
+		response = responseContent{
+			Status:      FailedStatus,
+			Action:      content.Action,
+			TextMessage: "Incorrect message",
 		}
-		if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-			today := time.Now()
-			expiration := claims["expires"]
-			expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
-			user = fmt.Sprintf("%v", claims["user"])
-			userUuid = fmt.Sprintf("%v", claims["userUuid"])
-			if today.After(expirationDate) {
-				configuration.Log(dbName, user, "Authorization expired (%v).", expirationDate)
-				return
-			}
-			if content.Action == ActionGetGrid {
-				response = getGrid(dbName, userUuid, user, content)
-			} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue {
-				response = postGridsRows(dbName, userUuid, user, content)
-			} else if content.Action == ActionLocateGrid {
-				response = locate(dbName, content)
-			} else {
-				configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
+	} else {
+		if content.Action == ActionAuthentication {
+			response = authentication(dbName, content)
+		} else {
+			token, err := jwt.Parse(string(tokenString), getTokenParsingHandler(dbName))
+			if token == nil {
+				configuration.LogError(dbName, "", "No authorization")
 				response = responseContent{
 					Status:      FailedStatus,
 					Action:      content.Action,
-					TextMessage: "Invalid action (" + content.Action + ")",
+					TextMessage: "No authorization",
+				}
+			} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+				today := time.Now()
+				expiration := claims["expires"]
+				expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
+				user = fmt.Sprintf("%v", claims["user"])
+				userUuid = fmt.Sprintf("%v", claims["userUuid"])
+				if today.After(expirationDate) {
+					configuration.Log(dbName, user, "Authorization expired (%v).", expirationDate)
+					response = responseContent{
+						Status:      FailedStatus,
+						Action:      content.Action,
+						TextMessage: "Authorization expired",
+					}
+				} else {
+					if content.Action == ActionGetGrid {
+						response = getGrid(dbName, userUuid, user, content)
+					} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue {
+						response = postGridsRows(dbName, userUuid, user, content)
+					} else if content.Action == ActionLocateGrid {
+						response = locate(dbName, content)
+					} else {
+						configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
+						response = responseContent{
+							Status:      FailedStatus,
+							Action:      content.Action,
+							TextMessage: "Invalid action (" + content.Action + ")",
+						}
+					}
+				}
+			} else {
+				configuration.Log(dbName, "", "Invalid token: %v.", err)
+				response = responseContent{
+					Status:      FailedStatus,
+					Action:      content.Action,
+					TextMessage: "Invalid request",
 				}
 			}
-		} else {
-			configuration.Log(dbName, "", "Invalid token: %v.", err)
-			response = responseContent{
-				Status:      FailedStatus,
-				Action:      content.Action,
-				TextMessage: "Invalid request",
-			}
-			return
 		}
 	}
 
