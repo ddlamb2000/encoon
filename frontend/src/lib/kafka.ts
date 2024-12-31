@@ -1,8 +1,7 @@
 import { env } from "$env/dynamic/private";
-import { Kafka } from "kafkajs";
 import { json } from '@sveltejs/kit'
-import { type Message, CompressionTypes } from 'kafkajs'
-import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
+import { Kafka, type Message, CompressionTypes } from 'kafkajs'
+import { type KafkaMessageRequest, type KafkaMessageResponse } from '$lib/types'
 
 export const kafka = new Kafka({
 	clientId: env.KAFKA_CLIENT_ID,
@@ -13,13 +12,14 @@ export const kafka = new Kafka({
 	}
 })
 
-export async function postMessage(params, request, url) {
+const producer = kafka.producer({
+	maxInFlightRequests: 50,
+	allowAutoTopicCreation: true,
+	retry: { retries: 5 }
+})
+
+export const postMessage = async (params, request, url: string) => {
 	const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-requests"
-	const producer = kafka.producer({
-		maxInFlightRequests: 50,
-		allowAutoTopicCreation: true,
-		retry: { retries: 5 }
-	})
 	try {
 		await producer.connect()
 	} catch (error) {
@@ -49,7 +49,7 @@ export async function postMessage(params, request, url) {
 	}
 }
 
-function getMessages(req: KafkaMessageRequest): Message[] {
+const getMessages = (req: KafkaMessageRequest): Message[] => {
 	const messageKey = req.messageKey?.trim()
 	const headers = Object.fromEntries(req.headers.map((h) => [ h.key + "", h.value + ""]))
 	if(req.selectedPartitions && req.selectedPartitions.length > 0) {

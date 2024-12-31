@@ -32,6 +32,5 @@
     list-style: none;
     font-size: small;
   }
-
   .request { color: gray; }
 </style>

@@ -2,7 +2,7 @@
   let { set, row, column, value = $bindable(), isFocused, changeFocus, changeCell } = $props()
 </script>
 <td contenteditable
-    class={isFocused(set, column, row) ? 'focus' : 'cell'}  
+    class="{isFocused(set, column, row) ? 'focus' : 'cell'}"
     onfocus={() => changeFocus(set, row, column)}
     oninput={() => changeCell(set, row)}
     bind:innerHTML={value}>

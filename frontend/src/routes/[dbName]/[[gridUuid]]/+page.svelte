@@ -1,6 +1,6 @@
 <script  lang="ts">
   import { newUuid, numberToLetters, debounce } from "$lib/utils.svelte"
-  import { ActionAuthentication, ActionLogout, SuccessStatus, ActionGetGrid, ActionLocateGrid, ActionUpdateValue, ActionAddRow } from "$lib/metadata.svelte"
+  import * as action from "$lib/metadata.svelte"
 	import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/types'
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -24,7 +24,7 @@
   
   onMount(() => {
     getStream()
-    pushTransaction({action: ActionGetGrid, griduuid: gridUuid})
+    pushTransaction({action: action.ActionGetGrid, griduuid: gridUuid})
   })
 
   onDestroy(() => {
@@ -44,7 +44,7 @@
     const row = { uuid: uuid }
     set.rows.push(row)
     return pushTransaction({
-      action: ActionAddRow,
+      action: action.ActionAddRow,
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
     })
@@ -53,7 +53,7 @@
   const changeCell = debounce(
     async (set, row) => {
       pushTransaction({
-        action: ActionUpdateValue,
+        action: action.ActionUpdateValue,
         gridUuid: set.grid.uuid,
         dataSet: { rowsEdited: [row] }
       })
@@ -82,7 +82,7 @@
   }
 
   const logout = async () => {
-    pushTransaction({action: ActionLogout})
+    pushTransaction({action: action.ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
     user.loginPassword = ""
     user.loggedIn = false
@@ -98,7 +98,7 @@
           {'key': 'url', 'value': url},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify({action: ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
+        message: JSON.stringify({action: action.ActionAuthentication, userid: user.loginId, password: btoa(user.loginPassword)}),
         selectedPartitions: []
       }
     )
@@ -106,7 +106,7 @@
 
   const changeFocus = async (set, row, column) => { 
     await pushTransaction({
-      action: ActionLocateGrid,
+      action: action.ActionLocateGrid,
       gridUuid: set.grid.uuid,
       rowUuid: row.uuid,
       columnUuid: column.uuid
@@ -238,7 +238,7 @@
               'message': json.value
             }
           })
-          if(message.action == ActionAuthentication) {
+          if(message.action == action.ActionAuthentication) {
             if(message.status == SuccessStatus) {
               console.log(`Logged in: ${message.firstname} ${message.lastname}`)
               user.loggedIn = true
@@ -249,18 +249,18 @@
               user.loggedIn = false
               user.token = ""
             }
-          } else if(message.action == ActionLogout) {
+          } else if(message.action == action.ActionLogout) {
             localStorage.removeItem(`access_token_${dbName}`)
             user.loginPassword = ""
             user.loggedIn = false
           } else if(checkToken()) {
-            if(message.status == SuccessStatus) {
-              if(message.action == ActionGetGrid) {
+            if(message.status == action.SuccessStatus) {
+              if(message.action == action.ActionGetGrid) {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                   dataSet.push(message.dataSet)
                 }
-              } else if(message.action == ActionLocateGrid) {
+              } else if(message.action == action.ActionLocateGrid) {
                 if(message.gridUuid && message.columnUuid && message.rowUuid) {
                   locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
                 }
@@ -325,10 +325,10 @@
             {#key set.grid.gridUuid}
               <li>
                 <strong>{set.grid.text1}</strong> <small>{set.grid.text2}</small>
+                <Grid {set} bind:value={set.rows}
+                      {addRow} {removeRow} {addColumn} {removeColumn} {isFocused} {changeFocus} {changeCell} />
+                {set.countRows} {set.countRows === 1 ? 'row' : 'rows'}
               </li>
-              <Grid {set} bind:value={set.rows}
-                    {addRow} {removeRow} {addColumn} {removeColumn} {isFocused} {changeFocus} {changeCell} />
-              {set.countRows} {set.countRows === 1 ? 'row' : 'rows'}
             {/key}
           {/if}
         {/each}
