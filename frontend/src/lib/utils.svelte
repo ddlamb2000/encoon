@@ -1,10 +1,10 @@
 <script module>  
 
-  export function newUuid() { return crypto.randomUUID() }
+  export const newUuid = () => crypto.randomUUID()
 
-  export function numberToLetters(num) {
+  export const numberToLetters = (num) => {
     let letters = ''
-    while (num >= 0) {
+    while(num >= 0) {
       letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[num % 26] + letters
       num = Math.floor(num / 26) - 1
     }

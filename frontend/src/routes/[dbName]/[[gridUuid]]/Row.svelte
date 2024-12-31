@@ -1,6 +1,6 @@
 <script lang="ts">
   import Cell from './Cell.svelte'
-  let { set, row, innerHTML = $bindable(), addRow, removeRow, isFocused, changeFocus, changeCell } = $props()
+  let { set, row, value = $bindable(), addRow, removeRow, isFocused, changeFocus, changeCell } = $props()
 </script>
 {#key row.uuid}
   <tr>
@@ -9,9 +9,7 @@
       <button onclick={() => addRow(set)}>+</button>
     </td>
     {#each set.grid.columns as column}
-      <Cell set={set} column={column} row={row}
-            bind:innerHTML={innerHTML[column.name]}
-            isFocused={isFocused} changeFocus={changeFocus} changeCell={changeCell} />
+      <Cell {set} {row} {column} bind:value={value[column.name]} {isFocused} {changeFocus} {changeCell} />
     {/each}
   </tr>
 {/key}

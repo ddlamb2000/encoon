@@ -125,7 +125,6 @@ Kafka
         
 
 To do
-    Learn array functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions 
     Learn async functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
     Review/Learn promises: https://svelte.dev/tutorial/svelte/await-blocks and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 

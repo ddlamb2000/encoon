@@ -5,7 +5,7 @@
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
   import Info from './Info.svelte'
-  import Row from './Row.svelte'
+  import Grid from './Grid.svelte'
   
   let { data }: { data: PageData } = $props()
 
@@ -31,7 +31,7 @@
     if(reader !== undefined) reader.cancel()
 	})
 
-  async function newGrid() {
+  const newGrid = async () => {
     const grid = {uuid: newUuid(), title: 'Untitled', 
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
                   rows: [{uuid: newUuid(), data: ['']}]
@@ -39,7 +39,7 @@
     pushTransaction({action: 'newgrid', griduuid: grid.uuid})
   }
 
-  const addRow = async (set): Promise<void> => {
+  const addRow = async (set) => {
     const uuid = newUuid()
     const row = { uuid: uuid }
     set.rows.push(row)
@@ -61,12 +61,12 @@
     500
   )
 
-  async function removeRow(grid, uuid) {
+  const removeRow = async (grid, uuid) => {
     grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
     pushTransaction({action: 'delrow', griduuid: grid.uuid, uuid: uuid})
   }
 
-  async function addColumn(grid) {
+  const addColumn = async (grid) => {
     const col = {uuid: newUuid(), title: numberToLetters(grid.columnSeq), type: 'coltypes-row-1'}
     grid.cols.push(col)
     grid.columnSeq += 1
@@ -74,21 +74,21 @@
     pushTransaction({action: 'addcol', griduuid: grid.uuid, col: col})
   }
 
-  async function removeColumn(grid, coluuid) {
+  const removeColumn = async (grid, coluuid) => {
     const colindex = grid.cols.findIndex((col) => col.uuid === coluuid)
     grid.cols.splice(colindex, 1)
     grid.rows.forEach((row) => row.data.splice(colindex, 1))
     pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
-  const logout = async (): Promise<void> => {
+  const logout = async () => {
     pushTransaction({action: ActionLogout})
     localStorage.removeItem(`access_token_${dbName}`)
     user.loginPassword = ""
     user.loggedIn = false
   }
 
-  const authentication = async (): Promise<void> => {
+  const authentication = async () => {
     sendMessage(
       true,
       {
@@ -104,8 +104,8 @@
     )
   }
 
-  const changeFocus = async (set, row, column): Promise<void> => { 
-    pushTransaction({
+  const changeFocus = async (set, row, column) => { 
+    await pushTransaction({
       action: ActionLocateGrid,
       gridUuid: set.grid.uuid,
       rowUuid: row.uuid,
@@ -128,7 +128,7 @@
     context.focus = {}
   }
   
-  const pushTransaction = async (payload): Promise<void> => {
+  const pushTransaction = async (payload) => {
     return sendMessage(
       false,
       {
@@ -148,7 +148,7 @@
     )
   }
 
-	const sendMessage = async (authMessage: boolean, request: KafkaMessageRequest): Promise<void> => {
+	const sendMessage = async (authMessage: boolean, request: KafkaMessageRequest) => {
 		context.isSending = true
     const uri = (authMessage ? "/authentication/" : "/pushMessage/") + dbName
     if(!authMessage) {
@@ -313,10 +313,7 @@
                                                     && context.focus.column.uuid === column.uuid
 
 </script>
-
-<svelte:head>
-	<title>εncooη - {data.dbName}</title>
-</svelte:head>
+<svelte:head><title>εncooη - {data.dbName}</title></svelte:head>
 <div class="layout">
   <main>
     <h1>{dbName}</h1>
@@ -327,31 +324,10 @@
           {#if set.grid && set.grid.gridUuid}
             {#key set.grid.gridUuid}
               <li>
-                <strong>{set.grid.text1}</strong>
-                <small>{set.grid.text2}</small>
+                <strong>{set.grid.text1}</strong> <small>{set.grid.text2}</small>
               </li>
-              <table>
-                <thead>
-                  <tr>
-                    <th></th>
-                    {#each set.grid.columns as column}
-                      <th class='header'>
-                        {column.label}
-                        <button onclick={() => removeColumn(grid, col.uuid)}>-</button>
-                      </th>
-                    {/each}
-                    <th><button onclick={() => addColumn(grid)}>+</button></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {#each set.rows as row, rowIndex}
-                    <Row set={set} row={row}
-                          addRow={addRow} removeRow={removeRow}
-                          bind:innerHTML={set.rows[rowIndex]}
-                          isFocused={isFocused} changeFocus={changeFocus} changeCell={changeCell} />
-                  {/each}
-                </tbody>
-              </table>
+              <Grid {set} bind:value={set.rows}
+                    {addRow} {removeRow} {addColumn} {removeColumn} {isFocused} {changeFocus} {changeCell} />
               {set.countRows} {set.countRows === 1 ? 'row' : 'rows'}
             {/key}
           {/if}
@@ -370,7 +346,6 @@
   </main>
   <Info {...context} messageStack={messageStack} />
 </div>
-
 <style>
   @media (min-width: 640px) {
     .layout {
@@ -379,14 +354,5 @@
       grid-template-columns: 1fr 16em;
     }
   }
-
-  table, th, td { border-collapse: collapse; }  
   li { list-style: none; }
-  
-  div {
-    position: relative;
-    display: inline-block;
-  }
-
-  .header { border: 1px dotted gray; }  
 </style>
