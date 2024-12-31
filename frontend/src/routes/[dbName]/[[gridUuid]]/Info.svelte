@@ -1,23 +1,23 @@
 <script lang="ts">
-  let { focus, messageStack, isSending, messageStatus, isStreaming } = $props()
+  let { context } = $props()
 </script>
 <aside>
   <div>
-    <p>{#if isStreaming}Streaming messages{/if}</p>
-    <p>{#if isSending}Sending message{/if} {#if messageStatus}{messageStatus}{/if}</p>
+    <p>{#if context.isStreaming}Streaming messages{/if}</p>
+    <p>{#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}</p>
   </div>
-  {#if focus.grid}
+  {#if context.focus.grid}
     <ul>
-      <li>Grid: {focus.grid.text1} ({focus.grid.uuid})</li>
-      <li>Column: {focus.column.label} ({focus.column.type}) ({focus.column.uuid})</li>
-      <li>Row: {focus.row.displayString} ({focus.row.uuid})</li>
-      <li>Value: {focus.row[focus.column.name]}</li>
-      <li>Created on {focus.row.created}</li>
-      <li>Updated on {focus.row.updated}</li>
+      <li>Grid: {context.focus.grid.text1} ({context.focus.grid.uuid})</li>
+      <li>Column: {context.focus.column.label} ({context.focus.column.type}) ({context.focus.column.uuid})</li>
+      <li>Row: {context.focus.row.displayString} ({context.focus.row.uuid})</li>
+      <li>Value: {context.focus.row[context.focus.column.name]}</li>
+      <li>Created on {context.focus.row.created}</li>
+      <li>Updated on {context.focus.row.updated}</li>
     </ul>
   {/if}
   <ul>
-    {#each messageStack as message}
+    {#each context.messageStack as message}
       {#if message.request}
         <li class="request">→ {message.request.messageKey} {message.request.message.substring(0, 200)}</li>
       {/if}

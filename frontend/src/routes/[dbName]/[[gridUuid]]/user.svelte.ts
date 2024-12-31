@@ -1,10 +1,10 @@
 export class User {
-	#token = $state("")
-  #userUuid = $state("")
-  #user = $state("")
-  #userFirstName = $state("")
-  #userLastName = $state("")
-  #loggedIn = $state(false)
+	#token: string = $state("")
+  #userUuid: string = $state("")
+  #user: string = $state("")
+  #userFirstName: string = $state("")
+  #userLastName: string = $state("")
+  #loggedIn: boolean = $state(false)
 
   reset() {
     this.#token = ""
