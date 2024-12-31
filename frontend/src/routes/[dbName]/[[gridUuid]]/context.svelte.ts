@@ -14,11 +14,16 @@ export class Context {
   isStreaming: boolean = $state(false)
   dataSet = $state([{}])
   messageStack = $state([{}])
+  reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
 
   constructor(dbName: string, url: string, gridUuid: string) {
     this.dbName = dbName
     this.url = url
     this.gridUuid = gridUuid
+  }
+
+  destroy() {
+    if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 
   async authentication(loginId: string, loginPassword: string) {
@@ -35,6 +40,12 @@ export class Context {
         selectedPartitions: []
       }
     )
+  }
+
+  async logout() {
+    this.pushTransaction({action: metadata.ActionLogout})
+    localStorage.removeItem(`access_token_${this.dbName}`)
+    this.user.reset()
   }
 
   async pushTransaction(payload) {
@@ -109,9 +120,9 @@ export class Context {
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
     if(!response.ok || !response.body) {
-        console.error(`Failed to fetch stream from ${uri}`)
-        return
-      }
+      console.error(`Failed to fetch stream from ${uri}`)
+      return
+    }
     const utf8Decoder = new TextDecoder("utf-8")
     let reader = response.body.getReader()
     let { value: chunk, done: readerDone } = await reader.read()

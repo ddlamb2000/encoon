@@ -11,15 +11,13 @@
 
   const context = new Context(data.dbName, data.url, data.gridUuid)
 
-  let reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
-
   onMount(() => {
     context.getStream()
     context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   })
 
   onDestroy(() => {
-    if(reader && reader !== undefined) reader.cancel()
+    context.destroy()
 	})
 
   const newGrid = async () => {
@@ -74,12 +72,6 @@
     context.pushTransaction({action: 'delcol', griduuid: grid.uuid, coluuid: coluuid})
   }
 
-  const logout = async () => {
-    context.pushTransaction({action: metadata.ActionLogout})
-    localStorage.removeItem(`access_token_${context.dbName}`)
-    context.user.reset()
-  }
-
   let loginId = $state("")
   let loginPassword = $state("")
 </script>
@@ -88,7 +80,7 @@
   <main>
     <h1>{context.dbName}</h1>
     {#if context.user.getIsLoggedIn()}
-      {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => logout()}>Log out</button>
+      {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
       <ul>
         {#each context.dataSet as set}
           {#if set.grid && set.grid.gridUuid}
