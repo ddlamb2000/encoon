@@ -126,13 +126,13 @@ func createContextAndApiRequest(ct context.Context, p ApiParameters, uri string)
 		ctx:         ctx,
 		p:           p,
 		db:          db,
-		ctxChan:     make(chan ApiResponse, 1),
+		ctxChan:     make(chan GridResponse, 1),
 		transaction: model.GetNewRowWithUuid(),
 	}
 	return r, cancel, err
 }
 
-func getHttpErrorCode(response ApiResponse) int {
+func getHttpErrorCode(response GridResponse) int {
 	switch {
 	case response.System:
 		return http.StatusInternalServerError

@@ -19,15 +19,15 @@ type requestContent struct {
 }
 
 type responseContent struct {
-	Status      string           `json:"status"`
-	Action      string           `json:"action"`
-	GridUuid    string           `json:"gridUuid,omitempty"`
-	ColumnUuid  string           `json:"columnUuid,omitempty"`
-	RowUuid     string           `json:"rowUuid,omitempty"`
-	Uuid        string           `json:"uuid,omitempty"`
-	TextMessage string           `json:"textMessage,omitempty"`
-	FirstName   string           `json:"firstName,omitempty"`
-	LastName    string           `json:"lastName,omitempty"`
-	JWT         string           `json:"jwt,omitempty"`
-	DataSet     apis.ApiResponse `json:"dataSet,omitempty"`
+	Action      string            `json:"action"`
+	Status      string            `json:"status"`
+	GridUuid    string            `json:"gridUuid,omitempty"`
+	ColumnUuid  string            `json:"columnUuid,omitempty"`
+	RowUuid     string            `json:"rowUuid,omitempty"`
+	Uuid        string            `json:"uuid,omitempty"`
+	TextMessage string            `json:"textMessage,omitempty"`
+	FirstName   string            `json:"firstName,omitempty"`
+	LastName    string            `json:"lastName,omitempty"`
+	JWT         string            `json:"jwt,omitempty"`
+	DataSet     apis.GridResponse `json:"dataSet,omitempty"`
 }

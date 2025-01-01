@@ -1,6 +1,6 @@
 <script lang="ts">
   import Row from './Row.svelte'
-  let { set, value = $bindable(), addRow, removeRow, addColumn, removeColumn, isFocused, changeFocus, changeCell } = $props()
+  let { context, set, value = $bindable(), addRow, removeRow, addColumn, removeColumn, isFocused, changeFocus, changeCell } = $props()
 </script>
 <table>
   <thead>
@@ -17,7 +17,7 @@
   </thead>
   <tbody>
     {#each set.rows as row, rowIndex}
-      <Row {set} {row} bind:value={value[rowIndex]} {addRow} {removeRow} {isFocused} {changeFocus} {changeCell} />
+      <Row {context} {set} {row} bind:value={value[rowIndex]} {addRow} {removeRow} {isFocused} {changeFocus} {changeCell} />
     {:else}
       <tr>
         <td>

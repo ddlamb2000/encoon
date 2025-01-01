@@ -1,4 +1,4 @@
-import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridPost, RowType, ColumnType } from '$lib/types'
+import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType } from '$lib/types'
 import { newUuid } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
@@ -12,7 +12,7 @@ export class Context {
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
   isStreaming: boolean = $state(false)
-  dataSet = $state([{}])
+  dataSet: GridResponse[] = $state([])
   messageStack = $state([{}])
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
@@ -140,7 +140,7 @@ export class Context {
         const json = JSON.parse(chunk.toString())
         if(json.value && json.headers) {
           chunk = ""
-          const message = JSON.parse(json.value)
+          const message: ResponseContent = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)
           const requestKey = String.fromCharCode(...json.headers.requestKey.data)
           const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)

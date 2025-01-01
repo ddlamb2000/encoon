@@ -17,12 +17,18 @@ import (
 	"github.com/segmentio/kafka-go/compress"
 )
 
-type RoundRobin struct {
-}
+type CustomRoundRobin struct{}
 
-func (b *RoundRobin) Balance(msg kafka.Message, partitions ...int) (partition int) {
+func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) (partition int) {
+	gridUuid := ""
+	for _, header := range message.Headers {
+		if header.Key == "gridUuid" {
+			gridUuid = string(header.Value)
+			break
+		}
+	}
 	algorithm := fnv.New32a()
-	algorithm.Write([]byte(msg.Key))
+	algorithm.Write([]byte(gridUuid))
 	nbPartitions := uint32(len(partitions))
 	hash := algorithm.Sum32()
 	balance := int(hash % nbPartitions)
@@ -46,7 +52,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		BatchTimeout:           100 * time.Millisecond,
 		RequiredAcks:           -1,
 		Compression:            compress.Gzip,
-		Balancer:               &RoundRobin{},
+		Balancer:               &CustomRoundRobin{},
 	}
 
 	key := utils.GetNewUUID()

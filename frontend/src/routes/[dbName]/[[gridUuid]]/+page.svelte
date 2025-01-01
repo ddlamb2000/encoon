@@ -1,5 +1,6 @@
 <script  lang="ts">
   import { newUuid, numberToLetters, debounce } from "$lib/utils.svelte"
+  import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType } from '$lib/types'
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -25,12 +26,12 @@
                   cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
                   rows: [{uuid: newUuid(), data: ['']}]
                  }
-    context.pushTransaction({action: 'newgrid', gridUuid: grid.uuid})
+    return context.pushTransaction({action: 'newgrid', gridUuid: grid.uuid})
   }
 
-  const addRow = async (set) => {
+  const addRow = async (set: GridResponse) => {
     const uuid = newUuid()
-    const row = { uuid: uuid }
+    const row: RowType = { uuid: uuid }
     set.rows.push(row)
     return context.pushTransaction({
       action: metadata.ActionChangeGrid,
@@ -39,19 +40,19 @@
     })
   }
 
-  const addColumn = async (set) => {
+  const addColumn = async (set: GridResponse) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
     const newText = 'text' + (nbColumns + 1)
-    const column = { uuid: uuidColumn,
-                      orderNumber: 5,
-                      owned: true,
-                      label: newLabel,
-                      name: newText,
-                      type: 'Text',
-                      typeUuid: metadata.UuidTextColumnType,
-                      gridUuid: set.grid.uuid}
+    const column: ColumnType = { uuid: uuidColumn,
+                                  orderNumber: 5,
+                                  owned: true,
+                                  label: newLabel,
+                                  name: newText,
+                                  type: 'Text',
+                                  typeUuid: metadata.UuidTextColumnType,
+                                  gridUuid: set.grid.uuid}
     if(set.grid.columns) set.grid.columns.push(column)
     else set.grid.columns = [column]
     return context.pushTransaction({
@@ -81,7 +82,7 @@
   }
 
   const changeCell = debounce(
-    async (set, row) => {
+    async (set: GridResponse, row: RowType) => {
       context.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
@@ -111,16 +112,15 @@
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 <div class="layout">
   <main>
-    <h1>{context.dbName}</h1>
     {#if context.user.getIsLoggedIn()}
       {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
       <ul>
         {#each context.dataSet as set}
-          {#if set.grid && set.grid.gridUuid}
-            {#key set.grid.gridUuid}
+          {#if set.grid && set.grid.uuid}
+            {#key set.grid.uuid}
               <li>
                 <strong>{set.grid.text1}</strong> <small>{set.grid.text2}</small>
-                <Grid {set} bind:value={set.rows}
+                <Grid {context} {set} bind:value={set.rows}
                       {addRow} {removeRow} {addColumn} {removeColumn}
                       isFocused={(set, column, row) => context.isFocused(set, column, row)}
                       changeFocus={(set, row, column) => context.changeFocus(set, row, column)}

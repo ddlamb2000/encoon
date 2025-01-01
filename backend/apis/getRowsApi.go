@@ -11,40 +11,40 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func GetGridsRows(ct context.Context, uri string, p ApiParameters) ApiResponse {
+func GetGridsRows(ct context.Context, uri string, p ApiParameters) GridResponse {
 	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
 	t := r.startTiming()
 	defer r.stopTiming("getGridsRows()", t)
 	if err != nil {
-		return ApiResponse{Err: err}
+		return GridResponse{Err: err}
 	}
 	go func() {
 		r.trace("getGridsRows()")
 		database.Sleep(r.ctx, p.DbName, p.UserName, r.db)
 		grid, err := getGridForGridsApi(r, p.GridUuid)
 		if err != nil {
-			r.ctxChan <- ApiResponse{Err: err, System: true}
+			r.ctxChan <- GridResponse{Err: err, System: true}
 			return
 		} else if grid == nil {
-			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Data not found.")}
+			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Data not found.")}
 			return
 		}
 		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.UserUuid)
 		if !canViewRows {
-			r.ctxChan <- ApiResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
 			return
 		}
 		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, p.Uuid, true, true)
 		if err != nil {
-			r.ctxChan <- ApiResponse{Err: err, System: true}
+			r.ctxChan <- GridResponse{Err: err, System: true}
 			return
 		}
 		if p.Uuid != "" && rowSetCount == 0 {
-			r.ctxChan <- ApiResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
+			r.ctxChan <- GridResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- ApiResponse{
+		r.ctxChan <- GridResponse{
 			Grid:        grid,
 			Rows:        rowSet,
 			CountRows:   rowSetCount,
@@ -57,7 +57,7 @@ func GetGridsRows(ct context.Context, uri string, p ApiParameters) ApiResponse {
 	select {
 	case <-r.ctx.Done():
 		r.trace("getGridsRows() - Cancelled")
-		return ApiResponse{Err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), TimeOut: true}
+		return GridResponse{Err: r.logAndReturnError("Get request has been cancelled: %v.", r.ctx.Err()), TimeOut: true}
 	case response := <-r.ctxChan:
 		r.trace("getGridsRows() - OK")
 		return response

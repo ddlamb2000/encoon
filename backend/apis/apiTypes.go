@@ -14,7 +14,7 @@ type ApiRequest struct {
 	ctx         context.Context
 	p           ApiParameters
 	db          *sql.DB
-	ctxChan     chan ApiResponse
+	ctxChan     chan GridResponse
 	transaction *model.Row
 }
 
@@ -30,7 +30,7 @@ type ApiParameters struct {
 	filterColumnValue    string
 }
 
-type ApiResponse struct {
+type GridResponse struct {
 	Grid                   *model.Grid         `json:"grid"`
 	CountRows              int                 `json:"countRows"`
 	Rows                   []model.Row         `json:"rows"`

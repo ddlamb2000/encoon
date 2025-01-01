@@ -22,8 +22,8 @@ export class User {
   getToken(): string { return this.#token }
   getIsLoggedIn(): boolean { return this.#loggedIn }
 
-  checkToken(token: string | null): boolean {
-    if(token) {
+  checkToken(token: string | undefined): boolean {
+    if(token && token !== undefined) {
       try {
         const arrayToken = token.split('.')
         const tokenPayload = JSON.parse(atob(arrayToken[1]))
