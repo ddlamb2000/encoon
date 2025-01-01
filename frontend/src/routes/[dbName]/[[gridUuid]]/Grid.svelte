@@ -29,7 +29,7 @@
           { uuid: uuidColumn,
             text1: newLabel,
             text2: newText,
-            int1: 6 } 
+            int1: nbColumns + 1 } 
         ],
         referencedValuesAdded: [
           { owned: false,
@@ -58,17 +58,43 @@
     })
   }
 
-  async function removeRow(grid, uuid: string) {
-    grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
-    context.pushTransaction({action: 'delrow', gridUuid: grid.uuid, uuid: uuid})
+  async function removeRow(set: GridResponse, row: RowType) {
+    const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
+    set.rows.splice(rowIndex, 1)
+    return context.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      gridUuid: set.grid.uuid,
+      dataSet: { rowsDeleted: [row] }
+    })
   }
 
-  async function removeColumn(grid, coluuid: string) {
-    const colindex = grid.cols.findIndex((col) => col.uuid === coluuid)
-    grid.cols.splice(colindex, 1)
-    grid.rows.forEach((row) => row.data.splice(colindex, 1))
-    context.pushTransaction({action: 'delcol', gridUuid: grid.uuid, columnUuid: coluuid})
-  }
+  async function removeColumn(set: GridResponse, column: ColumnType) {
+    if(set.grid.columns && set.grid.columns !== undefined) {
+      const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
+      set.grid.columns.splice(columnIndex, 1)
+      return context.pushTransaction({
+        action: metadata.ActionChangeGrid,
+        gridUuid: metadata.UuidColumns,
+        dataSet: {
+          rowsDeleted: [
+            { uuid: column.uuid }
+          ],
+          referencedValuesRemoved: [
+            { owned: false,
+              columnName: "relationship1",
+              fromUuid: column.uuid,
+              toGridUuid: metadata.UuidGrids,
+              uuid: set.grid.uuid },
+            { owned: true,
+              columnName: "relationship1",
+              fromUuid: column.uuid,
+              toGridUuid: metadata.UuidColumnTypes,
+              uuid: metadata.UuidTextColumnType }
+          ] 
+        }
+      })
+    }
+}
 
 </script>
 
@@ -80,7 +106,7 @@
       {#each set.grid.columns as column}
         <th class='header'>
           {column.label}
-          <button onclick={() => removeColumn(set, column.uuid)}>-</button>
+          <button onclick={() => removeColumn(set, column)}>-</button>
         </th>
       {/each}
       <th><button onclick={() => addColumn(set)}>+</button></th>

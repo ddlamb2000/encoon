@@ -7,7 +7,7 @@
 {#key row.uuid}
   <tr>
     <td class="nowrap">
-      <button onclick={() => removeRow(set, row.uuid)}>-</button>
+      <button onclick={() => removeRow(set, row)}>-</button>
       <button onclick={() => addRow(set)}>+</button>
       {#if set.grid.uuid === metadata.UuidGrids}
         <a href={"/" + context.dbName + "/" + row.uuid} data-sveltekit-reload>View</a>
