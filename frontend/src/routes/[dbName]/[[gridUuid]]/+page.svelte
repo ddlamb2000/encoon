@@ -1,6 +1,5 @@
 <script  lang="ts">
-  import { newUuid, numberToLetters, debounce } from "$lib/utils.svelte"
-  import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType } from '$lib/types'
+  import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
@@ -29,86 +28,10 @@
     return context.pushTransaction({action: 'newgrid', gridUuid: grid.uuid})
   }
 
-  const addRow = async (set: GridResponse) => {
-    const uuid = newUuid()
-    const row: RowType = { uuid: uuid }
-    set.rows.push(row)
-    return context.pushTransaction({
-      action: metadata.ActionChangeGrid,
-      gridUuid: set.grid.uuid,
-      dataSet: { rowsAdded: [row] }
-    })
-  }
-
-  const addColumn = async (set: GridResponse) => {
-    const uuidColumn = newUuid()
-    const nbColumns = set.grid.columns ? set.grid.columns.length : 0
-    const newLabel = numberToLetters(nbColumns)
-    const newText = 'text' + (nbColumns + 1)
-    const column: ColumnType = { uuid: uuidColumn,
-                                  orderNumber: 5,
-                                  owned: true,
-                                  label: newLabel,
-                                  name: newText,
-                                  type: 'Text',
-                                  typeUuid: metadata.UuidTextColumnType,
-                                  gridUuid: set.grid.uuid}
-    if(set.grid.columns) set.grid.columns.push(column)
-    else set.grid.columns = [column]
-    return context.pushTransaction({
-      action: metadata.ActionChangeGrid,
-      gridUuid: metadata.UuidColumns,
-      dataSet: {
-        rowsAdded: [
-          { uuid: uuidColumn,
-            text1: newLabel,
-            text2: newText,
-            int1: 6 } 
-        ],
-        referencedValuesAdded: [
-          { owned: false,
-            columnName: "relationship1",
-            fromUuid: uuidColumn,
-            toGridUuid: metadata.UuidGrids,
-            uuid: set.grid.uuid },
-          { owned: true,
-            columnName: "relationship1",
-            fromUuid: uuidColumn,
-            toGridUuid: metadata.UuidColumnTypes,
-            uuid: metadata.UuidTextColumnType }
-        ] 
-      }
-    })
-  }
-
-  const changeCell = debounce(
-    async (set: GridResponse, row: RowType) => {
-      context.pushTransaction(
-        {
-          action: metadata.ActionChangeGrid,
-          gridUuid: set.grid.uuid,
-          dataSet: { rowsEdited: [row] }
-        }
-      )
-    },
-    500
-  )
-
-  const removeRow = async (grid, uuid: string) => {
-    grid.rows = grid.rows.filter((t) => t.uuid !== uuid)
-    context.pushTransaction({action: 'delrow', gridUuid: grid.uuid, uuid: uuid})
-  }
-
-  const removeColumn = async (grid, coluuid: string) => {
-    const colindex = grid.cols.findIndex((col) => col.uuid === coluuid)
-    grid.cols.splice(colindex, 1)
-    grid.rows.forEach((row) => row.data.splice(colindex, 1))
-    context.pushTransaction({action: 'delcol', gridUuid: grid.uuid, columnUuid: coluuid})
-  }
-
   let loginId = $state("")
   let loginPassword = $state("")
 </script>
+
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 <div class="layout">
   <main>
@@ -119,13 +42,7 @@
           {#if set.grid && set.grid.uuid}
             {#key set.grid.uuid}
               <li>
-                <strong>{set.grid.text1}</strong> <small>{set.grid.text2}</small>
-                <Grid {context} {set} bind:value={set.rows}
-                      {addRow} {removeRow} {addColumn} {removeColumn}
-                      isFocused={(set, column, row) => context.isFocused(set, column, row)}
-                      changeFocus={(set, row, column) => context.changeFocus(set, row, column)}
-                      {changeCell} />
-                {set.countRows} {set.countRows === 1 ? 'row' : 'rows'}
+                <Grid {context} {set} bind:value={set.rows} />
               </li>
             {/key}
           {/if}
@@ -144,6 +61,7 @@
   </main>
   <Info {context} />
 </div>
+
 <style>
   @media (min-width: 640px) {
     .layout {

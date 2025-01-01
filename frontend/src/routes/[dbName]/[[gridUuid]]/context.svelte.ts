@@ -1,4 +1,4 @@
-import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType } from '$lib/types'
+import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/types'
 import { newUuid } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
@@ -97,7 +97,7 @@ export class Context {
 		else this.messageStatus = data.message
 	}
 
-  isFocused(set, column: ColumnType, row: RowType): boolean {
+  isFocused(set: GridResponse, column: ColumnType, row: RowType): boolean {
     return this.focus
             && this.focus.grid
             && this.focus.grid.uuid === set.grid.uuid 
@@ -107,7 +107,7 @@ export class Context {
             && this.focus.column.uuid === column.uuid
   }
 
-  async changeFocus(set, row: RowType, column: ColumnType) { 
+  async changeFocus(set: GridResponse, row: RowType, column: ColumnType) { 
     if(set.grid) {
       await this.pushTransaction(
         {
@@ -226,12 +226,14 @@ export class Context {
     console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
     const set = this.dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
     if(set && set.grid) {
-      const grid = set.grid
-      const column = grid.columns.find((column) => column.uuid === columnUuid)
-      if(column) {
-        const row = set.rows.find((row) => row.uuid === rowUuid)
-        this.focus = {grid: grid, column: column, row: row}
-        return
+      const grid: GridType = set.grid
+      if(grid.columns && grid.columns !== undefined) {
+        const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
+        if(column && column !== undefined) {
+          const row = set.rows.find((row) => row.uuid === rowUuid)
+          this.focus = {grid: grid, column: column, row: row}
+          return
+        }
       }
     }
     this.focus = {}

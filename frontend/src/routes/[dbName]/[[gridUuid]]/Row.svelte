@@ -1,8 +1,9 @@
 <script lang="ts">
   import Cell from './Cell.svelte'
   import * as metadata from "$lib/metadata.svelte"
-  let { context, set, row, value = $bindable(), addRow, removeRow, isFocused, changeFocus, changeCell } = $props()
+  let { context, set, row, value = $bindable(), addRow, removeRow } = $props()
 </script>
+
 {#key row.uuid}
   <tr>
     <td class="nowrap">
@@ -13,10 +14,11 @@
       {/if}
     </td>
     {#each set.grid.columns as column}
-      <Cell {set} {row} {column} bind:value={value[column.name]} {isFocused} {changeFocus} {changeCell} />
+      <Cell {context} {set} {row} {column} bind:value={value[column.name]} />
     {/each}
   </tr>
 {/key}
+
 <style>
   .nowrap { white-space:nowrap; }
   button { display:inline; }  
