@@ -25,7 +25,11 @@ export class Context {
     this.#tokenName = `access_token_${this.dbName}`
   }
 
-  destroy() {
+  reset = () => {
+    this.dataSet = []
+  }  
+
+  destroy = () => {
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 

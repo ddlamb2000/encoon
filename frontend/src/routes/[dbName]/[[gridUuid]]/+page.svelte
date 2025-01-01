@@ -2,6 +2,7 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
+  import { replaceState } from "$app/navigation"
   import { onMount, onDestroy } from 'svelte'
   import { User } from './user.svelte.ts'
   import { Context } from './context.svelte.ts'
@@ -22,10 +23,18 @@
 	})
 
   const newGrid = async () => {
+    context.reset()
     const gridUuid = newUuid()
-    await context.newGrid(gridUuid)
-    context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
+    context.newGrid(gridUuid)
+    navigateToGrid(gridUuid)
   }
+
+	const navigateToGrid = (gridUuid: string) => {
+		console.log("NavigateToGrid() gridUuid=", gridUuid)
+		const url = `/${data.dbName}/${gridUuid}`
+		replaceState(url, { gridUuid: gridUuid })
+	}
+
 
   let loginId = $state("")
   let loginPassword = $state("")
