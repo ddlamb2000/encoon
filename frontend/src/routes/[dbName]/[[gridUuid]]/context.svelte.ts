@@ -29,7 +29,7 @@ export class Context {
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 
-  async authentication(loginId: string, loginPassword: string) {
+  authentication = async (loginId: string, loginPassword: string) => {
     this.sendMessage(
       true,
       {
@@ -45,13 +45,13 @@ export class Context {
     )
   }
 
-  async logout() {
+  logout = async () => {
     this.pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(this.#tokenName)
     this.user.reset()
   }
 
-  async pushTransaction(request: RequestContent) {
+  pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
       {
@@ -72,7 +72,7 @@ export class Context {
     )
   }
 
-	async sendMessage(authMessage: boolean, request: KafkaMessageRequest) {
+	sendMessage = async (authMessage: boolean, request: KafkaMessageRequest) => {
 		this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
@@ -98,7 +98,7 @@ export class Context {
 		else this.messageStatus = data.message
 	}
 
-  isFocused(set: GridResponse, column: ColumnType, row: RowType): boolean {
+  isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean => {
     return this.focus
             && this.focus.grid
             && this.focus.grid.uuid === set.grid.uuid 
@@ -121,27 +121,21 @@ export class Context {
     }
   }
 
+ changeCell = debounce(
+    async (set: GridResponse, row: RowType) => {
+      this.pushTransaction(
+        {
+          action: metadata.ActionChangeGrid,
+          actionText: 'changeCell',
+          gridUuid: set.grid.uuid,
+          dataSet: { rowsEdited: [row] }
+        }
+      )
+    },
+    500
+  )
 
-  async changeCell(set: GridResponse, row: RowType) {
-
-    const changeCellDebounced = debounce(
-      async (set: GridResponse, row: RowType) => {
-        this.pushTransaction(
-          {
-            action: metadata.ActionChangeGrid,
-            actionText: 'changeCell',
-            gridUuid: set.grid.uuid,
-            dataSet: { rowsEdited: [row] }
-          }
-        )
-      },
-      500
-    )
-
-    changeCellDebounced(set, row)
-  }
-
-  async addColumn(set: GridResponse) {
+  addColumn = async (set: GridResponse) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
@@ -183,7 +177,7 @@ export class Context {
     })
   }
   
-  async addRow(set: GridResponse) {
+  addRow = async (set: GridResponse) => {
     const uuid = newUuid()
     const row: RowType = { uuid: uuid }
     set.rows.push(row)
@@ -195,7 +189,7 @@ export class Context {
     })
   }
 
-  async removeRow(set: GridResponse, row: RowType) {
+  removeRow = async (set: GridResponse, row: RowType) => {
     const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
     set.rows.splice(rowIndex, 1)
     return this.pushTransaction({
@@ -206,7 +200,7 @@ export class Context {
     })
   }
 
-  async removeColumn(set: GridResponse, column: ColumnType) {
+  removeColumn = async (set: GridResponse, column: ColumnType) => {
     if(set.grid.columns && set.grid.columns !== undefined) {
       const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
       set.grid.columns.splice(columnIndex, 1)
@@ -235,10 +229,13 @@ export class Context {
     }
   }
 
-  async newGrid(gridUuid: string) {
+  newGrid = async (gridUuid: string) => {
+    this.gridUuid = gridUuid
     const grid: GridType = {
       uuid: gridUuid,
-      text1: 'Untitled',
+      text1: 'New grid',
+      text2: 'Untitled',
+      text3: 'journal',
       columns: []
     }
     const set: GridResponse = {
@@ -251,23 +248,40 @@ export class Context {
       canEditGrid: true    
     }
     this.dataSet.push(set)
-    await this.pushTransaction({
+    this.pushTransaction({
       action: metadata.ActionChangeGrid,
       actionText: 'newGrid',
       gridUuid: metadata.UuidGrids,
       dataSet: {
         rowsAdded: [
           { uuid: gridUuid,
-            text1: 'new grid 2',
-            text2: 'Untitled 2',
+            text1: 'New grid',
+            text2: 'Untitled',
             text3: 'journal' } 
         ]
       }
     })
-    await this.addColumn(set)
-    return this.addRow(set)
+    this.addColumn(set)
+    this.addRow(set)
   }
-  
+
+  locateGrid = (gridUuid: string, columnUuid: string, rowUuid: string) => {
+    console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
+    const set = this.dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
+    if(set && set.grid) {
+      const grid: GridType = set.grid
+      if(grid.columns && grid.columns !== undefined) {
+        const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
+        if(column && column !== undefined) {
+          const row = set.rows.find((row) => row.uuid === rowUuid)
+          this.focus = {grid: grid, column: column, row: row}
+          return
+        }
+      }
+    }
+    this.focus = {}
+  }
+    
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
     if(!response.ok || !response.body) {
@@ -370,21 +384,4 @@ export class Context {
     }
   }  
 
-  locateGrid(gridUuid: string, columnUuid: string, rowUuid: string) {
-    console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
-    const set = this.dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
-    if(set && set.grid) {
-      const grid: GridType = set.grid
-      if(grid.columns && grid.columns !== undefined) {
-        const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
-        if(column && column !== undefined) {
-          const row = set.rows.find((row) => row.uuid === rowUuid)
-          this.focus = {grid: grid, column: column, row: row}
-          return
-        }
-      }
-    }
-    this.focus = {}
-  }
-  
 }

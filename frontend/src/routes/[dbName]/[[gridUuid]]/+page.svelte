@@ -9,8 +9,8 @@
   import Grid from './Grid.svelte'
   
   let { data }: { data: PageData } = $props()
-  let user = new User()
-  let context = new Context(data.dbName, data.url, user, data.gridUuid)
+  const user = new User()
+  const context = new Context(data.dbName, data.url, user, data.gridUuid)
 
   onMount(() => {
     context.getStream()
@@ -23,7 +23,6 @@
 
   const newGrid = async () => {
     const gridUuid = newUuid()
-    context = new Context(data.dbName, data.url, user, gridUuid)
     await context.newGrid(gridUuid)
     context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   }
