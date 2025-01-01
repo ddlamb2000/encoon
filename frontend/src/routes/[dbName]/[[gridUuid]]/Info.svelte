@@ -1,4 +1,5 @@
 <script lang="ts">
+  import DateTime from './DateTime.svelte'
   let { context } = $props()
 </script>
 <aside>
@@ -8,12 +9,12 @@
   </div>
   {#if context.focus.grid}
     <ul>
-      <li>Grid: {context.focus.grid.text1} ({context.focus.grid.uuid})</li>
-      <li>Column: {context.focus.column.label} ({context.focus.column.type}:{context.focus.column.int1}) ({context.focus.column.uuid})</li>
+      <li>Grid: {context.focus.grid.text1} ({context.focus.grid.text2})</li>
+      <li>Column: {context.focus.column.label} ({context.focus.column.type})</li>
       <li>Row: {context.focus.row.displayString} ({context.focus.row.uuid})</li>
       <li>Value: {context.focus.row[context.focus.column.name]}</li>
-      <li>Created on {context.focus.row.created}</li>
-      <li>Updated on {context.focus.row.updated}</li>
+      <li>Created on <DateTime dateTime={context.focus.row.created} /></li>
+      <li>Updated on <DateTime dateTime={context.focus.row.updated} /></li>
     </ul>
   {/if}
   <ul>

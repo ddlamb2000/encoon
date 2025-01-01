@@ -3,6 +3,7 @@
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
   import { replaceState } from "$app/navigation"
+  import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { User } from './user.svelte.ts'
   import { Context } from './context.svelte.ts'
@@ -18,9 +19,7 @@
     context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   })
 
-  onDestroy(() => {
-    context.destroy()
-	})
+  onDestroy(() => { context.destroy() })
 
   const newGrid = async () => {
     context.reset()
@@ -43,9 +42,11 @@
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 <div class="layout">
   <main>
-    {#if context.user.getIsLoggedIn()}
-      {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
-      <button onclick={() => newGrid()}>New Grid</button>
+    {#if user && context && context.user && context.user.getIsLoggedIn()}
+      <div transition:fade>
+        {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
+        <button onclick={() => newGrid()}>New Grid</button>
+      </div>
       <ul>
         {#each context.dataSet as set}
           {#if set.grid && set.grid.uuid}
@@ -58,7 +59,7 @@
         {/each}
       </ul>	
     {:else}
-      <form>
+      <form transition:fade>
         <label>Username<input bind:value={loginId} /></label>
         <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
         <button type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</button>
