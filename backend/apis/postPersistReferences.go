@@ -113,11 +113,11 @@ func postGridSetOwnership(r ApiRequest, grid *model.Grid, addedRows []*model.Row
 	return nil
 }
 
-func postDeleteReferenceRow(r ApiRequest, grid *model.Grid, addedRows []*model.Row, ref GridReferencePost) error {
+func postDeleteReferenceRow(r ApiRequest, grid *model.Grid, removedRows []*model.Row, ref GridReferencePost) error {
 	query := getDeleteReferenceRowStatement()
-	rowUuid := getUuidFromRowsForTmpUuid(r, addedRows, ref.FromUuid)
+	rowUuid := getUuidFromRowsForTmpUuid(r, removedRows, ref.FromUuid)
 	parms := getDeleteReferenceRowStatementParameters(r, grid, ref, rowUuid)
-	r.trace("postDeleteReferenceRow(%s, %v, %v) query=%s ; params=%s", grid, addedRows, ref, query, parms)
+	r.trace("postDeleteReferenceRow(%s, %v, %v) query=%s ; params=%s", grid, removedRows, ref, query, parms)
 	if err := r.execContext(query, parms...); err != nil {
 		return r.logAndReturnError("Delete referenced row error: %v.", err)
 	}
