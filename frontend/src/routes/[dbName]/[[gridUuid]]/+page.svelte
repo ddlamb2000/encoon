@@ -2,17 +2,14 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
-  import { replaceState } from "$app/navigation"
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
-  import { User } from './user.svelte.ts'
   import { Context } from './context.svelte.ts'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   
   let { data }: { data: PageData } = $props()
-  const user = new User()
-  const context = new Context(data.dbName, data.url, user, data.gridUuid)
+  const context = new Context(data.dbName, data.url, data.gridUuid)
 
   onMount(() => {
     context.getStream()
@@ -25,15 +22,8 @@
     context.reset()
     const gridUuid = newUuid()
     context.newGrid(gridUuid)
-    navigateToGrid(gridUuid)
+    context.navigateToGrid(gridUuid)
   }
-
-	const navigateToGrid = (gridUuid: string) => {
-		console.log("NavigateToGrid() gridUuid=", gridUuid)
-		const url = `/${data.dbName}/${gridUuid}`
-		replaceState(url, { gridUuid: gridUuid })
-	}
-
 
   let loginId = $state("")
   let loginPassword = $state("")
@@ -44,12 +34,13 @@
   <main>
     {#if context.isStreaming}
       *Streaming*
-      {#if user && context && context.user && context.user.getIsLoggedIn()}
+      {#if context && context.user && context.user.getIsLoggedIn()}
         <div transition:fade>
           {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
           <button onclick={() => newGrid()}>New Grid</button>
           {#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}
         </div>
+        <a href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>List</a>
         <ul>
           {#each context.dataSet as set}
             {#if set.grid && set.grid.uuid}
@@ -69,7 +60,7 @@
         </form>
       {/if}
     {:else}
-        Initializing
+      Initializing
     {/if}
   </main>
   <Info {context} />

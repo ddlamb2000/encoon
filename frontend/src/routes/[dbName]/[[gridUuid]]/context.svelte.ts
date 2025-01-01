@@ -1,6 +1,7 @@
 import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
+import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 
 export class Context {
@@ -17,16 +18,17 @@ export class Context {
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
 
-  constructor(dbName: string, url: string, user: User, gridUuid: string) {
+  constructor(dbName: string, url: string, gridUuid: string) {
     this.dbName = dbName
     this.url = url
-    this.user = user
+    this.user = new User()
     this.gridUuid = gridUuid
     this.#tokenName = `access_token_${this.dbName}`
   }
 
   reset = () => {
     this.dataSet = []
+    this.focus = {}
   }  
 
   destroy = () => {
@@ -124,6 +126,19 @@ export class Context {
       )
     }
   }
+
+  load = async () => {
+    this.pushTransaction({action: metadata.ActionGetGrid, gridUuid: this.gridUuid})
+  }
+
+  navigateToGrid = async (gridUuid: string) => {
+		console.log("[Context.navigateToGrid()] gridUuid=", gridUuid)
+    this.reset()
+		const url = `/${this.dbName}/${gridUuid}`
+		replaceState(url, { gridUuid: this.gridUuid })
+    this.gridUuid = gridUuid
+    this.load()
+	}
 
  changeCell = debounce(
     async (set: GridResponse, row: RowType) => {

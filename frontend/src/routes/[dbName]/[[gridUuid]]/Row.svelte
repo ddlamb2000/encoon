@@ -10,7 +10,7 @@
       <button onclick={() => context.removeRow(set, row)}>-</button>
       <button onclick={() => context.addRow(set)}>+</button>
       {#if set.grid.uuid === metadata.UuidGrids}
-        <a href={"/" + context.dbName + "/" + row.uuid} data-sveltekit-reload>View</a>
+        <a href="#" onclick={() => context.navigateToGrid(row.uuid)}>View</a>
       {/if}
     </td>
     {#each set.grid.columns as column}
