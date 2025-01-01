@@ -9,6 +9,7 @@ import (
 
 type requestContent struct {
 	Action     string        `json:"action"`
+	ActionText string        `json:"actionText,omitempty"`
 	GridUuid   string        `json:"gridUuid,omitempty"`
 	ColumnUuid string        `json:"columnUuid,omitempty"`
 	RowUuid    string        `json:"rowUuid,omitempty"`
@@ -20,6 +21,7 @@ type requestContent struct {
 
 type responseContent struct {
 	Action      string            `json:"action"`
+	ActionText  string            `json:"actionText,omitempty"`
 	Status      string            `json:"status"`
 	GridUuid    string            `json:"gridUuid,omitempty"`
 	ColumnUuid  string            `json:"columnUuid,omitempty"`

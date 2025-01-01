@@ -3,13 +3,14 @@
   import * as metadata from "$lib/metadata.svelte"
   import type { PageData } from './$types'
   import { onMount, onDestroy } from 'svelte'
+  import { User } from './user.svelte.ts'
   import { Context } from './context.svelte.ts'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   
   let { data }: { data: PageData } = $props()
-
-  const context = new Context(data.dbName, data.url, data.gridUuid)
+  let user = new User()
+  let context = new Context(data.dbName, data.url, user, data.gridUuid)
 
   onMount(() => {
     context.getStream()
@@ -21,11 +22,10 @@
 	})
 
   const newGrid = async () => {
-    const grid = {uuid: newUuid(), title: 'Untitled', 
-                  cols: [{uuid: newUuid(), title: 'A', type: 'coltypes-row-1'}],
-                  rows: [{uuid: newUuid(), data: ['']}]
-                 }
-    return context.pushTransaction({action: 'newgrid', gridUuid: grid.uuid})
+    const gridUuid = newUuid()
+    context = new Context(data.dbName, data.url, user, gridUuid)
+    await context.newGrid(gridUuid)
+    context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   }
 
   let loginId = $state("")
@@ -37,6 +37,7 @@
   <main>
     {#if context.user.getIsLoggedIn()}
       {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
+      <button onclick={() => newGrid()}>New Grid</button>
       <ul>
         {#each context.dataSet as set}
           {#if set.grid && set.grid.uuid}
@@ -47,9 +48,6 @@
             {/key}
           {/if}
         {/each}
-        <li>
-          <button onclick={() => newGrid()}>New Grid</button>
-        </li>
       </ul>	
     {:else}
       <form>

@@ -29,6 +29,7 @@ func authentication(dbName string, content requestContent) responseContent {
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      content.Action,
+				ActionText:  content.ActionText,
 				TextMessage: "Authentication: time out " + err.Error(),
 			}
 		} else {
@@ -36,6 +37,7 @@ func authentication(dbName string, content requestContent) responseContent {
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      content.Action,
+				ActionText:  content.ActionText,
 				TextMessage: "Authentication: failed " + err.Error(),
 			}
 		}
@@ -47,6 +49,7 @@ func authentication(dbName string, content requestContent) responseContent {
 		return responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
+			ActionText:  content.ActionText,
 			TextMessage: "Authentication: creation of JWT failed " + err.Error(),
 		}
 	}
@@ -54,6 +57,7 @@ func authentication(dbName string, content requestContent) responseContent {
 	return responseContent{
 		Status:      SuccessStatus,
 		Action:      content.Action,
+		ActionText:  content.ActionText,
 		FirstName:   firstName,
 		LastName:    lastName,
 		TextMessage: "User authenticated",

@@ -71,38 +71,42 @@ func handleMessage(dbName string, message kafka.Message) {
 	user := ""
 	userUuid := ""
 	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s", err)
+		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
 		response = responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
+			ActionText:  content.ActionText,
 			TextMessage: "Incorrect message",
 		}
 	} else {
 		if content.Action == ActionAuthentication {
-			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 			response = authentication(dbName, content)
 		} else if content.Action == ActionLogout {
-			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 			response = responseContent{
 				Status:      SuccessStatus,
 				Action:      content.Action,
+				ActionText:  content.ActionText,
 				TextMessage: "User logged out",
 			}
 		} else {
 			token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 			if err != nil {
-				configuration.LogError(dbName, "", "Invalid token for message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action, err)
+				configuration.LogError(dbName, "", "Invalid token for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
 				response = responseContent{
 					Status:      FailedStatus,
 					Action:      content.Action,
+					ActionText:  content.ActionText,
 					TextMessage: "Invalid token",
 				}
 			} else {
 				if token == nil {
-					configuration.LogError(dbName, "", "No authorization for message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+					configuration.LogError(dbName, "", "No authorization for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 					response = responseContent{
 						Status:      FailedStatus,
 						Action:      content.Action,
+						ActionText:  content.ActionText,
 						TextMessage: "No authorization",
 					}
 				} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
@@ -112,14 +116,15 @@ func handleMessage(dbName string, message kafka.Message) {
 					user = fmt.Sprintf("%v", claims["user"])
 					userUuid = fmt.Sprintf("%v", claims["userUuid"])
 					if today.After(expirationDate) {
-						configuration.LogError(dbName, user, "Authorization expired for message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+						configuration.LogError(dbName, user, "Authorization expired for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 						response = responseContent{
 							Status:      FailedStatus,
 							Action:      content.Action,
+							ActionText:  content.ActionText,
 							TextMessage: "Authorization expired",
 						}
 					} else {
-						configuration.Log(dbName, user, "PULL Message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+						configuration.Log(dbName, user, "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 						if content.Action == ActionGetGrid {
 							response = getGrid(dbName, userUuid, user, content)
 						} else if content.Action == ActionChangeGrid {
@@ -127,19 +132,21 @@ func handleMessage(dbName string, message kafka.Message) {
 						} else if content.Action == ActionLocateGrid {
 							response = locate(dbName, content)
 						} else {
-							configuration.Log(dbName, "", "Invalid action: %s.", content.Action)
+							configuration.Log(dbName, "", "Invalid action: % %ss", content.Action, content.ActionText)
 							response = responseContent{
 								Status:      FailedStatus,
 								Action:      content.Action,
+								ActionText:  content.ActionText,
 								TextMessage: "Invalid action (" + content.Action + ")",
 							}
 						}
 					}
 				} else {
-					configuration.LogError(dbName, "", "Invalid request for message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
+					configuration.LogError(dbName, "", "Invalid request for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 					response = responseContent{
 						Status:      FailedStatus,
 						Action:      content.Action,
+						ActionText:  content.ActionText,
 						TextMessage: "Invalid request",
 					}
 				}

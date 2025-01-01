@@ -1,10 +1,10 @@
 import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/types'
-import { newUuid } from "$lib/utils.svelte"
+import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 
 export class Context {
-  user = new User()
+  user: User
   dbName: string = $state("")
   url: string = $state("")
   gridUuid: string = $state("")
@@ -17,9 +17,10 @@ export class Context {
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
 
-  constructor(dbName: string, url: string, gridUuid: string) {
+  constructor(dbName: string, url: string, user: User, gridUuid: string) {
     this.dbName = dbName
     this.url = url
+    this.user = user
     this.gridUuid = gridUuid
     this.#tokenName = `access_token_${this.dbName}`
   }
@@ -120,6 +121,153 @@ export class Context {
     }
   }
 
+
+  async changeCell(set: GridResponse, row: RowType) {
+
+    const changeCellDebounced = debounce(
+      async (set: GridResponse, row: RowType) => {
+        this.pushTransaction(
+          {
+            action: metadata.ActionChangeGrid,
+            actionText: 'changeCell',
+            gridUuid: set.grid.uuid,
+            dataSet: { rowsEdited: [row] }
+          }
+        )
+      },
+      500
+    )
+
+    changeCellDebounced(set, row)
+  }
+
+  async addColumn(set: GridResponse) {
+    const uuidColumn = newUuid()
+    const nbColumns = set.grid.columns ? set.grid.columns.length : 0
+    const newLabel = numberToLetters(nbColumns)
+    const newText = 'text' + (nbColumns + 1)
+    const column: ColumnType = { uuid: uuidColumn,
+                                  orderNumber: 5,
+                                  owned: true,
+                                  label: newLabel,
+                                  name: newText,
+                                  type: 'Text',
+                                  typeUuid: metadata.UuidTextColumnType,
+                                  gridUuid: set.grid.uuid}
+    if(set.grid.columns) set.grid.columns.push(column)
+    else set.grid.columns = [column]
+    return this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'addColumn',
+      gridUuid: metadata.UuidColumns,
+      dataSet: {
+        rowsAdded: [
+          { uuid: uuidColumn,
+            text1: newLabel,
+            text2: newText,
+            int1: nbColumns + 1 } 
+        ],
+        referencedValuesAdded: [
+          { owned: false,
+            columnName: "relationship1",
+            fromUuid: uuidColumn,
+            toGridUuid: metadata.UuidGrids,
+            uuid: set.grid.uuid },
+          { owned: true,
+            columnName: "relationship1",
+            fromUuid: uuidColumn,
+            toGridUuid: metadata.UuidColumnTypes,
+            uuid: metadata.UuidTextColumnType }
+        ] 
+      }
+    })
+  }
+  
+  async addRow(set: GridResponse) {
+    const uuid = newUuid()
+    const row: RowType = { uuid: uuid }
+    set.rows.push(row)
+    return this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'addRow',
+      gridUuid: set.grid.uuid,
+      dataSet: { rowsAdded: [row] }
+    })
+  }
+
+  async removeRow(set: GridResponse, row: RowType) {
+    const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
+    set.rows.splice(rowIndex, 1)
+    return this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'removeRow',
+      gridUuid: set.grid.uuid,
+      dataSet: { rowsDeleted: [row] }
+    })
+  }
+
+  async removeColumn(set: GridResponse, column: ColumnType) {
+    if(set.grid.columns && set.grid.columns !== undefined) {
+      const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
+      set.grid.columns.splice(columnIndex, 1)
+      return this.pushTransaction({
+        action: metadata.ActionChangeGrid,
+        actionText: 'removeColumn',
+        gridUuid: metadata.UuidColumns,
+        dataSet: {
+          rowsDeleted: [
+            { uuid: column.uuid }
+          ],
+          referencedValuesRemoved: [
+            { owned: false,
+              columnName: "relationship1",
+              fromUuid: column.uuid,
+              toGridUuid: metadata.UuidGrids,
+              uuid: set.grid.uuid },
+            { owned: true,
+              columnName: "relationship1",
+              fromUuid: column.uuid,
+              toGridUuid: metadata.UuidColumnTypes,
+              uuid: metadata.UuidTextColumnType }
+          ] 
+        }
+      })
+    }
+  }
+
+  async newGrid(gridUuid: string) {
+    const grid: GridType = {
+      uuid: gridUuid,
+      text1: 'Untitled',
+      columns: []
+    }
+    const set: GridResponse = {
+      grid: grid,
+      countRows: 0,
+      rows: [],
+      canViewRows: true,
+      canEditRows: true,
+      canAddRows: true,
+      canEditGrid: true    
+    }
+    this.dataSet.push(set)
+    await this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'newGrid',
+      gridUuid: metadata.UuidGrids,
+      dataSet: {
+        rowsAdded: [
+          { uuid: gridUuid,
+            text1: 'new grid 2',
+            text2: 'Untitled 2',
+            text3: 'journal' } 
+        ]
+      }
+    })
+    await this.addColumn(set)
+    return this.addRow(set)
+  }
+  
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
     if(!response.ok || !response.body) {

@@ -16,13 +16,15 @@ func postGrid(dbName string, userUuid string, userName string, content requestCo
 		return responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
+			ActionText:  content.ActionText,
 			TextMessage: response.Err.Error(),
 		}
 	}
 	return responseContent{
-		Status:   SuccessStatus,
-		Action:   content.Action,
-		GridUuid: content.GridUuid,
-		DataSet:  response,
+		Status:     SuccessStatus,
+		Action:     content.Action,
+		ActionText: content.ActionText,
+		GridUuid:   content.GridUuid,
+		DataSet:    response,
 	}
 }

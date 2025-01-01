@@ -78,6 +78,7 @@ export interface GridReferencePost {
 
 export interface RequestContent {
   action: string
+  actionText?: string
   gridUuid?: string
   columnUuid?: string
   rowUuid?: string

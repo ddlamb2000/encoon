@@ -1,14 +1,14 @@
 <script lang="ts">
   import Cell from './Cell.svelte'
   import * as metadata from "$lib/metadata.svelte"
-  let { context, set, row, value = $bindable(), addRow, removeRow } = $props()
+  let { context, set, row, value = $bindable() } = $props()
 </script>
 
 {#key row.uuid}
   <tr>
     <td class="nowrap">
-      <button onclick={() => removeRow(set, row)}>-</button>
-      <button onclick={() => addRow(set)}>+</button>
+      <button onclick={() => context.removeRow(set, row)}>-</button>
+      <button onclick={() => context.addRow(set)}>+</button>
       {#if set.grid.uuid === metadata.UuidGrids}
         <a href={"/" + context.dbName + "/" + row.uuid} data-sveltekit-reload>View</a>
       {/if}
