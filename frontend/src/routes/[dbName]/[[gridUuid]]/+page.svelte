@@ -42,28 +42,34 @@
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 <div class="layout">
   <main>
-    {#if user && context && context.user && context.user.getIsLoggedIn()}
-      <div transition:fade>
-        {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
-        <button onclick={() => newGrid()}>New Grid</button>
-      </div>
-      <ul>
-        {#each context.dataSet as set}
-          {#if set.grid && set.grid.uuid}
-            {#key set.grid.uuid}
-              <li>
-                <Grid {context} {set} bind:value={set.rows} />
-              </li>
-            {/key}
-          {/if}
-        {/each}
-      </ul>	
+    {#if context.isStreaming}
+      *Streaming*
+      {#if user && context && context.user && context.user.getIsLoggedIn()}
+        <div transition:fade>
+          {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
+          <button onclick={() => newGrid()}>New Grid</button>
+          {#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}
+        </div>
+        <ul>
+          {#each context.dataSet as set}
+            {#if set.grid && set.grid.uuid}
+              {#key set.grid.uuid}
+                <li>
+                  <Grid {context} {set} bind:value={set.rows} />
+                </li>
+              {/key}
+            {/if}
+          {/each}
+        </ul>	
+      {:else}
+        <form transition:fade>
+          <label>Username<input bind:value={loginId} /></label>
+          <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
+          <button type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</button>
+        </form>
+      {/if}
     {:else}
-      <form transition:fade>
-        <label>Username<input bind:value={loginId} /></label>
-        <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
-        <button type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</button>
-      </form>
+        Initializing
     {/if}
   </main>
   <Info {context} />

@@ -378,8 +378,6 @@ export class Context {
 
   async getStream() {
     const uri = `/${this.dbName}/pullMessages`
-    const ac = new AbortController()
-    const signal = ac.signal
     this.user.checkToken(localStorage.getItem(this.#tokenName))
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true

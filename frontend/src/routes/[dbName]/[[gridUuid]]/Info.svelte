@@ -3,10 +3,6 @@
   let { context } = $props()
 </script>
 <aside>
-  <div>
-    <p>{#if context.isStreaming}Streaming messages{/if}</p>
-    <p>{#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}</p>
-  </div>
   {#if context.focus.grid}
     <ul>
       <li>Grid: {context.focus.grid.text1} ({context.focus.grid.text2})</li>
