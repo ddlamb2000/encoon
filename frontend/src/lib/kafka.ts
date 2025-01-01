@@ -19,12 +19,16 @@ const producer = kafka.producer({
 })
 
 export const postMessage = async (params, request, url: string) => {
-	const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-requests"
+	if(params.dbName === undefined) {
+		console.error('Missing dbName')
+		return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
+	}
+	const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-requests"
 	try {
 		await producer.connect()
 	} catch (error) {
 		console.error('Error connecting to Kafka:', error)
-		return json({ error: 'Failed to connect to Kafka.' } as KafkaMessageResponse, { status: 500 })
+		return json({ error: 'Failed to connect to Kafka' } as KafkaMessageResponse, { status: 500 })
 	}
 	try {
 		const data: KafkaMessageRequest = await request.json()

@@ -51,16 +51,19 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 }
 
 func handleMessage(dbName string, message kafka.Message) {
-	configuration.Log(dbName, "", "{PULL} %d bytes, topic: %s, key: %s", len(message.Value), message.Topic, message.Key)
-	requestInitiatedOn := []byte("")
-	tokenString := []byte("")
-	requestReceivedOn := []byte(time.Now().UTC().Format(time.RFC3339Nano))
+	requestKey := string(message.Key)
+	requestInitiatedOn := ""
+	tokenString := ""
+	gridUuid := ""
+	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	for _, header := range message.Headers {
 		switch header.Key {
 		case "requestInitiatedOn":
-			requestInitiatedOn = header.Value
+			requestInitiatedOn = string(header.Value)
 		case "jwt":
-			tokenString = header.Value
+			tokenString = string(header.Value)
+		case "gridUuid":
+			gridUuid = string(header.Value)
 		}
 	}
 	var content requestContent
@@ -68,17 +71,24 @@ func handleMessage(dbName string, message kafka.Message) {
 	user := ""
 	userUuid := ""
 	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error unmarshal message value", err)
+		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s", err)
 		response = responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
 			TextMessage: "Incorrect message",
 		}
 	} else {
+		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
 		if content.Action == ActionAuthentication {
 			response = authentication(dbName, content)
+		} else if content.Action == ActionLogout {
+			response = responseContent{
+				Status:      SuccessStatus,
+				Action:      content.Action,
+				TextMessage: "User logged out",
+			}
 		} else {
-			token, err := jwt.Parse(string(tokenString), getTokenParsingHandler(dbName))
+			token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 			if token == nil {
 				configuration.LogError(dbName, "", "No authorization")
 				response = responseContent{
@@ -100,10 +110,11 @@ func handleMessage(dbName string, message kafka.Message) {
 						TextMessage: "Authorization expired",
 					}
 				} else {
+					configuration.Log(dbName, user, "PULL Message (%d bytes), topic: %s, key: %s, action: %s", len(message.Value), message.Topic, message.Key, content.Action)
 					if content.Action == ActionGetGrid {
 						response = getGrid(dbName, userUuid, user, content)
-					} else if content.Action == ActionAddRow || content.Action == ActionUpdateValue || content.Action == ActionAddColumn {
-						response = postGridsRows(dbName, userUuid, user, content)
+					} else if content.Action == ActionChangeGrid {
+						response = postGrid(dbName, userUuid, user, content)
 					} else if content.Action == ActionLocateGrid {
 						response = locate(dbName, content)
 					} else {
@@ -125,13 +136,7 @@ func handleMessage(dbName string, message kafka.Message) {
 			}
 		}
 	}
-
-	responseEncoded, err := json.Marshal(response)
-	if err != nil {
-		configuration.LogError(dbName, "", "error marshal response:", err)
-		return
-	}
-	WriteMessage(dbName, userUuid, user, message.Key, requestInitiatedOn, requestReceivedOn, responseEncoded)
+	WriteMessage(dbName, userUuid, user, gridUuid, requestInitiatedOn, requestReceivedOn, requestKey, response)
 }
 
 func getTokenParsingHandler(dbName string) jwt.Keyfunc {

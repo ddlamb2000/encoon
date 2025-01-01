@@ -36,7 +36,7 @@ export interface ColumnType {
 }
 
 export interface RowType {
-
+	uuid: string
 }
 
 export interface GridPost {

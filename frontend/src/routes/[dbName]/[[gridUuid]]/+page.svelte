@@ -33,7 +33,7 @@
     const row = { uuid: uuid }
     set.rows.push(row)
     return context.pushTransaction({
-      action: metadata.ActionAddRow,
+      action: metadata.ActionChangeGrid,
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
     })
@@ -55,7 +55,7 @@
     if(set.grid.columns) set.grid.columns.push(column)
     else set.grid.columns = [column]
     return context.pushTransaction({
-      action: metadata.ActionAddColumn,
+      action: metadata.ActionChangeGrid,
       gridUuid: metadata.UuidColumns,
       dataSet: {
         rowsAdded: [
@@ -84,7 +84,7 @@
     async (set, row) => {
       context.pushTransaction(
         {
-          action: metadata.ActionUpdateValue,
+          action: metadata.ActionChangeGrid,
           gridUuid: set.grid.uuid,
           dataSet: { rowsEdited: [row] }
         }

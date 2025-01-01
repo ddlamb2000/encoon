@@ -5,6 +5,7 @@ package kafka
 
 import (
 	"context"
+	"encoding/json"
 	"hash/fnv"
 	"os"
 	"strings"
@@ -28,11 +29,12 @@ func (b *RoundRobin) Balance(msg kafka.Message, partitions ...int) (partition in
 	return balance
 }
 
-func WriteMessage(dbName string, userUuid string, user string, requestKey []byte, requestInitiatedOn []byte, receivedOn []byte, response []byte) {
+func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
+	requestInitiatedOn string, receivedOn string, requestKey string, response responseContent) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	hostname, _ := os.Hostname()
-	responseInitiatedOn := []byte(time.Now().UTC().Format(time.RFC3339Nano))
+	responseInitiatedOn := time.Now().UTC().Format(time.RFC3339Nano)
 
 	w := kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
@@ -54,25 +56,31 @@ func WriteMessage(dbName string, userUuid string, user string, requestKey []byte
 		{Key: "dbName", Value: []byte(dbName)},
 		{Key: "userUuid", Value: []byte(userUuid)},
 		{Key: "user", Value: []byte(user)},
-		{Key: "requestKey", Value: requestKey},
-		{Key: "requestInitiatedOn", Value: requestInitiatedOn},
-		{Key: "requestReceivedOn", Value: receivedOn},
-		{Key: "responseInitiatedOn", Value: responseInitiatedOn},
+		{Key: "requestKey", Value: []byte(requestKey)},
+		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
+		{Key: "requestReceivedOn", Value: []byte(receivedOn)},
+		{Key: "responseInitiatedOn", Value: []byte(responseInitiatedOn)},
 	}
-	configuration.Log(dbName, "", "{PUSH} %d bytes, topic: %s, key: %s", len(response), topic, key)
-	err := w.WriteMessages(
+
+	responseEncoded, err := json.Marshal(response)
+	if err != nil {
+		configuration.LogError(dbName, user, "Error marshal response:", err)
+		return
+	}
+	configuration.Log(dbName, user, "PUSH message (%d bytes), topic: %s, key: %s, action: %s, status: %s", len(responseEncoded), topic, key, response.Action, response.Status)
+	err = w.WriteMessages(
 		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
-			Value:   response,
+			Value:   responseEncoded,
 			Headers: headers,
 		},
 	)
 
 	if err != nil {
-		configuration.LogError(dbName, "", "failed to write messages:", err)
+		configuration.LogError(dbName, user, "failed to write messages:", err)
 	}
 	if err := w.Close(); err != nil {
-		configuration.LogError(dbName, "", "failed to close writer:", err)
+		configuration.LogError(dbName, user, "failed to close writer:", err)
 	}
 }

@@ -2,12 +2,14 @@ import { env } from "$env/dynamic/private"
 import { kafka } from '$lib/kafka'
 import { newUuid } from "$lib/utils.svelte"
 	
-export const GET = async ({ params, request, url, cookies }) => {
-  const topic = env.TOPIC_PREFIX + "-" + params.dbname + "-responses"
+export const GET = async ({ params, request, url }) => {
+  if(params.dbName === undefined) {
+    console.error('Missing dbName')
+    return new Response(JSON.stringify({ error: 'Missing dbName' }), { status: 500 })
+  }
+  const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-responses"
   const ac = new AbortController()
   const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
-  cookies.set('topic', topic, { path: '/' })
-  cookies.set('groupId', groupId, { path: '/' })
   console.log(`GET ${url}: Create consumer using groupId ${groupId}`)
   const consumer = kafka.consumer({
     groupId: groupId,
@@ -15,9 +17,7 @@ export const GET = async ({ params, request, url, cookies }) => {
     maxBytes: 10240,
     maxWaitTimeInMs: 100,
     maxInFlightRequests: 50,
-    retry: {
-      retries: 5
-    }
+    retry: { retries: 5 }
   })
   console.log(`GET stream: Start stream`)
   const stream = new ReadableStream({
@@ -59,10 +59,7 @@ export const GET = async ({ params, request, url, cookies }) => {
         })
       } catch (error) {
         console.error(`GET ${url}: Error subscribe to Kafka:`, error)
-        return new Response(JSON.stringify({ error }), {
-          headers: { 'Content-Type': 'text/event-stream' },
-          status: 500
-        })
+        return new Response(JSON.stringify({ error }), { status: 500 })
       }
     },
     cancel() {
@@ -72,8 +69,5 @@ export const GET = async ({ params, request, url, cookies }) => {
       ac.abort()
     },
   })
-  return new Response(stream, {
-    headers: { 'Content-Type': 'text/event-stream' },
-    status: 200
-  })
+  return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' }, status: 200 })
 }

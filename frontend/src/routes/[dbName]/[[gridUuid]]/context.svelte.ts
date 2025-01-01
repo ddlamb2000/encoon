@@ -62,6 +62,7 @@ export class Context {
           {'key': 'userUuid', 'value': this.user.getUserUuid()},
           {'key': 'user', 'value': this.user.getUser()},
           {'key': 'jwt', 'value': this.user.getToken()},
+          {'key': 'gridUuid', 'value': this.gridUuid},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
         message: JSON.stringify(request),
@@ -72,7 +73,7 @@ export class Context {
 
 	async sendMessage(authMessage: boolean, request: KafkaMessageRequest) {
 		this.isSending = true
-    const uri = (authMessage ? "/authentication/" : "/pushMessage/") + this.dbName
+    const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
       if(!this.user.checkToken(localStorage.getItem(this.#tokenName))) {
         this.messageStatus = "Not authorized to send message"
@@ -210,7 +211,7 @@ export class Context {
   }
 
   async getStream() {
-    const uri = "/pullMessages/" + this.dbName
+    const uri = `/${this.dbName}/pullMessages`
     const ac = new AbortController()
     const signal = ac.signal
     this.user.checkToken(localStorage.getItem(this.#tokenName))

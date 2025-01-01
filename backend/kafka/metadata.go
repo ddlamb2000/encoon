@@ -8,9 +8,8 @@ const (
 	FailedStatus  = "FAILED"
 
 	ActionAuthentication = "AUTHENTICATION"
+	ActionLogout         = "LOGOUT"
 	ActionGetGrid        = "LOAD"
-	ActionAddRow         = "NEWROW"
-	ActionAddColumn      = "NEWCOL"
+	ActionChangeGrid     = "CHANGE"
 	ActionLocateGrid     = "LOCATE"
-	ActionUpdateValue    = "UPDATE"
 )
