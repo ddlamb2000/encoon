@@ -1,4 +1,4 @@
-import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/types'
+import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
