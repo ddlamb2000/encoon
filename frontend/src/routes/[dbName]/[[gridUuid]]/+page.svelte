@@ -1,13 +1,13 @@
 <script  lang="ts">
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
-  import { Alert } from 'flowbite-svelte'
   import { Button } from 'flowbite-svelte'
   import { Indicator } from 'flowbite-svelte'
   import type { PageData } from './$types'
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
+  import * as Icon from 'flowbite-svelte-icons';
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   
@@ -33,36 +33,32 @@
 </script>
 
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
-<div class="p-8">
-  <Alert>
-    <span class="font-medium">Info alert!</span>
-    Change a few things up and try submitting again.
-  </Alert>
-</div>
 <div class="layout">
   <main>
     {#if context.isStreaming}
-      <Indicator color="green" /> Streaming
+      <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1.5" />Streaming</span>
       {#if context && context.user && context.user.getIsLoggedIn()}
         <div transition:fade>
           {context.user.getFirstName()} {context.user.getLastName()} <Button size="xs" onclick={() => context.logout()}>Log out</Button>
-          <Button size="xs" onclick={() => newGrid()}>
-            New Grid
-          </Button>
-          {#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}
+          <Button size="xs" onclick={() => newGrid()}>New Grid</Button>
+          {#if context.isSending}
+            <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1.5" />Sending message</span>
+
+          {/if}
+          {#if context.messageStatus}{context.messageStatus}{/if}
+          <a href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />List</span></a>
+          <ul>
+            {#each context.dataSet as set, indexSet}
+              {#if set.grid && set.grid.uuid}
+                {#key set.grid.uuid}
+                  <li>
+                    <Grid bind:context={context} {indexSet} />
+                  </li>
+                {/key}
+              {/if}
+            {/each}
+          </ul>	  
         </div>
-        <a href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>List</a>
-        <ul>
-          {#each context.dataSet as set, indexSet}
-            {#if set.grid && set.grid.uuid}
-              {#key set.grid.uuid}
-                <li>
-                  <Grid bind:context={context} {indexSet} />
-                </li>
-              {/key}
-            {/if}
-          {/each}
-        </ul>	
       {:else}
         <form transition:fade>
           <label>Username<input bind:value={loginId} /></label>
@@ -71,7 +67,7 @@
         </form>
       {/if}
     {:else}
-      <Indicator color="red" /> Initializing
+      <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1.5" />Initializing</span>
     {/if}
   </main>
   <Info {context} />
