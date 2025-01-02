@@ -128,6 +128,9 @@ To do
     Learn async functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
     Review/Learn promises: https://svelte.dev/tutorial/svelte/await-blocks and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 
+    Install https://flowbite-svelte.com/
+    
+
 Future
     Kafka ACL
     Logging thru Kafka
