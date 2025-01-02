@@ -2,6 +2,8 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import { Alert } from 'flowbite-svelte'
+  import { Button } from 'flowbite-svelte'
+  import { Indicator } from 'flowbite-svelte'
   import type { PageData } from './$types'
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
@@ -10,7 +12,7 @@
   import Grid from './Grid.svelte'
   
   let { data }: { data: PageData } = $props()
-  const context = new Context(data.dbName, data.url, data.gridUuid)
+  let context = new Context(data.dbName, data.url, data.gridUuid)
 
   onMount(() => {
     context.getStream()
@@ -40,20 +42,22 @@
 <div class="layout">
   <main>
     {#if context.isStreaming}
-      *Streaming*
+      <Indicator color="green" /> Streaming
       {#if context && context.user && context.user.getIsLoggedIn()}
         <div transition:fade>
-          {context.user.getFirstName()} {context.user.getLastName()} <button onclick={() => context.logout()}>Log out</button>
-          <button onclick={() => newGrid()}>New Grid</button>
+          {context.user.getFirstName()} {context.user.getLastName()} <Button size="xs" onclick={() => context.logout()}>Log out</Button>
+          <Button size="xs" onclick={() => newGrid()}>
+            New Grid
+          </Button>
           {#if context.isSending}Sending message{/if} {#if context.messageStatus}{context.messageStatus}{/if}
         </div>
         <a href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>List</a>
         <ul>
-          {#each context.dataSet as set}
+          {#each context.dataSet as set, indexSet}
             {#if set.grid && set.grid.uuid}
               {#key set.grid.uuid}
                 <li>
-                  <Grid {context} {set} bind:value={set.rows} />
+                  <Grid bind:context={context} {indexSet} />
                 </li>
               {/key}
             {/if}
@@ -67,7 +71,7 @@
         </form>
       {/if}
     {:else}
-      Initializing
+      <Indicator color="red" /> Initializing
     {/if}
   </main>
   <Info {context} />

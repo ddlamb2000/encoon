@@ -35,6 +35,8 @@ export class Context {
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 
+  getSetIndex = (gridUuid: string) => this.dataSet.findIndex((s) => s.grid.uuid === gridUuid)
+
   authentication = async (loginId: string, loginPassword: string) => {
     this.sendMessage(
       true,
