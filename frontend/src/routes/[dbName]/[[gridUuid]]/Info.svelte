@@ -1,6 +1,6 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import DateTime from './DateTime.svelte'
+  import DateTime from '$lib/DateTime.svelte'
   let { context } = $props()
 </script>
 <aside>

@@ -1,14 +1,9 @@
-<script lang="ts">
-	import Counter from './Counter.svelte';
-</script>
-
 <svelte:head>
 	<title>Home</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
 
 <section>
-
 	<div class="text-column">
 		<h1>εncooη</h1>
 		<p>For the time being, εncooη is an experimental web-based application 
@@ -28,10 +23,6 @@
 		application development toolkit.</p>
 		<p>Copyright David Lambert 2024</p>
 	</div>
-	
-
-
-	<Counter />
 </section>
 
 <style>
