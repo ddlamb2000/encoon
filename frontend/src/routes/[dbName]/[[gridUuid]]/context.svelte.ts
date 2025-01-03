@@ -27,7 +27,7 @@ export class Context {
   }
 
   reset = () => {
-    this.dataSet = []
+    // this.dataSet = []
     this.focus = {}
   }  
 
