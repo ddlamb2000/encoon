@@ -2,18 +2,21 @@
   import type { PageData } from './$types'
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
-  import { Input, Label, Indicator, Button, P } from 'flowbite-svelte'
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi } from 'flowbite-svelte';
+  import { Input, Label, Indicator, Button, P, A } from 'flowbite-svelte'
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Drawer, Sidebar, SidebarWrapper, SidebarGroup, SidebarItem } from 'flowbite-svelte';
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
+  import DateTime from '$lib/DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
-  let context = new Context(data.dbName, data.url, data.gridUuid)
+  let context = $state(new Context(data.dbName, data.url, data.gridUuid))
+  let drawerHidden: boolean = false
+  let backdrop: boolean = false;
 
   onMount(() => {
     context.getStream()
@@ -34,40 +37,66 @@
 </script>
 
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
-<header>
-  <Navbar let:hidden let:toggle fluid={true}>
-    <NavBrand href="/">
-      <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"> εncooη </span>
-    </NavBrand>
-    <NavHamburger  />
-    <div class="flex items-center lg:order-2">
-      {#if context.isStreaming}
-        <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
-        {#if context.isSending}
-          <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
-        {:else}
-          {#if context.messageStatus}
-            <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
-          {/if}
-        {/if}
-        {#if context && context.user && context.user.getIsLoggedIn()}
-          <P class="mx-2">{context.user.getFirstName()} {context.user.getLastName()}</P>
-          <Button size="xs" color="dark" onclick={() => context.logout()}>Log out</Button>
-        {/if}
-      {:else}
-        <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
-      {/if}
-    </div>
-    <NavUl {hidden} divClass="justify-between items-center w-full lg:flex lg:w-auto lg:order-1" ulClass="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
-      {#if context.isStreaming}
-        <NavLi href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />List</span></NavLi>
-        <NavLi href="#" onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></NavLi>
-      {/if}
-    </NavUl>
-  </Navbar>
-</header>
-<div class="layout">
-  <main>
+
+<Drawer
+	transitionType="fly"
+	width="w-48"
+	class="overflow-scroll"
+	id="sidebar"
+  bind:hidden={drawerHidden}
+  {backdrop}
+>
+	<Sidebar asideClass="w-50">
+		<SidebarWrapper divClass="overflow-y-auto dark:bg-gray-800">
+			<SidebarGroup>
+        <ul>
+          <li>εncooη</li>
+          <li>
+            {#if context.isStreaming}
+              <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
+              {#if context.isSending}
+                <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
+              {:else}
+                {#if context.messageStatus}
+                  <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
+                {/if}
+              {/if}
+              {#if context && context.user && context.user.getIsLoggedIn()}
+                <P class="mx-2">{context.user.getFirstName()} {context.user.getLastName()}</P>
+                <Button size="xs" color="dark" onclick={() => context.logout()}>Log out</Button>
+              {/if}
+            {:else}
+              <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
+            {/if}    
+          </li>
+          {#if context.focus.grid}
+            <li>
+              <ul>
+                <li>Grid: {@html context.focus.grid.text1} ({@html context.focus.grid.text2})</li>
+                <li>Column: {context.focus.column.label} ({context.focus.column.type})</li>
+                <li>Row: {context.focus.row.displayString} ({context.focus.row.uuid})</li>
+                <li>Value: {@html context.focus.row[context.focus.column.name]}</li>
+                <li>Created on <DateTime dateTime={context.focus.row.created} /></li>
+                <li>Updated on <DateTime dateTime={context.focus.row.updated} /></li>
+              </ul>
+            </li>
+          {/if}  
+          <li><A href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />List</span></A></li>
+          <li><A href="#" onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></A></li>
+          {#each context.dataSet as set}
+            {#if set.grid && set.grid.uuid}
+              <li><A href={"#" + set.grid.uuid}>{set.grid.text1}</A></li>
+            {/if}
+          {/each}
+        </ul>
+      </SidebarGroup>
+		</SidebarWrapper>
+	</Sidebar>
+</Drawer>
+
+
+<div class="flex px-4 mx-auto w-full">
+	<main class="lg:ml-72 w-full mx-auto">
     <div class="relative px-4">
       {#if context.isStreaming}
         {#if context && context.user && context.user.getIsLoggedIn()}
@@ -76,7 +105,7 @@
               {#each context.dataSet as set, indexSet}
                 {#if set.grid && set.grid.uuid}
                   {#key set.grid.uuid}
-                    <li>
+                    <li id={set.grid.uuid}>
                       <Grid bind:context={context} {indexSet} />
                     </li>
                   {/key}
@@ -96,13 +125,7 @@
   </main>
   <Info {context} />
 </div>
+
 <style>
-  @media (min-width: 640px) {
-    .layout {
-      display: grid;
-      gap: 2em;
-      grid-template-columns: 1fr 16em;
-    }
-  }
   li { list-style: none; }
 </style>

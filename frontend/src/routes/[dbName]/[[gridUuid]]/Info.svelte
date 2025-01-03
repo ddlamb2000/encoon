@@ -1,6 +1,7 @@
 <script lang="ts">
   import { fade } from 'svelte/transition'
-  import { Alert } from 'flowbite-svelte'
+  import { Toast } from 'flowbite-svelte';
+  import { DownloadOutline, PaperPlaneOutline } from 'flowbite-svelte-icons';
   import DateTime from '$lib/DateTime.svelte'
   let { context } = $props()
 </script>
@@ -15,18 +16,31 @@
       <li>Updated on <DateTime dateTime={context.focus.row.updated} /></li>
     </ul>
   {/if}
-  <ul transition:fade>
-    {#each context.messageStack as message}
-      {#if message.request}
-        <li>{message.request.messageKey} {message.request.message.substring(0, 200)}</li>
-      {/if}
-      {#if message.response}
-        <li>
-          <Alert>{message.response.messageKey} {message.response.message.substring(0, 200)}</Alert>
-        </li>
-      {/if}
-    {/each}
-  </ul>
+  {#each context.messageStack as message}
+    {#if message.request}
+      <Toast color="green">
+        <svelte:fragment slot="icon">
+          <PaperPlaneOutline class="w-4 h-4 rotate-45" />
+          <span class="sr-only">Error icon</span>
+        </svelte:fragment>
+        <div class="ps-4 text-xs font-normal">
+          {message.request.messageKey} {message.request.message.substring(0, 100)}
+        </div>
+        
+      </Toast>        
+    {/if}
+    {#if message.response}
+      <Toast color="blue">
+        <svelte:fragment slot="icon">
+          <DownloadOutline class="w-4 h-4" />
+          <span class="sr-only">Error icon</span>
+        </svelte:fragment>
+        <div class="ps-4 text-xs font-normal">
+          {message.response.messageKey} {message.response.message.substring(0, 100)}
+        </div>
+      </Toast>        
+    {/if}
+  {/each}
 </aside>
 <style>
   li {
