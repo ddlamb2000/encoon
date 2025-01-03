@@ -1,8 +1,9 @@
 <script>
-	import { Table, TableBody, TableBodyCell, TableBodyRow, TableHead, TableHeadCell } from 'flowbite-svelte';
-	import { Button, Dropdown, DropdownItem, Search, Checkbox, ToolbarButton, DropdownDivider } from 'flowbite-svelte';
-  import { DotsHorizontalOutline, DotsVerticalOutline } from 'flowbite-svelte-icons';
+  import '$lib/app.css'
+  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Button } from 'flowbite-svelte';
+  import { Dropdown, DropdownItem, Search, Checkbox, ToolbarButton, DropdownDivider, A } from 'flowbite-svelte';
   import { ChevronDownOutline, UserRemoveSolid } from 'flowbite-svelte-icons';
+  const dbs = ['master', 'test', 'sandbox']
   let searchTerm = ''
   const people = [
     { name: 'Robert Gouth', checked: false },
@@ -14,11 +15,24 @@
 
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+  <title>Home</title>
+  <meta name="description" content="Svelte demo app" />
 </svelte:head>
+<header>
+  <Navbar let:hidden let:toggle fluid={false}>
+    <NavBrand href="/">
+    <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"> εncooη </span>
+    </NavBrand>
+    <div class="flex items-center lg:order-2">
+    </div>
+    <NavUl {hidden} divClass="justify-between items-center w-full lg:flex lg:w-auto lg:order-1" ulClass="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+    {#each dbs as dbname}
+        <NavLi href={"/" + dbname} data-sveltekit-reload>{dbname}</NavLi>
+    {/each}
+    </NavUl>
+  </Navbar>
+</header>
 
-<h1>εncooη</h1>
 <p>For the time being, εncooη is an experimental web-based application 
 oriented toward data management.</p>
 <p>The object of the reasearches εncooη is based on is to propose 
@@ -50,33 +64,3 @@ application development toolkit.</p>
     <UserRemoveSolid class="w-4 h-4 me-2 text-primary-700 dark:text-primary-700" />Delete user
   </a>
 </Dropdown>
-
-
-  <Table>
-	<TableHead>
-	  <TableHeadCell>Product name</TableHeadCell>
-	  <TableHeadCell>Color</TableHeadCell>
-	  <TableHeadCell>Category</TableHeadCell>
-	  <TableHeadCell>Price</TableHeadCell>
-	</TableHead>
-	<TableBody tableBodyClass="divide-y">
-	  <TableBodyRow>
-		<TableBodyCell>Apple MacBook Pro 17"</TableBodyCell>
-		<TableBodyCell>Sliver</TableBodyCell>
-		<TableBodyCell>Laptop</TableBodyCell>
-		<TableBodyCell>$2999</TableBodyCell>
-	  </TableBodyRow>
-	  <TableBodyRow>
-		<TableBodyCell>Microsoft Surface Pro</TableBodyCell>
-		<TableBodyCell>White</TableBodyCell>
-		<TableBodyCell>Laptop PC</TableBodyCell>
-		<TableBodyCell>$1999</TableBodyCell>
-	  </TableBodyRow>
-	  <TableBodyRow>
-		<TableBodyCell>Magic Mouse 2</TableBodyCell>
-		<TableBodyCell>Black</TableBodyCell>
-		<TableBodyCell>Accessories</TableBodyCell>
-		<TableBodyCell>$99</TableBodyCell>
-	  </TableBodyRow>
-	</TableBody>
-  </Table>
