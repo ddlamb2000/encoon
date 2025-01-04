@@ -18,6 +18,8 @@ export class Context {
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
 
+  #messageStackLimit = 20
+
   constructor(dbName: string, url: string, gridUuid: string) {
     this.dbName = dbName
     this.url = url
@@ -73,6 +75,20 @@ export class Context {
     )
   }
 
+  trackRequest = (request) => {
+    this.messageStack.push({request : request})
+    if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
+  }
+
+  trackResponse = (response) => {
+    if(response.requestKey) {
+      const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.requestKey)
+      if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
+    }
+    this.messageStack.push({response : response})
+    if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
+  }
+
   sendMessage = async (authMessage: boolean, headers: KafkaMessageHeader[], message: RequestContent) => {
 		this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
@@ -85,12 +101,13 @@ export class Context {
     const request: KafkaMessageRequest = { messageKey: newUuid(), headers: headers, message: JSON.stringify(message) }    
     console.log(`[Send] to ${uri}`, request)
 
-    this.messageStack.push({'request' : {
+    this.trackRequest({
       messageKey: request.messageKey,
       action: message.action,
       actionText: message.actionText,
-      gridUuid: message.gridUuid
-    }})
+      gridUuid: message.gridUuid,
+      dateTime: (new Date).toISOString()
+    })
 
 		this.messageStatus = 'Sending'
 		const response = await fetch(uri, {
@@ -334,16 +351,15 @@ export class Context {
           const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
           const elapsedMs = nowDate - requestInitiatedOnDate
           console.log(`[Received] from ${uri} (${elapsedMs} ms) (${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
-          this.messageStack.push({
-            response : {
-              messageKey: json.key,
-              requestKey: requestKey,
-              action: message.action,
-              actionText: message.actionText,
-              gridUuid: message.gridUuid,
-              status: message.status,
-              elapsedMs: elapsedMs
-            }
+          this.trackResponse({
+            messageKey: json.key,
+            requestKey: requestKey,
+            action: message.action,
+            actionText: message.actionText,
+            gridUuid: message.gridUuid,
+            status: message.status,
+            elapsedMs: elapsedMs,
+            dateTime: (new Date).toISOString()
           })
           if(message.action == metadata.ActionAuthentication) {
             if(message.status == metadata.SuccessStatus) {

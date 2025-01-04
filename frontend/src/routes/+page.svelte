@@ -1,7 +1,6 @@
 <script>
   import '$lib/app.css'
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Button } from 'flowbite-svelte';
-  import { Dropdown, DropdownItem, Search, Checkbox, ToolbarButton, DropdownDivider, A } from 'flowbite-svelte';
+  import { Dropdown, DropdownItem, Search, Checkbox, Button } from 'flowbite-svelte';
   import { ChevronDownOutline, UserRemoveSolid } from 'flowbite-svelte-icons';
   const dbs = ['master', 'test', 'sandbox']
   let searchTerm = ''

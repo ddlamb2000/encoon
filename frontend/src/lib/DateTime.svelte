@@ -34,7 +34,7 @@
 		const interval = setInterval(() => {
       localDate = new Date(dateTime)
       timeAgo = getTimeAgo()
-    }, 2000)
+    }, 1000)
 		return () => { clearInterval(interval) }
 	})  
 

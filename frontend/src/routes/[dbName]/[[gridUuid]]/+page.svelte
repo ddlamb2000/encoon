@@ -3,7 +3,7 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import { Indicator, Button, A } from 'flowbite-svelte'
-  import { Drawer, Sidebar, SidebarWrapper, SidebarGroup } from 'flowbite-svelte';
+  import { Drawer, Sidebar, SidebarWrapper, SidebarGroup, Footer } from 'flowbite-svelte';
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
@@ -80,7 +80,11 @@
           <li><A color="text-blue-700 dark:text-blue-500" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />Grids</span></A></li>
           {#each context.dataSet as set}
             {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
-              <li><A color="text-blue-700 dark:text-blue-500" href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>{set.grid.text1}</A></li>
+              <li>
+                <a color="text-blue-700 dark:text-blue-500" href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>
+                  {@html set.grid.text1}
+                </a>
+              </li>
             {/if}
           {/each}
         </ul>
@@ -106,9 +110,12 @@
         {/if}
       {/if}
     </div>
-    <Info {context} />
   </main>
 </div>
+
+<footer class="absolute bottom-0 start-0 z-20 w-full p-4 bg-white border-t border-gray-200 shadow md:flex md:items-center md:justify-between md:p-6 dark:bg-gray-800 dark:border-gray-600">
+  <Info {context} />
+</footer>
 
 <style>
   li { list-style: none; }
