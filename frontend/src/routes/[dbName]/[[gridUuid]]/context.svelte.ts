@@ -374,7 +374,7 @@ export class Context {
         }
       } 
       catch(error) {
-        console.log(`Data from stream from ${uri} isn't Json`)
+        console.log(`Data from stream from ${uri} is incomplete`)
       }
       let result = re.exec(chunk)
       if (!result) {

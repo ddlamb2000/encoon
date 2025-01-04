@@ -19,18 +19,12 @@
   <meta name="description" content="Svelte demo app" />
 </svelte:head>
 <header>
-  <Navbar let:hidden let:toggle fluid={false}>
-    <NavBrand href="/">
     <span class="self-center whitespace-nowrap text-xl font-semibold dark:text-white"> εncooη </span>
-    </NavBrand>
     <div class="flex items-center lg:order-2">
     </div>
-    <NavUl {hidden} divClass="justify-between items-center w-full lg:flex lg:w-auto lg:order-1" ulClass="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
     {#each dbs as dbname}
-        <NavLi href={"/" + dbname} data-sveltekit-reload>{dbname}</NavLi>
+        <a href={"/" + dbname} data-sveltekit-reload>{dbname}</a>
     {/each}
-    </NavUl>
-  </Navbar>
 </header>
 
 <p>For the time being, εncooη is an experimental web-based application 

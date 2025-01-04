@@ -37,24 +37,18 @@ const producer = kafka.producer({
   createPartitioner: CustomRoundRobin
 })
 
-let producerConnected = false
-try {
-  producer.connect()
-  producerConnected = true
-} catch (error) {
-  console.error('Error connecting to Kafka:', error)
-}
-
-
 export const postMessage = async (params, request, url: string) => {
   if(params.dbName === undefined) {
     console.error('Missing dbName')
     return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
   }
-  const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-requests"
-  if(!producerConnected) {
+  try {
+    await producer.connect()
+  } catch (error) {
+    console.error('Error connecting to Kafka:', error)
     return json({ error: 'Failed to connect to Kafka' } as KafkaMessageResponse, { status: 500 })
   }
+  const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-requests"
   try {
     const data: KafkaMessageRequest = await request.json()
     if (!data.message.trim() || data.headers.some((h) => !h.key.trim())) {
@@ -73,6 +67,8 @@ export const postMessage = async (params, request, url: string) => {
   } catch (error) {
     console.error(`Error sending message to Kafka topic ${topic}:`, error)
     return json({ error: 'Failed to send message' } as KafkaMessageResponse, { status: 500 })
+  } finally { 
+    await producer.disconnect()
   }
 }
 
