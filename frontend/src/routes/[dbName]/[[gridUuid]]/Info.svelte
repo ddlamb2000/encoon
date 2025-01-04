@@ -12,12 +12,13 @@
       <li>
         <span class="flex items-center">
           <Spinner size={4} />
-          <div class="ps-4 text-xs font-normal">
+          <div class="ps-2 text-xs font-normal">
             <p>
-              <strong>Key: </strong>{message.request.messageKey}
-              {#if message.request.action}<strong>Action: </strong>{message.request.action}{/if}
-              {#if message.request.actionText}<strong>Text: </strong>{message.request.actionText}{/if}
-              {#if message.request.gridUuid}<strong>GridUuid: </strong>{message.request.gridUuid}{/if}
+              {message.request.messageKey}
+              <Badge color="blue" rounded class="px-2.5 py-0.5">
+                {message.request.action}
+                {#if message.request.actionText}[{message.request.actionText}]{/if}
+              </Badge>              
               <DateTime dateTime={message.request.dateTime} />
             </p>
           </div>
@@ -28,7 +29,7 @@
       <li>
         <span class="flex items-center">
           <Icon.DownloadOutline color={message.response.status === SuccessStatus ? "green" : "red"} class="w-4 h-4" />
-          <div class="text-xs font-normal">
+          <div class="ps-2 text-xs font-normal">
             <p>
               {message.response.messageKey}
               <Badge color="blue" rounded class="px-2.5 py-0.5">
