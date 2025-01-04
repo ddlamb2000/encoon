@@ -18,7 +18,7 @@ export class Context {
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
 
-  #messageStackLimit = 20
+  #messageStackLimit = 100
 
   constructor(dbName: string, url: string, gridUuid: string) {
     this.dbName = dbName
@@ -159,6 +159,7 @@ export class Context {
     replaceState(url, { gridUuid: this.gridUuid })
     this.gridUuid = gridUuid
     if(set === undefined) this.load()
+    // else this.focus = {grid: set.grid}
 	}
 
  changeCell = debounce(

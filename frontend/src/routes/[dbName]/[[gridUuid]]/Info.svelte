@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Spinner } from 'flowbite-svelte'
+	import { Spinner, Badge } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import DateTime from '$lib/DateTime.svelte'
   import { SuccessStatus } from '$lib/metadata.svelte'
@@ -28,16 +28,17 @@
       <li>
         <span class="flex items-center">
           <Icon.DownloadOutline color={message.response.status === SuccessStatus ? "green" : "red"} class="w-4 h-4" />
-          <div class="ps-4 text-xs font-normal">
+          <div class="text-xs font-normal">
             <p>
-              <strong>Key: </strong>{message.response.messageKey}
-              {#if message.response.requestKey}<strong>Request: </strong>{message.response.requestKey}{/if}
-              {#if message.response.action}<strong>Action: </strong>{message.response.action}{/if}
-              {#if message.response.actionText}<strong>Text: </strong>{message.response.actionText}{/if}
-              {#if message.response.gridUuid}<strong>GridUuid: </strong>{message.response.gridUuid}{/if}
-              <strong>Status: </strong>{message.response.status}
-              <strong>Elapsed: </strong>{message.response.elapsedMs} ms
-              <DateTime dateTime={message.response.dateTime} />
+              {message.response.messageKey}
+              <Badge color="blue" rounded class="px-2.5 py-0.5">
+                {message.response.action}
+                {#if message.response.actionText}[{message.response.actionText}]{/if}
+              </Badge>
+              <Badge color={message.response.status === SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">{message.response.status}</Badge>
+              {message.response.elapsedMs} ms
+              <DateTime dateTime={message.response.dateTime} showDate={false} />
+              
             </p>
           </div>
         </span>

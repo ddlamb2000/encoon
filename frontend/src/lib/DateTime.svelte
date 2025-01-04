@@ -1,5 +1,5 @@
 <script lang="ts">
-  let { dateTime } = $props()
+  let { dateTime, showDate = true } = $props()
 
   let localDate = $state(new Date(dateTime))
 
@@ -39,5 +39,8 @@
 	})  
 
 </script>
-  
-{localDate.toLocaleDateString()} {localDate.toLocaleTimeString()} <small><em>{@html timeAgo}</em></small>
+ 
+{#if showDate}
+  {localDate.toLocaleDateString()} {localDate.toLocaleTimeString()}
+{/if}
+<small><em>{@html timeAgo}</em></small>

@@ -2,9 +2,6 @@
 	"/": [
 		"src/routes/+page.ts"
 	],
-	"/mockup": [
-		"src/routes/mockup/+page.ts"
-	],
 	"/[dbName]/authentication": [
 		"src/routes/[dbName]/authentication/+server.ts"
 	],

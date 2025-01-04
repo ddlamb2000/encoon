@@ -24,7 +24,6 @@
     {#each dbs as dbname}
         <a href={"/" + dbname} data-sveltekit-reload>{dbname}</a>
     {/each}
-    <a href="/mockup">Mockup</a>
 </header>
 
 <p>For the time being, εncooη is an experimental web-based application 
