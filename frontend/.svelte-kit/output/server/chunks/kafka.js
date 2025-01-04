@@ -35,7 +35,7 @@ async function postMessage(params, request, url) {
       acks: -1
     });
     console.log(`POST ${url} to ${topic}: `, data);
-    return json({ message: "Message sent successfully" });
+    return json({ message: "Message" });
   } catch (error) {
     console.error(`Error sending message to Kafka topic ${topic}:`, error);
     return json({ error: "Failed to send message" }, { status: 500 });

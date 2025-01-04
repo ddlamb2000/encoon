@@ -26,16 +26,13 @@ export class Context {
     this.#tokenName = `access_token_${this.dbName}`
   }
 
-  reset = () => {
-    // this.dataSet = []
-    this.focus = {}
-  }  
+  reset = () => { this.focus = {} }  
 
   destroy = () => {
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 
-  getSetIndex = (gridUuid: string) => this.dataSet.findIndex((s) => s.grid.uuid === gridUuid)
+  getSet = (gridUuid: string) => this.dataSet.find((s) => s.grid.uuid === gridUuid)
 
   authentication = async (loginId: string, loginPassword: string) => {
     this.sendMessage(
@@ -47,8 +44,7 @@ export class Context {
           {'key': 'url', 'value': this.url},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)}),
-        selectedPartitions: []
+        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)})
       }
     )
   }
@@ -74,8 +70,7 @@ export class Context {
           {'key': 'gridUuid', 'value': this.gridUuid},
           {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
         ],
-        message: JSON.stringify(request),
-        selectedPartitions: []
+        message: JSON.stringify(request)
       }
     )
   }
@@ -135,11 +130,15 @@ export class Context {
 
   navigateToGrid = async (gridUuid: string) => {
 		console.log("[Context.navigateToGrid()] gridUuid=", gridUuid)
+    const set = this.getSet(gridUuid)
     this.reset()
-		const url = `/${this.dbName}/${gridUuid}`
-		replaceState(url, { gridUuid: this.gridUuid })
-    this.gridUuid = gridUuid
-    this.load()
+    if(set === undefined) {
+      const url = `/${this.dbName}/${gridUuid}`
+      replaceState(url, { gridUuid: this.gridUuid })
+      this.gridUuid = gridUuid
+      this.load()
+    }
+    else this.gridUuid = gridUuid
 	}
 
  changeCell = debounce(
@@ -358,6 +357,7 @@ export class Context {
               if(message.action == metadata.ActionGetGrid) {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                  const set = this.getSet(message.dataSet.grid.uuid)
                   this.dataSet.push(message.dataSet)
                 }
               } else if(message.action == metadata.ActionLocateGrid) {

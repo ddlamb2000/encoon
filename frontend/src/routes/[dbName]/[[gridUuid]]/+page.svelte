@@ -3,7 +3,7 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import { Input, Label, Indicator, Button, P, A } from 'flowbite-svelte'
-  import { Navbar, NavBrand, NavHamburger, NavUl, NavLi, Drawer, Sidebar, SidebarWrapper, SidebarGroup, SidebarItem } from 'flowbite-svelte';
+  import { Drawer, Sidebar, SidebarWrapper, SidebarGroup } from 'flowbite-svelte';
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
@@ -40,30 +40,32 @@
 
 <Drawer
 	transitionType="fly"
-	width="w-48"
+	width="w-40"
 	class="overflow-scroll"
 	id="sidebar"
   bind:hidden={drawerHidden}
   {backdrop}
 >
 	<Sidebar asideClass="w-50">
-		<SidebarWrapper divClass="overflow-y-auto dark:bg-gray-800">
+		<SidebarWrapper divClass="dark:bg-gray-800">
 			<SidebarGroup>
-        <ul>
+        <ul transition:fade>
           <li>εncooη</li>
           <li>
             {#if context.isStreaming}
-              <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
-              {#if context.isSending}
-                <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
-              {:else}
-                {#if context.messageStatus}
-                  <span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" /></span>
-                {/if}
-              {/if}
               {#if context && context.user && context.user.getIsLoggedIn()}
                 <P class="mx-2">{context.user.getFirstName()} {context.user.getLastName()}</P>
                 <Button size="xs" color="dark" onclick={() => context.logout()}>Log out</Button>
+              {/if}
+              <P><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />Connected</span></P>
+              {#if context.isSending}
+                <P><span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" />Sending</span></P>
+              {:else}
+                {#if context.messageStatus}
+                  <P><span class="flex items-center"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span></P>
+                {:else}
+                  <P><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />OK</span></P>
+                {/if}
               {/if}
             {:else}
               <span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
@@ -81,11 +83,11 @@
               </ul>
             </li>
           {/if}  
-          <li><A href="#" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />List</span></A></li>
-          <li><A href="#" onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></A></li>
+          <li><A color="text-blue-700 dark:text-blue-500" onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></A></li>
+          <li><A color="text-blue-700 dark:text-blue-500" onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />Grids</span></A></li>
           {#each context.dataSet as set}
-            {#if set.grid && set.grid.uuid}
-              <li><A href={"#" + set.grid.uuid}>{set.grid.text1}</A></li>
+            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
+              <li><A color="text-blue-700 dark:text-blue-500" href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>{set.grid.text1}</A></li>
             {/if}
           {/each}
         </ul>
@@ -94,24 +96,13 @@
 	</Sidebar>
 </Drawer>
 
-
-<div class="flex px-4 mx-auto w-full">
-	<main class="lg:ml-72 w-full mx-auto">
+<div class="flex mx-auto w-full">
+	<main class="lg:ml-40 w-full mx-auto">
     <div class="relative px-4">
       {#if context.isStreaming}
         {#if context && context.user && context.user.getIsLoggedIn()}
           <div transition:fade>
-            <ul>
-              {#each context.dataSet as set, indexSet}
-                {#if set.grid && set.grid.uuid}
-                  {#key set.grid.uuid}
-                    <li id={set.grid.uuid}>
-                      <Grid bind:context={context} {indexSet} />
-                    </li>
-                  {/key}
-                {/if}
-              {/each}
-            </ul>	  
+            <Grid bind:context={context} gridUuid={context.gridUuid} />
           </div>
         {:else}
           <form transition:fade>
@@ -122,9 +113,10 @@
         {/if}
       {/if}
     </div>
+    <Info {context} />
   </main>
-  <Info {context} />
 </div>
+
 
 <style>
   li { list-style: none; }

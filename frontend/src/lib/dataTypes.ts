@@ -7,7 +7,7 @@ export interface KafkaMessageRequest {
   messageKey?: string
   message: string
   headers: KafkaMessageHeader[]
-  selectedPartitions: number[]
+  selectedPartitions?: number[]
 }
 
 export interface KafkaMessageResponse {
