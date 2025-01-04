@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Table, TableBody, TableBodyRow, TableHead, TableHeadCell, A, Heading, Secondary } from 'flowbite-svelte'
+	import { A, Heading, Secondary } from 'flowbite-svelte'
   import { Dropdown, DropdownItem } from 'flowbite-svelte'
   import { DotsVerticalOutline } from 'flowbite-svelte-icons'
   import * as Icon from 'flowbite-svelte-icons'
@@ -10,38 +10,38 @@
 {#each context.dataSet as set, indexSet}
   {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
     {#key set.grid.uuid}
-      <Table hoverable={true} noborder={false}>
+      <table>
         <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
           <Heading tag="h1" customSize="text-3xl font-extrabold">{@html context.dataSet[indexSet].grid.text1}
-            <Secondary class="ms-2">
-              {@html context.dataSet[indexSet].grid.text2}
-            </Secondary>  
+            <Secondary class="ms-2">{@html context.dataSet[indexSet].grid.text2}</Secondary>  
           </Heading>
         </caption>
-        <TableHead>
-          <TableHeadCell>
-            <DotsVerticalOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
-            <Dropdown placement='right' triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
-              <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
-            </Dropdown>
-          </TableHeadCell>
-          {#each context.dataSet[indexSet].grid.columns as column}
-            <TableHeadCell class='header'>
-              <span class="flex">
-                {column.label}
-                <DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                <Dropdown placement='right' triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
-                  <DropdownItem onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</DropdownItem>
-                  <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
-                </Dropdown>
-              </span>
-            </TableHeadCell>
-          {/each}
-        </TableHead>
-        <TableBody>
+        <thead>
+          <tr>
+            <th>
+              <DotsVerticalOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
+              <Dropdown placement='right' triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
+                <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
+              </Dropdown>
+            </th>
+            {#each context.dataSet[indexSet].grid.columns as column}
+              <th class='header'>
+                <span class="flex">
+                  {column.label}
+                  <DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
+                  <Dropdown placement='right' triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
+                    <DropdownItem onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</DropdownItem>
+                    <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
+                  </Dropdown>
+                </span>
+              </th>
+            {/each}
+          </tr>
+        </thead>
+        <tbody>
           {#each context.dataSet[indexSet].rows as row, rowIndex}
             {#key row.uuid}
-              <TableBodyRow>
+              <tr>
                 <td class="nowrap">
                   <span class="flex">
                     <A href="#" color="teal" onclick={() => context.removeRow(context.dataSet[indexSet], row)}><Icon.CircleMinusOutline size="sm" /></A>
@@ -69,7 +69,7 @@
                     </td>
                   {/if}
                 {/each}
-              </TableBodyRow>
+              </tr>
             {/key}      
           {:else}
             <tr>
@@ -78,7 +78,7 @@
               </td>
             </tr>
           {/each}
-        </TableBody>
+        </tbody>
         <tfoot>
           <tr class="font-semibold text-gray-900 dark:text-white">
             <th>
@@ -89,7 +89,7 @@
             </th>
           </tr>
         </tfoot>
-      </Table>
+      </table>
     {/key}
   {/if}
 {/each}

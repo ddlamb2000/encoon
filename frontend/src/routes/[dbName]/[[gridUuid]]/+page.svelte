@@ -2,7 +2,7 @@
   import type { PageData } from './$types'
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
-  import { Input, Label, Indicator, Button, P, A } from 'flowbite-svelte'
+  import { Input, Label, Indicator, Button, A } from 'flowbite-svelte'
   import { Drawer, Sidebar, SidebarWrapper, SidebarGroup } from 'flowbite-svelte';
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
@@ -38,14 +38,7 @@
 
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 
-<Drawer
-	transitionType="fly"
-	width="w-40"
-	class="overflow-scroll"
-	id="sidebar"
-  bind:hidden={drawerHidden}
-  {backdrop}
->
+<Drawer transitionType="fly" width="w-40" class="overflow-scroll" id="sidebar" bind:hidden={drawerHidden} {backdrop}>
 	<Sidebar asideClass="w-50">
 		<SidebarWrapper divClass="dark:bg-gray-800">
 			<SidebarGroup>
@@ -54,17 +47,17 @@
           <li>
             {#if context.isStreaming}
               {#if context && context.user && context.user.getIsLoggedIn()}
-                <P class="mx-2">{context.user.getFirstName()} {context.user.getLastName()}</P>
+                <p class="mx-2">{context.user.getFirstName()} {context.user.getLastName()}</p>
                 <Button size="xs" color="dark" onclick={() => context.logout()}>Log out</Button>
               {/if}
-              <P><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />Connected</span></P>
+              <p><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />Connected</span></p>
               {#if context.isSending}
-                <P><span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" />Sending</span></P>
+                <p><span class="flex items-center"><Indicator size="sm" color="orange" class="me-1" />Sending</span></p>
               {:else}
                 {#if context.messageStatus}
-                  <P><span class="flex items-center"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span></P>
+                  <p><span class="flex items-center"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span></p>
                 {:else}
-                  <P><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />OK</span></P>
+                  <p><span class="flex items-center"><Indicator size="sm" color="teal" class="me-1" />OK</span></p>
                 {/if}
               {/if}
             {:else}
@@ -116,7 +109,6 @@
     <Info {context} />
   </main>
 </div>
-
 
 <style>
   li { list-style: none; }
