@@ -2,7 +2,7 @@
   import type { PageData } from './$types'
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
-  import { Input, Label, Indicator, Button, A } from 'flowbite-svelte'
+  import { Indicator, Button, A } from 'flowbite-svelte'
   import { Drawer, Sidebar, SidebarWrapper, SidebarGroup } from 'flowbite-svelte';
   import { fade } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
@@ -99,8 +99,8 @@
           </div>
         {:else}
           <form transition:fade>
-            <Label>Username<Input bind:value={loginId} /></Label>
-            <Label>Passphrase<Input bind:value={loginPassword} type="password" /></Label>
+            <label>Username<input bind:value={loginId} /></label>
+            <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
             <Button size="xs" type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</Button>
           </form>
         {/if}

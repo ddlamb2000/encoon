@@ -19,7 +19,6 @@ export const GET = async ({ params, request, url }) => {
     maxInFlightRequests: 50,
     retry: { retries: 5 }
   })
-  console.log(`GET stream: Start stream`)
   const stream = new ReadableStream({
     start(controller) {
       try {

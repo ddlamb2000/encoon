@@ -11,9 +11,11 @@
         <span class="sr-only">Error icon</span>
       </svelte:fragment>
       <div class="ps-4 text-xs font-normal">
-        {message.request.messageKey} {message.request.message.substring(0, 100)}
+        <p><strong>Key: </strong>{message.request.messageKey}</p>
+        {#if message.request.action}<p><strong>Action: </strong>{message.request.action}</p>{/if}
+        {#if message.request.actionText}<p><strong>Text: </strong>{message.request.action}</p>{/if}
+        <p><strong>GridUuid: </strong>{message.request.gridUuid}</p>
       </div>
-      
     </Toast>        
   {/if}
   {#if message.response}
@@ -23,7 +25,13 @@
         <span class="sr-only">Error icon</span>
       </svelte:fragment>
       <div class="ps-4 text-xs font-normal">
-        {message.response.messageKey} {message.response.message.substring(0, 100)}
+        <p><strong>Key: </strong>{message.response.messageKey}</p>
+        {#if message.response.requestKey}<p><strong>Request: </strong>{message.response.requestKey}</p>{/if}
+        {#if message.response.action}<p><strong>Action: </strong>{message.response.action}</p>{/if}
+        {#if message.response.actionText}<p><strong>Text: </strong>{message.response.action}</p>{/if}
+        <p><strong>GridUuid: </strong>{message.response.gridUuid}</p>
+        <p><strong>Status: </strong>{message.response.status}</p>
+        <p><strong>Elasped: </strong>{message.response.elapsedMs} ms</p>
       </div>
     </Toast>        
   {/if}

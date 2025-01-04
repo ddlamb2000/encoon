@@ -1,4 +1,4 @@
-import type { KafkaMessageRequest, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
+import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import { replaceState } from "$app/navigation"
@@ -37,14 +37,15 @@ export class Context {
   authentication = async (loginId: string, loginPassword: string) => {
     this.sendMessage(
       true,
+      [
+        {'key': 'from', 'value': 'εncooη frontend'},
+        {'key': 'url', 'value': this.url},
+        {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
+      ],
       {
-        messageKey: newUuid(),
-        headers: [
-          {'key': 'from', 'value': 'εncooη frontend'},
-          {'key': 'url', 'value': this.url},
-          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
-        ],
-        message: JSON.stringify({action: metadata.ActionAuthentication, userid: loginId, password: btoa(loginPassword)})
+        action: metadata.ActionAuthentication,
+        userid: loginId,
+        password: btoa(loginPassword)
       }
     )
   }
@@ -58,24 +59,21 @@ export class Context {
   pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
-      {
-        messageKey: newUuid(),
-        headers: [
-          {'key': 'from', 'value': 'εncooη frontend'},
-          {'key': 'url', 'value': this.url},
-          {'key': 'dbName', 'value': this.dbName},
-          {'key': 'userUuid', 'value': this.user.getUserUuid()},
-          {'key': 'user', 'value': this.user.getUser()},
-          {'key': 'jwt', 'value': this.user.getToken()},
-          {'key': 'gridUuid', 'value': this.gridUuid},
-          {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
-        ],
-        message: JSON.stringify(request)
-      }
+      [
+        {'key': 'from', 'value': 'εncooη frontend'},
+        {'key': 'url', 'value': this.url},
+        {'key': 'dbName', 'value': this.dbName},
+        {'key': 'userUuid', 'value': this.user.getUserUuid()},
+        {'key': 'user', 'value': this.user.getUser()},
+        {'key': 'jwt', 'value': this.user.getToken()},
+        {'key': 'gridUuid', 'value': this.gridUuid},
+        {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
+      ],
+      request
     )
   }
 
-	sendMessage = async (authMessage: boolean, request: KafkaMessageRequest) => {
+  sendMessage = async (authMessage: boolean, headers: KafkaMessageHeader[], message: RequestContent) => {
 		this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
@@ -84,8 +82,16 @@ export class Context {
         return
       }
     }
+    const request: KafkaMessageRequest = { messageKey: newUuid(), headers: headers, message: JSON.stringify(message) }    
     console.log(`[Send] to ${uri}`, request)
-    this.messageStack.push({'request' : request})
+
+    this.messageStack.push({'request' : {
+      messageKey: request.messageKey,
+      action: message.action,
+      actionText: message.actionText,
+      gridUuid: message.gridUuid
+    }})
+
 		this.messageStatus = 'Sending'
 		const response = await fetch(uri, {
 			method: 'POST',
@@ -132,13 +138,10 @@ export class Context {
 		console.log("[Context.navigateToGrid()] gridUuid=", gridUuid)
     const set = this.getSet(gridUuid)
     this.reset()
-    if(set === undefined) {
-      const url = `/${this.dbName}/${gridUuid}`
-      replaceState(url, { gridUuid: this.gridUuid })
-      this.gridUuid = gridUuid
-      this.load()
-    }
-    else this.gridUuid = gridUuid
+    const url = `/${this.dbName}/${gridUuid}`
+    replaceState(url, { gridUuid: this.gridUuid })
+    this.gridUuid = gridUuid
+    if(set === undefined) this.load()
 	}
 
  changeCell = debounce(
@@ -332,9 +335,14 @@ export class Context {
           const elapsedMs = nowDate - requestInitiatedOnDate
           console.log(`[Received] from ${uri} (${elapsedMs} ms) (${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
           this.messageStack.push({
-            'response' : {
-              'messageKey': json.key,
-              'message': json.value
+            response : {
+              messageKey: json.key,
+              requestKey: requestKey,
+              action: message.action,
+              actionText: message.actionText,
+              gridUuid: message.gridUuid,
+              status: message.status,
+              elapsedMs: elapsedMs
             }
           })
           if(message.action == metadata.ActionAuthentication) {
@@ -374,7 +382,7 @@ export class Context {
         }
       } 
       catch(error) {
-        console.log(`Data from stream from ${uri} is incomplete`)
+        console.log(`Data from stream ${uri} is incomplete`)
       }
       let result = re.exec(chunk)
       if (!result) {

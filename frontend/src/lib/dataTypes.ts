@@ -90,6 +90,7 @@ export interface RequestContent {
 
 export interface ResponseContent {
   action: string
+  actionText?: string
   status: string
   gridUuid?: string
   columnUuid?: string
