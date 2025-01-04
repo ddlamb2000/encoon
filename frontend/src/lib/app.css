@@ -3,3 +3,7 @@
 @import "tailwindcss/utilities";
 
 *{scroll-behavior: smooth;}
+
+html,body {
+  height: 100%;
+}
