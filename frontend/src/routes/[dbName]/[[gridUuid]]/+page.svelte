@@ -37,8 +37,7 @@
 
 
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
-  <nav class="global header bg-violet-200">
-
+  <nav class="p-2 global header bg-gray-900 text-gray-100">
     εncooη
     {#if context.isStreaming}
       {#if context && context.user && context.user.getIsLoggedIn()}
@@ -58,14 +57,10 @@
     {:else}
       <span class="inline-flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
     {/if}
-      
-
-
   </nav>
-  <section class="main-container bg-sky-200 grid [grid-template-columns:1fr_4fr] overflow-auto">
-    <aside class="side-bar bg-teal-200 grid overflow-auto">
-      <div class="overflow-auto h-[500px]">
-
+  <section class="main-container grid [grid-template-columns:1fr_4fr] overflow-auto">
+    <aside class="side-bar bg-gray-100 grid overflow-auto">
+      <div class="p-2 overflow-auto h-[500px]">
         <ul transition:fade>
           {#if context.focus.grid}
             <li>
@@ -91,19 +86,17 @@
             {/if}
           {/each}
         </ul>        
-
       </div>
     </aside>
-    <section class="content bg-lime-200 grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="bg-yellow-200">
+    <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
+      <div class="p-2 max-h-48 overflow-y-auto bg-gray-200">
         tabs
       </div>
-      <aside class="bg-orange-200">
+      <aside class="p-2 max-h-48 overflow-y-auto bg-gray-100">
         toolbar
       </aside>
-      <div class="bg-red-200 grid overflow-auto">
+      <div class="p-2 bg-white grid overflow-auto">
         <article class="h-[500px]">
-
           {#if context.isStreaming}
             {#if context && context.user && context.user.getIsLoggedIn()}
               <div transition:fade>
@@ -117,11 +110,9 @@
               </form>
             {/if}
           {/if}
-  
-
         </article>
       </div>
-      <footer class="bg-slate-200">
+      <footer class="p-2 max-h-48 overflow-y-auto bg-gray-100">
         <Info {context} />
       </footer>
     </section>

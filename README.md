@@ -122,13 +122,17 @@ Kafka
         https://joyofcode.xyz/using-websockets-with-sveltekit 
         https://medium.com/version-1/websockets-in-sveltekit-28e91eec9245
         https://stackoverflow.com/questions/74330190/how-to-respond-with-a-stream-in-a-sveltekit-server-load-function
-        
+
+Tailwind Css
+    https://tailwindcss.com/
+    https://play.tailwindcss.com/Ow445YYOoI?layout=horizontal    
 
 To do
     Learn async functions: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/async_function
     Review/Learn promises: https://svelte.dev/tutorial/svelte/await-blocks and https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Using_promises
 
     Install https://flowbite-svelte.com/
+    
     
 
 Future

@@ -12,12 +12,10 @@
   {#each context.dataSet as set, indexSet}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
+        <Heading tag="h1" customSize="text-3xl font-extrabold">{@html context.dataSet[indexSet].grid.text1}
+          <Secondary class="ms-2">{@html context.dataSet[indexSet].grid.text2}</Secondary>  
+        </Heading>
         <table transition:fade>
-          <caption class="p-5 text-lg font-semibold text-left text-gray-900 bg-white dark:text-white dark:bg-gray-800">
-            <Heading tag="h1" customSize="text-3xl font-extrabold">{@html context.dataSet[indexSet].grid.text1}
-              <Secondary class="ms-2">{@html context.dataSet[indexSet].grid.text2}</Secondary>  
-            </Heading>
-          </caption>
           <thead>
             <tr>
               <th>
