@@ -6,6 +6,7 @@
   import { fade, slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
+  import { UserPreferences } from './userPreferences.svelte.ts'
   import DateTime from '$lib/DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import Info from './Info.svelte'
@@ -13,11 +14,11 @@
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
-  let context = $state(new Context(data.dbName, data.url, data.gridUuid))
-  let showEvents = $state(true)
-  let expandSidebar = $state(true)
+  let context = new Context(data.dbName, data.url, data.gridUuid)
+  const userPreferences = new UserPreferences
 
   onMount(() => {
+    userPreferences.readUserPreferences()
     context.getStream()
     if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   })
@@ -62,7 +63,7 @@
       </span>
     </div>
   </nav>
-  <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
+  <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
       <div class="p-2 overflow-y-auto overflow-x-hidden h-[500px]">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
@@ -72,7 +73,10 @@
                   class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                   onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
                 <span class="flex items-center">
-                  <Icon.ListOutline />Grids
+                  <Icon.ListOutline />
+                    {#if userPreferences.expandSidebar}
+                      Grids
+                    {/if}
                 </span>
               </a>
             </li>
@@ -159,15 +163,15 @@
           {/if}
         {/if}
       </div>
-      {#if showEvents}
+      {#if userPreferences.showEvents}
         <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
           <Info {context} />
         </footer>
       {/if}
     </section>
   </section>
-  <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={expandSidebar} />
-  <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
+  <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={userPreferences.expandSidebar} />
+  <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={userPreferences.showEvents} />  
 </main>
 
 <style>
