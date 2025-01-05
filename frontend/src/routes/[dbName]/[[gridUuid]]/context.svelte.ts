@@ -68,7 +68,7 @@ export class Context {
   logout = async () => {
     this.pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(this.#tokenName)
-    this.user.purge()
+    this.purge()
   }
 
   pushTransaction = async (request: RequestContent) => {
@@ -171,8 +171,11 @@ export class Context {
     const url = `/${this.dbName}/${gridUuid}`
     replaceState(url, { gridUuid: this.gridUuid })
     this.gridUuid = gridUuid
-    if(set === undefined) this.load()
-    // else this.focus = {grid: set.grid}
+    if(set && set.grid) {
+      // console.log("setFocus")
+      // this.focus = {grid: set.grid, column: undefined, row: undefined}
+    }
+    else this.load()
 	}
 
  changeCell = debounce(
@@ -321,7 +324,7 @@ export class Context {
 
   locateGrid = (gridUuid: string, columnUuid: string, rowUuid: string) => {
     console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
-    const set = this.dataSet.find((set) => set.grid && (set.grid.uuid === gridUuid))
+    const set = this.getSet(gridUuid)
     if(set && set.grid) {
       const grid: GridType = set.grid
       if(grid.columns && grid.columns !== undefined) {

@@ -18,18 +18,18 @@
         <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
-              <th>
+              <th class="sticky -top-3 py-1 bg-gray-100">
                 <Icon.CaretDownOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
-                <Dropdown placement='right' triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
+                <Dropdown triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
                   <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
                 </Dropdown>
               </th>
               {#each context.dataSet[indexSet].grid.columns as column}
-                <th>
+                <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
                     {column.label}
                     <Icon.CaretDownOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                    <Dropdown placement='right' triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
+                    <Dropdown triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
                       <DropdownItem onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</DropdownItem>
                       <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
                     </Dropdown>
@@ -65,7 +65,7 @@
                     {:else if column.type === 'Reference'}
                       <td>
                         <Icon.CaretDownOutline size="sm" class={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid + " dark:text-white"} />
-                        <Dropdown placement='right' triggeredBy={".reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid}>
+                        <Dropdown triggeredBy={".reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid}>
                           <DropdownItem>Test 1</DropdownItem>
                           <DropdownItem>Test 2</DropdownItem>
                           <DropdownItem>Test 3</DropdownItem>
@@ -95,7 +95,7 @@
           </tbody>
           <tfoot class="border border-slate-200">
             <tr>
-              <th scope="row" colspan="99">
+              <th class="py-1 bg-gray-100" colspan="99">
                 <span class="flex">
                   <a href="#" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
                   {context.dataSet[indexSet].countRows} {context.dataSet[indexSet].countRows === 1 ? 'row' : 'rows'}
