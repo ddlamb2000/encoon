@@ -3,7 +3,7 @@
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte"
   import { Indicator, Badge, Button, Toggle } from 'flowbite-svelte'
-  import { fade } from 'svelte/transition'
+  import { fade, slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
   import DateTime from '$lib/DateTime.svelte'
@@ -19,7 +19,7 @@
 
   onMount(() => {
     context.getStream()
-    context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
+    if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
   })
 
   onDestroy(() => { context.destroy() })
@@ -36,86 +36,130 @@
 </script>
 
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
-
-
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    εncooη
-    {#if context.isStreaming}
-      {#if context && context.user && context.user.getIsLoggedIn()}
-        {context.user.getFirstName()} {context.user.getLastName()}
-        <Button size="xs" color="dark" onclick={() => context.logout()}>Log out</Button>
-      {/if}
-      <span class="inline-flex items-center"><Indicator size="sm" color="teal" class="me-1" />Connected</span>
-      {#if context.isSending}
-        <span class="inline-flex items-center"><Indicator size="sm" color="orange" class="me-1" />Sending</span>
-      {:else}
-        {#if context.messageStatus}
-          <span class="inline-flex items-center"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span>
-        {:else}
-          <span class="inline-flex items-center"><Indicator size="sm" color="teal" class="me-1" />OK</span>
-        {/if}
-      {/if}
-    {:else}
-      <span class="inline-flex items-center"><Indicator size="sm" color="orange" class="me-1" /></span>
-    {/if}
-  </nav>
-  <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
-    <aside class="side-bar bg-gray-100 grid overflow-y-auto">
-      <div class="p-2 overflow-y-auto h-[500px]">
-        <ul transition:fade>
-          <li><a href="#"  onclick={() => context.navigateToGrid(metadata.UuidGrids)}><span class="flex items-center"><Icon.ListOutline />Grids</span></a></li>
-          {#each context.dataSet as set}
-            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
-              <li>
-                <a href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>
-                  {@html set.grid.text1}
-                </a>
-              </li>
-            {/if}
-          {/each}
-        </ul>
-      </div>
-    </aside>
-    <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="p-2 h-10 overflow-y-auto bg-gray-200">
-        <a onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></a>
-      </div>
-      <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
-        {#if context.focus.grid}
-        <Badge color="red" rounded class="px-2.5 py-0.5">Grid: {@html context.focus.grid.text1}</Badge>
-        <Badge color="yellow" rounded class="px-2.5 py-0.5">Column: {context.focus.column.label} ({context.focus.column.type})</Badge>
-        <Badge color="green" rounded class="px-2.5 py-0.5">Row: {context.focus.row.displayString}</Badge>
-        <Badge color="dark" rounded class="px-2.5 py-0.5">Created on <DateTime dateTime={context.focus.row.created} /></Badge>
-        <Badge color="dark" rounded class="px-2.5 py-0.5">Updated on <DateTime dateTime={context.focus.row.updated} /></Badge>
-        {/if}  
-      </aside>
-      <div class="p-2 bg-white grid overflow-auto">
-        <article class="h-[500px]">
-          {#if context.isStreaming}
-            {#if context && context.user && context.user.getIsLoggedIn()}
-              <div transition:fade>
-                <Grid bind:context={context} gridUuid={context.gridUuid} />
-              </div>
-            {:else}
-              <form transition:fade>
-                <label>Username<input bind:value={loginId} /></label>
-                <label>Passphrase<input bind:value={loginPassword} type="password" /></label>
-                <Button size="xs" type="submit" onclick={() => context.authentication(loginId, loginPassword)}>Log in</Button>
-              </form>
+    <div class="relative flex items-center">
+      <span class="ms-2 text-xl font-extrabold">
+        <a href="/">εncooη</a>
+      </span>
+      <span class="lg:flex ml-auto">
+        {#if context.isStreaming}
+          {#if context.isSending}
+            <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="orange" class="me-1" />Sending message</span>
+          {:else}
+            {#if context.messageStatus}
+              <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span>
             {/if}
           {/if}
-        </article>
-      </div>
-      {#if showEvents}
-        <footer class="p-2 max-h-48 overflow-y-auto bg-gray-100">
-          <Info {context} />
-        </footer>
-      {/if}
+          <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="teal" class="me-1" />Connected to {context.dbName}</span>
+        {:else}
+          <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="orange" class="me-1" />Connecting</span>
+        {/if}
+        {#if context && context.user && context.user.getIsLoggedIn()}
+          {context.user.getFirstName()} {context.user.getLastName()}
+          <Button size="xs" class="ms-2 py-0" outline color="red" onclick={() => context.logout()}>Log out</Button>
+        {/if}
+      </span>
+    </div>
+  </nav>
+  {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
+    <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
+      <aside class="side-bar bg-gray-200 grid overflow-y-auto">
+        <div class="p-2 overflow-y-auto h-[500px]">
+          <ul transition:fade>
+            <li>
+              <a href="#"  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+                <span class="flex items-center">
+                  <Icon.ListOutline />Grids
+                </span>
+              </a>
+            </li>
+            {#each context.dataSet as set}
+              {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
+                <li transition:fade>
+                  <a href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>
+                    {@html set.grid.text1}
+                  </a>
+                </li>
+              {/if}
+            {/each}
+          </ul>
+        </div>
+      </aside>
+      <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
+        <div class="p-2 h-10 overflow-y-auto bg-gray-200">
+          <a onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></a>
+        </div>
+        <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
+          {#if context.hasDataSet() && context.focus.grid}
+            <Badge color="blue" rounded class="px-2.5 py-0.5">Grid: {@html context.focus.grid.text1}</Badge>
+            <Badge color="green" rounded class="px-2.5 py-0.5">Column: {context.focus.column.label} ({context.focus.column.type})</Badge>
+            <Badge color="yellow" rounded class="px-2.5 py-0.5">Row: {context.focus.row.displayString}</Badge>
+            <Badge color="dark" rounded class="px-2.5 py-0.5">Created on <DateTime dateTime={context.focus.row.created} /></Badge>
+            <Badge color="dark" rounded class="px-2.5 py-0.5">Updated on <DateTime dateTime={context.focus.row.updated} /></Badge>
+          {/if}
+        </aside>
+        <div class="p-2 bg-white grid overflow-auto">
+          <article class="h-[500px]">
+            {#if context.hasDataSet()}
+              <Grid bind:context={context} gridUuid={context.gridUuid} />
+            {/if}
+          </article>
+        </div>
+        {#if showEvents}
+          <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
+            <Info {context} />
+          </footer>
+        {/if}
+      </section>
     </section>
-  </section>
-  <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={expandSidebar} />
-  <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />
+    <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={expandSidebar} />
+    <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
+  {:else}
+    {#if context.isStreaming}
+      <section class="bg-gray-50 dark:bg-gray-900">
+        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto mt-20 md:h-fit lg:py-0">
+          <a href="#" class="flex items-center mb-6 text-2xl font-extrabold text-gray-900 dark:text-white">
+            εncooη
+          </a>
+          <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                  Sign in to your account
+              </h1>
+              <form class="space-y-4 md:space-y-6" action="#">
+                <div>
+                  <label for="login" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                  <input type="text" id="login" 
+                          class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          placeholder="username" required={true}
+                          bind:value={loginId}>
+                </div>
+                <div>
+                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passphrase</label>
+                  <input type="password" id="password" placeholder="••••••••" 
+                          class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                          required={true}
+                          bind:value={loginPassword}>
+                </div>
+                <button type="submit" 
+                        class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                        onclick={() => context.authentication(loginId, loginPassword)}>
+                      Sign in
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+    {/if}
+    {#if showEvents}
+      <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
+        <Info {context} />
+      </footer>
+    {/if}
+    <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
+  {/if}
 </main>
 
 <style>

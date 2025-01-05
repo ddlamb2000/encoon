@@ -21,8 +21,8 @@ func IsDbAuthorized(ct context.Context, dbName string, user string, password str
 	if db, err := GetDbByName(dbName); err == nil {
 		var uuid, firstName, lastName string
 		request := "SELECT uuid, " +
-			"text1, " +
-			"text2 " +
+			"text2, " +
+			"text3 " +
 			"FROM users " +
 			"WHERE gridUuid = $1 " +
 			"AND enabled = true " +

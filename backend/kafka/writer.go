@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
-	"d.lambert.fr/encoon/utils"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 )
@@ -36,7 +35,7 @@ func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) (pa
 }
 
 func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
-	requestInitiatedOn string, receivedOn string, requestKey string, response responseContent) {
+	requestInitiatedOn string, receivedOn string, key string, response responseContent) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	hostname, _ := os.Hostname()
@@ -55,14 +54,12 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		Balancer:               &CustomRoundRobin{},
 	}
 
-	key := utils.GetNewUUID()
 	headers := []kafka.Header{
 		{Key: "from", Value: []byte("εncooη backend")},
 		{Key: "hostName", Value: []byte(hostname)},
 		{Key: "dbName", Value: []byte(dbName)},
 		{Key: "userUuid", Value: []byte(userUuid)},
 		{Key: "user", Value: []byte(user)},
-		{Key: "requestKey", Value: []byte(requestKey)},
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 		{Key: "requestReceivedOn", Value: []byte(receivedOn)},
 		{Key: "responseInitiatedOn", Value: []byte(responseInitiatedOn)},

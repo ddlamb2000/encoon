@@ -51,7 +51,6 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 }
 
 func handleMessage(dbName string, message kafka.Message) {
-	requestKey := string(message.Key)
 	requestInitiatedOn := ""
 	tokenString := ""
 	gridUuid := ""
@@ -153,7 +152,7 @@ func handleMessage(dbName string, message kafka.Message) {
 			}
 		}
 	}
-	WriteMessage(dbName, userUuid, user, gridUuid, requestInitiatedOn, requestReceivedOn, requestKey, response)
+	WriteMessage(dbName, userUuid, user, gridUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
 }
 
 func getTokenParsingHandler(dbName string) jwt.Keyfunc {

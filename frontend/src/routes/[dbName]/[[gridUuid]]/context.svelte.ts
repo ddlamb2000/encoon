@@ -28,7 +28,10 @@ export class Context {
     this.#tokenName = `access_token_${this.dbName}`
   }
 
-  reset = () => { this.focus = {} }  
+  reset = () => {
+    this.focus = {}
+    this.isSending = false
+  }
 
   destroy = () => {
     if(this.reader && this.reader !== undefined) this.reader.cancel()
@@ -36,9 +39,13 @@ export class Context {
 
   getSet = (gridUuid: string) => this.dataSet.find((s) => s.grid.uuid === gridUuid)
 
+  hasDataSet = () => this.dataSet.length > 0
+
   authentication = async (loginId: string, loginPassword: string) => {
+    if(loginId === "" || loginPassword === "") return
     this.sendMessage(
       true,
+      metadata.ActionAuthentication + ":" + this.dbName + ":" + loginId,
       [
         {'key': 'from', 'value': 'εncooη frontend'},
         {'key': 'url', 'value': this.url},
@@ -61,6 +68,7 @@ export class Context {
   pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
+      request.action + ":" + this.dbName + ":" + newUuid(),
       [
         {'key': 'from', 'value': 'εncooη frontend'},
         {'key': 'url', 'value': this.url},
@@ -81,28 +89,27 @@ export class Context {
   }
 
   trackResponse = (response) => {
-    if(response.requestKey) {
-      const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.requestKey)
-      if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
-    }
+    const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.messageKey)
+    if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
     this.messageStack.push({response : response})
     if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
   }
 
-  sendMessage = async (authMessage: boolean, headers: KafkaMessageHeader[], message: RequestContent) => {
+  sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
 		this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
       if(!this.user.checkToken(localStorage.getItem(this.#tokenName))) {
-        this.messageStatus = "Not authorized to send message"
+        this.messageStatus = "Not authorized "
+        this.isSending = false
         return
       }
     }
-    const request: KafkaMessageRequest = { messageKey: newUuid(), headers: headers, message: JSON.stringify(message) }    
+    const request: KafkaMessageRequest = { messageKey: messageKey, headers: headers, message: JSON.stringify(message) }    
     console.log(`[Send] to ${uri}`, request)
 
     this.trackRequest({
-      messageKey: request.messageKey,
+      messageKey: messageKey,
       action: message.action,
       actionText: message.actionText,
       gridUuid: message.gridUuid,
@@ -345,18 +352,17 @@ export class Context {
           chunk = ""
           const message: ResponseContent = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)
-          const requestKey = String.fromCharCode(...json.headers.requestKey.data)
           const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
           const now = (new Date).toISOString()
           const nowDate = Date.parse(now)
           const requestInitiatedOnDate = Date.parse(requestInitiatedOn)
           const elapsedMs = nowDate - requestInitiatedOnDate
-          console.log(`[Received] from ${uri} (${elapsedMs} ms) (${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}, requestKey: ${requestKey}}`)
+          console.log(`[Received] from ${uri} (${elapsedMs} ms) (${charsReceived} bytes in total) topic: ${json.topic}, key: ${json.key}, value:`, message, `, headers: {from: ${fromHeader}`)
           this.trackResponse({
             messageKey: json.key,
-            requestKey: requestKey,
             action: message.action,
             actionText: message.actionText,
+            textMessage: message.textMessage,
             gridUuid: message.gridUuid,
             status: message.status,
             elapsedMs: elapsedMs,

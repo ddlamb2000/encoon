@@ -32,8 +32,10 @@
 
   $effect(() => {
 		const interval = setInterval(() => {
-      localDate = new Date(dateTime)
-      timeAgo = getTimeAgo()
+      if(dateTime !== undefined) {
+        localDate = new Date(dateTime)
+        timeAgo = getTimeAgo()
+      } else timeAgo = ""
     }, 1000)
 		return () => { clearInterval(interval) }
 	})  
