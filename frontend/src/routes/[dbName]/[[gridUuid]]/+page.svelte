@@ -63,12 +63,14 @@
     </div>
   </nav>
   <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
-    <aside class="side-bar bg-gray-200 grid overflow-y-auto">
-      <div class="p-2 overflow-y-auto h-[500px]">
+    <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
+      <div class="p-2 overflow-y-auto overflow-x-hidden h-[500px]">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <ul>
             <li>
-              <a href="#"  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+              <a href="#"
+                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
                 <span class="flex items-center">
                   <Icon.ListOutline />Grids
                 </span>
@@ -77,7 +79,9 @@
             {#each context.dataSet as set}
               {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
                 <li transition:fade>
-                  <a href="#" onclick={() => context.navigateToGrid(set.grid.uuid)}>
+                  <a href="#"
+                      class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                      onclick={() => context.navigateToGrid(set.grid.uuid)}>
                     {@html set.grid.text1}
                   </a>
                 </li>
@@ -90,7 +94,13 @@
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="p-2 h-10 overflow-y-auto bg-gray-200">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <a onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></a>
+          <a href="#"
+              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"              
+              onclick={() => newGrid()}>
+            <span class="flex items-center">
+              <Icon.CirclePlusOutline />New Grid
+            </span>
+          </a>
         {/if}
       </div>
       <aside class="p-2 h-10 overflow-y-auto bg-gray-100">

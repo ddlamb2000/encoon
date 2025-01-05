@@ -15,8 +15,8 @@
         <h1 class="text-2xl font-extrabold">{@html context.dataSet[indexSet].grid.text1}
           <small class="ms-2 font-light text-sm">{@html context.dataSet[indexSet].grid.text2}</small>  
         </h1>
-        <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-400">
-          <thead>
+        <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-100">
+          <thead class="border border-slate-200">
             <tr>
               <th>
                 <Icon.CaretDownOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
@@ -25,7 +25,7 @@
                 </Dropdown>
               </th>
               {#each context.dataSet[indexSet].grid.columns as column}
-                <th class='header'>
+                <th>
                   <span class="flex">
                     {column.label}
                     <Icon.CaretDownOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
@@ -38,22 +38,23 @@
               {/each}
             </tr>
           </thead>
-          <tbody>
+          <tbody class="border border-slate-100">
             {#each context.dataSet[indexSet].rows as row, rowIndex}
               {#key row.uuid}
-                <tr>
+                <tr class="border border-slate-100">
                   <td class="nowrap">
                     <span class="flex">
-                      {#if context.dataSet[indexSet].grid.uuid === metadata.UuidGrids}
-                        <a href="#" onclick={() => context.navigateToGrid(row.uuid)}>
-                          <Icon.ArrowUpRightFromSquareOutline />
-                        </a>
-                      {/if}
-                      <a href="#" onclick={() => context.removeRow(context.dataSet[indexSet], row)}><Icon.CircleMinusOutline size="sm" /></a>
+                      <a href="#" onclick={() => context.removeRow(context.dataSet[indexSet], row)}><Icon.CircleMinusOutline size="sm" color="salmon" /></a>
                     </span>
                   </td>
                   {#each context.dataSet[indexSet].grid.columns as column}
-                    {#if column.type === 'Text' || column.type === 'Uuid'}
+                    {#if context.dataSet[indexSet].grid.uuid === metadata.UuidGrids && column.name === "text1"}
+                      <a href="#"
+                          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                          onclick={() => context.navigateToGrid(row.uuid)}>
+                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                      </a>
+                    {:else if column.type === 'Text' || column.type === 'Uuid'}
                       <td contenteditable
                           class="{context.isFocused(context.dataSet[indexSet], column, row) ? 'focus' : 'cell'}"
                           onfocus={() => context.changeFocus(context.dataSet[indexSet], row, column)}
@@ -71,8 +72,6 @@
                           <DropdownItem>Test 4</DropdownItem>
                           <DropdownItem>Test 5</DropdownItem>
                         </Dropdown>
-        
-
                       </td>
                     {:else if column.type === 'Boolean'}
                       <td>{context.dataSet[indexSet].rows[rowIndex][column.name]}</td>
@@ -94,13 +93,13 @@
               </tr>
             {/each}
           </tbody>
-          <tfoot>
-            <tr class="font-semibold text-gray-900 dark:text-white">
-              <th>
-                <a href="#" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
-              </th>
-              <th scope="row" colspan="99" class="py-1 px-2 text-base">
-                {context.dataSet[indexSet].countRows} {context.dataSet[indexSet].countRows === 1 ? 'row' : 'rows'}
+          <tfoot class="border border-slate-200">
+            <tr>
+              <th scope="row" colspan="99">
+                <span class="flex">
+                  <a href="#" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
+                  {context.dataSet[indexSet].countRows} {context.dataSet[indexSet].countRows === 1 ? 'row' : 'rows'}
+                </span>
               </th>
             </tr>
           </tfoot>
