@@ -67,31 +67,33 @@
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
       <div class="p-2 overflow-y-auto overflow-x-hidden h-[500px]">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <ul>
-            <li>
-              <a href="#"
-                  class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-                <span class="flex items-center">
-                  <Icon.ListOutline />
-                    {#if userPreferences.expandSidebar}
-                      Grids
-                    {/if}
-                </span>
-              </a>
-            </li>
-            {#each context.dataSet as set}
-              {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
-                <li transition:fade>
-                  <a href="#"
-                      class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                      onclick={() => context.navigateToGrid(set.grid.uuid)}>
+          <div>
+            <a href="#"
+                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+              <span class="flex items-center">
+                <Icon.ListOutline />
+                  {#if userPreferences.expandSidebar}
+                    Grids
+                  {/if}
+              </span>
+            </a>
+          </div>
+          {#each context.dataSet as set}
+            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
+              <div>
+                <a href="#"
+                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                    onclick={() => context.navigateToGrid(set.grid.uuid)}>
+                  {#if userPreferences.expandSidebar}
                     {@html set.grid.text1}
-                  </a>
-                </li>
-              {/if}
-            {/each}
-          </ul>
+                  {:else}
+                    {@html set.grid.text1?.substring(0, 4)}…
+                  {/if}
+                </a>
+              </div>
+            {/if}
+          {/each}
         {/if}
       </div>
     </aside>
