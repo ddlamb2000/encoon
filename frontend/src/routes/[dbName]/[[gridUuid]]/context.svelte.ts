@@ -396,8 +396,6 @@ export class Context {
                   this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
                 }
               }
-            } else {
-              console.log(`[Received] from ${uri} (${elapsedMs} ms) - error: ${message.textMessage}`, )
             }
           }
         } else {

@@ -20,7 +20,6 @@
                 {message.request.action}
                 {#if message.request.actionText}[{message.request.actionText}]{/if}
               </Badge>              
-              {message.request}
               {#if message.request.dateTime !== undefined}<DateTime dateTime={message.request.dateTime} />{/if}
             </p>
           </div>

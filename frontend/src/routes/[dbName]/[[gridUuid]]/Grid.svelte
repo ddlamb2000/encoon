@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Dropdown, DropdownItem, Spinner, Button, Badge } from 'flowbite-svelte'
+	import { Dropdown, DropdownItem, Spinner } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   import { fade } from 'svelte/transition'
@@ -19,7 +19,7 @@
           <thead>
             <tr>
               <th>
-                <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
+                <Icon.CaretDownOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
                 <Dropdown placement='right' triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
                   <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
                 </Dropdown>
@@ -28,7 +28,7 @@
                 <th class='header'>
                   <span class="flex">
                     {column.label}
-                    <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
+                    <Icon.CaretDownOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown placement='right' triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
                       <DropdownItem onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</DropdownItem>
                       <DropdownItem onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</DropdownItem>
@@ -63,8 +63,7 @@
                       </td>
                     {:else if column.type === 'Reference'}
                       <td>
-                        <Badge color="yellow" class={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid + " px-2.5 py-0.5"}>Ref</Badge>
-                        <!-- <Button size="xs" color="light" pill class={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid + " dark:text-white"}>Ref</Button> -->
+                        <Icon.CaretDownOutline size="sm" class={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid + " dark:text-white"} />
                         <Dropdown placement='right' triggeredBy={".reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid}>
                           <DropdownItem>Test 1</DropdownItem>
                           <DropdownItem>Test 2</DropdownItem>

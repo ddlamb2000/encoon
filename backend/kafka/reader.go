@@ -17,9 +17,9 @@ import (
 
 func SetAndStartKafkaReader() {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
-	groupID := configuration.GetConfiguration().Kafka.GroupID
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
 		topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbConfig.Name + "-requests"
+		groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbConfig.Name
 		go setAndStartKafkaReaderForDatabase(dbConfig.Name, kafkaBrokers, groupID, topic)
 	}
 }
@@ -32,21 +32,17 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 		MaxBytes:         10e3,
 		MaxWait:          10 * time.Millisecond,
 		RebalanceTimeout: 2 * time.Second,
+		CommitInterval:   time.Second,
 	})
 
 	configuration.Log(dbName, "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
 	for {
-		message, err := consumer.FetchMessage(context.Background())
+		message, err := consumer.ReadMessage(context.Background())
 		if err != nil {
 			configuration.LogError(dbName, "", "could not read message: %v", err)
 			continue
 		}
-		err = consumer.CommitMessages(context.Background(), message)
-		if err != nil {
-			configuration.LogError(dbName, "", "failed to commit message from topic %s, partition %d and offset %d", message.Topic, message.Partition, message.Offset)
-		} else {
-			handleMessage(dbName, message)
-		}
+		handleMessage(dbName, message)
 	}
 }
 

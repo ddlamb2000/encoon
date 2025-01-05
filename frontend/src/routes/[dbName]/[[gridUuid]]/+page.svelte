@@ -62,11 +62,11 @@
       </span>
     </div>
   </nav>
-  {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-    <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
-      <aside class="side-bar bg-gray-200 grid overflow-y-auto">
-        <div class="p-2 overflow-y-auto h-[500px]">
-          <ul transition:fade>
+  <section class={"main-container grid " + (expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
+    <aside class="side-bar bg-gray-200 grid overflow-y-auto">
+      <div class="p-2 overflow-y-auto h-[500px]">
+        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
+          <ul>
             <li>
               <a href="#"  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
                 <span class="flex items-center">
@@ -84,13 +84,17 @@
               {/if}
             {/each}
           </ul>
-        </div>
-      </aside>
-      <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-        <div class="p-2 h-10 overflow-y-auto bg-gray-200">
+        {/if}
+      </div>
+    </aside>
+    <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
+      <div class="p-2 h-10 overflow-y-auto bg-gray-200">
+        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <a onclick={() => newGrid()}><span class="flex items-center"><Icon.CirclePlusOutline />New Grid</span></a>
-        </div>
-        <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
+        {/if}
+      </div>
+      <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
+        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           {#if context.hasDataSet() && context.focus.grid}
             <Badge color="blue" rounded class="px-2.5 py-0.5">Grid: {@html context.focus.grid.text1}</Badge>
             <Badge color="green" rounded class="px-2.5 py-0.5">Column: {context.focus.column.label} ({context.focus.column.type})</Badge>
@@ -98,68 +102,62 @@
             <Badge color="dark" rounded class="px-2.5 py-0.5">Created on <DateTime dateTime={context.focus.row.created} /></Badge>
             <Badge color="dark" rounded class="px-2.5 py-0.5">Updated on <DateTime dateTime={context.focus.row.updated} /></Badge>
           {/if}
-        </aside>
-        <div class="p-2 bg-white grid overflow-auto">
+        {/if}
+      </aside>
+      <div class="p-2 bg-white grid overflow-auto">
+        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
             {#if context.hasDataSet()}
               <Grid bind:context={context} gridUuid={context.gridUuid} />
             {/if}
           </article>
-        </div>
-        {#if showEvents}
-          <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
-            <Info {context} />
-          </footer>
-        {/if}
-      </section>
-    </section>
-    <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={expandSidebar} />
-    <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
-  {:else}
-    {#if context.isStreaming}
-      <section class="bg-gray-50 dark:bg-gray-900">
-        <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto mt-20 md:h-fit lg:py-0">
-          <a href="#" class="flex items-center mb-6 text-2xl font-extrabold text-gray-900 dark:text-white">
-            εncooη
-          </a>
-          <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-            <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-                  Sign in to your account
-              </h1>
-              <form class="space-y-4 md:space-y-6" action="#">
-                <div>
-                  <label for="login" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
-                  <input type="text" id="login" 
-                          class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          placeholder="username" required={true}
-                          bind:value={loginId}>
+        {:else}
+          {#if context.isStreaming}
+            <div class="flex flex-col items-center justify-center px-6 py-8 mx-auto mt-20 md:h-fit lg:py-0">
+              <a href="#" class="flex items-center mb-6 text-2xl font-extrabold text-gray-900 dark:text-white">
+                εncooη
+              </a>
+              <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+                <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
+                  <h1 class="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+                      Sign in to your account
+                  </h1>
+                  <form class="space-y-4 md:space-y-6" action="#">
+                    <div>
+                      <label for="login" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Username</label>
+                      <input type="text" id="login" 
+                              class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              placeholder="username" required={true}
+                              bind:value={loginId}>
+                    </div>
+                    <div>
+                      <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passphrase</label>
+                      <input type="password" id="password" placeholder="••••••••" 
+                              class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                              required={true}
+                              bind:value={loginPassword}>
+                    </div>
+                    <button type="submit" 
+                            class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
+                            onclick={() => context.authentication(loginId, loginPassword)}>
+                          Sign in
+                    </button>
+                  </form>
                 </div>
-                <div>
-                  <label for="password" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Passphrase</label>
-                  <input type="password" id="password" placeholder="••••••••" 
-                          class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                          required={true}
-                          bind:value={loginPassword}>
-                </div>
-                <button type="submit" 
-                        class="w-full text-white bg-primary-600 hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800"
-                        onclick={() => context.authentication(loginId, loginPassword)}>
-                      Sign in
-                </button>
-              </form>
+              </div>
             </div>
-          </div>
-        </div>
-      </section>
-    {/if}
-    {#if showEvents}
-      <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
-        <Info {context} />
-      </footer>
-    {/if}
-    <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
-  {/if}
+          {/if}
+        {/if}
+      </div>
+      {#if showEvents}
+        <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
+          <Info {context} />
+        </footer>
+      {/if}
+    </section>
+  </section>
+  <Toggle class="fixed bottom-2 left-2" size="small" bind:checked={expandSidebar} />
+  <Toggle class="fixed bottom-2 right-2" size="small" bind:checked={showEvents} />  
 </main>
 
 <style>

@@ -9,7 +9,7 @@ export const GET = async ({ params, request, url }) => {
   }
   const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-responses"
   const ac = new AbortController()
-  const groupId = env.KAFKA_GROUP_ID + "-" + newUuid()
+  const groupId = env.KAFKA_GROUP_ID + "-" + params.dbName + "-" + newUuid()
   console.log(`GET ${url}: Create consumer using groupId ${groupId}`)
   const consumer = kafka.consumer({
     groupId: groupId,
