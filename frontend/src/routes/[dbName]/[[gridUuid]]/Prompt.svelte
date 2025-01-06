@@ -3,6 +3,7 @@
   import * as metadata from "$lib/metadata.svelte"
   import * as Icon from 'flowbite-svelte-icons'
   let { context, gridUuid, elementReference } = $props()
+  let searchText = $state("")
 
   const loadPrompt = () => {
     if(context.getSet(gridUuid) === undefined) context.pushTransaction({action: metadata.ActionLoad, gridUuid: gridUuid})
@@ -17,16 +18,18 @@
   {#if context.getSet(gridUuid) === undefined}
     <Spinner size={4} />
   {:else}
-    <Search size="md" />
-    {#each context.dataSet as set, indexSet}
+    <Search size="md" bind:value={searchText} />
+    {#each context.dataSet as set}
       {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
         {#key "prompt" + elementReference + set.grid.uuid}
-          {#each context.dataSet[indexSet].rows as row, rowIndex}
-            {#key "prompt" + elementReference + row.uuid}
-            <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-              {context.dataSet[indexSet].rows[rowIndex].text1}
-            </li>            
-            {/key}
+          {#each set.rows as row}
+            {#if searchText === "" || row.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
+              {#key "prompt" + elementReference + row.uuid}
+              <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+                {row.displayString}
+              </li>            
+              {/key}
+            {/if}
           {/each}
         {/key}
       {/if}

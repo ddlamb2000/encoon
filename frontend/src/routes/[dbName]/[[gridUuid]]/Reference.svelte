@@ -8,7 +8,7 @@
 <span class="flex">
   {#each row.references as reference}
     {#if reference.owned && reference.name == column.name}
-      {#each reference.rows as referencedRow, indexReferencedRow}
+      {#each reference.rows as referencedRow}
         <Badge color="dark" rounded class="px-0.5 py-0.5">
           {referencedRow.displayString}
           <Icon.CircleMinusOutline size="sm" color="salmon" />

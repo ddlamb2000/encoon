@@ -83,12 +83,9 @@
                     {:else if column.type === 'Reference'}
                       <td>
                         {#if column.owned}
-                          <Reference {context} 
-                                      {set}
-                                      {row}
-                                      {column} />
+                          <Reference {context} {set} {row} {column} />
                         {:else}
-                          <Icon.ArrowRightAltOutline />
+                          <Icon.DotsHorizontalOutline />
                         {/if}
                       </td>
                     {:else if column.type === 'Boolean'}
