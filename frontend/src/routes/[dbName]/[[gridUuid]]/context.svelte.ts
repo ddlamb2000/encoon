@@ -2,7 +2,7 @@ import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse, Req
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import { replaceState } from "$app/navigation"
-import * as metadata from "$lib/metadata.svelte"
+import * as metadata from "$lib/Metadata.svelte"
 
 export class Context {
   user: User

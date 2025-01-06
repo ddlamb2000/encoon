@@ -12,7 +12,6 @@
 		"src/routes/[dbName]/pushMessage/+server.ts"
 	],
 	"/[dbName]/[[gridUuid]]": [
-		"src/routes/[dbName]/[[gridUuid]]/+page.ts",
 		"src/routes/[dbName]/[[gridUuid]]/+page.server.ts"
 	]
 }
