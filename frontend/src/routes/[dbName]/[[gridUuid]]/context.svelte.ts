@@ -161,7 +161,7 @@ export class Context {
   }
 
   load = async () => {
-    this.pushTransaction({action: metadata.ActionGetGrid, gridUuid: this.gridUuid})
+    this.pushTransaction({action: metadata.ActionLoad, gridUuid: this.gridUuid})
   }
 
   navigateToGrid = async (gridUuid: string) => {
@@ -394,7 +394,7 @@ export class Context {
             this.purge()
           } else if(this.user.checkToken(localStorage.getItem(this.#tokenName))) {
             if(message.status == metadata.SuccessStatus) {
-              if(message.action == metadata.ActionGetGrid) {
+              if(message.action == metadata.ActionLoad) {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                   const set = this.getSet(message.dataSet.grid.uuid)

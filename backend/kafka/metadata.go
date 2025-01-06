@@ -9,7 +9,7 @@ const (
 
 	ActionAuthentication = "AUTHENTICATION"
 	ActionLogout         = "LOGOUT"
-	ActionGetGrid        = "LOAD"
+	ActionLoad           = "LOAD"
 	ActionChangeGrid     = "CHANGE"
 	ActionLocateGrid     = "LOCATE"
 )

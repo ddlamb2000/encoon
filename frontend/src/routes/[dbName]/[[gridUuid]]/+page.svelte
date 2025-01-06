@@ -20,7 +20,7 @@
   onMount(() => {
     userPreferences.readUserPreferences()
     context.getStream()
-    if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionGetGrid, gridUuid: context.gridUuid})
+    if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionLoad, gridUuid: context.gridUuid})
   })
 
   onDestroy(() => { context.destroy() })

@@ -120,7 +120,7 @@ func handleMessage(dbName string, message kafka.Message) {
 						}
 					} else {
 						configuration.Log(dbName, user, "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-						if content.Action == ActionGetGrid {
+						if content.Action == ActionLoad {
 							response = getGrid(dbName, userUuid, user, content)
 						} else if content.Action == ActionChangeGrid {
 							response = postGrid(dbName, userUuid, user, content)

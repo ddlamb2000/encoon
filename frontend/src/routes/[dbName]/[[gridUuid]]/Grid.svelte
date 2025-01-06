@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { Dropdown, Spinner } from 'flowbite-svelte'
+  import Prompt from './Prompt.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   import { fade } from 'svelte/transition'
@@ -72,14 +73,9 @@
                       </td>
                     {:else if column.type === 'Reference'}
                       <td>
-                        <Icon.CaretDownOutline size="sm" class={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid + " dark:text-white"} />
-                        <Dropdown triggeredBy={".reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid}>
-                          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Test1</li>
-                          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Test2</li>
-                          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Test3</li>
-                          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Test4</li>
-                          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">Test5</li>
-                        </Dropdown>
+                        <Prompt {context} 
+                                gridUuid={metadata.UuidColumnTypes}
+                                elementReference={"reference-" + context.dataSet[indexSet].grid.uuid + column.uuid + row.uuid} />
                       </td>
                     {:else if column.type === 'Boolean'}
                       <td>{context.dataSet[indexSet].rows[rowIndex][column.name]}</td>

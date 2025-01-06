@@ -1,6 +1,6 @@
 export const ActionAuthentication = "AUTHENTICATION"
 export const ActionLogout = "LOGOUT"
-export const ActionGetGrid = "LOAD"
+export const ActionLoad = "LOAD"
 export const ActionChangeGrid = "CHANGE"
 export const ActionLocateGrid = "LOCATE"
 export const SuccessStatus = "SUCCESS"
