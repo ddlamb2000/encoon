@@ -2,20 +2,21 @@
   import type { PageData } from './$types'
   import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte.ts"
-  import { Indicator, Badge, Button, Toggle } from 'flowbite-svelte'
+  import { Indicator, Button, Toggle } from 'flowbite-svelte'
   import { fade, slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from './context.svelte.ts'
-  import { UserPreferences } from '../../../lib/userPreferences.svelte.ts'
-  import DateTime from '$lib/DateTime.svelte'
+  import { UserPreferences } from '$lib/userPreferences.svelte.ts'
   import * as Icon from 'flowbite-svelte-icons'
   import Login from './Login.svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
+  import GridList from './GridList.svelte'
+  import FocusArea from './FocusArea.svelte'
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
-  let context = new Context(data.dbName, data.url, data.gridUuid)
+  let context = $state(new Context(data.dbName, data.url, data.gridUuid))
   const userPreferences = new UserPreferences
 
   onMount(() => {
@@ -65,34 +66,7 @@
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
       <div class="p-2 overflow-y-auto overflow-x-hidden h-[500px]">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <div>
-            <a href="#top"
-                class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-              <span class="flex items-center">
-                <Icon.ListOutline />
-                  {#if userPreferences.expandSidebar}
-                    Grids
-                  {/if}
-              </span>
-            </a>
-          </div>
-          {#each context.dataSet as set}
-            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
-              <div>
-                <a href="#top"
-                    class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                    onclick={() => context.navigateToGrid(set.grid.uuid)}>
-                  <span class="flex items-center">
-                    <Icon.BookmarkOutline />
-                    {#if userPreferences.expandSidebar}
-                      {@html set.grid.text1}
-                    {/if}
-                  </span>
-                </a>
-              </div>
-            {/if}
-          {/each}
+          <GridList {context} {userPreferences} />
         {/if}
       </div>
     </aside>
@@ -110,13 +84,7 @@
       </div>
       <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          {#if context.hasDataSet() && context.focus.grid}
-            <Badge color="blue" rounded class="px-2.5 py-0.5">Grid: {@html context.focus.grid.text1}</Badge>
-            <Badge color="green" rounded class="px-2.5 py-0.5">Column: {context.focus.column.label} ({context.focus.column.type})</Badge>
-            <Badge color="yellow" rounded class="px-2.5 py-0.5">Row: {context.focus.row.displayString}</Badge>
-            <Badge color="dark" rounded class="px-2.5 py-0.5">Created on <DateTime dateTime={context.focus.row.created} /></Badge>
-            <Badge color="dark" rounded class="px-2.5 py-0.5">Updated on <DateTime dateTime={context.focus.row.updated} /></Badge>
-          {/if}
+          <FocusArea {context} />
         {/if}
       </aside>
       <div class="p-2 bg-white grid overflow-auto">
@@ -126,10 +94,8 @@
               <Grid bind:context={context} gridUuid={context.gridUuid} />
             {/if}
           </article>
-        {:else}
-          {#if context.isStreaming}
-            <Login {context} />
-          {/if}
+        {:else if context.isStreaming}
+          <Login {context} />
         {/if}
       </div>
       {#if userPreferences.showEvents}
@@ -144,5 +110,4 @@
 </main>
 
 <style>
-
 </style>

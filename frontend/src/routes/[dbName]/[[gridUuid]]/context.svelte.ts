@@ -1,15 +1,16 @@
 import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
+import { Focus } from './focus.svelte.ts'
 import { replaceState } from "$app/navigation"
-import * as metadata from "$lib/Metadata.svelte"
+import * as metadata from "$lib/metadata.svelte"
 
 export class Context {
   user: User
   dbName: string = $state("")
   url: string = $state("")
   gridUuid: string = $state("")
-  focus = $state({})
+  focus = new Focus
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
   isStreaming: boolean = $state(false)
@@ -29,7 +30,7 @@ export class Context {
   }
 
   reset = () => {
-    this.focus = {}
+    this.focus.reset()
     this.isSending = false
   }
 
@@ -137,24 +138,26 @@ export class Context {
 		else this.messageStatus = data.message
 	}
 
-  isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean => {
-    return this.focus
-            && this.focus.grid
-            && this.focus.grid.uuid === set.grid.uuid 
-            && this.focus.row
-            && this.focus.row.uuid === row.uuid 
-            && this.focus.column
-            && this.focus.column.uuid === column.uuid
+  isRowFocused = (set: GridResponse, row: RowType): boolean | undefined => {
+    return this.focus && this.focus.isRowFocused(set.grid, row)
   }
 
-  async changeFocus(set: GridResponse, row: RowType, column: ColumnType) { 
-    if(set.grid) {
+  isColumnFocused = (set: GridResponse, column: ColumnType): boolean | undefined => {
+    return this.focus && this.focus.isColumnFocused(set.grid, column)
+  }
+
+  isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean | undefined => {
+    return this.focus && this.focus.isFocused(set.grid, column, row)
+  }
+
+  async changeFocus(grid: GridType | undefined, row: RowType | undefined, column: ColumnType | undefined) { 
+    if(grid) {
       await this.pushTransaction(
         {
           action: metadata.ActionLocateGrid,
-          gridUuid: set.grid.uuid,
-          rowUuid: row.uuid,
-          columnUuid: column.uuid
+          gridUuid: grid.uuid,
+          rowUuid: row !== undefined ? row.uuid : undefined,
+          columnUuid: column !== undefined ? column.uuid : undefined
         }
       )
     }
@@ -171,10 +174,7 @@ export class Context {
     const url = `/${this.dbName}/${gridUuid}`
     replaceState(url, { gridUuid: this.gridUuid })
     this.gridUuid = gridUuid
-    if(set && set.grid) {
-      // console.log("setFocus")
-      // this.focus = {grid: set.grid, column: undefined, row: undefined}
-    }
+    if(set && set.grid) this.focus.set(set.grid, undefined, undefined)
     else this.load()
 	}
 
@@ -216,7 +216,9 @@ export class Context {
           { uuid: uuidColumn,
             text1: newLabel,
             text2: newText,
-            int1: nbColumns + 1 } 
+            int1: nbColumns + 1,
+            created: new Date,
+            updated: new Date } 
         ],
         referencedValuesAdded: [
           { owned: false,
@@ -236,7 +238,7 @@ export class Context {
   
   addRow = async (set: GridResponse) => {
     const uuid = newUuid()
-    const row: RowType = { uuid: uuid }
+    const row: RowType = { uuid: uuid, created: new Date, updated: new Date }
     set.rows.push(row)
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
@@ -258,7 +260,7 @@ export class Context {
   }
 
   removeColumn = async (set: GridResponse, column: ColumnType) => {
-    if(set.grid.columns && set.grid.columns !== undefined) {
+    if(set.grid.columns && set.grid.columns !== undefined && column !== undefined && column.uuid !== undefined) {
       const columnIndex = set.grid.columns.findIndex((c) => c.uuid === column.uuid)
       set.grid.columns.splice(columnIndex, 1)
       return this.pushTransaction({
@@ -293,6 +295,8 @@ export class Context {
       text1: 'New grid',
       text2: 'Untitled',
       text3: 'journal',
+      created: new Date,
+      updated: new Date,
       columns: []
     }
     const set: GridResponse = {
@@ -314,7 +318,9 @@ export class Context {
           { uuid: gridUuid,
             text1: 'New grid',
             text2: 'Untitled',
-            text3: 'journal' } 
+            text3: 'journal',
+            created: new Date,
+            updated: new Date } 
         ]
       }
     })
@@ -322,21 +328,28 @@ export class Context {
     this.addRow(set)
   }
 
-  locateGrid = (gridUuid: string, columnUuid: string, rowUuid: string) => {
+  locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, rowUuid: string | undefined) => {
     console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
-    const set = this.getSet(gridUuid)
-    if(set && set.grid) {
-      const grid: GridType = set.grid
-      if(grid.columns && grid.columns !== undefined) {
-        const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
-        if(column && column !== undefined) {
-          const row = set.rows.find((row) => row.uuid === rowUuid)
-          this.focus = {grid: grid, column: column, row: row}
-          return
+    if(gridUuid !== undefined) {
+      let set = this.getSet(gridUuid)
+      if(set && set.grid) {
+        const grid: GridType = set.grid
+        if(grid.columns) {
+          const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
+          if(column && column !== undefined) {
+            const row = set.rows.find((row) => row.uuid === rowUuid)
+            this.focus.set(grid, column, row)
+            return
+          }
+          else {
+            const row = set.rows.find((row) => row.uuid === rowUuid)
+            this.focus.set(grid, undefined, row)
+            return
+          }
         }
       }
     }
-    this.focus = {}
+    this.focus.reset()
   }
     
   async * getStreamIteration(uri: string) {
@@ -397,13 +410,11 @@ export class Context {
               if(message.action == metadata.ActionLoad) {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-                  const set = this.getSet(message.dataSet.grid.uuid)
                   this.dataSet.push(message.dataSet)
+                  this.focus.set(message.dataSet.grid, undefined, undefined)
                 }
               } else if(message.action == metadata.ActionLocateGrid) {
-                if(message.gridUuid && message.columnUuid && message.rowUuid) {
-                  this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
-                }
+                this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
               }
             }
           }

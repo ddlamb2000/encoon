@@ -11,13 +11,16 @@
       {#each reference.rows as referencedRow}
         <Badge color="dark" rounded class="px-0.5 py-0.5">
           {referencedRow.displayString}
-          <Icon.CircleMinusOutline size="sm" color="salmon" />
+          <a href="#top"
+              onfocus={() => context.changeFocus(set.grid, row, column)}>
+            <Icon.CircleMinusOutline size="sm" color="salmon" />
+          </a>
         </Badge>
       {/each}
     {/if}
   {/each}
 
-  <Prompt {context}
+  <Prompt {context} {set} {row} {column}
           gridUuid={column.gridPromptUuid}
           elementReference={"reference-" + set.grid.uuid + column.uuid + row.uuid} />
 </span>

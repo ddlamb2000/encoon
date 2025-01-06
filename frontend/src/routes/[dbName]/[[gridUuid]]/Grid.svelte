@@ -5,6 +5,7 @@
   import * as metadata from "$lib/metadata.svelte"
   import { fade } from 'svelte/transition'
   let { context = $bindable(), gridUuid } = $props()
+  const colorFocus = "bg-yellow-100/30"
 </script>
 
 {#if context.getSet(gridUuid) === undefined}
@@ -31,7 +32,7 @@
                 </Dropdown>
               </th>
               {#each set.grid.columns as column}
-                <th class="sticky -top-3 py-1 bg-gray-100">
+                <th class={"sticky -top-3 py-1 " + (context.isColumnFocused(set, column) ? colorFocus : "bg-gray-100")}>
                   <span class="flex">
                     {column.label}
                     <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
@@ -57,31 +58,36 @@
           <tbody class="border border-slate-100">
             {#each context.dataSet[indexSet].rows as row, rowIndex}
               {#key row.uuid}
-                <tr class="border border-slate-100">
+                <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
                   <td class="nowrap">
                     <span class="flex">
-                      <a href="#top" onclick={() => context.removeRow(set, row)}><Icon.CircleMinusOutline size="sm" color="salmon" /></a>
+                      <a href="#top" 
+                          onclick={() => context.removeRow(set, row)}
+                          onfocus={() => context.changeFocus(set.grid, row, undefined)} >
+                        <Icon.CircleMinusOutline size="sm" color="salmon" />
+                      </a>
                     </span>
                   </td>
                   {#each set.grid.columns as column}
                     {#if set.grid.uuid === metadata.UuidGrids && column.name === "text1"}
-                      <td>
+                      <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                         <a href="#top"
                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            onfocus={() => context.changeFocus(set.grid, row, column)}
                             onclick={() => context.navigateToGrid(row.uuid)}>
                           {row[column.name]}
                         </a>
                       </td>
                     {:else if column.type === 'Text' || column.type === 'Uuid'}
                       <td contenteditable
-                          class="{context.isFocused(set, column, row) ? 'focus' : 'cell'}"
-                          onfocus={() => context.changeFocus(set, row, column)}
+                          class="{context.isFocused(set, column, row) ? colorFocus : ''}"
+                          onfocus={() => context.changeFocus(set.grid, row, column)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
                         {context.dataSet[indexSet].rows[rowIndex][column.name]}
                       </td>
                     {:else if column.type === 'Reference'}
-                      <td>
+                      <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                         {#if column.owned}
                           <Reference {context} {set} {row} {column} />
                         {:else}
@@ -89,13 +95,21 @@
                         {/if}
                       </td>
                     {:else if column.type === 'Boolean'}
-                      <td>{context.dataSet[indexSet].rows[rowIndex][column.name]}</td>
+                      <td>
+                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                      </td>
                     {:else if column.type === 'Integer'}
-                      <td>{context.dataSet[indexSet].rows[rowIndex][column.name]}</td>
+                      <td>
+                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                      </td>
                     {:else if column.type === 'Password'}
-                      <td>*****</td>
+                      <td>
+                        *****
+                      </td>
                     {:else}
-                      <td>{context.dataSet[indexSet].rows[rowIndex][column.name]}</td>
+                      <td>
+                        .
+                      </td>
                     {/if}
                   {/each}
                 </tr>
@@ -123,7 +137,3 @@
     {/if}
   {/each}
 {/if}
-
-<style>
-  .focus { background-color: lightyellow; }
-</style>

@@ -60,6 +60,8 @@ export interface RowType {
   int10?: number
   displayString?: string
   references?: Reference[]
+  created: Date
+  updated: Date
 }
 
 export interface Reference {
