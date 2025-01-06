@@ -61,5 +61,5 @@ database:
   jwtsecret: "$2a$08$gI0CqdhzX.Ke.y.77AzGweKGGiXql7n9YJPEXtTAcnDQnTe4/AcGy"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  testSleepTime: 500 # Temporisation (in milliseconds) of every database requests
+  testSleepTime: 100 # Temporisation (in milliseconds) of every database requests
   timeOutThreshold: 2000

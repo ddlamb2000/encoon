@@ -85,11 +85,12 @@
                 <a href="#"
                     class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
                     onclick={() => context.navigateToGrid(set.grid.uuid)}>
-                  {#if userPreferences.expandSidebar}
-                    {@html set.grid.text1}
-                  {:else}
-                    {@html set.grid.text1?.substring(0, 4)}…
-                  {/if}
+                  <span class="flex items-center">
+                    <Icon.BookmarkOutline />
+                    {#if userPreferences.expandSidebar}
+                      {@html set.grid.text1}
+                    {/if}
+                  </span>
                 </a>
               </div>
             {/if}

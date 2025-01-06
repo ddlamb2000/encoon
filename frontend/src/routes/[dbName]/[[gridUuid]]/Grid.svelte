@@ -19,10 +19,10 @@
           <thead class="border border-slate-200">
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
-                <Icon.CaretDownOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
+                <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + context.dataSet[indexSet].grid.uuid + " dark:text-white"} />
                 <Dropdown triggeredBy={".first-column-menu-" + context.dataSet[indexSet].grid.uuid}>
                   <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                    <a href="#" onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</a>  
+                    <a href="#top" onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</a>  
                   </li>
                 </Dropdown>
               </th>
@@ -30,13 +30,13 @@
                 <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
                     {column.label}
-                    <Icon.CaretDownOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
+                    <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
                       <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <a href="#" onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</a>  
+                        <a href="#top" onclick={() => context.addColumn(context.dataSet[indexSet])}>Add column</a>  
                       </li>    
                       <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <a href="#" onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</a>  
+                        <a href="#top" onclick={() => context.removeColumn(context.dataSet[indexSet], column)}>Remove column</a>  
                       </li>
                     </Dropdown>
                   </span>
@@ -50,16 +50,18 @@
                 <tr class="border border-slate-100">
                   <td class="nowrap">
                     <span class="flex">
-                      <a href="#" onclick={() => context.removeRow(context.dataSet[indexSet], row)}><Icon.CircleMinusOutline size="sm" color="salmon" /></a>
+                      <a href="#top" onclick={() => context.removeRow(context.dataSet[indexSet], row)}><Icon.CircleMinusOutline size="sm" color="salmon" /></a>
                     </span>
                   </td>
                   {#each context.dataSet[indexSet].grid.columns as column}
                     {#if context.dataSet[indexSet].grid.uuid === metadata.UuidGrids && column.name === "text1"}
-                      <a href="#"
-                          class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                          onclick={() => context.navigateToGrid(row.uuid)}>
-                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
-                      </a>
+                      <td>
+                        <a href="#top"
+                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                            onclick={() => context.navigateToGrid(row.uuid)}>
+                          {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                        </a>
+                      </td>
                     {:else if column.type === 'Text' || column.type === 'Uuid'}
                       <td contenteditable
                           class="{context.isFocused(context.dataSet[indexSet], column, row) ? 'focus' : 'cell'}"
@@ -103,7 +105,7 @@
             <tr>
               <th class="py-1 bg-gray-100" colspan="99">
                 <span class="flex">
-                  <a href="#" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
+                  <a href="#top" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
                   {context.dataSet[indexSet].countRows} {context.dataSet[indexSet].countRows === 1 ? 'row' : 'rows'}
                 </span>
               </th>
