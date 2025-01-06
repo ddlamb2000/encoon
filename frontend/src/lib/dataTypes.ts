@@ -58,6 +58,16 @@ export interface RowType {
   int8?: number
   int9?: number
   int10?: number
+  displayString?: string
+  references?: Reference[]
+}
+
+export interface Reference {
+	owned: boolean
+	label?: string
+	name?: string
+	gridUuid?: string
+	rows?: RowType[]
 }
 
 export interface GridPost {
