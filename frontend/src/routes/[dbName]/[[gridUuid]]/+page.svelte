@@ -20,11 +20,11 @@
 
   onMount(() => {
     userPreferences.readUserPreferences()
-    context.getStream()
+    context.startStreaming()
     if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionLoad, gridUuid: context.gridUuid})
   })
 
-  onDestroy(() => { context.destroy() })
+  onDestroy(() => { context.stopStreaming()  })
 
 </script>
 
@@ -42,13 +42,25 @@
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="p-2 h-10 overflow-y-auto bg-gray-200">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <a href="#top"
-              class="font-medium text-blue-600 dark:text-blue-500 hover:underline"              
-              onclick={() => context.newGrid()}>
-            <span class="flex items-center">
-              <Icon.CirclePlusOutline />New Grid
-            </span>
-          </a>
+          <span class="flex">
+            <a href="#top"
+                class="me-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
+                onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+              <span class="flex items-center">
+                <Icon.ListOutline />
+                  {#if userPreferences.expandSidebar}
+                    Grids
+                  {/if}
+              </span>
+            </a>
+            <a href="#top"
+                class="me-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"              
+                onclick={() => context.newGrid()}>
+              <span class="flex items-center">
+                <Icon.CirclePlusOutline />New Grid
+              </span>
+            </a>
+          </span>            
         {/if}
       </div>
       <aside class="p-2 h-10 overflow-y-auto bg-gray-100">

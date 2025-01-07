@@ -1,5 +1,5 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2024
+// Copyright David Lambert 2025
 
 package kafka
 
@@ -35,7 +35,7 @@ func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) (pa
 }
 
 func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
-	requestInitiatedOn string, receivedOn string, key string, response responseContent) {
+	contextUuid string, requestInitiatedOn string, receivedOn string, key string, response responseContent) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	hostname, _ := os.Hostname()
@@ -60,6 +60,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		{Key: "dbName", Value: []byte(dbName)},
 		{Key: "userUuid", Value: []byte(userUuid)},
 		{Key: "user", Value: []byte(user)},
+		{Key: "contextUuid", Value: []byte(contextUuid)},
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 		{Key: "requestReceivedOn", Value: []byte(receivedOn)},
 		{Key: "responseInitiatedOn", Value: []byte(responseInitiatedOn)},

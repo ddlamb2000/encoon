@@ -29,14 +29,20 @@
     {#if message.response}
       <li transition:fade>
         <span class="flex items-center">
-          <Icon.DownloadOutline color={message.response.status === SuccessStatus ? "green" : "red"} class="w-4 h-4" />
+          {#if message.response.sameContext}
+            <span class="flex"><Icon.CodePullRequestOutline color={message.response.status === SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>
+          {:else}
+            <Icon.DownloadOutline color={message.response.status === SuccessStatus ? "orange" : "red"} class="w-4 h-4" />
+          {/if}
           <div class="ps-2 text-xs font-normal">
             <p>
               {message.response.messageKey}
-              <Badge color="blue" rounded class="px-2.5 py-0.5">
-                {message.response.action}
-                {#if message.response.actionText}[{message.response.actionText}]{/if}
-              </Badge>
+              {#if message.response.action}
+                <Badge color="blue" rounded class="px-2.5 py-0.5">
+                  {message.response.action}
+                  {#if message.response.actionText}[{message.response.actionText}]{/if}
+                </Badge>
+              {/if}
               <Badge color={message.response.status === SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
                 {message.response.status}
                 {#if message.response.textMessage}[{message.response.textMessage}]{/if}

@@ -1,5 +1,5 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2024
+// Copyright David Lambert 2025
 
 package kafka
 
@@ -50,6 +50,7 @@ func handleMessage(dbName string, message kafka.Message) {
 	requestInitiatedOn := ""
 	tokenString := ""
 	gridUuid := ""
+	contextUuid := ""
 	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	for _, header := range message.Headers {
 		switch header.Key {
@@ -59,6 +60,8 @@ func handleMessage(dbName string, message kafka.Message) {
 			tokenString = string(header.Value)
 		case "gridUuid":
 			gridUuid = string(header.Value)
+		case "contextUuid":
+			contextUuid = string(header.Value)
 		}
 	}
 	var content requestContent
@@ -74,7 +77,12 @@ func handleMessage(dbName string, message kafka.Message) {
 			TextMessage: "Incorrect message",
 		}
 	} else {
-		if content.Action == ActionAuthentication {
+		if content.Action == ActionHeartbeat {
+			response = responseContent{
+				Status: SuccessStatus,
+				Action: content.Action,
+			}
+		} else if content.Action == ActionAuthentication {
 			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
 			response = authentication(dbName, content)
 		} else if content.Action == ActionLogout {
@@ -148,7 +156,7 @@ func handleMessage(dbName string, message kafka.Message) {
 			}
 		}
 	}
-	WriteMessage(dbName, userUuid, user, gridUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
+	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
 }
 
 func getTokenParsingHandler(dbName string) jwt.Keyfunc {

@@ -7,6 +7,7 @@ const (
 	SuccessStatus = "SUCCESS"
 	FailedStatus  = "FAILED"
 
+	ActionHeartbeat      = "HEARTBEAT"
 	ActionAuthentication = "AUTHENTICATION"
 	ActionLogout         = "LOGOUT"
 	ActionLoad           = "LOAD"

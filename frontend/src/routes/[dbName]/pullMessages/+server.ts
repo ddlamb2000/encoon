@@ -1,6 +1,7 @@
 import { env } from "$env/dynamic/private"
 import { kafka } from '$lib/kafka'
 import { newUuid } from "$lib/utils.svelte"
+import * as metadata from "$lib/metadata.svelte"
 	
 export const GET = async ({ params, request, url }) => {
   if(params.dbName === undefined) {
@@ -24,12 +25,7 @@ export const GET = async ({ params, request, url }) => {
     start(controller) {
       try {
         console.log(`GET ${url}: Submit an initialization message to the stream`)
-        const initializationMessage = {
-          topic: '',
-          headers: [],
-          key: 'INIT',
-          value: JSON.stringify({action: 'INIT'})
-        }
+        const initializationMessage = { key: metadata.InitializationKey }
         controller.enqueue(JSON.stringify(initializationMessage))
         console.log(`GET ${url}: Start connection for consumer`)
         consumer.connect()

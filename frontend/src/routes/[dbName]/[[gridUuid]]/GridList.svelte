@@ -5,18 +5,6 @@
 </script>
 
 {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-  <div>
-    <a href="#top"
-        class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-        onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-      <span class="flex items-center">
-        <Icon.ListOutline />
-          {#if userPreferences.expandSidebar}
-            Grids
-          {/if}
-      </span>
-    </a>
-  </div>
   {#each context.dataSet as set}
     {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
       <div>

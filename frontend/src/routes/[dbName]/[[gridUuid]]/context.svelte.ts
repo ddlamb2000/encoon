@@ -27,6 +27,8 @@ export class Context {
   messageStack = $state([{}])
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
+  #contextUuid = newUuid()
+  #hearbeatId: any = null
 
   #messageStackLimit = 100
 
@@ -49,10 +51,6 @@ export class Context {
     this.dataSet = []
   }
 
-  destroy = () => {
-    if(this.reader && this.reader !== undefined) this.reader.cancel()
-  }
-
   getSet = (gridUuid: string) => this.dataSet.find((s) => s.grid.uuid === gridUuid)
 
   hasDataSet = () => this.dataSet.length > 0
@@ -63,9 +61,10 @@ export class Context {
       true,
       metadata.ActionAuthentication + ":" + this.dbName + ":" + loginId,
       [
-        {'key': 'from', 'value': 'εncooη frontend'},
-        {'key': 'url', 'value': this.url},
-        {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
+        {key: 'from', value: 'εncooη frontend'},
+        {key: 'url', value: this.url},
+        {key: 'contextUuid', value: this.#contextUuid},
+        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
       ],
       {
         action: metadata.ActionAuthentication,
@@ -86,14 +85,30 @@ export class Context {
       false,
       request.action + ":" + this.dbName + ":" + newUuid(),
       [
-        {'key': 'from', 'value': 'εncooη frontend'},
-        {'key': 'url', 'value': this.url},
-        {'key': 'dbName', 'value': this.dbName},
-        {'key': 'userUuid', 'value': this.user.getUserUuid()},
-        {'key': 'user', 'value': this.user.getUser()},
-        {'key': 'jwt', 'value': this.user.getToken()},
-        {'key': 'gridUuid', 'value': this.gridUuid},
-        {'key': 'requestInitiatedOn', 'value': (new Date).toISOString()}
+        {key: 'from', value: 'εncooη frontend'},
+        {key: 'url', value: this.url},
+        {key: 'contextUuid', value: this.#contextUuid},
+        {key: 'dbName', value: this.dbName},
+        {key: 'userUuid', value: this.user.getUserUuid()},
+        {key: 'user', value: this.user.getUser()},
+        {key: 'jwt', value: this.user.getToken()},
+        {key: 'gridUuid', value: this.gridUuid},
+        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
+      ],
+      request
+    )
+  }
+
+  pushAdminMessage = async (request: RequestContent) => {
+    return this.sendMessage(
+      true,
+      request.action + ":" + this.dbName,
+      [
+        {key: 'from', value: 'εncooη frontend'},
+        {key: 'url', value: this.url},
+        {key: 'contextUuid', value: this.#contextUuid},
+        {key: 'dbName', value: this.dbName},
+        {key: 'requestInitiatedOn', value: (new Date).toISOString()}
       ],
       request
     )
@@ -430,7 +445,7 @@ export class Context {
     }
     this.focus.reset()
   }
-    
+  
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
     if(!response.ok || !response.body) {
@@ -449,13 +464,20 @@ export class Context {
       try {
         charsReceived += chunk.length
         const json = JSON.parse(chunk.toString())
-        if(json.key && json.key === "INIT") {
+        if(json.key && json.key === metadata.InitializationKey) {
           console.log("Stream initialized")
+          this.trackResponse({
+            messageKey: metadata.InitializationKey,
+            status: metadata.SuccessStatus,
+            textMessage: "Stream initialized",
+            dateTime: (new Date).toISOString()
+          })
           chunk = ""
         } else if(json.value && json.headers) {
           chunk = ""
           const message: ResponseContent = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)
+          const contextUuid = String.fromCharCode(...json.headers.contextUuid.data)
           const requestInitiatedOn = String.fromCharCode(...json.headers.requestInitiatedOn.data)
           const now = (new Date).toISOString()
           const nowDate = Date.parse(now)
@@ -469,6 +491,7 @@ export class Context {
             textMessage: message.textMessage,
             gridUuid: message.gridUuid,
             status: message.status,
+            sameContext: contextUuid === this.#contextUuid,
             elapsedMs: elapsedMs,
             dateTime: (new Date).toISOString()
           })
@@ -524,14 +547,21 @@ export class Context {
     if (startIndex < chunk.length) yield chunk.substr(startIndex)
   }
 
-  async getStream() {
+  async startStreaming() {
     const uri = `/${this.dbName}/pullMessages`
     this.user.checkToken(localStorage.getItem(this.#tokenName))
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
+    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
     for await (let line of this.getStreamIteration(uri)) {
       console.log(`Get from ${uri}`, line)
     }
   }  
+
+  stopStreaming = () => {
+    this.isStreaming = false
+    if(this.#hearbeatId) clearInterval(this.#hearbeatId)
+    if(this.reader && this.reader !== undefined) this.reader.cancel()
+  }
 
 }
