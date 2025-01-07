@@ -1,6 +1,5 @@
 <script  lang="ts">
   import type { PageData } from './$types'
-  import { newUuid } from "$lib/utils.svelte"
   import * as metadata from "$lib/metadata.svelte.ts"
   import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
