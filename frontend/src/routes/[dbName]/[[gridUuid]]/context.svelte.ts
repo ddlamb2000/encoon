@@ -447,7 +447,10 @@ export class Context {
       try {
         charsReceived += chunk.length
         const json = JSON.parse(chunk.toString())
-        if(json.value && json.headers) {
+        if(json.key && json.key === "INIT") {
+          console.log("Stream initialized")
+          chunk = ""
+        } else if(json.value && json.headers) {
           chunk = ""
           const message: ResponseContent = JSON.parse(json.value)
           const fromHeader = String.fromCharCode(...json.headers.from.data)

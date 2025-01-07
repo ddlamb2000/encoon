@@ -128,6 +128,36 @@ services:
     depends_on:
       - db
       - broker1
+  backend-sandbox2:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    container_name: backend-sandbox2
+    image: backend-encoon-production
+    restart: unless-stopped
+    configs:
+      - source: encoon-configuration-sandbox
+        target: /usr/encoon/configuration.yml
+    networks:
+      - encoon
+    depends_on:
+      - db
+      - broker1
+  backend-sandbox3:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.production
+    container_name: backend-sandbox3
+    image: backend-encoon-production
+    restart: unless-stopped
+    configs:
+      - source: encoon-configuration-sandbox
+        target: /usr/encoon/configuration.yml
+    networks:
+      - encoon
+    depends_on:
+      - db
+      - broker1
   frontend:
     build:
       context: ./frontend

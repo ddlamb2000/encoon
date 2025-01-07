@@ -4,7 +4,7 @@ import { newUuid } from "$lib/utils.svelte"
 	
 export const GET = async ({ params, request, url }) => {
   if(params.dbName === undefined) {
-    console.error('Missing dbName')
+    console.error(`GET ${url}: Missing dbName`)
     return new Response(JSON.stringify({ error: 'Missing dbName' }), { status: 500 })
   }
   const topic = env.TOPIC_PREFIX + "-" + params.dbName + "-responses"
@@ -19,12 +19,23 @@ export const GET = async ({ params, request, url }) => {
     maxInFlightRequests: 50,
     retry: { retries: 5 }
   })
+  console.log(`GET ${url}: Start streaming`)
   const stream = new ReadableStream({
     start(controller) {
       try {
-        console.log(`GET ${url}: Subscribe consumer to ${topic}`)
+        console.log(`GET ${url}: Submit an initialization message to the stream`)
+        const initializationMessage = {
+          topic: '',
+          headers: [],
+          key: 'INIT',
+          value: JSON.stringify({action: 'INIT'})
+        }
+        controller.enqueue(JSON.stringify(initializationMessage))
+        console.log(`GET ${url}: Start connection for consumer`)
         consumer.connect()
+        console.log(`GET ${url}: Consumer connected`)
         consumer.subscribe({ topics: [topic] })
+        console.log(`GET ${url}: Consumer subscribed to ${topic}`)
         consumer.run({
             eachBatchAutoResolve: true,
             autoCommitInterval: 50,
@@ -38,8 +49,12 @@ export const GET = async ({ params, request, url }) => {
                 isStale,
                 pause,
             }) => {
+                console.log(`GET ${url}: Consumer running from ${topic}`)
                 for (let message of batch.messages) {
-                  if (!isRunning() || isStale()) break
+                  if (!isRunning() || isStale()) {
+                    console.log(`GET ${url}: Consumer stopping from ${topic}`)
+                    break
+                  }
                   if(message.key !== null && message.value !== null) {
                     const valueString = message.value.toString()
                     const received = {
@@ -50,8 +65,12 @@ export const GET = async ({ params, request, url }) => {
                     }
                     console.log(`GET ${url}: ${valueString.length} bytes`, received)
                     controller.enqueue(JSON.stringify(received))
+                  } else {
+                    console.log(`GET ${url}: Message with no key nor value`, message)
                   }
+                  console.log(`GET ${url}: Resolve offset from ${topic}: ${message.offset}`)
                   resolveOffset(message.offset)
+                  console.log(`GET ${url}: Awaiting heartbeat from ${topic}`)
                   await heartbeat()
                 }
             },
@@ -68,5 +87,6 @@ export const GET = async ({ params, request, url }) => {
       ac.abort()
     },
   })
+  console.log(`GET ${url}: Return response as text/event-stream`)
   return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' }, status: 200 })
 }
