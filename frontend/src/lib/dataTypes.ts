@@ -27,7 +27,7 @@ export interface ColumnType {
   orderNumber?: number
   owned?: boolean
   label?: string
-  name?: string
+  name: string
   type?: string
   typeUuid?: string
   gridUuid?: string
@@ -37,6 +37,7 @@ export interface ColumnType {
 }
 
 export interface RowType {
+  gridUuid: string
 	uuid: string
 	text1?: string
 	text2?: string

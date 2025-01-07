@@ -222,7 +222,8 @@ export class Context {
       gridUuid: metadata.UuidColumns,
       dataSet: {
         rowsAdded: [
-          { uuid: uuidColumn,
+          { gridUuid: metadata.UuidColumns,
+            uuid: uuidColumn,
             text1: newLabel,
             text2: newText,
             int1: nbColumns + 1,
@@ -247,7 +248,7 @@ export class Context {
   
   addRow = async (set: GridResponse) => {
     const uuid = newUuid()
-    const row: RowType = { uuid: uuid, created: new Date, updated: new Date }
+    const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
     set.rows.push(row)
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
@@ -280,7 +281,10 @@ export class Context {
         gridUuid: metadata.UuidColumns,
         dataSet: {
           rowsDeleted: [
-            { uuid: column.uuid }
+            { gridUuid: metadata.UuidColumnTypes,
+              uuid: column.uuid,
+              created: new Date,
+              updated: new Date }
           ],
           referencedValuesRemoved: [
             { owned: false,
@@ -302,6 +306,7 @@ export class Context {
   newGrid = async (gridUuid: string) => {
     this.gridUuid = gridUuid
     const grid: GridType = {
+      gridUuid: metadata.UuidGrids,
       uuid: gridUuid,
       text1: 'New grid',
       text2: 'Untitled',
@@ -326,7 +331,8 @@ export class Context {
       gridUuid: metadata.UuidGrids,
       dataSet: {
         rowsAdded: [
-          { uuid: gridUuid,
+          { gridUuid: metadata.UuidGrids,
+            uuid: gridUuid,
             text1: 'New grid',
             text2: 'Untitled',
             text3: 'journal',
@@ -357,6 +363,20 @@ export class Context {
       if(row.references !== undefined) row.references.push(reference)
       else row.references = [reference]
     }
+    return this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'addReferenceValue',
+      gridUuid: set.grid.uuid,
+      dataSet: {
+        referencedValuesAdded: [
+          { owned: true,
+            columnName: column.name,
+            fromUuid: row.uuid,
+            toGridUuid: rowPrompt.gridUuid,
+            uuid: rowPrompt.uuid },
+        ] 
+      }
+    })    
   }
 
   removeReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
@@ -369,6 +389,20 @@ export class Context {
         }
       }
     }
+    return this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'removeReferenceValue',
+      gridUuid: set.grid.uuid,
+      dataSet: {
+        referencedValuesRemoved: [
+          { owned: true,
+            columnName: column.name,
+            fromUuid: row.uuid,
+            toGridUuid: rowPrompt.gridUuid,
+            uuid: rowPrompt.uuid },
+        ] 
+      }
+    })    
   }
 
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, rowUuid: string | undefined) => {
