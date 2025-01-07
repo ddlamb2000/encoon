@@ -10,7 +10,8 @@
   }
 </script>
   
-<Badge color="none" rounded class="px-0.5 py-0.5">
+<Badge color="none" rounded class="px-0 py-0">
+  &nbsp;
   <Icon.CirclePlusOutline size="sm" 
                           class={elementReference + " dark:text-white"} 
                           onclick={() => loadPrompt()} 
