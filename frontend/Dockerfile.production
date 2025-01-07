@@ -3,7 +3,9 @@ WORKDIR /usr/src/encoon/frontend
 COPY src src
 COPY static static
 COPY package.json package.json
+COPY postcss.config.js postcss.config.js
 COPY svelte.config.js svelte.config.js
+COPY tailwind.config.ts tailwind.config.ts
 COPY tsconfig.json tsconfig.json
 COPY vite.config.ts vite.config.ts
 RUN npm install && npm run build
