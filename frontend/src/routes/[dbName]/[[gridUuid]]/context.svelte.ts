@@ -303,7 +303,8 @@ export class Context {
     }
   }
 
-  newGrid = async (gridUuid: string) => {
+  newGrid = async () => {
+    const gridUuid = newUuid()
     this.gridUuid = gridUuid
     const grid: GridType = {
       gridUuid: metadata.UuidGrids,
@@ -343,6 +344,7 @@ export class Context {
     })
     this.addColumn(set)
     this.addRow(set)
+    this.navigateToGrid(gridUuid)
   }
 
   addReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
