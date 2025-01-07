@@ -63,7 +63,7 @@
                     <span class="flex">
                       <a href="#top" 
                           onclick={() => context.removeRow(set, row)}
-                          onfocus={() => context.changeFocus(set.grid, row, undefined)} >
+                          onfocus={() => context.changeFocus(set.grid, undefined, row)} >
                         <Icon.CircleMinusOutline size="sm" color="salmon" />
                       </a>
                     </span>
@@ -73,7 +73,7 @@
                       <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                         <a href="#top"
                             class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                            onfocus={() => context.changeFocus(set.grid, row, column)}
+                            onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => context.navigateToGrid(row.uuid)}>
                           {row[column.name]}
                         </a>
@@ -81,7 +81,7 @@
                     {:else if column.type === 'Text' || column.type === 'Uuid'}
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''}"
-                          onfocus={() => context.changeFocus(set.grid, row, column)}
+                          onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
                         {context.dataSet[indexSet].rows[rowIndex][column.name]}

@@ -2,7 +2,7 @@
   import { Badge } from 'flowbite-svelte'
   import Prompt from './Prompt.svelte'
   import * as Icon from 'flowbite-svelte-icons'
-  let { context, set, row, column } = $props()
+  let { context, set, column, row } = $props()
 </script>
 
 <span class="flex">
@@ -12,7 +12,8 @@
         <Badge color="dark" rounded class="px-0.5 py-0.5">
           {referencedRow.displayString}
           <a href="#top"
-              onfocus={() => context.changeFocus(set.grid, row, column)}>
+              onfocus={() => context.changeFocus(set.grid, column, row)}
+              onclick={() => context.removeReferencedValue(set, column, row, referencedRow)}>
             <Icon.CircleMinusOutline size="sm" color="salmon" />
           </a>
         </Badge>
@@ -20,7 +21,7 @@
     {/if}
   {/each}
 
-  <Prompt {context} {set} {row} {column}
-          gridUuid={column.gridPromptUuid}
+  <Prompt {context} {set} {column} {row}
+          gridPromptUuid={column.gridPromptUuid}
           elementReference={"reference-" + set.grid.uuid + column.uuid + row.uuid} />
 </span>

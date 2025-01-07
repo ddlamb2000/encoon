@@ -1,4 +1,13 @@
-import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse, RequestContent, GridResponse, ResponseContent, RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
+import type { KafkaMessageRequest,
+              KafkaMessageHeader,
+              KafkaMessageResponse,
+              RequestContent,
+              GridResponse,
+              ResponseContent,
+              RowType,
+              ColumnType,
+              GridType,
+              ReferenceType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
 import { User } from './user.svelte.ts'
 import { Focus } from './focus.svelte.ts'
@@ -150,7 +159,7 @@ export class Context {
     return this.focus && this.focus.isFocused(set.grid, column, row)
   }
 
-  async changeFocus(grid: GridType | undefined, row: RowType | undefined, column: ColumnType | undefined) { 
+  async changeFocus(grid: GridType | undefined, column: ColumnType | undefined, row: RowType | undefined) { 
     if(grid) {
       await this.pushTransaction(
         {
@@ -250,13 +259,15 @@ export class Context {
 
   removeRow = async (set: GridResponse, row: RowType) => {
     const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
-    set.rows.splice(rowIndex, 1)
-    return this.pushTransaction({
-      action: metadata.ActionChangeGrid,
-      actionText: 'removeRow',
-      gridUuid: set.grid.uuid,
-      dataSet: { rowsDeleted: [row] }
-    })
+    if(rowIndex >= 0) {
+      set.rows.splice(rowIndex, 1)
+      return this.pushTransaction({
+        action: metadata.ActionChangeGrid,
+        actionText: 'removeRow',
+        gridUuid: set.grid.uuid,
+        dataSet: { rowsDeleted: [row] }
+      })
+    }
   }
 
   removeColumn = async (set: GridResponse, column: ColumnType) => {
@@ -326,6 +337,38 @@ export class Context {
     })
     this.addColumn(set)
     this.addRow(set)
+  }
+
+  addReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
+    const reference = row.references !== undefined ? 
+                        row.references.find((reference) => reference.owned && reference.name === column.name) :
+                        undefined
+    if(reference !== undefined) {
+      if(reference.rows !== undefined) reference.rows.push(rowPrompt)
+      else reference.rows = [rowPrompt]
+    } else {
+      const reference: ReferenceType = {
+        owned: true,
+        label: column.label,
+        name: column.name,
+        gridUuid: column.gridPromptUuid,
+        rows: [rowPrompt]
+      }
+      if(row.references !== undefined) row.references.push(reference)
+      else row.references = [reference]
+    }
+  }
+
+  removeReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {
+    if(row.references !== undefined) {
+      const reference = row.references.find((reference) => reference.owned && reference.name === column.name)
+      if(reference !== undefined) {
+        if(reference.rows !== undefined) {
+          const rowIndex = reference.rows.findIndex((r) => r.uuid === rowPrompt.uuid)
+          if(rowIndex >= 0) reference.rows.splice(rowIndex, 1)
+        }
+      }
+    }
   }
 
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, rowUuid: string | undefined) => {

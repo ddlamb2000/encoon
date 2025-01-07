@@ -59,12 +59,12 @@ export interface RowType {
   int9?: number
   int10?: number
   displayString?: string
-  references?: Reference[]
+  references?: ReferenceType[]
   created: Date
   updated: Date
 }
 
-export interface Reference {
+export interface ReferenceType {
 	owned: boolean
 	label?: string
 	name?: string
