@@ -23,7 +23,7 @@ export interface GridType extends RowType {
 }
 
 export interface ColumnType {
-  uuid?: string
+  uuid: string
   orderNumber?: number
   owned?: boolean
   label?: string

@@ -422,6 +422,44 @@ export class Context {
     })    
   }
 
+  changeGrid = debounce(
+    async (grid: GridType) => {
+      this.pushTransaction(
+        {
+          action: metadata.ActionChangeGrid,
+          actionText: 'changeGrid',
+          gridUuid: metadata.UuidGrids,
+          dataSet: { rowsEdited: [grid] }
+        }
+      )
+    },
+    500
+  )
+
+  changeColumn = debounce(
+    async (column: ColumnType) => {
+      this.pushTransaction(
+        {
+          action: metadata.ActionChangeGrid,
+          actionText: 'changeColumn',
+          gridUuid: metadata.UuidColumns,
+          dataSet: {
+            rowsEdited: [
+              { gridUuid: metadata.UuidColumns,
+                uuid: column.uuid,
+                text1: column.label,
+                text2: column.name,
+                int1: column.orderNumber,
+                created: new Date,
+                updated: new Date }               
+            ] 
+          }
+        }
+      )
+    },
+    500
+  )
+
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, rowUuid: string | undefined) => {
     console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
     if(gridUuid !== undefined) {

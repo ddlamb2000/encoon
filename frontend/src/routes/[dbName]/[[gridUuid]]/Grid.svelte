@@ -14,9 +14,15 @@
   {#each context.dataSet as set, indexSet}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <h1 class="text-2xl font-extrabold">{@html set.grid.text1}
-          <small class="ms-2 font-light text-sm">{@html set.grid.text2}</small>  
-        </h1>
+        <span contenteditable
+              class="text-2xl font-extrabold"
+              oninput={() => context.changeGrid(set.grid)}
+              bind:innerHTML={context.dataSet[indexSet].grid.text1}></span>
+        <span contenteditable
+              class="ms-2 font-light text-sm"
+              oninput={() => context.changeGrid(set.grid)}
+              bind:innerHTML={context.dataSet[indexSet].grid.text2}>
+        </span>
         <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
@@ -31,10 +37,12 @@
                   </li>
                 </Dropdown>
               </th>
-              {#each set.grid.columns as column}
+              {#each set.grid.columns as column, indexColumn}
                 <th class={"sticky -top-3 py-1 " + (context.isColumnFocused(set, column) ? colorFocus : "bg-gray-100")}>
                   <span class="flex">
-                    {column.label}
+                    <span contenteditable
+                          oninput={() => context.changeColumn(column)}
+                          bind:innerHTML={context.dataSet[indexSet].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-36" triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
                       <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
@@ -84,7 +92,6 @@
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
-                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
                       </td>
                     {:else if column.type === 'Reference'}
                       <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
