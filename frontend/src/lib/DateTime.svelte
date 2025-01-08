@@ -2,12 +2,15 @@
   let { dateTime, showDate = true } = $props()
   import { onMount, onDestroy } from 'svelte'
 
-  let localDate = new Date(dateTime)
-  const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
-                                    localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
-  let timerId: any = null
+  const displayDateTime = (dateTime: Date) => {
+    const localDate = new Date(dateTime)
+    return localDate.toLocaleDateString() + " " +  localDate.toLocaleTimeString()
+  }
 
-  const getTimeAgo = () => {
+  const getTimeAgo = (dateTime: Date) => {
+    const localDate = new Date(dateTime)
+    const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
+                                  localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
 		const localNow = new Date
 		const localNowUTC =  Date.UTC(localNow.getUTCFullYear(), localNow.getUTCMonth(), localNow.getUTCDate(),
                                   localNow.getUTCHours(), localNow.getUTCMinutes(), localNow.getUTCSeconds())
@@ -22,13 +25,12 @@
 		else return `${Math.round(seconds / YEAR)}&nbsp;year&nbsp;ago`
 	}
 
-  let timeAgo = $state(getTimeAgo())
+  let timeAgo = $state(getTimeAgo(dateTime))
+  let timerId: any = null
 
-  onMount(() => { timerId = setInterval(() => { timeAgo = getTimeAgo() }, 1000) })
+  onMount(() => { timerId = setInterval(() => { timeAgo = getTimeAgo(dateTime) }, 1000) })
   onDestroy(() => { if(timerId) clearInterval(timerId) })
 </script>
- 
-{#if showDate}
-  {localDate.toLocaleDateString()} {localDate.toLocaleTimeString()}
-{/if}
+
+{#if showDate}{displayDateTime(dateTime)}{/if}
 <small><em>{@html timeAgo}</em></small>
