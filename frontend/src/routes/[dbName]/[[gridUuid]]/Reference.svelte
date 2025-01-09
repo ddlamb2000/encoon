@@ -1,7 +1,6 @@
 <script lang="ts">
   import { Badge } from 'flowbite-svelte'
   import Prompt from './Prompt.svelte'
-  import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row } = $props()
 </script>
 
@@ -11,13 +10,8 @@
       {#if indexReferencedRow > 0 && indexReferencedRow % 3 == 0}
         <br/>
       {/if}
-      <Badge color="dark" rounded class="px-0 py-0">
+      <Badge color="dark" rounded class="px-0 py-0 shadow-lg">
         {referencedRow.displayString}
-        <a href="#top"
-            onfocus={() => context.changeFocus(set.grid, column, row)}
-            onclick={() => context.removeReferencedValue(set, column, row, referencedRow)}>
-          <Icon.CloseOutline size="sm" color="salmon" />
-        </a>
       </Badge>
     {/each}
   {/if}

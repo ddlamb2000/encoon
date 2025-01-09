@@ -12,16 +12,33 @@
   
 <Badge color="none" rounded class="px-0 py-0">
   &nbsp;
-  <Icon.CirclePlusOutline size="sm" 
-                          class={elementReference + " dark:text-white"} 
-                          onclick={() => loadPrompt()} 
-                          onfocus={() => context.changeFocus(set.grid, column, row)} />
+  <Icon.ChevronDoubleDownOutline size="sm" 
+                                  color="gray"
+                                  class={"cursor-pointer " + elementReference + " dark:text-white"} 
+                                  onclick={() => loadPrompt()}
+                                  onfocus={() => context.changeFocus(set.grid, column, row)} />
 </Badge>
 
 <Dropdown triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60">
   {#if context.getSet(gridPromptUuid) === undefined}
     <Spinner size={4} />
   {:else}
+    {#each row.references as reference}
+      {#if reference.owned && reference.name == column.name}
+        {#each reference.rows as referencedRow, indexReferencedRow}
+          <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">
+            <span class="flex">
+              {referencedRow.displayString}
+              <a href="#top"
+                  class="cursor-pointer"
+                  onclick={() => context.removeReferencedValue(set, column, row, referencedRow)}>
+                <Icon.CloseOutline size="sm" color="salmon" />
+              </a>
+            </span>
+          </li>
+        {/each}
+      {/if}
+    {/each}
     <Search size="md" bind:value={searchText} />
     {#each context.dataSet as setPrompt}
       {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
@@ -29,10 +46,8 @@
           {#each setPrompt.rows as rowPrompt}
             {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
               {#key "prompt" + elementReference + rowPrompt.uuid}
-              <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600">
-                <a href="#top" onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}>
-                  {rowPrompt.displayString}
-                </a>                
+              <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600" onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}>
+                {rowPrompt.displayString}
               </li>            
               {/key}
             {/if}

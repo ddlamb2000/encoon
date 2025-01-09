@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
+  import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   import { fade } from 'svelte/transition'
@@ -28,33 +29,27 @@
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
                 <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
-                <Dropdown class="w-36" triggeredBy={".first-column-menu-" + set.grid.uuid}>
-                  <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                    <span class="flex">
-                      <Icon.AddColumnAfterOutline />
-                      <a href="#top" onclick={() => context.addColumn(set)}>Add column</a>  
-                    </span>
-                  </li>
+                <Dropdown class="w-48" triggeredBy={".first-column-menu-" + set.grid.uuid}>
+                  <PromptColumnType {context} {set}
+                                    gridPromptUuid={metadata.UuidColumnTypes}
+                                    elementReference={"referenceColumnType-" + set.grid.uuid} />
                 </Dropdown>
               </th>
               {#each set.grid.columns as column, indexColumn}
-                <th class={"sticky -top-3 py-1 " + (context.isColumnFocused(set, column) ? colorFocus : "bg-gray-100")}>
+                <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
                     <span contenteditable
                           oninput={() => context.changeColumn(column)}
                           bind:innerHTML={context.dataSet[indexSet].grid.columns[indexColumn].label}></span>
-                    <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                    <Dropdown class="w-36" triggeredBy={".column-menu-" + context.dataSet[indexSet].grid.uuid + "-" + column.uuid}>
-                      <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <span class="flex">
-                          <Icon.AddColumnAfterOutline />
-                          <a href="#top" onclick={() => context.addColumn(set)}>Add column</a>  
-                        </span>
-                      </li>    
-                      <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <span class="flex">
+                    <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
+                    <Dropdown class="w-48" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
+                      <PromptColumnType {context} {set}
+                                        gridPromptUuid={metadata.UuidColumnTypes}
+                                        elementReference={"referenceColumnType-" + set.grid.uuid} />
+                      <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
+                        <span class="flex" onclick={() => context.removeColumn(set, column)}>
                           <Icon.DeleteColumnOutline />
-                          <a href="#top" onclick={() => context.removeColumn(set, column)}>Remove column</a>  
+                          Remove column
                         </span>
                       </li>
                     </Dropdown>
@@ -72,7 +67,7 @@
                       <a href="#top" 
                           onclick={() => context.removeRow(set, row)}
                           onfocus={() => context.changeFocus(set.grid, undefined, row)} >
-                        <Icon.CircleMinusOutline size="sm" color="salmon" />
+                        <Icon.CircleMinusOutline size="sm" color="gray" />
                       </a>
                     </span>
                   </td>
@@ -86,14 +81,14 @@
                           {row[column.name]}
                         </a>
                       </td>
-                    {:else if column.type === 'Text' || column.type === 'Uuid'}
+                    {:else if column.typeUuid === metadata.UuidTextColumnType || column.typeUuid === metadata.UuidUuidColumnType}
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
                       </td>
-                    {:else if column.type === 'Reference'}
+                    {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                         {#if column.owned}
                           <Reference {context} {set} {row} {column} />
@@ -101,21 +96,21 @@
                           <Icon.DotsHorizontalOutline />
                         {/if}
                       </td>
-                    {:else if column.type === 'Boolean'}
+                    {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td>
                         {context.dataSet[indexSet].rows[rowIndex][column.name]}
                       </td>
-                    {:else if column.type === 'Integer'}
+                    {:else if column.typeUuid === metadata.UuidIntColumnType}
                       <td>
                         {context.dataSet[indexSet].rows[rowIndex][column.name]}
                       </td>
-                    {:else if column.type === 'Password'}
+                    {:else if column.typeUuid === metadata.UuidPasswordColumnType}
                       <td>
                         *****
                       </td>
                     {:else}
                       <td>
-                        .
+                        ?
                       </td>
                     {/if}
                   {/each}
