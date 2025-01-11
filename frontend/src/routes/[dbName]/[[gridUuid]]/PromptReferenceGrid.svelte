@@ -1,0 +1,37 @@
+<script lang="ts">
+  import { Dropdown, Spinner, Search } from 'flowbite-svelte'
+  import * as metadata from "$lib/metadata.svelte"
+  import * as Icon from 'flowbite-svelte-icons'
+  let { context, set, rowPrompt, gridPromptUuid, elementReference } = $props()
+  let searchText = $state("")
+
+  const loadPrompt = () => {
+    if(context.getSet(gridPromptUuid) === undefined) context.pushTransaction({action: metadata.ActionLoad, gridUuid: gridPromptUuid})
+  }
+</script>
+  
+<Icon.ChevronRightOutline class={"cursor-pointer " + elementReference + " dark:text-white"} onclick={() => loadPrompt()} />
+
+<Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60">
+  {#if context.getSet(gridPromptUuid) === undefined}
+    <Spinner size={4} />
+  {:else}
+    <Search size="md" bind:value={searchText} />
+    {#each context.dataSet as setPrompt}
+      {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
+        {#key "prompt-reference" + elementReference + gridPromptUuid}
+          {#each setPrompt.rows as rowReference}
+            {#if searchText === "" || rowReference.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
+              {#key "prompt" + elementReference + rowReference.uuid}
+                <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                    onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
+                  {rowReference.displayString}
+                </li>            
+              {/key}
+            {/if}
+          {/each}
+        {/key}
+      {/if}
+    {/each}
+  {/if}
+</Dropdown>

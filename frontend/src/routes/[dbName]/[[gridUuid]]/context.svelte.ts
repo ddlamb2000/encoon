@@ -249,49 +249,59 @@ export class Context {
     return ""
   }
 
-  addColumn = async (set: GridResponse, rowPrompt: RowType) => {
+  addColumn = async (set: GridResponse, rowPrompt: RowType, rowReference: RowType | undefined) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
     const columnName = this.getColumnName(set, rowPrompt)
     if(columnName !== "") {
       const column: ColumnType = { uuid: uuidColumn,
-                                    orderNumber: 5,
+                                    orderNumber: nbColumns + 1,
                                     owned: true,
                                     label: newLabel,
                                     name: columnName,
                                     type: rowPrompt.text1 || "?",
                                     typeUuid: rowPrompt.uuid,
-                                    gridUuid: set.grid.uuid}
+                                    gridUuid: set.grid.uuid,
+                                    gridPromptUuid: rowReference !== undefined ? rowReference.uuid : undefined
+                                  }
       if(set.grid.columns) set.grid.columns.push(column)
       else set.grid.columns = [column]
+      const rowsAdded = [
+        { gridUuid: metadata.UuidColumns,
+          uuid: uuidColumn,
+          text1: newLabel,
+          text2: columnName,
+          int1: nbColumns + 1,
+          created: new Date,
+          updated: new Date } 
+      ]
+      const referencedValuesAdded = [
+        { owned: false,
+          columnName: "relationship1",
+          fromUuid: uuidColumn,
+          toGridUuid: metadata.UuidGrids,
+          uuid: set.grid.uuid },
+        { owned: true,
+          columnName: "relationship1",
+          fromUuid: uuidColumn,
+          toGridUuid: metadata.UuidColumnTypes,
+          uuid: rowPrompt.uuid }
+      ] 
+      if(rowReference !== undefined) {
+        referencedValuesAdded.push(
+          { owned: true,
+            columnName: "relationship2",
+            fromUuid: uuidColumn,
+            toGridUuid: metadata.UuidGrids,
+            uuid: rowReference.uuid }  
+        )
+      }
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
         actionText: `Add column ${newLabel} (${columnName}) to grid ${set.grid.uuid} (${set.grid.text1})`,
         gridUuid: metadata.UuidColumns,
-        dataSet: {
-          rowsAdded: [
-            { gridUuid: metadata.UuidColumns,
-              uuid: uuidColumn,
-              text1: newLabel,
-              text2: columnName,
-              int1: nbColumns + 1,
-              created: new Date,
-              updated: new Date } 
-          ],
-          referencedValuesAdded: [
-            { owned: false,
-              columnName: "relationship1",
-              fromUuid: uuidColumn,
-              toGridUuid: metadata.UuidGrids,
-              uuid: set.grid.uuid },
-            { owned: true,
-              columnName: "relationship1",
-              fromUuid: uuidColumn,
-              toGridUuid: metadata.UuidColumnTypes,
-              uuid: rowPrompt.uuid }
-          ] 
-        }
+        dataSet: { rowsAdded: rowsAdded, referencedValuesAdded: referencedValuesAdded }
       })
     }
   }

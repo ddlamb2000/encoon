@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { Dropdown, Spinner, Search } from 'flowbite-svelte'
+  import { Dropdown, Spinner } from 'flowbite-svelte'
+  import PromptReferenceGrid from './PromptReferenceGrid.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context, set, gridPromptUuid, elementReference } = $props()
@@ -9,14 +10,12 @@
   }
 </script>
 
-<li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-  <span class="flex cursor-pointer" onclick={() => loadPrompt()}>
-    Add column
-    <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
-  </span>                    
+<li class="flex cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm" onclick={() => loadPrompt()}>
+  Add column
+  <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
 </li>
 
-<Dropdown placement="right-start" class="overflow-y-auto py-1">
+<Dropdown placement="right-start" class="w-40 overflow-y-auto">
   {#if context.getSet(gridPromptUuid) === undefined}
     <Spinner size={4} />
   {:else}
@@ -25,9 +24,15 @@
         {#key "prompt" + elementReference + gridPromptUuid}
           {#each setPrompt.rows as rowPrompt}
             {#key "prompt" + elementReference + rowPrompt.uuid}
-            <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm"
-                onclick={() => context.addColumn(set, rowPrompt)}>
+            <li class="cursor-pointer flex rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm"
+                onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
               {rowPrompt.displayString}
+              {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
+                <PromptReferenceGrid {context} {set} {rowPrompt}                
+                                      gridPromptUuid={metadata.UuidGrids}
+                                      elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
+
+              {/if}
             </li>            
             {/key}
           {/each}
