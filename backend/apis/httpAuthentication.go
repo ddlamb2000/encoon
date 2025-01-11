@@ -52,20 +52,6 @@ func authentication(c *gin.Context) {
 	c.JSON(http.StatusOK, JWTtoken{tokenString})
 }
 
-// function is available for mocking
-var getNewToken = func(dbName, user, userUuid, firstName, lastName string, expiration time.Time) (string, error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS512, jwt.MapClaims{
-		"user":          user,
-		"userUuid":      userUuid,
-		"userFirstName": firstName,
-		"userLastName":  lastName,
-		"expires":       expiration,
-	})
-	configuration.Trace(dbName, user, "Token generated, expiration: %v", expiration)
-	jwtSecret := configuration.GetJWTSecret(dbName)
-	return token.SignedString([]byte(jwtSecret))
-}
-
 func authMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		dbName := c.Param("dbName")
@@ -123,19 +109,4 @@ func authMiddleware() gin.HandlerFunc {
 			return
 		}
 	}
-}
-
-func getTokenParsingHandler(dbName string) jwt.Keyfunc {
-	return func(token *jwt.Token) (interface{}, error) {
-		if ok := verifyToken(token); !ok {
-			return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
-		}
-		return []byte(configuration.GetJWTSecret(dbName)), nil
-	}
-}
-
-// function is available for mocking
-var verifyToken = func(token *jwt.Token) bool {
-	_, ok := token.Method.(*jwt.SigningMethodHMAC)
-	return ok
 }

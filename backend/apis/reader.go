@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-package kafka
+package apis
 
 import (
 	"context"
@@ -10,7 +10,6 @@ import (
 	"strings"
 	"time"
 
-	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"github.com/golang-jwt/jwt"
 	"github.com/segmentio/kafka-go"
@@ -61,7 +60,7 @@ func handleMessage(dbName string, message kafka.Message) {
 		if content.Action == ActionHeartbeat {
 			response = heartBeat(content)
 		} else if content.Action == ActionAuthentication {
-			response = authentication(dbName, content)
+			response = handleAuthentication(dbName, content)
 		} else if content.Action == ActionLogout {
 			response = logOut(content)
 		} else {
@@ -131,9 +130,9 @@ func invalidMessage(content requestContent) responseContent {
 
 func handleActions(dbName string, userUuid string, userName string, content requestContent) responseContent {
 	if content.Action == ActionLoad {
-		return executeActionGrid(dbName, userUuid, userName, content, apis.GetGridsRows)
+		return executeActionGrid(dbName, userUuid, userName, content, GetGridsRows)
 	} else if content.Action == ActionChangeGrid {
-		return executeActionGrid(dbName, userUuid, userName, content, apis.PostGridsRows)
+		return executeActionGrid(dbName, userUuid, userName, content, PostGridsRows)
 	} else if content.Action == ActionLocateGrid {
 		return locate(content)
 	} else {
@@ -208,25 +207,10 @@ func invalidToken(dbName string, content requestContent) responseContent {
 	}
 }
 
-func getTokenParsingHandler(dbName string) jwt.Keyfunc {
-	return func(token *jwt.Token) (interface{}, error) {
-		if ok := verifyToken(token); !ok {
-			return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
-		}
-		return []byte(configuration.GetJWTSecret(dbName)), nil
-	}
-}
-
-// function is available for mocking
-var verifyToken = func(token *jwt.Token) bool {
-	_, ok := token.Method.(*jwt.SigningMethodHMAC)
-	return ok
-}
-
-type ActionGridDataFunc func(ct context.Context, uri string, p apis.ApiParameters, payload apis.GridPost) apis.GridResponse
+type ActionGridDataFunc func(ct context.Context, uri string, p ApiParameters, payload GridPost) GridResponse
 
 func executeActionGrid(dbName string, userUuid string, userName string, content requestContent, f ActionGridDataFunc) responseContent {
-	parameters := getParameters(dbName, userUuid, userName, content)
+	parameters := getRequestParameters(dbName, userUuid, userName, content)
 	response := f(context.Background(), "", parameters, content.DataSet)
 	if response.Err != nil {
 		return responseContent{

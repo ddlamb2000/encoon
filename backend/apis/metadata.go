@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2024
 
-package kafka
+package apis
 
 const (
 	SuccessStatus = "SUCCESS"

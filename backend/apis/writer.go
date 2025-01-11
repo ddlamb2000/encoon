@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-package kafka
+package apis
 
 import (
 	"context"
@@ -18,20 +18,23 @@ import (
 
 type CustomRoundRobin struct{}
 
-func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) (partition int) {
-	gridUuid := ""
+func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) int {
 	for _, header := range message.Headers {
 		if header.Key == "gridUuid" {
-			gridUuid = string(header.Value)
-			break
+			gridUuid := string(header.Value)
+			hash := calcHash(gridUuid)
+			nbPartitions := uint32(len(partitions))
+			balance := int(hash % nbPartitions)
+			return balance
 		}
 	}
+	return 0
+}
+
+func calcHash(input string) uint32 {
 	algorithm := fnv.New32a()
-	algorithm.Write([]byte(gridUuid))
-	nbPartitions := uint32(len(partitions))
-	hash := algorithm.Sum32()
-	balance := int(hash % nbPartitions)
-	return balance
+	algorithm.Write([]byte(input))
+	return algorithm.Sum32()
 }
 
 func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
@@ -60,6 +63,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		{Key: "dbName", Value: []byte(dbName)},
 		{Key: "userUuid", Value: []byte(userUuid)},
 		{Key: "user", Value: []byte(user)},
+		{Key: "gridUuid", Value: []byte(gridUuid)},
 		{Key: "contextUuid", Value: []byte(contextUuid)},
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 		{Key: "requestReceivedOn", Value: []byte(receivedOn)},

@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-package kafka
+package apis
 
 import (
 	"context"
@@ -13,7 +13,7 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func authentication(dbName string, content requestContent) responseContent {
+func handleAuthentication(dbName string, content requestContent) responseContent {
 	if dbName == "" || content.Userid == "" || content.Password == "" {
 		return responseContent{
 			Status:      FailedStatus,
@@ -77,4 +77,19 @@ var getNewToken = func(dbName, user, userUuid, firstName, lastName string, expir
 	configuration.Trace(dbName, user, "Token generated, expiration: %v", expiration)
 	jwtSecret := configuration.GetJWTSecret(dbName)
 	return token.SignedString([]byte(jwtSecret))
+}
+
+func getTokenParsingHandler(dbName string) jwt.Keyfunc {
+	return func(token *jwt.Token) (interface{}, error) {
+		if ok := verifyToken(token); !ok {
+			return nil, configuration.LogAndReturnError(dbName, "", "Unexpect signing method: %v.", token.Header["alg"])
+		}
+		return []byte(configuration.GetJWTSecret(dbName)), nil
+	}
+}
+
+// function is available for mocking
+var verifyToken = func(token *jwt.Token) bool {
+	_, ok := token.Method.(*jwt.SigningMethodHMAC)
+	return ok
 }

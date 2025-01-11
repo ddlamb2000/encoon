@@ -1,7 +1,7 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-package kafka
+package apis
 
 import (
 	"testing"
