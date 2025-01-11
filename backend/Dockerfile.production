@@ -8,7 +8,6 @@ COPY configuration configuration
 COPY database database
 COPY model model
 COPY utils utils
-COPY kafka kafka
 COPY encoon.go .
 RUN go build -v
 
