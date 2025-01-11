@@ -6,7 +6,7 @@
   import * as metadata from "$lib/metadata.svelte"
   import { fade } from 'svelte/transition'
   let { context = $bindable(), gridUuid } = $props()
-  const colorFocus = "bg-yellow-100/30"
+  const colorFocus = "bg-yellow-100/10"
 </script>
 
 {#if context.getSet(gridUuid) === undefined}

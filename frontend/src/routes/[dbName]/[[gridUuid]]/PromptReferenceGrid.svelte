@@ -11,19 +11,18 @@
 </script>
   
 <Icon.ChevronRightOutline class={"cursor-pointer " + elementReference + " dark:text-white"} onclick={() => loadPrompt()} />
-
-<Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60">
+<Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60 shadow-lg">
   {#if context.getSet(gridPromptUuid) === undefined}
     <Spinner size={4} />
   {:else}
-    <Search size="md" bind:value={searchText} />
+    <Search size="md" class="py-1" bind:value={searchText} />
     {#each context.dataSet as setPrompt}
       {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
         {#key "prompt-reference" + elementReference + gridPromptUuid}
           {#each setPrompt.rows as rowReference}
             {#if searchText === "" || rowReference.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
               {#key "prompt" + elementReference + rowReference.uuid}
-                <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600"
+                <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
                     onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
                   {rowReference.displayString}
                 </li>            
