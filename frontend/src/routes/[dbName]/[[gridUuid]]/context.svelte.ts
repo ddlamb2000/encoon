@@ -231,7 +231,7 @@ export class Context {
       case metadata.UuidIntColumnType:
         return "int"
       case metadata.UuidReferenceColumnType:
-        return "reference"
+        return "relationship"
       }
     return ""
   }
