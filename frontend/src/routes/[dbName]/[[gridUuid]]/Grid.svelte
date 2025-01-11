@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Dropdown, Spinner } from 'flowbite-svelte'
+	import { Dropdown, Spinner, Toggle } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
@@ -86,9 +86,9 @@
                       </td>
                     {:else if column.typeUuid === metadata.UuidTextColumnType || column.typeUuid === metadata.UuidUuidColumnType}
                       <td contenteditable
-                          class="{context.isFocused(set, column, row) ? colorFocus : ''}"
+                          class="{context.isFocused(set, column, row) ? colorFocus : ''} {column.typeUuid === metadata.UuidUuidColumnType ? ' font-mono' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
-                          oninput={() => context.changeCell(set, row)}
+                          oninput={() => context.changeCell(set, column, row)}
                           bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
@@ -101,7 +101,10 @@
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td>
-                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                        <Toggle size="small"
+                                bind:checked={context.dataSet[indexSet].rows[rowIndex][column.name]}
+                                onfocus={() => context.changeFocus(set.grid, column, row)}
+                                oninput={() => context.changeCell(set, column, row)} />
                       </td>
                     {:else if column.typeUuid === metadata.UuidIntColumnType}
                       <td>

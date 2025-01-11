@@ -207,8 +207,11 @@ export class Context {
 	}
 
  changeCell = debounce(
-    async (set: GridResponse, row: RowType) => {
+    async (set: GridResponse, column: ColumnType, row: RowType) => {
       row.updated = new Date
+      if(column.typeUuid === metadata.UuidBooleanColumnType) { // TODO: replace with boolean columns
+        row[column.name] = row[column.name].toString()
+      }
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
@@ -249,7 +252,7 @@ export class Context {
     return ""
   }
 
-  addColumn = async (set: GridResponse, rowPrompt: RowType, rowReference: RowType | undefined) => {
+  addColumn = async (set: GridResponse, rowPrompt: RowType, rowReference: RowType | undefined = undefined) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
