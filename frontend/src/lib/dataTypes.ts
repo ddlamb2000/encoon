@@ -28,9 +28,9 @@ export interface ColumnType {
   owned?: boolean
   label?: string
   name: string
-  type?: string
-  typeUuid?: string
-  gridUuid?: string
+  type: string
+  typeUuid: string
+  gridUuid: string
   grid?: GridType
   gridPromptUuid?: string
   bidirectional?: boolean

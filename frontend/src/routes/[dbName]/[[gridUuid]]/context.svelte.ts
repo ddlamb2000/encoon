@@ -83,7 +83,7 @@ export class Context {
   pushTransaction = async (request: RequestContent) => {
     return this.sendMessage(
       false,
-      request.action + ":" + this.dbName + ":" + newUuid(),
+      request.action + ":" + this.dbName + ":" + this.user.getUser() + ":" + newUuid(),
       [
         {key: 'from', value: 'εncooη frontend'},
         {key: 'url', value: this.url},
@@ -102,7 +102,7 @@ export class Context {
   pushAdminMessage = async (request: RequestContent) => {
     return this.sendMessage(
       true,
-      request.action + ":" + this.dbName,
+      request.action + ":" + this.dbName + ":" + this.user.getUser(),
       [
         {key: 'from', value: 'εncooη frontend'},
         {key: 'url', value: this.url},
@@ -120,8 +120,12 @@ export class Context {
   }
 
   trackResponse = (response) => {
+    // Remove corresponding request from messageStack
     const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.messageKey)
     if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
+    // Compaction of the messageStack
+    const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
+    if(responseIndex >= 0) this.messageStack.splice(responseIndex, 1)
     this.messageStack.push({response : response})
     if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
   }
@@ -207,7 +211,7 @@ export class Context {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: 'changeCell',
+          actionText: `Update value on row ${row.uuid} into grid ${set.grid.uuid} (${set.grid.text1})`,
           gridUuid: set.grid.uuid,
           dataSet: { rowsEdited: [row] }
         }
@@ -216,7 +220,7 @@ export class Context {
     500
   )
 
-  addColumn = async (set: GridResponse) => {
+  addColumn = async (set: GridResponse, rowPrompt: RowType) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
@@ -226,14 +230,14 @@ export class Context {
                                   owned: true,
                                   label: newLabel,
                                   name: newText,
-                                  type: 'Text',
-                                  typeUuid: metadata.UuidTextColumnType,
+                                  type: rowPrompt.text1 || "?",
+                                  typeUuid: rowPrompt.uuid,
                                   gridUuid: set.grid.uuid}
     if(set.grid.columns) set.grid.columns.push(column)
     else set.grid.columns = [column]
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: 'addColumn',
+      actionText: `Add column ${newLabel} (${newText}) to grid ${set.grid.uuid} (${set.grid.text1})`,
       gridUuid: metadata.UuidColumns,
       dataSet: {
         rowsAdded: [
@@ -255,7 +259,7 @@ export class Context {
             columnName: "relationship1",
             fromUuid: uuidColumn,
             toGridUuid: metadata.UuidColumnTypes,
-            uuid: metadata.UuidTextColumnType }
+            uuid: rowPrompt.uuid }
         ] 
       }
     })
@@ -267,7 +271,7 @@ export class Context {
     set.rows.push(row)
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: 'addRow',
+      actionText: `Add row ${uuid} to grid ${set.grid.uuid} (${set.grid.text1})`,
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
     })
@@ -279,7 +283,7 @@ export class Context {
       set.rows.splice(rowIndex, 1)
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
-        actionText: 'removeRow',
+        actionText: `Remove row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
         gridUuid: set.grid.uuid,
         dataSet: { rowsDeleted: [row] }
       })
@@ -292,7 +296,7 @@ export class Context {
       set.grid.columns.splice(columnIndex, 1)
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
-        actionText: 'removeColumn',
+        actionText: `Remove column ${column.label} (${column.name}) from grid ${set.grid.uuid} (${set.grid.text1})`,
         gridUuid: metadata.UuidColumns,
         dataSet: {
           rowsDeleted: [
@@ -311,7 +315,7 @@ export class Context {
               columnName: "relationship1",
               fromUuid: column.uuid,
               toGridUuid: metadata.UuidColumnTypes,
-              uuid: metadata.UuidTextColumnType }
+              uuid: column.typeUuid }
           ] 
         }
       })
@@ -343,7 +347,7 @@ export class Context {
     this.dataSet.push(set)
     this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: 'newGrid',
+      actionText: `Add grid ${grid.uuid} (${grid.text1})`,
       gridUuid: metadata.UuidGrids,
       dataSet: {
         rowsAdded: [
@@ -357,7 +361,14 @@ export class Context {
         ]
       }
     })
-    this.addColumn(set)
+    const rowPrompt: RowType = {
+      gridUuid: metadata.UuidColumnTypes,
+      uuid: metadata.UuidTextColumnType,
+      text1: "Text",
+      created: new Date,
+      updated: new Date
+    }
+    this.addColumn(set, rowPrompt)
     this.addRow(set)
     this.navigateToGrid(gridUuid)
   }
@@ -382,7 +393,7 @@ export class Context {
     }
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: 'addReferenceValue',
+      actionText: `Add reference value ${rowPrompt.uuid} to grid ${set.grid.uuid} (${set.grid.text1})`,
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesAdded: [
@@ -408,7 +419,7 @@ export class Context {
     }
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: 'removeReferenceValue',
+      actionText: `Remove reference value ${rowPrompt.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesRemoved: [
@@ -427,7 +438,7 @@ export class Context {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: 'changeGrid',
+          actionText: `Update grid ${grid.uuid} (${grid.text1})`,
           gridUuid: metadata.UuidGrids,
           dataSet: { rowsEdited: [grid] }
         }
@@ -437,11 +448,11 @@ export class Context {
   )
 
   changeColumn = debounce(
-    async (column: ColumnType) => {
+    async (grid: GridType, column: ColumnType) => {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: 'changeColumn',
+          actionText: `Update column ${column.label} (${column.name}) on grid ${grid.uuid} (${grid.text1})`,
           gridUuid: metadata.UuidColumns,
           dataSet: {
             rowsEdited: [

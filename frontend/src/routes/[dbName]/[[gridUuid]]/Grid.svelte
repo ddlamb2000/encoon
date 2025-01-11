@@ -29,7 +29,7 @@
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
                 <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
-                <Dropdown class="w-48" triggeredBy={".first-column-menu-" + set.grid.uuid}>
+                <Dropdown class="w-40" triggeredBy={".first-column-menu-" + set.grid.uuid}>
                   <PromptColumnType {context} {set}
                                     gridPromptUuid={metadata.UuidColumnTypes}
                                     elementReference={"referenceColumnType-" + set.grid.uuid} />
@@ -39,16 +39,15 @@
                 <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
                     <span contenteditable
-                          oninput={() => context.changeColumn(column)}
+                          oninput={() => context.changeColumn(set.grid, column)}
                           bind:innerHTML={context.dataSet[indexSet].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                    <Dropdown class="w-48" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
+                    <Dropdown class="w-40" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       <PromptColumnType {context} {set}
                                         gridPromptUuid={metadata.UuidColumnTypes}
                                         elementReference={"referenceColumnType-" + set.grid.uuid} />
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
                         <span class="flex" onclick={() => context.removeColumn(set, column)}>
-                          <Icon.DeleteColumnOutline />
                           Remove column
                         </span>
                       </li>

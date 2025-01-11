@@ -11,13 +11,12 @@
 
 <li class="rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
   <span class="flex cursor-pointer" onclick={() => loadPrompt()}>
-    <Icon.AddColumnAfterOutline />
     Add column
     <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
   </span>                    
 </li>
 
-<Dropdown placement="right-start" class="w-36 overflow-y-auto py-1">
+<Dropdown placement="right-start" class="overflow-y-auto py-1">
   {#if context.getSet(gridPromptUuid) === undefined}
     <Spinner size={4} />
   {:else}
@@ -27,7 +26,7 @@
           {#each setPrompt.rows as rowPrompt}
             {#key "prompt" + elementReference + rowPrompt.uuid}
             <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm"
-                onclick={() => context.addColumn(set)}>
+                onclick={() => context.addColumn(set, rowPrompt)}>
               {rowPrompt.displayString}
             </li>            
             {/key}

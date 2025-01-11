@@ -18,7 +18,7 @@
               {message.request.messageKey}
               <Badge color="blue" rounded class="px-2.5 py-0.5">
                 {message.request.action}
-                {#if message.request.actionText}[{message.request.actionText}]{/if}
+                {message.request.actionText}
               </Badge>              
               {#if message.request.dateTime !== undefined}<DateTime dateTime={message.request.dateTime} />{/if}
             </p>
@@ -40,7 +40,7 @@
               {#if message.response.action}
                 <Badge color="blue" rounded class="px-2.5 py-0.5">
                   {message.response.action}
-                  {#if message.response.actionText}[{message.response.actionText}]{/if}
+                  {message.response.actionText}
                 </Badge>
               {/if}
               <Badge color={message.response.status === SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
