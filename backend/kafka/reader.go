@@ -10,21 +10,22 @@ import (
 	"strings"
 	"time"
 
+	"d.lambert.fr/encoon/apis"
 	"d.lambert.fr/encoon/configuration"
 	"github.com/golang-jwt/jwt"
 	"github.com/segmentio/kafka-go"
 )
 
-func SetAndStartKafkaReader() {
+func ReadMessagesFromKafka() {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
-		topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbConfig.Name + "-requests"
-		groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbConfig.Name
-		go setAndStartKafkaReaderForDatabase(dbConfig.Name, kafkaBrokers, groupID, topic)
+		go readMessages(dbConfig.Name, kafkaBrokers)
 	}
 }
 
-func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, groupID string, topic string) {
+func readMessages(dbName string, kafkaBrokers string) {
+	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
+	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbName
 	consumer := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
@@ -34,12 +35,11 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 		RebalanceTimeout: 2 * time.Second,
 		CommitInterval:   time.Second,
 	})
-
 	configuration.Log(dbName, "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
 	for {
 		message, err := consumer.ReadMessage(context.Background())
 		if err != nil {
-			configuration.LogError(dbName, "", "could not read message: %v", err)
+			configuration.LogError(dbName, "", "Error reading message: %v", err)
 			continue
 		}
 		handleMessage(dbName, message)
@@ -47,11 +47,35 @@ func setAndStartKafkaReaderForDatabase(dbName string, kafkaBrokers string, group
 }
 
 func handleMessage(dbName string, message kafka.Message) {
+	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
+	requestInitiatedOn, tokenString, gridUuid, contextUuid := getDataFromHeaders(message)
+	var content requestContent
+	var response responseContent
+	user := ""
+	userUuid := ""
+	if err := json.Unmarshal(message.Value, &content); err != nil {
+		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
+		response = invalidMessage(content)
+	} else {
+		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
+		if content.Action == ActionHeartbeat {
+			response = heartBeat(content)
+		} else if content.Action == ActionAuthentication {
+			response = authentication(dbName, content)
+		} else if content.Action == ActionLogout {
+			response = logOut(content)
+		} else {
+			userUuid, user, response = validMessage(dbName, tokenString, content)
+		}
+	}
+	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
+}
+
+func getDataFromHeaders(message kafka.Message) (string, string, string, string) {
 	requestInitiatedOn := ""
 	tokenString := ""
 	gridUuid := ""
 	contextUuid := ""
-	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	for _, header := range message.Headers {
 		switch header.Key {
 		case "requestInitiatedOn":
@@ -64,99 +88,124 @@ func handleMessage(dbName string, message kafka.Message) {
 			contextUuid = string(header.Value)
 		}
 	}
-	var content requestContent
-	var response responseContent
-	user := ""
-	userUuid := ""
-	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
-		response = responseContent{
-			Status:      FailedStatus,
-			Action:      content.Action,
-			ActionText:  content.ActionText,
-			TextMessage: "Incorrect message",
-		}
+	return requestInitiatedOn, tokenString, gridUuid, contextUuid
+}
+
+func validMessage(dbName string, tokenString string, content requestContent) (string, string, responseContent) {
+	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
+	if err != nil {
+		return "", "", invalidToken(dbName, content)
 	} else {
-		if content.Action == ActionHeartbeat {
-			response = responseContent{
-				Status: SuccessStatus,
-				Action: content.Action,
-			}
-		} else if content.Action == ActionAuthentication {
-			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-			response = authentication(dbName, content)
-		} else if content.Action == ActionLogout {
-			configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-			response = responseContent{
-				Status:      SuccessStatus,
-				Action:      content.Action,
-				ActionText:  content.ActionText,
-				TextMessage: "User logged out",
+		if token == nil {
+			return "", "", notAuthorization(dbName, content)
+		} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			userUuid, user, tokenExpired := getDataFromJWTClaims(claims)
+			if tokenExpired {
+				return "", "", expired(dbName, user, content)
+			} else {
+				return userUuid, user, handleActions(dbName, userUuid, user, content)
 			}
 		} else {
-			token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
-			if err != nil {
-				configuration.LogError(dbName, "", "Invalid token for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
-				response = responseContent{
-					Status:      FailedStatus,
-					Action:      content.Action,
-					ActionText:  content.ActionText,
-					TextMessage: "Invalid token",
-				}
-			} else {
-				if token == nil {
-					configuration.LogError(dbName, "", "No authorization for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-					response = responseContent{
-						Status:      FailedStatus,
-						Action:      content.Action,
-						ActionText:  content.ActionText,
-						TextMessage: "No authorization",
-					}
-				} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-					today := time.Now()
-					expiration := claims["expires"]
-					expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
-					user = fmt.Sprintf("%v", claims["user"])
-					userUuid = fmt.Sprintf("%v", claims["userUuid"])
-					if today.After(expirationDate) {
-						configuration.LogError(dbName, user, "Authorization expired for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-						response = responseContent{
-							Status:      FailedStatus,
-							Action:      content.Action,
-							ActionText:  content.ActionText,
-							TextMessage: "Authorization expired",
-						}
-					} else {
-						configuration.Log(dbName, user, "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-						if content.Action == ActionLoad {
-							response = getGrid(dbName, userUuid, user, content)
-						} else if content.Action == ActionChangeGrid {
-							response = postGrid(dbName, userUuid, user, content)
-						} else if content.Action == ActionLocateGrid {
-							response = locate(dbName, content)
-						} else {
-							configuration.Log(dbName, "", "Invalid action: % %ss", content.Action, content.ActionText)
-							response = responseContent{
-								Status:      FailedStatus,
-								Action:      content.Action,
-								ActionText:  content.ActionText,
-								TextMessage: "Invalid action (" + content.Action + ")",
-							}
-						}
-					}
-				} else {
-					configuration.LogError(dbName, "", "Invalid request for message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
-					response = responseContent{
-						Status:      FailedStatus,
-						Action:      content.Action,
-						ActionText:  content.ActionText,
-						TextMessage: "Invalid request",
-					}
-				}
-			}
+			return "", "", invalidToken(dbName, content)
 		}
 	}
-	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
+}
+
+func getDataFromJWTClaims(claims jwt.MapClaims) (string, string, bool) {
+	today := time.Now()
+	expiration := claims["expires"]
+	expirationDate, _ := time.Parse(time.RFC3339Nano, fmt.Sprintf("%v", expiration))
+	userUuid := fmt.Sprintf("%v", claims["userUuid"])
+	user := fmt.Sprintf("%v", claims["user"])
+	return userUuid, user, today.After(expirationDate)
+}
+
+func invalidMessage(content requestContent) responseContent {
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "Incorrect message",
+	}
+}
+
+func handleActions(dbName string, userUuid string, userName string, content requestContent) responseContent {
+	if content.Action == ActionLoad {
+		return executeActionGrid(dbName, userUuid, userName, content, apis.GetGridsRows)
+	} else if content.Action == ActionChangeGrid {
+		return executeActionGrid(dbName, userUuid, userName, content, apis.PostGridsRows)
+	} else if content.Action == ActionLocateGrid {
+		return locate(content)
+	} else {
+		return invalidAction(dbName, content)
+	}
+}
+
+func heartBeat(content requestContent) responseContent {
+	return responseContent{
+		Status: SuccessStatus,
+		Action: content.Action,
+	}
+}
+
+func logOut(content requestContent) responseContent {
+	return responseContent{
+		Status:      SuccessStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "User logged out",
+	}
+}
+
+func locate(content requestContent) responseContent {
+	return responseContent{
+		Status:     SuccessStatus,
+		Action:     content.Action,
+		ActionText: content.ActionText,
+		GridUuid:   content.GridUuid,
+		ColumnUuid: content.ColumnUuid,
+		RowUuid:    content.RowUuid,
+	}
+}
+
+func notAuthorization(dbName string, content requestContent) responseContent {
+	configuration.LogError(dbName, "", "No authorization for action: %s %s", content.Action, content.ActionText)
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "No authorization",
+	}
+}
+
+func expired(dbName string, userName string, content requestContent) responseContent {
+	configuration.LogError(dbName, userName, "Authorization expired for action: %s %s", content.Action, content.ActionText)
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "Authorization expired",
+	}
+}
+
+func invalidAction(dbName string, content requestContent) responseContent {
+	configuration.Log(dbName, "", "Invalid action: %s %s", content.Action, content.ActionText)
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "Invalid action (" + content.Action + ")",
+	}
+}
+
+func invalidToken(dbName string, content requestContent) responseContent {
+	configuration.LogError(dbName, "", "Invalid token for action: %s %s", content.Action, content.ActionText)
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		TextMessage: "Invalid token",
+	}
 }
 
 func getTokenParsingHandler(dbName string) jwt.Keyfunc {
@@ -172,4 +221,26 @@ func getTokenParsingHandler(dbName string) jwt.Keyfunc {
 var verifyToken = func(token *jwt.Token) bool {
 	_, ok := token.Method.(*jwt.SigningMethodHMAC)
 	return ok
+}
+
+type ActionGridDataFunc func(ct context.Context, uri string, p apis.ApiParameters, payload apis.GridPost) apis.GridResponse
+
+func executeActionGrid(dbName string, userUuid string, userName string, content requestContent, f ActionGridDataFunc) responseContent {
+	parameters := getParameters(dbName, userUuid, userName, content)
+	response := f(context.Background(), "", parameters, content.DataSet)
+	if response.Err != nil {
+		return responseContent{
+			Status:      FailedStatus,
+			Action:      content.Action,
+			ActionText:  content.ActionText,
+			TextMessage: response.Err.Error(),
+		}
+	}
+	return responseContent{
+		Status:     SuccessStatus,
+		Action:     content.Action,
+		ActionText: content.ActionText,
+		GridUuid:   content.GridUuid,
+		DataSet:    response,
+	}
 }

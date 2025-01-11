@@ -54,7 +54,7 @@ func main() {
 				doneChan <- true
 			}()
 			go apis.InitializeCaches()
-			go kafka.SetAndStartKafkaReader()
+			go kafka.ReadMessagesFromKafka()
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()

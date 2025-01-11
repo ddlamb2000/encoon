@@ -39,7 +39,7 @@ var getGridInstanceForGridsApi = func(r ApiRequest, gridUuid string) (*model.Gri
 	t := r.startTiming()
 	defer r.stopTiming("getGridInstanceForGridsApi()", t)
 	query := getGridQueryForGridsApi()
-	parms := getGridQueryParametersForGridsApi(gridUuid, r.p.UserUuid)
+	parms := getGridQueryParametersForGridsApi(gridUuid)
 	r.trace("getGridInstanceForGridsApi(%s) - query=%s ; parms=%v", gridUuid, query, parms)
 	set, err := r.db.QueryContext(r.ctx, query, parms...)
 	if err != nil {
@@ -118,7 +118,7 @@ var getGridQueryForGridsApi = func() string {
 		"AND grids.enabled = true"
 }
 
-func getGridQueryParametersForGridsApi(gridUuid, userUuid string) []any {
+func getGridQueryParametersForGridsApi(gridUuid string) []any {
 	parameters := make([]any, 0)
 	parameters = append(parameters, model.UuidGrids)
 	parameters = append(parameters, gridUuid)

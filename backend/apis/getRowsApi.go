@@ -11,7 +11,7 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func GetGridsRows(ct context.Context, uri string, p ApiParameters) GridResponse {
+func GetGridsRows(ct context.Context, uri string, p ApiParameters, payload GridPost) GridResponse {
 	r, cancel, err := createContextAndApiRequest(ct, p, uri)
 	defer cancel()
 	t := r.startTiming()

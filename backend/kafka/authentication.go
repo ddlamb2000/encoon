@@ -1,5 +1,5 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2024
+// Copyright David Lambert 2025
 
 package kafka
 
@@ -21,11 +21,11 @@ func authentication(dbName string, content requestContent) responseContent {
 			TextMessage: "Authentication: missing username or passphrase",
 		}
 	}
-	configuration.Log(dbName, "*", "Authentication: %s try to login", content.Userid)
+	configuration.Log(dbName, "", "Authentication: %s try to login", content.Userid)
 	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(context.Background(), dbName, content.Userid, content.Password)
 	if err != nil || userUuid == "" {
 		if timeOut {
-			configuration.LogError(dbName, "*", "Authentication: time out ", err)
+			configuration.LogError(dbName, "", "Authentication: time out ", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      content.Action,
@@ -33,7 +33,7 @@ func authentication(dbName string, content requestContent) responseContent {
 				TextMessage: "Authentication: time out " + err.Error(),
 			}
 		} else {
-			configuration.LogError(dbName, "*", "Authentication: failed ", err)
+			configuration.LogError(dbName, "", "Authentication: failed ", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      content.Action,
@@ -45,7 +45,7 @@ func authentication(dbName string, content requestContent) responseContent {
 	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
 	token, err := getNewToken(dbName, content.Userid, userUuid, firstName, lastName, expiration)
 	if err != nil {
-		configuration.LogError(dbName, "*", "Authentication: creation of JWT failed ", err)
+		configuration.LogError(dbName, "", "Authentication: creation of JWT failed ", err)
 		return responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
