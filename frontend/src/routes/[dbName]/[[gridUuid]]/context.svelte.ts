@@ -208,6 +208,7 @@ export class Context {
 
  changeCell = debounce(
     async (set: GridResponse, row: RowType) => {
+      row.updated = new Date
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
@@ -220,10 +221,32 @@ export class Context {
     500
   )
 
+  getPrefixFromColumknType = (columnTypeUuid: string): string => {
+    switch(columnTypeUuid) {
+      case metadata.UuidTextColumnType:
+      case metadata.UuidPasswordColumnType:
+      case metadata.UuidUuidColumnType:
+      case metadata.UuidBooleanColumnType:
+        return "text"
+      case metadata.UuidIntColumnType:
+        return "int"
+      case metadata.UuidReferenceColumnType:
+        return "reference"
+      }
+    return ""
+  }
+
   getColumnName = (set: GridResponse, rowPrompt: RowType): string => {
-    const nbColumns = set.grid.columns ? set.grid.columns.length : 0
-    const columnName = 'text' + (nbColumns + 1)
-    return columnName
+    if(set.grid && rowPrompt.uuid) {
+      const prefixColumnName = this.getPrefixFromColumknType(rowPrompt.uuid)
+      const columnsSamePrefix = set.grid.columns !== undefined ? set.grid.columns.filter((c) => this.getPrefixFromColumknType(c.typeUuid) === prefixColumnName) : undefined
+      const nbColumnsSamePrefix = columnsSamePrefix !== undefined ? columnsSamePrefix.length : 0
+      if(nbColumnsSamePrefix < 10) {
+        const columnName = prefixColumnName + (nbColumnsSamePrefix + 1)
+        return columnName
+      }
+    }
+    return ""
   }
 
   addColumn = async (set: GridResponse, rowPrompt: RowType) => {

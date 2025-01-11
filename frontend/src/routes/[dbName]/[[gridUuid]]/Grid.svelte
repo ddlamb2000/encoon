@@ -28,7 +28,7 @@
           <thead class="border border-slate-200">
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
-                {#if set.grid.columns.length === 0}
+                {#if set.grid.columns === undefined || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40" triggeredBy={".first-column-menu-" + set.grid.uuid}>
                     <PromptColumnType {context} {set}
