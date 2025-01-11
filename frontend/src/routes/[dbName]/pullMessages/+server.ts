@@ -1,6 +1,6 @@
 import { env } from "$env/dynamic/private"
 import { kafka } from '$lib/kafka'
-import { newUuid } from "$lib/utils.svelte"
+import { newUuid } from "$lib/utils.svelte.ts"
 import * as metadata from "$lib/metadata.svelte"
 	
 export const GET = async ({ params, request, url }) => {

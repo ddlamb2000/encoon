@@ -8,7 +8,7 @@ import type { KafkaMessageRequest,
               ColumnType,
               GridType,
               ReferenceType } from '$lib/dataTypes.ts'
-import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte"
+import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { User } from './user.svelte.ts'
 import { Focus } from './focus.svelte.ts'
 import { replaceState } from "$app/navigation"
@@ -220,49 +220,57 @@ export class Context {
     500
   )
 
+  getColumnName = (set: GridResponse, rowPrompt: RowType): string => {
+    const nbColumns = set.grid.columns ? set.grid.columns.length : 0
+    const columnName = 'text' + (nbColumns + 1)
+    return columnName
+  }
+
   addColumn = async (set: GridResponse, rowPrompt: RowType) => {
     const uuidColumn = newUuid()
     const nbColumns = set.grid.columns ? set.grid.columns.length : 0
     const newLabel = numberToLetters(nbColumns)
-    const newText = 'text' + (nbColumns + 1)
-    const column: ColumnType = { uuid: uuidColumn,
-                                  orderNumber: 5,
-                                  owned: true,
-                                  label: newLabel,
-                                  name: newText,
-                                  type: rowPrompt.text1 || "?",
-                                  typeUuid: rowPrompt.uuid,
-                                  gridUuid: set.grid.uuid}
-    if(set.grid.columns) set.grid.columns.push(column)
-    else set.grid.columns = [column]
-    return this.pushTransaction({
-      action: metadata.ActionChangeGrid,
-      actionText: `Add column ${newLabel} (${newText}) to grid ${set.grid.uuid} (${set.grid.text1})`,
-      gridUuid: metadata.UuidColumns,
-      dataSet: {
-        rowsAdded: [
-          { gridUuid: metadata.UuidColumns,
-            uuid: uuidColumn,
-            text1: newLabel,
-            text2: newText,
-            int1: nbColumns + 1,
-            created: new Date,
-            updated: new Date } 
-        ],
-        referencedValuesAdded: [
-          { owned: false,
-            columnName: "relationship1",
-            fromUuid: uuidColumn,
-            toGridUuid: metadata.UuidGrids,
-            uuid: set.grid.uuid },
-          { owned: true,
-            columnName: "relationship1",
-            fromUuid: uuidColumn,
-            toGridUuid: metadata.UuidColumnTypes,
-            uuid: rowPrompt.uuid }
-        ] 
-      }
-    })
+    const columnName = this.getColumnName(set, rowPrompt)
+    if(columnName !== "") {
+      const column: ColumnType = { uuid: uuidColumn,
+                                    orderNumber: 5,
+                                    owned: true,
+                                    label: newLabel,
+                                    name: columnName,
+                                    type: rowPrompt.text1 || "?",
+                                    typeUuid: rowPrompt.uuid,
+                                    gridUuid: set.grid.uuid}
+      if(set.grid.columns) set.grid.columns.push(column)
+      else set.grid.columns = [column]
+      return this.pushTransaction({
+        action: metadata.ActionChangeGrid,
+        actionText: `Add column ${newLabel} (${columnName}) to grid ${set.grid.uuid} (${set.grid.text1})`,
+        gridUuid: metadata.UuidColumns,
+        dataSet: {
+          rowsAdded: [
+            { gridUuid: metadata.UuidColumns,
+              uuid: uuidColumn,
+              text1: newLabel,
+              text2: columnName,
+              int1: nbColumns + 1,
+              created: new Date,
+              updated: new Date } 
+          ],
+          referencedValuesAdded: [
+            { owned: false,
+              columnName: "relationship1",
+              fromUuid: uuidColumn,
+              toGridUuid: metadata.UuidGrids,
+              uuid: set.grid.uuid },
+            { owned: true,
+              columnName: "relationship1",
+              fromUuid: uuidColumn,
+              toGridUuid: metadata.UuidColumnTypes,
+              uuid: rowPrompt.uuid }
+          ] 
+        }
+      })
+    }
   }
   
   addRow = async (set: GridResponse) => {

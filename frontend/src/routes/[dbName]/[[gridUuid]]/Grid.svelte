@@ -28,12 +28,14 @@
           <thead class="border border-slate-200">
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
-                <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
-                <Dropdown class="w-40" triggeredBy={".first-column-menu-" + set.grid.uuid}>
-                  <PromptColumnType {context} {set}
-                                    gridPromptUuid={metadata.UuidColumnTypes}
-                                    elementReference={"referenceColumnType-" + set.grid.uuid} />
-                </Dropdown>
+                {#if set.grid.columns.length === 0}
+                  <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
+                  <Dropdown class="w-40" triggeredBy={".first-column-menu-" + set.grid.uuid}>
+                    <PromptColumnType {context} {set}
+                                      gridPromptUuid={metadata.UuidColumnTypes}
+                                      elementReference={"referenceColumnType-" + set.grid.uuid} />
+                  </Dropdown>
+                {/if}
               </th>
               {#each set.grid.columns as column, indexColumn}
                 <th class="sticky -top-3 py-1 bg-gray-100">
@@ -43,9 +45,11 @@
                           bind:innerHTML={context.dataSet[indexSet].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
-                      <PromptColumnType {context} {set}
-                                        gridPromptUuid={metadata.UuidColumnTypes}
-                                        elementReference={"referenceColumnType-" + set.grid.uuid} />
+                      {#if indexColumn === set.grid.columns.length - 1}
+                        <PromptColumnType {context} {set}
+                                          gridPromptUuid={metadata.UuidColumnTypes}
+                                          elementReference={"referenceColumnType-" + set.grid.uuid} />
+                      {/if}
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
                         <span class="flex" onclick={() => context.removeColumn(set, column)}>
                           Remove column
