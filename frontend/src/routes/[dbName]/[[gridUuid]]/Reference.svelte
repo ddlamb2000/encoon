@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { Badge } from 'flowbite-svelte'
   import Prompt from './Prompt.svelte'
   let { context, set, column, row } = $props()
 </script>
@@ -7,7 +8,9 @@
   {#if reference.owned && reference.name == column.name}
     {#each reference.rows as referencedRow, indexReferencedRow}
       {#if indexReferencedRow > 0}<br/>{/if}
-        {referencedRow.displayString}
+        <Badge color="dark" rounded class="px-2.5 py-0.5">
+          {referencedRow.displayString}
+        </Badge>      
     {/each}
   {/if}
 {/each}

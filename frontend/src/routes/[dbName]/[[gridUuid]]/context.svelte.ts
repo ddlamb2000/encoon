@@ -212,8 +212,8 @@ export class Context {
       const rowClone = Object.assign({}, row)
       set.grid.columns?.forEach((column) => {
         if(column.typeUuid === metadata.UuidIntColumnType) {
-          if(row[column.name] === "<br>") rowClone[column.name] = undefined
-          else rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
+          if(row[column.name] === undefined || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
+          else if(typeof row[column.name] === "string") rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
         }
       })
       this.pushTransaction(

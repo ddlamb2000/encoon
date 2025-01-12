@@ -96,6 +96,7 @@
                               || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''} {column.typeUuid === metadata.UuidUuidColumnType ? ' font-mono' : ''}"
+                          align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>

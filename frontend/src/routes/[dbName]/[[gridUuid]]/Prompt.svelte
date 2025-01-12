@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Dropdown, Spinner, Search } from 'flowbite-svelte'
+  import { Dropdown, Spinner, Search, Badge } from 'flowbite-svelte'
   import * as metadata from "$lib/metadata.svelte"
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row, gridPromptUuid, elementReference } = $props()
@@ -11,11 +11,11 @@
 </script>
   
 <span class="inline-block">
-  <Icon.WindowOutline size="sm" 
-                      color="gray"
-                      class={"cursor-pointer " + elementReference + " dark:text-white"} 
-                      onclick={() => loadPrompt()}
-                      onfocus={() => context.changeFocus(set.grid, column, row)} />
+  <Icon.ChevronDownOutline
+    size="sm" color="gray"
+    class={"cursor-pointer " + elementReference + " dark:text-white"} 
+    onclick={() => loadPrompt()}
+    onfocus={() => context.changeFocus(set.grid, column, row)} />
 </span>
 <Dropdown triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60 shadow-lg">
   {#if context.getSet(gridPromptUuid) === undefined}
@@ -26,11 +26,11 @@
         {#each reference.rows as referencedRow, indexReferencedRow}
           <li class="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
             <span class="flex">
-              {referencedRow.displayString}
+              <Badge color="dark" rounded class="px-2.5 py-0.5">{referencedRow.displayString}</Badge>
               <a href="#top"
                   class="cursor-pointer"
                   onclick={() => context.removeReferencedValue(set, column, row, referencedRow)}>
-                <Icon.CloseOutline size="sm" color="salmon" />
+                <Icon.CloseOutline size="sm" color="lightgray" />
               </a>
             </span>
           </li>
@@ -45,7 +45,7 @@
             {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
               {#key "prompt" + elementReference + rowPrompt.uuid}
               <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600" onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}>
-                {rowPrompt.displayString}
+                <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
               </li>            
               {/key}
             {/if}
