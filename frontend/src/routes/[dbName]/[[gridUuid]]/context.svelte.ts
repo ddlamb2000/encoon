@@ -209,12 +209,19 @@ export class Context {
  changeCell = debounce(
     async (set: GridResponse, row: RowType) => {
       row.updated = new Date
+      const rowClone = Object.assign({}, row)
+      set.grid.columns?.forEach((column) => {
+        if(column.typeUuid === metadata.UuidIntColumnType) {
+          if(row[column.name] === "<br>") rowClone[column.name] = undefined
+          else rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
+        }
+      })
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
           actionText: `Update value of row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
           gridUuid: set.grid.uuid,
-          dataSet: { rowsEdited: [row] }
+          dataSet: { rowsEdited: [rowClone] }
         }
       )
     },

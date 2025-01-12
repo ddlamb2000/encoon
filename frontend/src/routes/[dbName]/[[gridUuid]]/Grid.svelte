@@ -91,7 +91,9 @@
                           {row[column.name]}
                         </a>
                       </td>
-                    {:else if column.typeUuid === metadata.UuidTextColumnType || column.typeUuid === metadata.UuidUuidColumnType}
+                    {:else if column.typeUuid === metadata.UuidTextColumnType
+                              || column.typeUuid === metadata.UuidUuidColumnType 
+                              || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''} {column.typeUuid === metadata.UuidUuidColumnType ? ' font-mono' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
@@ -112,10 +114,6 @@
                               size="sm"
                               onclick={() => toggleBoolean(set, column, row)}
                               color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
-                      </td>
-                    {:else if column.typeUuid === metadata.UuidIntColumnType}
-                      <td>
-                        {context.dataSet[setIndex].rows[rowIndex][column.name]}
                       </td>
                     {:else if column.typeUuid === metadata.UuidPasswordColumnType}
                       <td>
