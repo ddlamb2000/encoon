@@ -3,21 +3,18 @@ import { json } from '@sveltejs/kit'
 import { Kafka, type Message, CompressionTypes } from 'kafkajs'
 import { type KafkaMessageRequest, type KafkaMessageResponse } from '$lib/dataTypes.ts'
 
-function hashCode(str) {
-  var hash = 0
-  for(var i = 0; i < str.length; i++) {
-      hash = ~~(((hash << 5) - hash) + str.charCodeAt(i))
-  }
+function hashCode(str: string): number {
+  let hash = 0
+  for(let i = 0; i < str.length; i++) hash = ~~(((hash << 5) - hash) + str.charCodeAt(i))
   return hash > 0 ? hash : -hash
 }
 
 const CustomRoundRobin = () => {
   return ({ topic, partitionMetadata, message }) => {
-  const nbPartitions = partitionMetadata.length
-  const gridUuid = message && message.headers && message.headers.gridUuid ? message.headers.gridUuid : ""
-  const hash =  hashCode(gridUuid)
-  const balance = hash % nbPartitions
-      return balance
+    const nbPartitions: number = partitionMetadata.length
+    const gridUuid: string = message && message.headers && message.headers.gridUuid ? message.headers.gridUuid : ""
+    const hash = hashCode(gridUuid)
+    return hash % nbPartitions
   }
 }
 
@@ -37,7 +34,7 @@ const producer = kafka.producer({
   createPartitioner: CustomRoundRobin
 })
 
-export const postMessage = async (params, request, url: string) => {
+export const postMessage = async (params, request) => {
   if(params.dbName === undefined) {
     console.error('Missing dbName')
     return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
@@ -62,7 +59,7 @@ export const postMessage = async (params, request, url: string) => {
       acks: -1
     })
     const dataLength = JSON.stringify(data).length
-    console.log(`POST ${url} to ${topic}: ${dataLength} bytes`, data)
+    console.log(`PUSH message (${dataLength} bytes), topic: ${topic}, key: ${data.messageKey}`)
     return json({  } as KafkaMessageResponse)
   } catch (error) {
     console.error(`Error sending message to Kafka topic ${topic}:`, error)

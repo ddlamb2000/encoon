@@ -21,5 +21,5 @@ export const POST: RequestHandler = async ({ params, request, url }) => {
   } catch (error) {
     return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
   }
-  return postMessage(params, request, url)
+  return postMessage(params, request)
 }
