@@ -139,3 +139,6 @@ Future
     Kafka ACL
     Logging thru Kafka
     Create topics for locators, auth and logging
+
+Gen AI
+    https://developers.googleblog.com/en/introducing-genkit-for-go-build-scalable-ai-powered-apps-in-go/ 

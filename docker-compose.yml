@@ -186,7 +186,7 @@ services:
     image: frontend-encoon-production
     restart: unless-stopped
     ports:
-      - "5174:4173"
+      - "5174:3000"
     environment:
       KAFKA_BROKERS: broker1:19092
       KAFKA_CLIENT_ID: frontend-encoon-sandbox

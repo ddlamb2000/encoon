@@ -4,4 +4,4 @@ WORKDIR /usr/src/encoon/frontend
 # RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" sh -
 # RUN source /root/.shrc && pnpm install
 # CMD ["sh", "-c", "source /root/.shrc && pnpm install && pnpm run dev -- --host"]
-CMD ["sh", "-c", "npm install && npm run dev -- --host"]
+CMD ["sh", "-c", "npm install && npm i -D @sveltejs/adapter-node && npm run dev -- --host"]
