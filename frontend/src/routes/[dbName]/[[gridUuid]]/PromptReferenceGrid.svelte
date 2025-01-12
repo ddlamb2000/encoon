@@ -11,9 +11,7 @@
 </script>
   
 <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm" >
-  <Badge color="dark" rounded class="px-2.5 py-0.5">
-    {rowPrompt.displayString}
-  </Badge>
+  <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
   <Icon.ChevronRightOutline class={"cursor-pointer " + elementReference + " dark:text-white"} onclick={() => loadPrompt()} />
   <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60 shadow-lg">
     {#if context.getSet(gridPromptUuid) === undefined}
