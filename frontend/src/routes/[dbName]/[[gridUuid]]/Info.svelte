@@ -20,7 +20,7 @@
                 {message.request.action}
                 {message.request.actionText}
               </Badge>              
-              {#if message.request !== undefined && message.request.dateTime !== undefined}<DateTime dateTime={message.request.dateTime} />{/if}
+              {#if message.request !== undefined && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} />{/if}
             </p>
           </div>
         </span>
@@ -48,8 +48,7 @@
                 {#if message.response.textMessage}[{message.response.textMessage}]{/if}
               </Badge>
               {message.response.elapsedMs} ms
-              {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response.dateTime} showDate={false} />{/if}
-              
+              {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}              
             </p>
           </div>
         </span>

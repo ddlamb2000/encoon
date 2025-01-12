@@ -207,15 +207,12 @@ export class Context {
 	}
 
  changeCell = debounce(
-    async (set: GridResponse, column: ColumnType, row: RowType) => {
+    async (set: GridResponse, row: RowType) => {
       row.updated = new Date
-      if(column.typeUuid === metadata.UuidBooleanColumnType) { // TODO: replace with boolean columns
-        row[column.name] = row[column.name].toString()
-      }
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: `Update value on row ${row.uuid} into grid ${set.grid.uuid} (${set.grid.text1})`,
+          actionText: `Update value of row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
           gridUuid: set.grid.uuid,
           dataSet: { rowsEdited: [row] }
         }
@@ -324,12 +321,13 @@ export class Context {
   removeRow = async (set: GridResponse, row: RowType) => {
     const rowIndex = set.rows.findIndex((r) => r.uuid === row.uuid)
     if(rowIndex >= 0) {
+      const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
       set.rows.splice(rowIndex, 1)
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
         actionText: `Remove row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
         gridUuid: set.grid.uuid,
-        dataSet: { rowsDeleted: [row] }
+        dataSet: { rowsDeleted: [deletedRow] }
       })
     }
   }
@@ -345,9 +343,7 @@ export class Context {
         dataSet: {
           rowsDeleted: [
             { gridUuid: metadata.UuidColumnTypes,
-              uuid: column.uuid,
-              created: new Date,
-              updated: new Date }
+              uuid: column.uuid }
           ],
           referencedValuesRemoved: [
             { owned: false,
@@ -505,7 +501,6 @@ export class Context {
                 text1: column.label,
                 text2: column.name,
                 int1: column.orderNumber,
-                created: new Date,
                 updated: new Date }               
             ] 
           }

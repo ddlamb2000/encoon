@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Dropdown, Spinner, Toggle } from 'flowbite-svelte'
+  import type { GridResponse, RowType, ColumnType } from '$lib/dataTypes.ts'
+	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
@@ -7,22 +8,28 @@
   import { fade } from 'svelte/transition'
   let { context = $bindable(), gridUuid } = $props()
   const colorFocus = "bg-yellow-100/10"
+
+  const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
+    if(row[column.name] === "true") row[column.name] = "false"
+    else row[column.name] = "true"
+    context.changeCell(set, row)
+  }
 </script>
 
 {#if context.getSet(gridUuid) === undefined}
   <Spinner size={4} />
 {:else}
-  {#each context.dataSet as set, indexSet}
+  {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
         <span contenteditable
               class="text-2xl font-extrabold"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[indexSet].grid.text1}></span>
+              bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
         <span contenteditable
               class="ms-2 font-light text-sm"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[indexSet].grid.text2}>
+              bind:innerHTML={context.dataSet[setIndex].grid.text2}>
         </span>
         <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
@@ -42,7 +49,7 @@
                   <span class="flex">
                     <span contenteditable
                           oninput={() => context.changeColumn(set.grid, column)}
-                          bind:innerHTML={context.dataSet[indexSet].grid.columns[indexColumn].label}></span>
+                          bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
@@ -62,7 +69,7 @@
             </tr>
           </thead>
           <tbody class="border border-slate-100">
-            {#each context.dataSet[indexSet].rows as row, rowIndex}
+            {#each context.dataSet[setIndex].rows as row, rowIndex}
               {#key row.uuid}
                 <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
                   <td class="nowrap">
@@ -88,8 +95,8 @@
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''} {column.typeUuid === metadata.UuidUuidColumnType ? ' font-mono' : ''}"
                           onfocus={() => context.changeFocus(set.grid, column, row)}
-                          oninput={() => context.changeCell(set, column, row)}
-                          bind:innerHTML={context.dataSet[indexSet].rows[rowIndex][column.name]}>
+                          oninput={() => context.changeCell(set, row)}
+                          bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
@@ -100,15 +107,15 @@
                         {/if}
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td>
-                        <Toggle size="small"
-                                bind:checked={context.dataSet[indexSet].rows[rowIndex][column.name]}
-                                onfocus={() => context.changeFocus(set.grid, column, row)}
-                                oninput={() => context.changeCell(set, column, row)} />
+                      <td class="cursor-pointer" align='center'>
+                        <Icon.CheckCircleOutline 
+                              size="sm"
+                              onclick={() => toggleBoolean(set, column, row)}
+                              color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
                       </td>
                     {:else if column.typeUuid === metadata.UuidIntColumnType}
                       <td>
-                        {context.dataSet[indexSet].rows[rowIndex][column.name]}
+                        {context.dataSet[setIndex].rows[rowIndex][column.name]}
                       </td>
                     {:else if column.typeUuid === metadata.UuidPasswordColumnType}
                       <td>
@@ -134,8 +141,8 @@
             <tr>
               <th class="py-1 bg-gray-100" colspan="99">
                 <span class="flex">
-                  <a href="#top" onclick={() => context.addRow(context.dataSet[indexSet])}><Icon.CirclePlusOutline size="sm" /></a>
-                  {context.dataSet[indexSet].countRows} {context.dataSet[indexSet].countRows === 1 ? 'row' : 'rows'}
+                  <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline size="sm" /></a>
+                  {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
                 </span>
               </th>
             </tr>
