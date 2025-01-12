@@ -67,6 +67,46 @@ services:
       - "9092:9092"
     networks:
       - encoon
+  broker2:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker2
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 2
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker2:29092,PLAINTEXT_HOST://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_NUM_PARTITIONS: 3
+    ports:
+      - "9093:9093"
+    networks:
+      - encoon
+  broker3:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka-broker3
+    depends_on:
+      - zookeeper
+    environment:
+      KAFKA_BROKER_ID: 3
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://broker3:39092,PLAINTEXT_HOST://localhost:9094
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_NUM_PARTITIONS: 3
+    ports:
+      - "9094:9094"
+    networks:
+      - encoon
   kafka-ui:
     image: provectuslabs/kafka-ui:latest
     container_name: kafka-admin
@@ -77,7 +117,7 @@ services:
       - "8088:8080"
     environment:
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker1:19092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker1:19092,broker2:29092,broker3:39092
     networks:
       - encoon
   v2:
@@ -128,6 +168,8 @@ services:
     depends_on:
       - db
       - broker1
+      - broker2
+      - broker3
   backend-sandbox2:
     build:
       context: ./backend
@@ -143,6 +185,8 @@ services:
     depends_on:
       - db
       - broker1
+      - broker2
+      - broker3
   backend-sandbox3:
     build:
       context: ./backend
@@ -158,6 +202,8 @@ services:
     depends_on:
       - db
       - broker1
+      - broker2
+      - broker3
   frontend:
     build:
       context: ./frontend
@@ -170,7 +216,7 @@ services:
     ports:
       - "5173:5173"
     environment:
-      KAFKA_BROKERS: broker1:19092
+      KAFKA_BROKERS: broker1:19092,broker2:29092,broker3:39092
       KAFKA_CLIENT_ID: frontend-encoon-development
       KAFKA_GROUP_ID: frontend-encoon-development
       TOPIC_PREFIX: encoon
@@ -178,6 +224,8 @@ services:
       - encoon
     depends_on:
       - broker1
+      - broker2
+      - broker3
   frontend-sandbox:
     build:
       context: ./frontend
@@ -188,7 +236,7 @@ services:
     ports:
       - "5174:3000"
     environment:
-      KAFKA_BROKERS: broker1:19092
+      KAFKA_BROKERS: broker1:19092,broker2:29092,broker3:39092
       KAFKA_CLIENT_ID: frontend-encoon-sandbox
       KAFKA_GROUP_ID: frontend-encoon-sandbox
       TOPIC_PREFIX: encoon
@@ -196,6 +244,8 @@ services:
       - encoon
     depends_on:
       - broker1
+      - broker2
+      - broker3
   system-test:
     build:
       context: ./backend
@@ -214,7 +264,7 @@ services:
     command: sh -c "./testData/run_all_tests.sh"
 configs:
   encoon-configuration-sandbox:
-    file: ./backend/testData/docker.sandbox.yml
+    file: ./backend/testData/sandbox.yml
   db-init:
     file: ./.dbConfiguration/docker.sql
 networks:

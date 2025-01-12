@@ -6,7 +6,7 @@
         {
             "label": "Start application",
             "type": "shell",
-            "command": "go run . -configuration ./testData/local-development.yml",
+            "command": "go run . -configuration ./testData/development.yml",
             "group": {
                 "kind": "build",
                 "isDefault": true
@@ -26,7 +26,7 @@
         {
             "label": "Export data from master",
             "type": "shell",
-            "command": "go run . -export master -configuration ./testData/local-development.yml -exportfile ./seedData.json",
+            "command": "go run . -export master -configuration ./testData/development.yml -exportfile ./seedData.json",
             "group": {
                 "kind": "build",
                 "isDefault": true
