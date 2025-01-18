@@ -1,17 +1,15 @@
 {
-	"/": [
-		"src/routes/+page.ts"
+	"/": [],
+	"/[[dbName]]/authentication": [
+		"src/routes/[[dbName]]/authentication/+server.ts"
 	],
-	"/[dbName]/authentication": [
-		"src/routes/[dbName]/authentication/+server.ts"
+	"/[[dbName]]/pullMessages": [
+		"src/routes/[[dbName]]/pullMessages/+server.ts"
 	],
-	"/[dbName]/pullMessages": [
-		"src/routes/[dbName]/pullMessages/+server.ts"
+	"/[[dbName]]/pushMessage": [
+		"src/routes/[[dbName]]/pushMessage/+server.ts"
 	],
-	"/[dbName]/pushMessage": [
-		"src/routes/[dbName]/pushMessage/+server.ts"
-	],
-	"/[dbName]/[[gridUuid]]": [
-		"src/routes/[dbName]/[[gridUuid]]/+page.server.ts"
+	"/[[dbName]]/[[gridUuid]]": [
+		"src/routes/[[dbName]]/[[gridUuid]]/+page.server.ts"
 	]
 }

@@ -6,7 +6,7 @@
 
 <div class="relative flex items-center">
   <span class="ms-2 text-xl font-extrabold">
-    <a href="/">εncooη</a>
+    <a href={"/" + context.dbName}>εncooη</a>
   </span>
   <span class="lg:flex ml-auto">
     {#if context.isStreaming}

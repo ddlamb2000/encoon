@@ -5,7 +5,6 @@
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  import { fade } from 'svelte/transition'
   let { context = $bindable(), gridUuid } = $props()
   const colorFocus = "bg-yellow-100/10"
 
@@ -31,7 +30,7 @@
               oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text2}>
         </span>
-        <table transition:fade class="font-light text-sm table-auto border-collapse border border-slate-100">
+        <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">

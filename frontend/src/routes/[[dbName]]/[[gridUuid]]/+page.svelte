@@ -36,7 +36,7 @@
   </nav>
   <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
-      <div class="p-2 overflow-y-auto overflow-x-hidden h-[500px]">
+      <div class="p-1 overflow-y-auto overflow-x-hidden h-[500px]">
         <GridList {context} {userPreferences} />
       </div>
     </aside>
@@ -45,10 +45,10 @@
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <span class="flex">
             <Button href="#top" color="light" size="xs" class="mt-1 me-1" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-              <Icon.ListOutline class="w-5 h-5 me-2"/> Grids
+              <Icon.ListOutline class="w-5 h-5 me-2"/> List
             </Button>
             <Button href="#top" color="blue" size="xs" class="mt-1 me-1" onclick={() => context.newGrid()}>
-              <Icon.CirclePlusOutline class="w-5 h-5 me-2" /> New Grid
+              <Icon.CirclePlusOutline class="w-5 h-5 me-2" /> New
             </Button>
           </span>            
         {/if}
