@@ -23,4 +23,4 @@ database:
   jwtsecret: "$2a$08$DO1mR4Iu33zJ/UidByyUJOSd6WmrMT.b0Nvna414pS4s24oHlRbNq"
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
-  timeOutThreshold: 1000
+  timeOutThreshold: 5000

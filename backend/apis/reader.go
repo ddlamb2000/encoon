@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
+	"sync"
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
@@ -15,17 +16,50 @@ import (
 	"github.com/segmentio/kafka-go"
 )
 
+var consumers = struct {
+	sync.RWMutex
+	m map[string]*kafka.Reader
+}{m: make(map[string]*kafka.Reader)}
+
+var consumerShutdown = struct {
+	sync.RWMutex
+	shutdown map[string]bool
+}{shutdown: make(map[string]bool)}
+
 func ReadMessagesFromKafka() {
-	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
-		go readMessages(dbConfig.Name, kafkaBrokers)
+		go readMessages(dbConfig.Name)
 	}
 }
 
-func readMessages(dbName string, kafkaBrokers string) {
+func ShutdownKafkaConsumers() {
+	for _, dbConfig := range configuration.GetConfiguration().Databases {
+		consumer := consumers.m[dbConfig.Name]
+		if consumer != nil {
+			configuration.Log(dbConfig.Name, "", "Stop requested for Kafka consumer")
+			consumerShutdown.shutdown[dbConfig.Name] = true
+			consumer.Close()
+		}
+	}
+}
+
+func getConsumer(dbName string) (*kafka.Reader, error) {
+	if dbName == "" || dbName == "undefined" {
+		return nil, configuration.LogAndReturnError("", "", "Missing database name parameter.")
+	}
+	consumers.RLock()
+	consumer := consumers.m[dbName]
+	consumers.RUnlock()
+	if consumer != nil {
+		return consumer, nil
+	}
+	consumers.Lock()
+	defer consumers.Unlock()
+	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
 	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbName
-	consumer := kafka.NewReader(kafka.ReaderConfig{
+	configuration.Log(dbName, "", "Creating Kafka consumer")
+	consumer = kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
 		GroupID:          groupID,
@@ -34,14 +68,29 @@ func readMessages(dbName string, kafkaBrokers string) {
 		RebalanceTimeout: 2 * time.Second,
 		CommitInterval:   time.Second,
 	})
-	configuration.Log(dbName, "", "Read messages on topic %s through brokers %s with consumer group %s.", topic, kafkaBrokers, groupID)
+	consumers.m[dbName] = consumer
+	consumerShutdown.shutdown[dbName] = false
+	return consumer, nil
+}
+
+func readMessages(dbName string) {
+	consumer, err := getConsumer(dbName)
+	if err != nil {
+		configuration.LogError(dbName, "", "Error getting Kafka consumer", err)
+		return
+	}
+	configuration.Log(dbName, "", "Read messages")
 	for {
 		message, err := consumer.ReadMessage(context.Background())
 		if err != nil {
+			if consumerShutdown.shutdown[dbName] {
+				configuration.Log(dbName, "", "Kafka consumer stopped")
+				return
+			}
 			configuration.LogError(dbName, "", "Error reading message: %v", err)
 			continue
 		}
-		handleMessage(dbName, message)
+		go handleMessage(dbName, message)
 	}
 }
 

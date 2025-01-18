@@ -57,6 +57,8 @@ func main() {
 			<-doneChan
 			ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 			defer cancel()
+			apis.ShutdownKafkaProducers()
+			apis.ShutdownKafkaConsumers()
 			<-ctx.Done()
 		}
 	}

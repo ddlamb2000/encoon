@@ -116,12 +116,18 @@ Kafka
 
     https://www.redpanda.com/guides/kafka-cloud-kafka-headers
 
+    Commit messages: see https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme.
+
     Streaming:
         https://svelte.dev/docs/kit/load#Streaming-with-promises
         https://khromov.se/sveltekit-streaming-the-complete-guide/
         https://joyofcode.xyz/using-websockets-with-sveltekit 
         https://medium.com/version-1/websockets-in-sveltekit-28e91eec9245
         https://stackoverflow.com/questions/74330190/how-to-respond-with-a-stream-in-a-sveltekit-server-load-function
+
+    Graceful shutdown:
+        Backend: https://withcodeexample.com/a-practical-guide-to-using-golang-with-apache-kafka/
+        Frontend: https://medium.com/@curtis.porter/graceful-termination-of-kafkajs-client-processes-b05dd185759d 
 
 Tailwind Css
     https://tailwindcss.com/
