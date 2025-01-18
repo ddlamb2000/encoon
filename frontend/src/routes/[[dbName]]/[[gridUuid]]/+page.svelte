@@ -1,12 +1,13 @@
 <script  lang="ts">
   import type { PageData } from './$types'
   import * as metadata from "$lib/metadata.svelte.ts"
+  import * as Icon from 'flowbite-svelte-icons'
   import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Button } from 'flowbite-svelte'
   import { Context } from './context.svelte.ts'
   import { UserPreferences } from '$lib/userPreferences.svelte.ts'
-  import * as Icon from 'flowbite-svelte-icons'
+  import DynIcon from './DynIcon.svelte'
   import Login from './Login.svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
@@ -43,14 +44,23 @@
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-12 overflow-y-auto bg-gray-200">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <span class="flex">
-            <Button href="#top" color="light" size="xs" class="mt-1 me-1" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-              <Icon.ListOutline class="w-5 h-5 me-2"/> List
-            </Button>
-            <Button href="#top" color="blue" size="xs" class="mt-1 me-1" onclick={() => context.newGrid()}>
-              <Icon.CirclePlusOutline class="w-5 h-5 me-2" /> New
-            </Button>
-          </span>            
+          <Button color="light" size="xs" class="mt-1 me-1"
+                  disabled={context.gridUuid === metadata.UuidGrids}
+                  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+            <Icon.ListOutline class="w-5 h-5"/> List
+          </Button>
+          {#each context.dataSet as set}
+            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
+              <Button size="xs"
+                      color="light"
+                      class="mt-1 me-1"
+                      disabled={context.gridUuid === set.grid.uuid}
+                      onclick={() => context.navigateToGrid(set.grid.uuid)}>
+                <DynIcon iconName={set.grid.text3}/>
+                {@html set.grid.text1}
+              </Button>
+            {/if}
+          {/each}
         {/if}
       </div>
       <aside class="p-2 h-10 overflow-y-auto bg-gray-100">

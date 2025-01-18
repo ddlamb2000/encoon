@@ -32,8 +32,8 @@ export class Context {
 
   #messageStackLimit = 100
 
-  constructor(dbName: string, url: string, gridUuid: string) {
-    this.dbName = dbName
+  constructor(dbName: string | undefined, url: string, gridUuid: string) {
+    this.dbName = dbName || ""
     this.url = url
     this.user = new User()
     this.gridUuid = gridUuid
