@@ -11,7 +11,7 @@
 </script>
 
 <li class="flex cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm" onclick={() => loadPrompt()}>
-  Add column
+  Add
   <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
   <Dropdown placement="right-start" class="w-40 overflow-y-auto shadow-lg">
     {#if context.getSet(gridPromptUuid) === undefined}

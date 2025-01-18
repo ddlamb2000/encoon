@@ -3,6 +3,7 @@
   import * as metadata from "$lib/metadata.svelte.ts"
   import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
+  import { Button } from 'flowbite-svelte'
   import { Context } from './context.svelte.ts'
   import { UserPreferences } from '$lib/userPreferences.svelte.ts'
   import * as Icon from 'flowbite-svelte-icons'
@@ -40,26 +41,15 @@
       </div>
     </aside>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="p-2 h-10 overflow-y-auto bg-gray-200">
+      <div class="h-12 overflow-y-auto bg-gray-200">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <span class="flex">
-            <a href="#top"
-                class="me-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-              <span class="flex items-center">
-                <Icon.ListOutline />
-                  {#if userPreferences.expandSidebar}
-                    Grids
-                  {/if}
-              </span>
-            </a>
-            <a href="#top"
-                class="me-4 font-medium text-blue-600 dark:text-blue-500 hover:underline"              
-                onclick={() => context.newGrid()}>
-              <span class="flex items-center">
-                <Icon.CirclePlusOutline />New Grid
-              </span>
-            </a>
+            <Button href="#top" color="light" size="xs" class="mt-1 me-1" onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
+              <Icon.ListOutline class="w-5 h-5 me-2"/> Grids
+            </Button>
+            <Button href="#top" color="blue" size="xs" class="mt-1 me-1" onclick={() => context.newGrid()}>
+              <Icon.CirclePlusOutline class="w-5 h-5 me-2" /> New Grid
+            </Button>
           </span>            
         {/if}
       </div>

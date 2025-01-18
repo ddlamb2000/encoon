@@ -317,6 +317,7 @@ export class Context {
     const uuid = newUuid()
     const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
     set.rows.push(row)
+    set.countRows += 1
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
       actionText: `Add row ${uuid} to grid ${set.grid.uuid} (${set.grid.text1})`,
@@ -330,6 +331,7 @@ export class Context {
     if(rowIndex >= 0) {
       const deletedRow: RowType = { gridUuid: set.grid.uuid, uuid: row.uuid }
       set.rows.splice(rowIndex, 1)
+      set.countRows -= 1
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
         actionText: `Remove row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,

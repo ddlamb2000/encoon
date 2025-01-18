@@ -36,8 +36,8 @@
             <tr>
               <th class="sticky -top-3 py-1 bg-gray-100">
                 {#if set.grid.columns === undefined || set.grid.columns.length === 0}
-                  <Icon.DotsVerticalOutline size="sm" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
-                  <Dropdown class="w-40" triggeredBy={".first-column-menu-" + set.grid.uuid}>
+                  <Icon.DotsVerticalOutline size="sm" color="gray" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
+                  <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
                     <PromptColumnType {context} {set}
                                       gridPromptUuid={metadata.UuidColumnTypes}
                                       elementReference={"referenceColumnType-" + set.grid.uuid} />
@@ -50,8 +50,8 @@
                     <span contenteditable
                           oninput={() => context.changeColumn(set.grid, column)}
                           bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
-                    <Icon.DotsVerticalOutline size="sm" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
-                    <Dropdown class="w-40" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
+                    <Icon.DotsVerticalOutline size="sm" color="gray" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
+                    <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
                         <PromptColumnType {context} {set}
                                           gridPromptUuid={metadata.UuidColumnTypes}
@@ -59,7 +59,7 @@
                       {/if}
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
                         <span class="flex" onclick={() => context.removeColumn(set, column)}>
-                          Remove column
+                          Remove
                         </span>
                       </li>
                     </Dropdown>
@@ -73,13 +73,14 @@
               {#key row.uuid}
                 <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
                   <td class="nowrap">
-                    <span class="flex">
-                      <a href="#top" 
-                          onclick={() => context.removeRow(set, row)}
-                          onfocus={() => context.changeFocus(set.grid, undefined, row)} >
-                        <Icon.CircleMinusOutline size="sm" color="gray" />
-                      </a>
-                    </span>
+                    <Icon.DotsVerticalOutline size="sm" color="gray" class={"row-menu-" + row.uuid}/>
+                    <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
+                      <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
+                        <span class="flex" onclick={() => context.removeRow(set, row)}>
+                          Remove
+                        </span>
+                      </li>
+                    </Dropdown>
                   </td>
                   {#each set.grid.columns as column}
                     {#if set.grid.uuid === metadata.UuidGrids && column.name === "text1"}
