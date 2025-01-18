@@ -76,7 +76,7 @@
         {
             "label": "Backup sandbox",
             "type": "shell",
-            "command": "docker exec -i database /usr/bin/pg_dump -U encoon sandbox > backend/testData/sandbox.sql",
+            "command": "docker exec -i database /usr/bin/pg_dump -U encoon sandbox > backend/testData/sandbox.dump",
             "group": {
                 "kind": "build",
                 "isDefault": true
