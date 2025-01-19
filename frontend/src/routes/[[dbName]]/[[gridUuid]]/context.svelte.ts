@@ -1,3 +1,6 @@
+// εncooη : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 import type { KafkaMessageRequest,
               KafkaMessageHeader,
               KafkaMessageResponse,
@@ -14,6 +17,8 @@ import { Focus } from './focus.svelte.ts'
 import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 
+const messageStackLimit = 100
+
 export class Context {
   user: User
   dbName: string = $state("")
@@ -29,8 +34,6 @@ export class Context {
   #tokenName = ""
   #contextUuid = newUuid()
   #hearbeatId: any = null
-
-  #messageStackLimit = 100
 
   constructor(dbName: string | undefined, url: string, gridUuid: string) {
     this.dbName = dbName || ""
@@ -114,12 +117,12 @@ export class Context {
     )
   }
 
-  trackRequest = (request) => {
+  trackRequest = (request: KafkaMessageRequest) => {
     this.messageStack.push({request : request})
-    if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
+    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
-  trackResponse = (response) => {
+  trackResponse = (response: KafkaMessageResponse) => {
     // Remove corresponding request from messageStack
     const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.messageKey)
     if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
@@ -127,7 +130,7 @@ export class Context {
     const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
     if(responseIndex >= 0) this.messageStack.splice(responseIndex, 1)
     this.messageStack.push({response : response})
-    if(this.messageStack.length > this.#messageStackLimit) this.messageStack.splice(0, 1)
+    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
   sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
@@ -594,9 +597,9 @@ export class Context {
           })
           if(message.action == metadata.ActionAuthentication) {
             if(message.status == metadata.SuccessStatus) {
-              if(this.user.checkToken(message.jwt)) {
+              if(message.jwt !== undefined && this.user.checkToken(message.jwt)) {
                 console.log(`Logged in: ${message.firstName} ${message.lastName}`)
-                localStorage.setItem(this.#tokenName, message.jwt)
+                if(message.jwt !== undefined) localStorage.setItem(this.#tokenName, message.jwt)
               } else {
                 console.error(`Invalid token for ${message.firstName}`)
               }
@@ -628,7 +631,7 @@ export class Context {
         console.log(`Data from stream ${uri} is incomplete`)
       }
       let result = re.exec(chunk)
-      if (!result) {
+      if(!result) {
         if (readerDone) break
         let remainder = chunk.substr(startIndex)
         {
@@ -641,7 +644,7 @@ export class Context {
       yield chunk.substring(startIndex, result.index)
       startIndex = re.lastIndex
     }
-    if (startIndex < chunk.length) yield chunk.substr(startIndex)
+    if(startIndex < chunk.length) yield chunk.substr(startIndex)
   }
 
   async startStreaming() {
@@ -650,9 +653,7 @@ export class Context {
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
-    for await (let line of this.getStreamIteration(uri)) {
-      console.log(`Get from ${uri}`, line)
-    }
+    for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {
