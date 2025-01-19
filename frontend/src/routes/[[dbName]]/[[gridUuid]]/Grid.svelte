@@ -1,10 +1,11 @@
 <script lang="ts">
   import type { GridResponse, RowType, ColumnType } from '$lib/dataTypes.ts'
-	import { Dropdown, Spinner } from 'flowbite-svelte'
+	import { Dropdown, Spinner, Badge } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
+  import DateTime from '$lib/DateTime.svelte'
   let { context = $bindable(), gridUuid } = $props()
   const colorFocus = "bg-yellow-100/10"
 
@@ -21,12 +22,10 @@
   {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <span contenteditable
-              class="text-2xl font-extrabold"
+        <span contenteditable role="heading" class="text-2xl font-extrabold"
               oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text1} />
-        <span contenteditable
-              class="ms-2 font-light text-sm"
+        <span contenteditable role="heading" class="ms-2 font-light text-sm"
               oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text2} />
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
@@ -113,9 +112,7 @@
                               color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
                       </td>
                     {:else}
-                      <td>
-                        ?
-                      </td>
+                      <td></td>
                     {/if}
                   {/each}
                 </tr>
@@ -134,6 +131,18 @@
                 <span class="flex">
                   <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline size="sm" /></a>
                   {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
+                  {#if context.getLastResponse(set.grid.uuid) !== undefined}
+                    <Badge color={context.getLastResponse(set.grid.uuid).response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
+                      {#if context.getLastResponse(set.grid.uuid).response.action}{context.getLastResponse(set.grid.uuid).response.actionText}{/if}
+                      {#if context.getLastResponse(set.grid.uuid).response.textMessage}: {context.getLastResponse(set.grid.uuid).response.textMessage}{/if}
+                      <span class="font-light text-xs ms-1">
+                        <small>({context.getLastResponse(set.grid.uuid).response.elapsedMs} ms)</small>
+                      </span>
+                      <span class="font-light text-xs ms-1">
+                        {#if context.getLastResponse(set.grid.uuid).response !== undefined && context.getLastResponse(set.grid.uuid).response.dateTime !== undefined}<DateTime dateTime={context.getLastResponse(set.grid.uuid).response?.dateTime} showDate={false} />{/if}
+                      </span>
+                    </Badge>
+                  {/if}
                 </span>
               </th>
             </tr>

@@ -30,7 +30,7 @@ func PostGridsRows(ct context.Context, uri string, p ApiParameters, payload Grid
 		}
 		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.UserUuid)
 		if !canViewRows {
-			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden"), Forbidden: true}
 			return
 		}
 		if err := r.beginTransaction(); err != nil {

@@ -27,12 +27,12 @@ func GetGridsRows(ct context.Context, uri string, p ApiParameters, payload GridP
 			r.ctxChan <- GridResponse{Err: err, System: true}
 			return
 		} else if grid == nil {
-			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Data not found.")}
+			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Data not found")}
 			return
 		}
 		canViewRows, canEditRows, canAddRows, canEditGrid := grid.GetViewEditAccessFlags(p.UserUuid)
 		if !canViewRows {
-			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+			r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden"), Forbidden: true}
 			return
 		}
 		rowSet, rowSetCount, err := getRowSetForGridsApi(r, grid, p.Uuid, true, true)
@@ -41,7 +41,7 @@ func GetGridsRows(ct context.Context, uri string, p ApiParameters, payload GridP
 			return
 		}
 		if p.Uuid != "" && rowSetCount == 0 {
-			r.ctxChan <- GridResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
+			r.ctxChan <- GridResponse{Grid: grid, Err: r.logAndReturnError("Data not found")}
 			return
 		}
 		r.ctxChan <- GridResponse{

@@ -16,10 +16,11 @@
           <div class="ps-2 text-xs font-normal">
             <p>
               {message.request.messageKey}
-              <Badge color="blue" rounded class="px-2.5 py-0.5">
-                {message.request.action}
-                {message.request.actionText}
-              </Badge>              
+              {#if message.request.actionText}
+                <Badge color="blue" rounded class="px-2.5 py-0.5">
+                  {message.request.actionText}
+                </Badge>
+              {/if}
               {#if message.request !== undefined && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} />{/if}
             </p>
           </div>
@@ -37,9 +38,8 @@
           <div class="ps-2 text-xs font-normal">
             <p>
               {message.response.messageKey}
-              {#if message.response.action}
+              {#if message.response.actionText}
                 <Badge color="blue" rounded class="px-2.5 py-0.5">
-                  {message.response.action}
                   {message.response.actionText}
                 </Badge>
               {/if}

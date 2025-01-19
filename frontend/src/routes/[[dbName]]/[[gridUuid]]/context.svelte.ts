@@ -43,9 +43,13 @@ export class Context {
     this.#tokenName = `access_token_${this.dbName}`
   }
 
-  mount = () => {
-    if(this.gridUuid !== "") this.pushTransaction({action: metadata.ActionLoad, gridUuid: this.gridUuid})
-    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({action: metadata.ActionLoad, gridUuid: metadata.UuidGrids})  
+  mount = async () => {
+    if(this.gridUuid !== "") this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
+    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: metadata.UuidGrids})  
+  }
+
+  load = async () => {
+    this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
   }
 
   reset = () => {
@@ -138,6 +142,15 @@ export class Context {
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
+  getLastResponse = (gridUuid: string) => {
+    return this.messageStack.findLast((r) =>
+      r.response 
+      && r.response.gridUuid === gridUuid 
+      && r.response.sameContext 
+      && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
+    )
+  }
+
   sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
 		this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
@@ -199,10 +212,6 @@ export class Context {
     }
   }
 
-  load = async () => {
-    this.pushTransaction({action: metadata.ActionLoad, gridUuid: this.gridUuid})
-  }
-
   navigateToGrid = async (gridUuid: string) => {
 		console.log("[Context.navigateToGrid()] gridUuid=", gridUuid)
     const set = this.getSet(gridUuid)
@@ -227,7 +236,7 @@ export class Context {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: `Update value of row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
+          actionText: 'Update',
           gridUuid: set.grid.uuid,
           dataSet: { rowsEdited: [rowClone] }
         }
@@ -314,7 +323,7 @@ export class Context {
       }
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
-        actionText: `Add column ${newLabel} (${columnName}) to grid ${set.grid.uuid} (${set.grid.text1})`,
+        actionText: 'Add column',
         gridUuid: metadata.UuidColumns,
         dataSet: { rowsAdded: rowsAdded, referencedValuesAdded: referencedValuesAdded }
       })
@@ -328,7 +337,7 @@ export class Context {
     set.countRows += 1
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: `Add row ${uuid} to grid ${set.grid.uuid} (${set.grid.text1})`,
+      actionText: 'Add row',
       gridUuid: set.grid.uuid,
       dataSet: { rowsAdded: [row] }
     })
@@ -342,7 +351,7 @@ export class Context {
       set.countRows -= 1
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
-        actionText: `Remove row ${row.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
+        actionText: 'Remove row',
         gridUuid: set.grid.uuid,
         dataSet: { rowsDeleted: [deletedRow] }
       })
@@ -355,7 +364,7 @@ export class Context {
       set.grid.columns.splice(columnIndex, 1)
       return this.pushTransaction({
         action: metadata.ActionChangeGrid,
-        actionText: `Remove column ${column.label} (${column.name}) from grid ${set.grid.uuid} (${set.grid.text1})`,
+        actionText: 'Remove column',
         gridUuid: metadata.UuidColumns,
         dataSet: {
           rowsDeleted: [
@@ -404,7 +413,7 @@ export class Context {
     this.dataSet.push(set)
     this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: `Add grid ${grid.uuid} (${grid.text1})`,
+      actionText: 'New grid',
       gridUuid: metadata.UuidGrids,
       dataSet: {
         rowsAdded: [
@@ -450,7 +459,7 @@ export class Context {
     }
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: `Add reference value ${rowPrompt.uuid} to grid ${set.grid.uuid} (${set.grid.text1})`,
+      actionText: 'Add value',
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesAdded: [
@@ -476,7 +485,7 @@ export class Context {
     }
     return this.pushTransaction({
       action: metadata.ActionChangeGrid,
-      actionText: `Remove reference value ${rowPrompt.uuid} from grid ${set.grid.uuid} (${set.grid.text1})`,
+      actionText: 'Remove value',
       gridUuid: set.grid.uuid,
       dataSet: {
         referencedValuesRemoved: [
@@ -495,7 +504,7 @@ export class Context {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: `Update grid ${grid.uuid} (${grid.text1})`,
+          actionText: 'Update grid',
           gridUuid: metadata.UuidGrids,
           dataSet: { rowsEdited: [grid] }
         }
@@ -509,7 +518,7 @@ export class Context {
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
-          actionText: `Update column ${column.label} (${column.name}) on grid ${grid.uuid} (${grid.text1})`,
+          actionText: 'Update column',
           gridUuid: metadata.UuidColumns,
           dataSet: {
             rowsEdited: [

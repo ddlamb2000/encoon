@@ -222,6 +222,7 @@ func notAuthorization(dbName string, content requestContent) responseContent {
 		Status:      FailedStatus,
 		Action:      content.Action,
 		ActionText:  content.ActionText,
+		GridUuid:    content.GridUuid,
 		TextMessage: "No authorization",
 	}
 }
@@ -232,6 +233,7 @@ func expired(dbName string, userName string, content requestContent) responseCon
 		Status:      FailedStatus,
 		Action:      content.Action,
 		ActionText:  content.ActionText,
+		GridUuid:    content.GridUuid,
 		TextMessage: "Authorization expired",
 	}
 }
@@ -242,6 +244,7 @@ func invalidAction(dbName string, content requestContent) responseContent {
 		Status:      FailedStatus,
 		Action:      content.Action,
 		ActionText:  content.ActionText,
+		GridUuid:    content.GridUuid,
 		TextMessage: "Invalid action (" + content.Action + ")",
 	}
 }
@@ -252,6 +255,7 @@ func invalidToken(dbName string, content requestContent) responseContent {
 		Status:      FailedStatus,
 		Action:      content.Action,
 		ActionText:  content.ActionText,
+		GridUuid:    content.GridUuid,
 		TextMessage: "Invalid token",
 	}
 }
@@ -266,6 +270,7 @@ func executeActionGrid(dbName string, userUuid string, userName string, content 
 			Status:      FailedStatus,
 			Action:      content.Action,
 			ActionText:  content.ActionText,
+			GridUuid:    content.GridUuid,
 			TextMessage: response.Err.Error(),
 		}
 	}

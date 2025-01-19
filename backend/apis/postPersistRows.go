@@ -26,7 +26,7 @@ func persistGridRowData(r ApiRequest, grid *model.Grid, rows []*model.Row, f per
 func postInsertGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 	_, _, canAddRows, _ := grid.GetViewEditAccessFlags(r.p.UserUuid)
 	if !canAddRows {
-		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden"), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to create rows.")
 	}
 	row.TmpUuid = row.Uuid
@@ -142,7 +142,7 @@ func postUpdateGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before update: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
-		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden"), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getUpdateStatementForGridsApi(grid)
@@ -235,7 +235,7 @@ func postDeleteGridRow(r ApiRequest, grid *model.Grid, row *model.Row) error {
 		return r.logAndReturnError("Error retrieving row %q from grid %q before delete: %v.", row.Uuid, grid.Uuid, err)
 	}
 	if !rows[0].CanEditRow {
-		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden."), Forbidden: true}
+		r.ctxChan <- GridResponse{Err: r.logAndReturnError("Access forbidden"), Forbidden: true}
 		return r.logAndReturnError("User isn't allowed to update rows.")
 	}
 	query := getDeleteGridReferencedRowQuery(grid)
