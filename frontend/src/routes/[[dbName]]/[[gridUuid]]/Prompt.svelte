@@ -26,7 +26,7 @@
         {#each reference.rows as referencedRow, indexReferencedRow}
           <li class="rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
             <span class="flex">
-              <Badge color="dark" rounded class="px-2.5 py-0.5">{referencedRow.displayString}</Badge>
+              <Badge color="dark" rounded class="px-2.5 py-0.5">{@html referencedRow.displayString}</Badge>
               <a href="#top"
                   class="cursor-pointer"
                   onclick={() => context.removeReferencedValue(set, column, row, referencedRow)}>
@@ -48,7 +48,7 @@
                   <a href="#top" role="menuitem"
                       onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}
                       onkeydown={(e) => e.code === 'Enter' && context.addReferencedValue(set, column, row, rowPrompt)}>
-                    <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
+                    <Badge color="dark" rounded class="px-2.5 py-0.5">{@html rowPrompt.displayString}</Badge>
                   </a>
                 </li>
               {/key}

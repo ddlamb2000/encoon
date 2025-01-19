@@ -27,7 +27,7 @@
                   <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
                     <a href="#top" role="menuitem"
                         onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
-                      <Badge color="dark" rounded class="px-2.5 py-0.5">{rowReference.displayString}</Badge>
+                      <Badge color="dark" rounded class="px-2.5 py-0.5">{@html  rowReference.displayString}</Badge>
                     </a>
                   </li>
                 {/key}
