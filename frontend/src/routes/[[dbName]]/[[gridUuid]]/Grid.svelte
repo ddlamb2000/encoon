@@ -23,10 +23,10 @@
       {#key set.grid.uuid}
         <span contenteditable class="text-2xl font-extrabold"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text1} />
+              bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
         <span contenteditable class="ms-2 font-light text-sm"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text2} />
+              bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>        
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
