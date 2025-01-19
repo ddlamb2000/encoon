@@ -24,8 +24,9 @@
             {#each setPrompt.rows as rowReference}
               {#if searchText === "" || rowReference.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
                 {#key "prompt" + elementReference + rowReference.uuid}
-                  <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <li>
                     <a href="#top" role="menuitem"
+                        class="cursor-pointer flex w-full rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
                         onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
                       <Badge color="dark" rounded class="px-2.5 py-0.5">{@html  rowReference.displayString}</Badge>
                     </a>

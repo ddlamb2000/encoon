@@ -31,7 +31,7 @@
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"
-                        class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                        class="cursor-pointer flex w-full rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                         onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
                       <Badge color="dark" rounded class="px-2.5 py-0.5">{@html rowPrompt.displayString}</Badge>
                     </a>

@@ -21,10 +21,10 @@
   {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <span contenteditable role="heading" class="text-2xl font-extrabold"
+        <span contenteditable class="text-2xl font-extrabold"
               oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text1} />
-        <span contenteditable role="heading" class="ms-2 font-light text-sm"
+        <span contenteditable class="ms-2 font-light text-sm"
               oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text2} />
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
