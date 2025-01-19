@@ -17,5 +17,9 @@
       <Badge color="dark" rounded class="px-2.5 py-0.5">Created on <DateTime dateTime={context.focus.getCreationDate()} /></Badge>
       <Badge color="dark" rounded class="px-2.5 py-0.5">Updated on <DateTime dateTime={context.focus.getUpdateDate()} /></Badge>
     {/if}
+  {:else}
+    <ResponseMessage response={context.getGridLastResponse()} />
   {/if}
+{:else}
+  <ResponseMessage response={context.getNonGridLastFailResponse()} />
 {/if}

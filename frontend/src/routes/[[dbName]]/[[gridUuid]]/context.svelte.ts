@@ -80,6 +80,7 @@ export class Context {
       ],
       {
         action: metadata.ActionAuthentication,
+        actionText: 'Login',
         userid: loginId,
         password: btoa(loginPassword)
       }
@@ -143,16 +144,22 @@ export class Context {
   }
 
   getGridLastResponse = () => {
-    if(this.focus.hasFocus()) {
-      const gridUuid = this.focus.getGridUuid()
-      return this.messageStack.findLast((r) =>
-        r.response 
-        && r.response.gridUuid === gridUuid 
-        && r.response.sameContext 
-        && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
-      )
-    }
-    return undefined
+    return this.messageStack.findLast((r) =>
+      r.response 
+      && r.response.gridUuid === this.gridUuid
+      && r.response.sameContext 
+      && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
+    )
+  }
+
+  getNonGridLastFailResponse = () => {
+    const last = this.messageStack.findLast((r) =>
+      r.response 
+      && r.response.sameContext
+      && r.response.action !== metadata.ActionHeartbeat
+    )
+    if(last && last.response && last.response.status === metadata.FailedStatus && last.response.gridUuid === undefined) return last
+    else return undefined
   }
 
   sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {

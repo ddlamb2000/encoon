@@ -18,7 +18,7 @@ func handleAuthentication(dbName string, content requestContent) responseContent
 		return responseContent{
 			Status:      FailedStatus,
 			Action:      content.Action,
-			TextMessage: "Authentication: missing username or passphrase",
+			TextMessage: "Missing username or passphrase",
 		}
 	}
 	configuration.Log(dbName, "", "Authentication: %s try to login", content.Userid)
@@ -30,7 +30,7 @@ func handleAuthentication(dbName string, content requestContent) responseContent
 				Status:      FailedStatus,
 				Action:      content.Action,
 				ActionText:  content.ActionText,
-				TextMessage: "Authentication: time out " + err.Error(),
+				TextMessage: "Authentication timed out",
 			}
 		} else {
 			configuration.LogError(dbName, "", "Authentication: failed ", err)
@@ -38,7 +38,7 @@ func handleAuthentication(dbName string, content requestContent) responseContent
 				Status:      FailedStatus,
 				Action:      content.Action,
 				ActionText:  content.ActionText,
-				TextMessage: "Authentication: failed " + err.Error(),
+				TextMessage: "Authentication failed",
 			}
 		}
 	}
@@ -50,7 +50,7 @@ func handleAuthentication(dbName string, content requestContent) responseContent
 			Status:      FailedStatus,
 			Action:      content.Action,
 			ActionText:  content.ActionText,
-			TextMessage: "Authentication: creation of JWT failed " + err.Error(),
+			TextMessage: "Creation of JWT failed",
 		}
 	}
 	configuration.Log(dbName, content.Userid, "Connected.")

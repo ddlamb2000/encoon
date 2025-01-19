@@ -1,5 +1,6 @@
 <script  lang="ts">
   import { Button } from 'flowbite-svelte'
+  import ResponseMessage from './ResponseMessage.svelte'
   let { context } = $props()
   let loginId = $state("")
   let loginPassword = $state("")
@@ -32,6 +33,9 @@
             It is similar to a password in usage, but a passphrase is generally longer 
             for added security.
           </div>
+        </div>
+        <div class="mt-2 font-semibold">
+          <ResponseMessage response={context.getNonGridLastFailResponse()} />
         </div>
         <Button type="submit" color="blue" size="md" class="w-full" onclick={() => context.authentication(loginId, loginPassword)}>
             Sign in
