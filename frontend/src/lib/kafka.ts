@@ -72,11 +72,5 @@ export const postMessage = async (params, request) => {
 const getMessages = (req: KafkaMessageRequest): Message[] => {
   const messageKey = req.messageKey?.trim()
   const headers = Object.fromEntries(req.headers.map((h) => [ h.key + "", h.value + ""]))
-  if(req.selectedPartitions && req.selectedPartitions.length > 0) {
-    return req.selectedPartitions.map((pId) => (
-      { partition: pId, key: messageKey || null, value: req.message, headers: headers }
-    ))
-  } else {
-    return [ { key: messageKey || null, value: req.message, headers: headers } as Message ]
-  }
+  return [ { key: messageKey || null, value: req.message, headers: headers } as Message ]
 }

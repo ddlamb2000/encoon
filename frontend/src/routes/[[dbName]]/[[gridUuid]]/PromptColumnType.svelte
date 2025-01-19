@@ -10,8 +10,10 @@
   }
 </script>
 
-<li class="flex cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm" onclick={() => loadPrompt()}>
-  Add
+<a href="#top" role="menuitem"
+    class="flex cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light" 
+    onclick={() => loadPrompt()}>
+  Add column
   <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
   <Dropdown placement="right-start" class="w-40 overflow-y-auto shadow-lg">
     {#if context.getSet(gridPromptUuid) === undefined}
@@ -22,16 +24,19 @@
           {#key "prompt" + elementReference + gridPromptUuid}
             {#each setPrompt.rows as rowPrompt}
               {#key "prompt" + elementReference + rowPrompt.uuid}
-                {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
-                  <PromptReferenceGrid {context} {set} {rowPrompt}                
-                                        gridPromptUuid={metadata.UuidGrids}
-                                        elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
-                {:else}
-                  <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm"
-                      onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
-                    <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
-                  </li>
-                {/if}
+                <li>
+                  {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
+                    <PromptReferenceGrid {context} {set} {rowPrompt}                
+                                          gridPromptUuid={metadata.UuidGrids}
+                                          elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
+                  {:else}
+                    <a href="#top" role="menuitem"
+                        class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                        onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
+                      <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
+                    </a>
+                  {/if}
+                </li>
               {/key}
             {/each}
           {/key}
@@ -39,4 +44,4 @@
       {/each}
     {/if}
   </Dropdown>
-</li>
+</a>

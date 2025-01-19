@@ -44,9 +44,13 @@
           {#each setPrompt.rows as rowPrompt}
             {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
               {#key "prompt" + elementReference + rowPrompt.uuid}
-              <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600" onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}>
-                <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
-              </li>            
+                <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
+                  <a href="#top" role="menuitem"
+                      onclick={() => context.addReferencedValue(set, column, row, rowPrompt)}
+                      onkeydown={(e) => e.code === 'Enter' && context.addReferencedValue(set, column, row, rowPrompt)}>
+                    <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
+                  </a>
+                </li>
               {/key}
             {/if}
           {/each}

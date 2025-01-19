@@ -10,7 +10,7 @@
   }
 </script>
   
-<li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm" >
+<li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
   <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
   <Icon.ChevronRightOutline class={"cursor-pointer " + elementReference + " dark:text-white"} onclick={() => loadPrompt()} />
   <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60 shadow-lg">
@@ -24,10 +24,12 @@
             {#each setPrompt.rows as rowReference}
               {#if searchText === "" || rowReference.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
                 {#key "prompt" + elementReference + rowReference.uuid}
-                  <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
-                      onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
-                    <Badge color="dark" rounded class="px-2.5 py-0.5">{rowReference.displayString}</Badge>
-                  </li>            
+                  <li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
+                    <a href="#top" role="menuitem"
+                        onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
+                      <Badge color="dark" rounded class="px-2.5 py-0.5">{rowReference.displayString}</Badge>
+                    </a>
+                  </li>
                 {/key}
               {/if}
             {/each}

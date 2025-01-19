@@ -117,12 +117,12 @@ export class Context {
     )
   }
 
-  trackRequest = (request: KafkaMessageRequest) => {
+  trackRequest = (request) => {
     this.messageStack.push({request : request})
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
-  trackResponse = (response: KafkaMessageResponse) => {
+  trackResponse = (response) => {
     // Remove corresponding request from messageStack
     const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.messageKey)
     if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)

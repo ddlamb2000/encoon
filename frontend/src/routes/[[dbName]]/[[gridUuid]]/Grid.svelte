@@ -57,9 +57,11 @@
                                           elementReference={"referenceColumnType-" + set.grid.uuid} />
                       {/if}
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <span class="flex" onclick={() => context.removeColumn(set, column)}>
-                          Remove
-                        </span>
+                        <a href="#top" class="flex" role="menuitem"
+                            onclick={() => context.removeColumn(set, column)}
+                            onkeydown={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
+                          Remove column
+                        </a>
                       </li>
                     </Dropdown>
                   </span>
@@ -75,9 +77,11 @@
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <span class="flex" onclick={() => context.removeRow(set, row)}>
-                          Remove
-                        </span>
+                        <a href="#top" class="flex" role="menuitem"
+                            onclick={() => context.removeRow(set, row)}
+                            onkeydown={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
+                          Remove row
+                        </a>
                       </li>
                     </Dropdown>
                   </td>
