@@ -10,3 +10,6 @@ cover*.out
 cover*.html
 encoon
 node_modules
+package-lock.json
+backend/go.sum
+yarn.lock
