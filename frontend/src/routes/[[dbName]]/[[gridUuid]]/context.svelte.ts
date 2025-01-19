@@ -142,13 +142,17 @@ export class Context {
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
   }
 
-  getLastResponse = (gridUuid: string) => {
-    return this.messageStack.findLast((r) =>
-      r.response 
-      && r.response.gridUuid === gridUuid 
-      && r.response.sameContext 
-      && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
-    )
+  getGridLastResponse = () => {
+    if(this.focus.hasFocus()) {
+      const gridUuid = this.focus.getGridUuid()
+      return this.messageStack.findLast((r) =>
+        r.response 
+        && r.response.gridUuid === gridUuid 
+        && r.response.sameContext 
+        && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
+      )
+    }
+    return undefined
   }
 
   sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {

@@ -1,11 +1,10 @@
 <script lang="ts">
   import type { GridResponse, RowType, ColumnType } from '$lib/dataTypes.ts'
-	import { Dropdown, Spinner, Badge } from 'flowbite-svelte'
+	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  import DateTime from '$lib/DateTime.svelte'
   let { context = $bindable(), gridUuid } = $props()
   const colorFocus = "bg-yellow-100/10"
 
@@ -131,18 +130,6 @@
                 <span class="flex">
                   <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline size="sm" /></a>
                   {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
-                  {#if context.getLastResponse(set.grid.uuid) !== undefined}
-                    <Badge color={context.getLastResponse(set.grid.uuid).response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
-                      {#if context.getLastResponse(set.grid.uuid).response.action}{context.getLastResponse(set.grid.uuid).response.actionText}{/if}
-                      {#if context.getLastResponse(set.grid.uuid).response.textMessage}: {context.getLastResponse(set.grid.uuid).response.textMessage}{/if}
-                      <span class="font-light text-xs ms-1">
-                        <small>({context.getLastResponse(set.grid.uuid).response.elapsedMs} ms)</small>
-                      </span>
-                      <span class="font-light text-xs ms-1">
-                        {#if context.getLastResponse(set.grid.uuid).response !== undefined && context.getLastResponse(set.grid.uuid).response.dateTime !== undefined}<DateTime dateTime={context.getLastResponse(set.grid.uuid).response?.dateTime} showDate={false} />{/if}
-                      </span>
-                    </Badge>
-                  {/if}
                 </span>
               </th>
             </tr>

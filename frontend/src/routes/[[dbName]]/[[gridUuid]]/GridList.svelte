@@ -24,7 +24,7 @@
                         color={context.gridUuid === row.uuid ? "dark" : "light"}
                         onclick={() => context.navigateToGrid(row.uuid)}>
                   <DynIcon iconName={row.text3}/>
-                  {#if userPreferences.expandSidebar}{row.text1}{/if}
+                  {#if userPreferences.expandSidebar}{@html row.text1}{/if}
                 </Button>
               {/key}      
             {/each}

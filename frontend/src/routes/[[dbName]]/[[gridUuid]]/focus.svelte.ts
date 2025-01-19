@@ -39,6 +39,7 @@ export class Focus {
   }
 
   getGridName = () => this.#grid !== undefined ? this.#grid.text1 : ""
+  getGridUuid = () => this.#grid !== undefined ? this.#grid.uuid : ""
   getColumnName = () => this.#column !== undefined ? this.#column.label : ""
   getColumnType = () => this.#column !== undefined ? this.#column.type : ""
   getRowName = () => this.#row !== undefined ? this.#row.displayString : ""
