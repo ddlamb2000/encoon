@@ -24,12 +24,11 @@
         <span contenteditable
               class="text-2xl font-extrabold"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
+              bind:innerHTML={context.dataSet[setIndex].grid.text1} />
         <span contenteditable
               class="ms-2 font-light text-sm"
               oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text2}>
-        </span>
+              bind:innerHTML={context.dataSet[setIndex].grid.text2} />
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
@@ -86,16 +85,7 @@
                     </Dropdown>
                   </td>
                   {#each set.grid.columns as column}
-                    {#if set.grid.uuid === metadata.UuidGrids && column.name === "text1"}
-                      <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
-                        <a href="#top"
-                            class="font-medium text-blue-600 dark:text-blue-500 hover:underline"
-                            onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => context.navigateToGrid(row.uuid)}>
-                          {row[column.name]}
-                        </a>
-                      </td>
-                    {:else if column.typeUuid === metadata.UuidTextColumnType
+                    {#if column.typeUuid === metadata.UuidTextColumnType
                               || column.typeUuid === metadata.UuidUuidColumnType 
                               || column.typeUuid === metadata.UuidPasswordColumnType 
                               || column.typeUuid === metadata.UuidIntColumnType}

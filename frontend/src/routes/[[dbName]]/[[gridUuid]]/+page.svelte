@@ -1,18 +1,16 @@
 <script  lang="ts">
   import type { PageData } from './$types'
   import * as metadata from "$lib/metadata.svelte.ts"
-  import * as Icon from 'flowbite-svelte-icons'
   import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
-  import { Button } from 'flowbite-svelte'
   import { Context } from './context.svelte.ts'
   import { UserPreferences } from '$lib/userPreferences.svelte.ts'
-  import DynIcon from './DynIcon.svelte'
   import Login from './Login.svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   import GridList from './GridList.svelte'
   import FocusArea from './FocusArea.svelte'
+  import Navigation from './Navigation.svelte'
   import TopBar from './TopBar.svelte'
   import '$lib/app.css'
   
@@ -23,7 +21,7 @@
   onMount(() => {
     userPreferences.readUserPreferences()
     context.startStreaming()
-    if(context.gridUuid !== "") context.pushTransaction({action: metadata.ActionLoad, gridUuid: context.gridUuid})
+    context.mount()
   })
 
   onDestroy(() => { context.stopStreaming()  })
@@ -33,34 +31,18 @@
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    <TopBar {context} {userPreferences} />
+    <Navigation {context} {userPreferences} />
   </nav>
   <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
-      <div class="p-1 overflow-y-auto overflow-x-hidden h-[500px]">
+      <div class="p-1 overflow-y-auto overflow-x-hidden">
         <GridList {context} {userPreferences} />
       </div>
     </aside>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-12 overflow-y-auto bg-gray-200">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <Button color="light" size="xs" class="mt-1 me-1"
-                  disabled={context.gridUuid === metadata.UuidGrids}
-                  onclick={() => context.navigateToGrid(metadata.UuidGrids)}>
-            <Icon.ListOutline class="w-5 h-5"/> List
-          </Button>
-          {#each context.dataSet as set}
-            {#if set.grid && set.grid.uuid && set.grid.uuid !== metadata.UuidGrids}
-              <Button size="xs"
-                      color="light"
-                      class="mt-1 me-1"
-                      disabled={context.gridUuid === set.grid.uuid}
-                      onclick={() => context.navigateToGrid(set.grid.uuid)}>
-                <DynIcon iconName={set.grid.text3}/>
-                {@html set.grid.text1}
-              </Button>
-            {/if}
-          {/each}
+          <TopBar {context} />
         {/if}
       </div>
       <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
@@ -69,7 +51,7 @@
       <div class="p-2 bg-white grid overflow-auto">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
-            {#if context.hasDataSet()}
+            {#if context.gridUuid !== undefined && context.gridUuid !== "" && context.hasDataSet()}
               <Grid bind:context={context} gridUuid={context.gridUuid} />
             {/if}
           </article>

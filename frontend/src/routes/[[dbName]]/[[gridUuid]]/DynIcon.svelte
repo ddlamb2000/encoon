@@ -5,6 +5,8 @@
 
 {#if iconName === "person"}
   <Icon.UsersOutline />
+{:else if iconName === "grid-3x3"}
+  <Icon.GridOutline />
 {:else if iconName === "columns-gap"}
   <Icon.ToolsOutline />
 {:else if iconName === "columns"}

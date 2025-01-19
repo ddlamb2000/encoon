@@ -43,6 +43,11 @@ export class Context {
     this.#tokenName = `access_token_${this.dbName}`
   }
 
+  mount = () => {
+    if(this.gridUuid !== "") this.pushTransaction({action: metadata.ActionLoad, gridUuid: this.gridUuid})
+    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({action: metadata.ActionLoad, gridUuid: metadata.UuidGrids})  
+  }
+
   reset = () => {
     this.focus.reset()
     this.isSending = false
@@ -599,7 +604,8 @@ export class Context {
             if(message.status == metadata.SuccessStatus) {
               if(message.jwt !== undefined && this.user.checkToken(message.jwt)) {
                 console.log(`Logged in: ${message.firstName} ${message.lastName}`)
-                if(message.jwt !== undefined) localStorage.setItem(this.#tokenName, message.jwt)
+                localStorage.setItem(this.#tokenName, message.jwt)
+                this.mount()
               } else {
                 console.error(`Invalid token for ${message.firstName}`)
               }
@@ -616,7 +622,7 @@ export class Context {
                 if(message.dataSet && message.dataSet.grid) {
                   console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                   this.dataSet.push(message.dataSet)
-                  this.focus.set(message.dataSet.grid, undefined, undefined)
+                  if(this.gridUuid === message.dataSet.grid.uuid) this.focus.set(message.dataSet.grid, undefined, undefined)
                 }
               } else if(message.action == metadata.ActionLocateGrid) {
                 this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
