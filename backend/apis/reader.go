@@ -74,9 +74,6 @@ func getConsumer(dbName string) (*kafka.Reader, error) {
 }
 
 func readMessages(dbName string) {
-	timeOutThreshold := configuration.GetConfiguration().Kafka.TimeOutThreshold
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutThreshold)*time.Millisecond)
-	defer cancel()
 	consumer, err := getConsumer(dbName)
 	if err != nil {
 		configuration.LogError(dbName, "", "Error getting Kafka consumer", err)
@@ -84,18 +81,18 @@ func readMessages(dbName string) {
 	}
 	configuration.Log(dbName, "", "Read messages")
 	for {
-		message, err := consumer.ReadMessage(ctx)
+		message, err := consumer.ReadMessage(context.Background())
 		if err != nil {
 			if consumerShutdown.shutdown[dbName] {
 				configuration.Log(dbName, "", "Kafka consumer stopped")
 				return
 			}
-			configuration.LogError(dbName, "", "Error reading message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, err)
+			configuration.LogError(dbName, "", "Error reading message", err)
 			continue
 		}
 		go func() {
 			handleMessage(dbName, message)
-			if err := consumer.CommitMessages(ctx, message); err != nil {
+			if err := consumer.CommitMessages(context.Background(), message); err != nil {
 				configuration.LogError(dbName, "", "Error committing message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, err)
 			}
 		}()

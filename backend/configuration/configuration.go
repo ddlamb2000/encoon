@@ -36,10 +36,9 @@ type HttpServerConfiguration struct {
 }
 
 type KafkaConfiguration struct {
-	Brokers          string `yaml:"brokers"`
-	GroupID          string `yaml:"groupID"`
-	TopicPrefix      string `yaml:"topicPrefix"`
-	TimeOutThreshold int64  `yaml:"timeOutThreshold"`
+	Brokers     string `yaml:"brokers"`
+	GroupID     string `yaml:"groupID"`
+	TopicPrefix string `yaml:"topicPrefix"`
 }
 
 type DatabaseConfiguration struct {

@@ -31,8 +31,7 @@ func waitAndRepeat(t *testing.T, consumer *kafka.Reader, key string, f func(t *t
 }
 
 func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*responseContent, bool) {
-	timeOutThreshold := configuration.GetConfiguration().Kafka.TimeOutThreshold
-	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(timeOutThreshold)*time.Millisecond)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	message, err := consumer.ReadMessage(ctx)
 	if err != nil {
