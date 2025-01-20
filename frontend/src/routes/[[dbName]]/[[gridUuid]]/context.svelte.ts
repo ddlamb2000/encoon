@@ -586,6 +586,7 @@ export class Context {
         const seconds = (localNowUTC - localDateUTC) / 1000
         if(seconds > thresholdMessages) {
           message.request.timeOut = true
+          this.messageStatus = "Timed out"
           console.log("Message timed out: ", message.request.messageKey, message.request.dateTime, seconds)
         }
       }
