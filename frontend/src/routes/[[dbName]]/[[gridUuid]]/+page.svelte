@@ -44,7 +44,7 @@
           <TopBar {context} />
         {/if}
       </div>
-      <aside class="p-2 h-10 overflow-y-auto bg-gray-100">
+      <aside class="p-1 h-10 overflow-y-auto bg-gray-100">
         <FocusArea {context} />
       </aside>
       <div class="p-2 bg-white grid overflow-auto">

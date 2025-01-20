@@ -21,11 +21,9 @@
   {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <span contenteditable class="text-2xl font-extrabold"
-              oninput={() => context.changeGrid(set.grid)}
+        <span contenteditable class="text-2xl font-extrabold" oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
-        <span contenteditable class="ms-2 font-light text-sm"
-              oninput={() => context.changeGrid(set.grid)}
+        <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>        
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
@@ -34,8 +32,7 @@
                 {#if set.grid.columns === undefined || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline size="sm" color="gray" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
-                    <PromptColumnType {context} {set}
-                                      gridPromptUuid={metadata.UuidColumnTypes}
+                    <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
                                       elementReference={"referenceColumnType-" + set.grid.uuid} />
                   </Dropdown>
                 {/if}
@@ -43,14 +40,12 @@
               {#each set.grid.columns as column, indexColumn}
                 <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
-                    <span contenteditable
-                          oninput={() => context.changeColumn(set.grid, column)}
+                    <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
                           bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
-                        <PromptColumnType {context} {set}
-                                          gridPromptUuid={metadata.UuidColumnTypes}
+                        <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
                                           elementReference={"referenceColumnType-" + set.grid.uuid} />
                       {/if}
                       <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
@@ -84,9 +79,9 @@
                   </td>
                   {#each set.grid.columns as column}
                     {#if column.typeUuid === metadata.UuidTextColumnType
-                              || column.typeUuid === metadata.UuidUuidColumnType 
-                              || column.typeUuid === metadata.UuidPasswordColumnType 
-                              || column.typeUuid === metadata.UuidIntColumnType}
+                          || column.typeUuid === metadata.UuidUuidColumnType 
+                          || column.typeUuid === metadata.UuidPasswordColumnType 
+                          || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
                           class="{context.isFocused(set, column, row) ? colorFocus : ''}
                                  {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
@@ -106,8 +101,7 @@
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="cursor-pointer" align='center'>
                         <Icon.CheckCircleOutline 
-                              size="sm"
-                              onclick={() => toggleBoolean(set, column, row)}
+                              size="sm" onclick={() => toggleBoolean(set, column, row)}
                               color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
                       </td>
                     {:else}
@@ -117,11 +111,7 @@
                 </tr>
               {/key}      
             {:else}
-              <tr>
-                <td>
-                  No data
-                </td>
-              </tr>
+              <tr><td>No data</td></tr>
             {/each}
           </tbody>
           <tfoot class="border border-slate-200">
