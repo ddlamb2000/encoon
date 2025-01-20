@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Dropdown, Spinner, Badge } from 'flowbite-svelte'
+  import { Dropdown, Spinner } from 'flowbite-svelte'
   import PromptReferenceGrid from './PromptReferenceGrid.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
@@ -11,10 +11,12 @@
 </script>
 
 <a href="#top" role="menuitem"
-    class="flex cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light" 
-    onclick={() => loadPrompt()}>
-  Add column
-  <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
+    class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+    on:click={() => loadPrompt()}>
+  <span class="flex">
+    Add column
+    <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />      
+  </span>
   <Dropdown placement="right-start" class="w-40 overflow-y-auto shadow-lg">
     {#if context.getSet(gridPromptUuid) === undefined}
       <Spinner size={4} />
@@ -24,16 +26,16 @@
           {#key "prompt" + elementReference + gridPromptUuid}
             {#each setPrompt.rows as rowPrompt}
               {#key "prompt" + elementReference + rowPrompt.uuid}
-                <li>
+                <li class="p-1">
                   {#if rowPrompt.uuid === metadata.UuidReferenceColumnType}
                     <PromptReferenceGrid {context} {set} {rowPrompt}                
                                           gridPromptUuid={metadata.UuidGrids}
                                           elementReference={"referenceColumnType-referenceType-" + set.grid.uuid} />
                   {:else}
                     <a href="#top" role="menuitem"
-                        class="cursor-pointer flex w-full rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-                        onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
-                      <Badge color="dark" rounded class="px-2.5 py-0.5">{@html rowPrompt.displayString}</Badge>
+                        class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                        on:click={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
+                      {@html rowPrompt.displayString}
                     </a>
                   {/if}
                 </li>

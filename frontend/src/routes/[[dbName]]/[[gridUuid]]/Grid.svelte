@@ -21,9 +21,9 @@
   {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <span contenteditable class="text-2xl font-extrabold" oninput={() => context.changeGrid(set.grid)}
+        <span contenteditable class="text-2xl font-extrabold" on:input={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
-        <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
+        <span contenteditable class="ms-2 text-sm font-light" on:input={() => context.changeGrid(set.grid)}
               bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>        
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
@@ -32,26 +32,31 @@
                 {#if set.grid.columns === undefined || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline size="sm" color="gray" class={"first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
-                    <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
-                                      elementReference={"referenceColumnType-" + set.grid.uuid} />
+                    <li class="p-0.5">
+                      <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
+                                        elementReference={"referenceColumnType-" + set.grid.uuid} />
+                    </li>
                   </Dropdown>
                 {/if}
               </th>
               {#each set.grid.columns as column, indexColumn}
                 <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
-                    <span contenteditable oninput={() => context.changeColumn(set.grid, column)}
+                    <span contenteditable on:input={() => context.changeColumn(set.grid, column)}
                           bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
-                        <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
-                                          elementReference={"referenceColumnType-" + set.grid.uuid} />
+                        <li class="p-1">
+                          <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
+                                            elementReference={"referenceColumnType-" + set.grid.uuid} />
+                        </li>
                       {/if}
-                      <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <a href="#top" class="flex" role="menuitem"
-                            onclick={() => context.removeColumn(set, column)}
-                            onkeyup={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
+                      <li class="p-1">
+                        <a href="#top" role="menuitem"
+                            class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                            on:click={() => context.removeColumn(set, column)}
+                            on:keyup={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
                           Remove column
                         </a>
                       </li>
@@ -68,10 +73,11 @@
                   <td class="nowrap">
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
-                      <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
-                        <a href="#top" class="flex" role="menuitem"
-                            onclick={() => context.removeRow(set, row)}
-                            onkeyup={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
+                      <li class="p-1">
+                        <a href="#top"  role="menuitem"
+                            class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
+                            on:click={() => context.removeRow(set, row)}
+                            on:keyup={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
                           Remove row
                         </a>
                       </li>
@@ -86,8 +92,8 @@
                           class="{context.isFocused(set, column, row) ? colorFocus : ''}
                                  {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
-                          onfocus={() => context.changeFocus(set.grid, column, row)}
-                          oninput={() => context.changeCell(set, row)}
+                          on:focus={() => context.changeFocus(set.grid, column, row)}
+                          on:input={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
@@ -101,8 +107,8 @@
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="cursor-pointer" align='center'>
                         <a href="#top"
-                            onfocus={() => context.changeFocus(set.grid, column, row)}
-                            onclick={() => toggleBoolean(set, column, row)}>
+                            on:focus={() => context.changeFocus(set.grid, column, row)}
+                            on:click={() => toggleBoolean(set, column, row)}>
                           <Icon.CheckCircleOutline size="sm"
                                 color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
                         </a>
@@ -121,7 +127,7 @@
             <tr>
               <th class="py-1 bg-gray-100" colspan="99">
                 <span class="flex">
-                  <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline size="sm" /></a>
+                  <a href="#top" on:click={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline size="sm" /></a>
                   {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
                 </span>
               </th>

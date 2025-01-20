@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Dropdown, Spinner, Search, Badge } from 'flowbite-svelte'
+  import { Dropdown, Spinner, Search } from 'flowbite-svelte'
   import * as metadata from "$lib/metadata.svelte"
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, rowPrompt, gridPromptUuid, elementReference } = $props()
@@ -10,25 +10,31 @@
   }
 </script>
   
-<li class="cursor-pointer flex rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600">
-  <Badge color="dark" rounded class="px-2.5 py-0.5">{rowPrompt.displayString}</Badge>
-  <Icon.ChevronRightOutline class={"cursor-pointer " + elementReference + " dark:text-white"} onclick={() => loadPrompt()} />
-  <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto py-1 max-h-60 shadow-lg">
+<a href="#top" role="menuitem"
+    class={"cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light " + elementReference}
+    on:click={() => loadPrompt()}>
+  <span class="flex">
+    {rowPrompt.displayString}
+    <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />  
+  </span>
+  <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto max-h-60 shadow-lg">
     {#if context.getSet(gridPromptUuid) === undefined}
       <Spinner size={4} />
     {:else}
-      <Search size="md" class="py-1" bind:value={searchText} />
+      <span class="flex p-1">
+        <Search size="md" class="py-1" bind:value={searchText}  on:click={(e) => {e.stopPropagation()}} />
+      </span>      
       {#each context.dataSet as setPrompt}
         {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
           {#key "prompt-reference" + elementReference + gridPromptUuid}
             {#each setPrompt.rows as rowReference}
               {#if searchText === "" || rowReference.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}
                 {#key "prompt" + elementReference + rowReference.uuid}
-                  <li>
+                  <li class="p-1">
                     <a href="#top" role="menuitem"
-                        class="cursor-pointer flex w-full rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600"
-                        onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
-                      <Badge color="dark" rounded class="px-2.5 py-0.5">{@html  rowReference.displayString}</Badge>
+                        class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600"
+                        on:click={() => context.addColumn(set, rowPrompt, rowReference)}>
+                      {@html  rowReference.displayString}
                     </a>
                   </li>
                 {/key}
@@ -39,4 +45,4 @@
       {/each}
     {/if}
   </Dropdown>
-</li>
+</a>
