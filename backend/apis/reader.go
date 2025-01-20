@@ -87,10 +87,15 @@ func readMessages(dbName string) {
 				configuration.Log(dbName, "", "Kafka consumer stopped")
 				return
 			}
-			configuration.LogError(dbName, "", "Error reading message: %v", err)
+			configuration.LogError(dbName, "", "Error reading message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, err)
 			continue
 		}
-		go handleMessage(dbName, message)
+		go func() {
+			handleMessage(dbName, message)
+			if err := consumer.CommitMessages(context.Background(), message); err != nil {
+				configuration.LogError(dbName, "", "Error committing message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, err)
+			}
+		}()
 	}
 }
 
@@ -102,10 +107,10 @@ func handleMessage(dbName string, message kafka.Message) {
 	user := ""
 	userUuid := ""
 	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText, err)
+		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, content.Action, content.ActionText, err)
 		response = invalidMessage(content)
 	} else {
-		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, action: %s %s", len(message.Value), message.Topic, message.Key, content.Action, content.ActionText)
+		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, content.Action, content.ActionText)
 		if content.Action == ActionHeartbeat {
 			response = heartBeat(content)
 		} else if content.Action == ActionAuthentication {
