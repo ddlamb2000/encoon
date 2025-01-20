@@ -48,10 +48,10 @@
                         <PromptColumnType {context} {set} gridPromptUuid={metadata.UuidColumnTypes}
                                           elementReference={"referenceColumnType-" + set.grid.uuid} />
                       {/if}
-                      <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
+                      <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
                         <a href="#top" class="flex" role="menuitem"
                             onclick={() => context.removeColumn(set, column)}
-                            onkeydown={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
+                            onkeyup={(e) => e.code === 'Enter' && context.removeColumn(set, column)}>
                           Remove column
                         </a>
                       </li>
@@ -68,10 +68,10 @@
                   <td class="nowrap">
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
-                      <li class="cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
+                      <li class="cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light text-sm">
                         <a href="#top" class="flex" role="menuitem"
                             onclick={() => context.removeRow(set, row)}
-                            onkeydown={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
+                            onkeyup={(e) => e.code === 'Enter' && context.removeRow(set, row)}>
                           Remove row
                         </a>
                       </li>
@@ -100,9 +100,12 @@
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="cursor-pointer" align='center'>
-                        <Icon.CheckCircleOutline 
-                              size="sm" onclick={() => toggleBoolean(set, column, row)}
-                              color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
+                        <a href="#top"
+                            onfocus={() => context.changeFocus(set.grid, column, row)}
+                            onclick={() => toggleBoolean(set, column, row)}>
+                          <Icon.CheckCircleOutline size="sm"
+                                color={context.dataSet[setIndex].rows[rowIndex][column.name] === "true" ? "" : "lightgray"} />
+                        </a>
                       </td>
                     {:else}
                       <td></td>

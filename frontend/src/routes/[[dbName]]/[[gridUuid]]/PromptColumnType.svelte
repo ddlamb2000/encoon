@@ -11,7 +11,7 @@
 </script>
 
 <a href="#top" role="menuitem"
-    class="flex cursor-pointer rounded p-2 hover:bg-gray-100 dark:hover:bg-gray-600 font-light" 
+    class="flex cursor-pointer rounded p-1 hover:bg-gray-100 dark:hover:bg-gray-600 font-light" 
     onclick={() => loadPrompt()}>
   Add column
   <Icon.ChevronRightOutline class="w-6 h-6 ms-2 text-gray-700 dark:text-white" />
