@@ -304,7 +304,7 @@ func RunSystemTestAuth(t *testing.T) {
 		responseData, err := io.ReadAll(w.Body)
 		httpCodeEqual(t, w.Code, http.StatusNotFound)
 
-		expect := utils.CleanupStrings(`"error":"Data not found."`)
+		expect := utils.CleanupStrings(`"error":"Data not found"`)
 		response := utils.CleanupStrings(string(responseData))
 
 		if err != nil {

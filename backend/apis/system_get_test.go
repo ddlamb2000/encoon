@@ -37,7 +37,7 @@ func RunSystemTestGet(t *testing.T) {
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		jsonStringContains(t, responseData, `"error":"Data not found"`)
 	})
 
 	t.Run("VerifyGridNotFound2", func(t *testing.T) {
@@ -80,7 +80,7 @@ func RunSystemTestGet(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusNotFound)
 		jsonStringDoesntContain(t, responseData, `"countRows"`)
-		jsonStringContains(t, responseData, `{"error":"Data not found."}`)
+		jsonStringContains(t, responseData, `{"error":"Data not found"}`)
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {

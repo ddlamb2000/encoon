@@ -96,8 +96,7 @@ func getProducer(dbName string) (*kafka.Writer, error) {
 }
 
 func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
-	contextUuid string, requestInitiatedOn string, receivedOn string, key string, response responseContent) {
-	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
+	contextUuid string, requestInitiatedOn string, receivedOn string, key string, message responseContent) {
 	hostname, _ := os.Hostname()
 	responseInitiatedOn := time.Now().UTC().Format(time.RFC3339Nano)
 
@@ -107,6 +106,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		return
 	}
 	if producerShutdown.shutdown[dbName] {
+		configuration.Log(dbName, user, "Message not sent (producer is shuting down), key: %s, action: %s, status: %s", key, message.Action, message.Status)
 		return
 	}
 
@@ -123,22 +123,22 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		{Key: "responseInitiatedOn", Value: []byte(responseInitiatedOn)},
 	}
 
-	responseEncoded, err := json.Marshal(response)
+	messageEncoded, err := json.Marshal(message)
 	if err != nil {
 		configuration.LogError(dbName, user, "Error marshal response:", err)
 		return
 	}
-	configuration.Log(dbName, user, "PUSH message (%d bytes), topic: %s, key: %s, action: %s, status: %s", len(responseEncoded), topic, key, response.Action, response.Status)
 	err = (*writer).WriteMessages(
 		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
-			Value:   responseEncoded,
+			Value:   messageEncoded,
 			Headers: headers,
 		},
 	)
-
 	if err != nil {
-		configuration.LogError(dbName, user, "failed to write messages:", err)
+		configuration.LogError(dbName, user, "Failed to PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
+	} else {
+		configuration.Log(dbName, user, "PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
 	}
 }

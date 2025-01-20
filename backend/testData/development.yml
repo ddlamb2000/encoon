@@ -23,6 +23,7 @@ kafka:
   brokers: broker1:19092 # Kafka brokers, separated with a comma
   groupID: backend-encoon-development # GroupId for Kafka consumer
   topicPrefix: encoon # Kafka topic
+  timeOutThreshold: 5000 # timeout threshold (in milliseconds) for Kafka requests
 
 # Database configuration
 database:

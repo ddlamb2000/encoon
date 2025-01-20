@@ -29,6 +29,7 @@ func TestSystem(t *testing.T) {
 	t.Run("IncorrectDb", func(t *testing.T) { RunTestConnectDbServersIncorrect(t) })
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
+	t.Run("Kafka", func(t *testing.T) { RunSystemTestKafka(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
 	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })

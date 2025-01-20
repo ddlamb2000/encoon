@@ -1,5 +1,5 @@
 #  εncooη : data structuration, presentation and navigation.
-#  Copyright David Lambert 2023
+#  Copyright David Lambert 2025
 appName: "εncooη (sandbox)"
 appTag: "Data structuration, presentation and navigation."
 log: true
@@ -14,6 +14,7 @@ kafka:
   brokers: broker1:19092
   groupID: backend-encoon
   topicPrefix: encoon
+  timeOutThreshold: 10000
 database:
 - name: "sandbox"
   host: "db"
