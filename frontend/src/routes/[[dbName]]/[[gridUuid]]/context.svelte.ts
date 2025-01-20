@@ -18,6 +18,8 @@ import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 
 const messageStackLimit = 100
+const heartBeat = 60
+const thresholdMessages = 10
 
 export class Context {
   user: User
@@ -34,6 +36,7 @@ export class Context {
   #tokenName = ""
   #contextUuid = newUuid()
   #hearbeatId: any = null
+  #messageTimerId: any = null
 
   constructor(dbName: string | undefined, url: string, gridUuid: string) {
     this.dbName = dbName || ""
@@ -570,6 +573,24 @@ export class Context {
     }
     this.focus.reset()
   }
+
+  controlMessages = () => {
+    this.messageStack.forEach((message) => {
+      if(message.request !== undefined && message.request.dateTime !== undefined) {
+        const localDate = new Date(message.request.dateTime)
+        const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
+                                      localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
+        const localNow = new Date
+        const localNowUTC =  Date.UTC(localNow.getUTCFullYear(), localNow.getUTCMonth(), localNow.getUTCDate(),
+                                      localNow.getUTCHours(), localNow.getUTCMinutes(), localNow.getUTCSeconds())
+        const seconds = (localNowUTC - localDateUTC) / 1000
+        if(seconds > thresholdMessages) {
+          message.request.timeOut = true
+          console.log("Message timed out: ", message.request.messageKey, message.request.dateTime, seconds)
+        }
+      }
+    })
+  }
   
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
@@ -684,13 +705,15 @@ export class Context {
     this.user.checkToken(localStorage.getItem(this.#tokenName))
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
+    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, heartBeat * 1000)
+    this.#messageTimerId = setInterval(() => { this.controlMessages() }, thresholdMessages * 1000)
     for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {
     this.isStreaming = false
     if(this.#hearbeatId) clearInterval(this.#hearbeatId)
+    if(this.#messageTimerId) clearInterval(this.#messageTimerId)
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 

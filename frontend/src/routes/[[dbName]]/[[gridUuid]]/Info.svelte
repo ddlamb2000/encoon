@@ -12,7 +12,11 @@
     {#if message.request}
       <li transition:fade>
         <span class="flex items-center">
-          <Spinner size={4} />
+          {#if message.request.timeOut}
+            <Icon.LockTimeOutline color="red" class="w-4 h-4" />
+          {:else}
+            <Spinner size={4} />
+          {/if}
           <div class="ps-2 text-xs font-normal">
             <p>
               {message.request.messageKey}
