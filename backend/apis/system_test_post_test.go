@@ -5,7 +5,6 @@ package apis
 
 import (
 	"errors"
-	"net/http"
 	"testing"
 
 	"d.lambert.fr/encoon/database"
@@ -23,9 +22,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("baddb", "root", model.UuidRootUser, "/baddb/api/v1/xxx", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
+		response, responseData := runKafkaTestRequest(t, "baddb", "root", model.UuidRootUser, "xxx", requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: "xxx",
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Unable to connect to database: dial tcp`)
 	})
 
@@ -35,9 +37,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
 	})
 
@@ -71,9 +76,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Test Column 04","text2":"text4"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 01","text2":"text1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 02","text2":"text2"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 03","text2":"text3"`)
@@ -98,9 +106,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol4 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidTextColumnType + `"}` +
 			`]` +
 			`}`
-		_, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ = runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidRelationships, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidRelationships,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 
 	t.Run("CreateNewRowInSingleGrid", func(t *testing.T) {
@@ -111,9 +122,12 @@ func RunSystemTestPost(t *testing.T) {
 			`}`
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"test02","text3":"test03","text4":"test04"`)
 		jsonStringContains(t, responseData, `"columns":[`)
@@ -125,9 +139,12 @@ func RunSystemTestPost(t *testing.T) {
 		postStr := `{"xxxxx"}`
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"test02","text3":"test03","text4":"test04"`)
 	})
@@ -154,10 +171,13 @@ func RunSystemTestPost(t *testing.T) {
 		defer setDefaultTestSleepTimeAndTimeOutThreshold()
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusRequestTimeout)
-		jsonStringContains(t, responseData, `{"error":"Post request has been cancelled: context deadline exceeded."}`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Post request has been cancelled: context deadline exceeded."`)
 	})
 
 	t.Run("VerifyNoNewRowInSingleGrid", func(t *testing.T) {
@@ -182,9 +202,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + model.UuidUserColumnId + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error retrieving row`)
 		var revision int
 		db.QueryRow("SELECT revision FROM grids WHERE gridUuid = $1 and uuid = $2", model.UuidGrids, uuid).Scan(&revision)
@@ -200,9 +223,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"uuid":"`+uuid+`"`)
 		jsonStringContains(t, responseData, `"text1":"Grid01","text2":"Test grid 01","text3":"journal"`)
 		var revision int
@@ -228,9 +254,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `","text1":"test-01","text2":"test-02","text3":"test-03","text4":"test-04"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringContains(t, responseData, `"text1":"test-01","text2":"test-02","text3":"test-03","text4":"test-04"`)
 		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12"`)
@@ -245,9 +274,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + model.UuidGridColumnName + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error retrieving row`)
 	})
 
@@ -267,9 +299,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":6`)
 		jsonStringContains(t, responseData, `"text1":"test-21","text2":"test-22","text3":"test-23","text4":"test-24"`)
 		jsonStringContains(t, responseData, `"text1":"test-25","text2":"test-26","text3":"test-27","text4":"test-28"`)
@@ -287,9 +322,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":5`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-09"`)
 	})
@@ -304,9 +342,12 @@ func RunSystemTestPost(t *testing.T) {
 			`}`
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 10, 500)
 		defer setDefaultTestSleepTimeAndTimeOutThreshold()
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":6`)
 		jsonStringContains(t, responseData, `"text1":"test-29","text2":"test-30","text3":"test-31","text4":"test-32"`)
 	})
@@ -317,9 +358,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid02","text2":"Test grid 02","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid02","text2":"Test grid 02","text3":"journal"`)
 	})
 
@@ -332,9 +376,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Test Column 08","text2":"int4"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 05","text2":"int1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 06","text2":"int2"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 07","text2":"int3"`)
@@ -359,9 +406,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"relationship1","text2":"` + model.UuidColumns + `", "text3":"` + uuidCol4 + `", "text4":"` + model.UuidColumnTypes + `", "text5":"` + model.UuidIntColumnType + `"}` +
 			`]` +
 			`}`
-		_, code, err = runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidRelationships, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ = runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidRelationships, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidRelationships,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 
 	t.Run("CreateNewRowsIn2ndSingleGrid", func(t *testing.T) {
@@ -383,9 +433,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"int1":1,"int2":2,"int3":3,"int4":4}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":12`)
 		jsonStringContains(t, responseData, `"int1":1,"int2":2,"int3":3,"int4":4`)
 		jsonStringContains(t, responseData, `"columns":[`)
@@ -398,10 +451,13 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", model.UuidRootUser, "/test/api/v1/d7c004ff-cccc-dddd-eeee-cd42b2847508", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: "d7c004ff-cccc-dddd-eeee-cd42b2847508",
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Data not found."`)
 	})
 
 	t.Run("InvalidCreateGrid2", func(t *testing.T) {
@@ -410,9 +466,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", model.UuidRootUser, "/test/api/v1/xxx", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, "xxx", requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: "xxx",
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error when retrieving grid definition: pq: invalid input syntax for type uuid`)
 	})
 
@@ -424,9 +483,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid0x","text2":"Test grid 0x","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Begin transaction error: pq: syntax error`)
 		getBeginTransactionQuery = getBeginTransactionQueryImpl
 	})
@@ -439,9 +501,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid0x","text2":"Test grid 0x","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Commit transaction error: pq: syntax error `)
 		getCommitTransactionQuery = getCommitTransactionQueryImpl
 	})
@@ -454,9 +519,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid0x","text2":"Test grid 0x","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
 		getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
 	})
@@ -469,9 +537,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"text1":"Grid0x","text2":"Test grid 0x","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Insert row error: pq: syntax error`)
 		getInsertStatementForGridsApi = getInsertStatementForGridsApiImpl
 	})
@@ -487,9 +558,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Update row error: pq: syntax error`)
 		getUpdateStatementForGridsApi = getUpdateStatementForGridsApiImpl
 	})
@@ -507,9 +581,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
 		getDeleteGridReferencedRowQuery = getDeleteGridReferencedRowQueryImpl
 	})
@@ -527,9 +604,12 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Delete row error: pq: syntax error`)
 		getDeleteGridRowQuery = getDeleteGridRowQueryImpl
 	})
@@ -541,10 +621,14 @@ func RunSystemTestPost(t *testing.T) {
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
 		postStr := `{}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/xxxx", postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
-		jsonStringContains(t, responseData, `"error":"Data not found."`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			Uuid:     "xxxx",
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Data not found."`)
 	})
 
 	t.Run("DeleteSingleGridRow", func(t *testing.T) {
@@ -558,9 +642,13 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuidRow + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: uuidGrid,
+			Uuid:     uuidRow,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"enabled":false`)
 	})
 
@@ -651,10 +739,13 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `"error":"Insert transaction error: pq: syntax error at or near \"xxx\".`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Insert transaction error: pq: syntax error at or near \"xxx\".`)
 		getInsertStatementForTransaction = getInsertStatementForTransactionImpl
 	})
 
@@ -669,10 +760,13 @@ func RunSystemTestPost(t *testing.T) {
 			`{"uuid":"` + uuid + `","text1":"Grid01","text2":"Test grid 01","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `"error":"Insert transaction referenced row error: pq: syntax error at or near \"xxx\"."`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Insert transaction referenced row error: pq: syntax error at or near \"xxx\"."`)
 		getInsertStatementForTransactionReferenceRow = getInsertStatementForTransactionReferenceRowImpl
 	})
 }

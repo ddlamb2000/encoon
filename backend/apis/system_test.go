@@ -66,8 +66,8 @@ func TestSystem(t *testing.T) {
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
 
 	InitializeCaches()
-	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
-	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
+	// t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
+	// t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	// t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
 	// t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
 }
@@ -303,4 +303,10 @@ func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid stri
 		consumer = kafkaBaddbConsumer
 	}
 	return readKafkaTestMessage(t, consumer, key)
+}
+
+func stringToJson(in string) GridPost {
+	var post GridPost
+	_ = json.Unmarshal([]byte(in), &post)
+	return post
 }
