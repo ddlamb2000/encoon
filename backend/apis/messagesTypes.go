@@ -8,7 +8,6 @@ type requestContent struct {
 	ActionText string   `json:"actionText,omitempty"`
 	GridUuid   string   `json:"gridUuid,omitempty"`
 	ColumnUuid string   `json:"columnUuid,omitempty"`
-	RowUuid    string   `json:"rowUuid,omitempty"`
 	Uuid       string   `json:"uuid,omitempty"`
 	Userid     string   `json:"userId,omitempty"`
 	Password   string   `json:"password,omitempty"`
@@ -21,7 +20,6 @@ type responseContent struct {
 	Status      string       `json:"status"`
 	GridUuid    string       `json:"gridUuid,omitempty"`
 	ColumnUuid  string       `json:"columnUuid,omitempty"`
-	RowUuid     string       `json:"rowUuid,omitempty"`
 	Uuid        string       `json:"uuid,omitempty"`
 	TextMessage string       `json:"textMessage,omitempty"`
 	FirstName   string       `json:"firstName,omitempty"`

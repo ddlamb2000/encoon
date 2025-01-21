@@ -135,9 +135,11 @@ func RunSystemTestPost(t *testing.T) {
 	t.Run("VerifyNewRowInSingleGrid", func(t *testing.T) {
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "root", user01Uuid, gridUuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: gridUuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"test02","text3":"test03","text4":"test04"`)
 	})
@@ -161,9 +163,11 @@ func RunSystemTestPost(t *testing.T) {
 	t.Run("VerifyNoNewRowInSingleGrid", func(t *testing.T) {
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "root", user01Uuid, gridUuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: gridUuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":1`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"test02","text3":"test03","text4":"test04"`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test05"`)
@@ -570,19 +574,24 @@ func RunSystemTestPost(t *testing.T) {
 		stringNotEqual(t, uuidGrid, "")
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", uuidGrid, "test-29").Scan(&uuidRow)
 		stringNotEqual(t, uuidRow, "")
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+uuidGrid+"/"+uuidRow)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `"error":"xxx"`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, uuidGrid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: uuidGrid,
+			Uuid:     uuidRow,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"xxx"`)
 		getGridForOwnership = getGridForOwnershipImpl
 	})
 
 	t.Run("GetSingleGridDefect10", func(t *testing.T) {
 		getRowsQueryForGridUuidAttachedToColumnImpl := getRowsQueryForGridUuidAttachedToColumn
 		getRowsQueryForGridUuidAttachedToColumn = func() string { return "x x x" }
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "root", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidColumns,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error when retrieving grid uuid for column`)
 		getRowsQueryForGridUuidAttachedToColumn = getRowsQueryForGridUuidAttachedToColumnImpl
 	})
@@ -590,9 +599,12 @@ func RunSystemTestPost(t *testing.T) {
 	t.Run("VerifyAuditInSingleGrid", func(t *testing.T) {
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+			Uuid:     gridUuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"audits":[`)
 		jsonStringContains(t, responseData, `"createdByName":"test01","actionName":"Updated"`)
 		jsonStringContains(t, responseData, `"createdByName":"test01","actionName":"Created"`)
@@ -603,9 +615,12 @@ func RunSystemTestPost(t *testing.T) {
 		getAuditsQueryForRow = func(*model.Grid, string) string { return "x x x" }
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+			Uuid:     gridUuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error when querying audits: pq: syntax error`)
 		getAuditsQueryForRow = getAuditsQueryForRowImpl
 	})
@@ -615,9 +630,12 @@ func RunSystemTestPost(t *testing.T) {
 		getAuditsQueryOutputForRow = func(audit *model.Audit) []any { return nil }
 		var gridUuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid01").Scan(&gridUuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+"/"+gridUuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+			Uuid:     gridUuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Error when scanning audits: sql`)
 		getAuditsQueryOutputForRow = getAuditsQueryOutputForRowImpl
 	})

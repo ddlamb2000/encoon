@@ -16,18 +16,4 @@ func RunSystemTestKafka(t *testing.T) {
 		})
 		responseIsSuccess(t, response)
 	})
-
-	t.Run("LoadGrid", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
-			Action:   ActionLoad,
-			GridUuid: model.UuidGrids,
-		})
-		responseIsSuccess(t, response)
-		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
-		jsonStringContains(t, responseData, `"rows":[`)
-		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)
-		jsonStringContains(t, responseData, `"columns":[`)
-		jsonStringContains(t, responseData, `"label":"Columns","name":"relationship1","type":"Reference"`)
-		jsonStringContains(t, responseData, `"label":"Description","name":"text2","type":"Text"`)
-	})
 }

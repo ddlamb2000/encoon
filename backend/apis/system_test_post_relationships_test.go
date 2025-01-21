@@ -209,9 +209,11 @@ func RunSystemTestPostRelationships(t *testing.T) {
 	t.Run("VerifyNotOwnedColumnIn2ndSingleGrid", func(t *testing.T) {
 		var grid2Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid02").Scan(&grid2Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid2Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid2Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":12`)
 		jsonStringContains(t, responseData, `"owned":false,"label":"Test Column 20","name":"relationship4"`)
 	})

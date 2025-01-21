@@ -32,6 +32,8 @@ var testRouter = gin.Default()
 var kafakMessageNumber = 0
 var kafkaTestConsumer *kafka.Reader = nil
 var kafkaTestProducer *kafka.Writer = nil
+var kafkaBaddbConsumer *kafka.Reader = nil
+var kafkaBaddbProducer *kafka.Writer = nil
 
 var contextUuid = utils.GetNewUUID()
 
@@ -46,10 +48,14 @@ func TestSystem(t *testing.T) {
 
 	configuration.LoadConfiguration("../testData/systemTest.yml")
 	go ReadMessagesFromKafka()
-	createKafkaTestProducer("test")
-	createKafkaTestConsumer("test")
+	kafkaTestProducer = createKafkaTestProducer("test")
+	kafkaTestConsumer = createKafkaTestConsumer("test")
+	kafkaBaddbProducer = createKafkaTestProducer("baddb")
+	kafkaBaddbConsumer = createKafkaTestConsumer("baddb")
 	defer kafkaTestProducer.Close()
 	defer kafkaTestConsumer.Close()
+	defer kafkaBaddbProducer.Close()
+	defer kafkaBaddbConsumer.Close()
 	defer ShutdownKafkaProducers()
 	defer ShutdownKafkaConsumers()
 	time.Sleep(time.Second * 5) // wait for Kafka election
@@ -60,8 +66,8 @@ func TestSystem(t *testing.T) {
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
 
 	InitializeCaches()
-	// t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
-	// t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
+	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
+	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	// t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
 	// t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
 }
@@ -222,11 +228,11 @@ func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*re
 	return nil, nil
 }
 
-func createKafkaTestConsumer(dbName string) {
+func createKafkaTestConsumer(dbName string) *kafka.Reader {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbName
-	kafkaTestConsumer = kafka.NewReader(kafka.ReaderConfig{
+	return kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
 		GroupID:          groupID,
@@ -237,10 +243,10 @@ func createKafkaTestConsumer(dbName string) {
 	})
 }
 
-func createKafkaTestProducer(dbName string) {
+func createKafkaTestProducer(dbName string) *kafka.Writer {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
-	kafkaTestProducer = &kafka.Writer{
+	return &kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
@@ -268,8 +274,12 @@ func writeTestMessage(t *testing.T, dbName, userUuid, user, token, contextUuid, 
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 	}
 	messageEncoded, _ := json.Marshal(message)
+	producer := kafkaTestProducer
+	if dbName == "baddb" {
+		producer = kafkaBaddbProducer
+	}
 	t.Logf("PUSH request message key: %s", key)
-	err := (*kafkaTestProducer).WriteMessages(
+	err := (*producer).WriteMessages(
 		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
@@ -288,5 +298,9 @@ func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid stri
 	kafakMessageNumber++
 	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
 	writeTestMessage(t, dbName, userUuid, userName, token, contextUuid, gridUuid, key, message)
-	return readKafkaTestMessage(t, kafkaTestConsumer, key)
+	consumer := kafkaTestConsumer
+	if dbName == "baddb" {
+		consumer = kafkaBaddbConsumer
+	}
+	return readKafkaTestMessage(t, consumer, key)
 }

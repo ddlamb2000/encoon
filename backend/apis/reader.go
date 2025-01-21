@@ -213,7 +213,7 @@ func locate(content requestContent) responseContent {
 		ActionText: content.ActionText,
 		GridUuid:   content.GridUuid,
 		ColumnUuid: content.ColumnUuid,
-		RowUuid:    content.RowUuid,
+		Uuid:       content.Uuid,
 	}
 }
 
@@ -272,6 +272,7 @@ func executeActionGrid(dbName string, userUuid string, userName string, content 
 			Action:      content.Action,
 			ActionText:  content.ActionText,
 			GridUuid:    content.GridUuid,
+			Uuid:        content.Uuid,
 			TextMessage: response.Err.Error(),
 		}
 	}
@@ -280,6 +281,7 @@ func executeActionGrid(dbName string, userUuid string, userName string, content 
 		Action:     content.Action,
 		ActionText: content.ActionText,
 		GridUuid:   content.GridUuid,
+		Uuid:       content.Uuid,
 		DataSet:    response,
 	}
 }

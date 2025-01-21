@@ -28,26 +28,32 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("RootCanGetGrid", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringContains(t, responseData, `"canEditRows":true`)
 	})
 
 	t.Run("User01CanGetGrid", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":false`)
+		jsonStringDoesntContain(t, responseData, `"canEditRows"`)
 	})
 
 	t.Run("RootCannotGetGrid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+grid01Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
@@ -105,9 +111,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canAddRows":false`)
+		jsonStringDoesntContain(t, responseData, `"canAddRows"`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":false`)
+		jsonStringDoesntContain(t, responseData, `"canEditRows"`)
 	})
 
 	t.Run("User01SetViewAccessForUser2Grid02", func(t *testing.T) {
@@ -125,9 +131,9 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid)
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusOK)
-		jsonStringContains(t, responseData, `"canAddRows":false`)
+		jsonStringDoesntContain(t, responseData, `"canAddRows"`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
-		jsonStringContains(t, responseData, `"canEditRows":false`)
+		jsonStringDoesntContain(t, responseData, `"canEditRows"`)
 	})
 
 	t.Run("User03CannotGetGrid03", func(t *testing.T) {
