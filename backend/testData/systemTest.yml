@@ -19,7 +19,7 @@ seedDataFile: ../seedData.json
 # Kafka configuration
 kafka:
   brokers: broker1:19092 # Kafka brokers, separated with a comma
-  groupID: backend-encoon-testing # GroupId for Kafka consumer
+  groupID: testing-encoon # GroupId for Kafka consumer
   topicPrefix: encoon-testing # Kafka topic
 
 # Database configuration

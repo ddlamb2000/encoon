@@ -50,9 +50,11 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"grid":{"gridUuid":"`+model.UuidGrids+`","uuid":"`+model.UuidGrids+`"`)
 		jsonStringContains(t, responseData, `"rows":[`)
 		jsonStringContains(t, responseData, `"createdBy":"`+model.UuidRootUser+`"`)
