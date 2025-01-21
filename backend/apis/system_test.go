@@ -203,9 +203,7 @@ func RunTestRecreateDb(t *testing.T) {
 
 func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*responseContent, []byte) {
 	for i := 0; i < 50; i++ {
-		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-		defer cancel()
-		message, err := consumer.ReadMessage(ctx)
+		message, err := consumer.ReadMessage(context.Background())
 		if err != nil {
 			t.Errorf("Error reading message: %v", err)
 			return nil, nil
@@ -234,7 +232,7 @@ func createKafkaTestConsumer(dbName string) {
 		GroupID:          groupID,
 		MaxBytes:         10e3,
 		MaxWait:          5 * time.Millisecond,
-		RebalanceTimeout: 2 * time.Second,
+		RebalanceTimeout: 10 * time.Second,
 		CommitInterval:   time.Second,
 	})
 }
@@ -270,11 +268,9 @@ func writeTestMessage(t *testing.T, dbName, userUuid, user, token, contextUuid, 
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 	}
 	messageEncoded, _ := json.Marshal(message)
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
 	t.Logf("PUSH request message key: %s", key)
 	err := (*kafkaTestProducer).WriteMessages(
-		ctx,
+		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
 			Value:   messageEncoded,

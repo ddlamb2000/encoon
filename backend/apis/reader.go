@@ -65,7 +65,7 @@ func getConsumer(dbName string) (*kafka.Reader, error) {
 		GroupID:          groupID,
 		MaxBytes:         10e3,
 		MaxWait:          10 * time.Millisecond,
-		RebalanceTimeout: 2 * time.Second,
+		RebalanceTimeout: 10 * time.Second,
 		CommitInterval:   time.Second,
 	})
 	consumers.m[dbName] = consumer
