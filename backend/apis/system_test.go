@@ -1,5 +1,5 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2023
+// Copyright David Lambert 2025
 
 //
 // Note
@@ -66,10 +66,10 @@ func TestSystem(t *testing.T) {
 	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
 
 	InitializeCaches()
-	// t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
-	// t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
-	// t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
-	// t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
+	t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
+	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
+	t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
+	t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
@@ -108,13 +108,6 @@ func httpCodeEqual(t *testing.T, code int, expectCode int) {
 func stringNotEqual(t *testing.T, got, expect string) {
 	if got == expect {
 		t.Errorf(`Got %v.`, got)
-	}
-}
-
-func byteEqualString(t *testing.T, got []byte, expect string) {
-	gotString := string(got)
-	if gotString != expect {
-		t.Errorf(`Got %v instead of %v.`, gotString, expect)
 	}
 }
 
@@ -260,31 +253,36 @@ func createKafkaTestProducer(dbName string) *kafka.Writer {
 	}
 }
 
-func writeTestMessage(t *testing.T, dbName, userUuid, user, token, contextUuid, gridUuid, key string, message requestContent) {
-	requestInitiatedOn := time.Now().UTC().Format(time.RFC3339Nano)
-	headers := []kafka.Header{
-		{Key: "from", Value: []byte("εncooη testing")},
-		{Key: "url", Value: []byte("http://localhost")},
-		{Key: "contextUuid", Value: []byte(contextUuid)},
-		{Key: "dbName", Value: []byte(dbName)},
-		{Key: "userUuid", Value: []byte(userUuid)},
-		{Key: "user", Value: []byte(user)},
-		{Key: "jwt", Value: []byte(token)},
-		{Key: "gridUuid", Value: []byte(gridUuid)},
-		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
+func runKafkaTestAuthRequest(t *testing.T, dbName string, message requestContent) (*responseContent, []byte) {
+	kafakMessageNumber++
+	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
+	writeTestAuthMessage(t, dbName, key, message)
+	consumer := kafkaTestConsumer
+	if dbName == "baddb" {
+		consumer = kafkaBaddbConsumer
 	}
+	return readKafkaTestMessage(t, consumer, key)
+}
+
+func writeTestAuthMessage(t *testing.T, dbName, key string, message requestContent) {
 	messageEncoded, _ := json.Marshal(message)
 	producer := kafkaTestProducer
 	if dbName == "baddb" {
 		producer = kafkaBaddbProducer
 	}
-	t.Logf("PUSH request message key: %s", key)
+	t.Logf("PUSH authentication request message key: %s", key)
 	err := (*producer).WriteMessages(
 		context.Background(),
 		kafka.Message{
-			Key:     []byte(key),
-			Value:   messageEncoded,
-			Headers: headers,
+			Key: []byte(key),
+			Headers: []kafka.Header{
+				{Key: "from", Value: []byte("εncooη testing")},
+				{Key: "url", Value: []byte("http://localhost")},
+				{Key: "contextUuid", Value: []byte(contextUuid)},
+				{Key: "dbName", Value: []byte(dbName)},
+				{Key: "requestInitiatedOn", Value: []byte(time.Now().UTC().Format(time.RFC3339Nano))},
+			},
+			Value: messageEncoded,
 		},
 	)
 
@@ -297,12 +295,54 @@ func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid stri
 	token := getTokenForUser(dbName, userName, userUuid)
 	kafakMessageNumber++
 	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
-	writeTestMessage(t, dbName, userUuid, userName, token, contextUuid, gridUuid, key, message)
+	writeTestMessage(t, dbName, userUuid, userName, token, gridUuid, key, message)
 	consumer := kafkaTestConsumer
 	if dbName == "baddb" {
 		consumer = kafkaBaddbConsumer
 	}
 	return readKafkaTestMessage(t, consumer, key)
+}
+
+func runKafkaTestRequestWithToken(t *testing.T, dbName, userName, userUuid, gridUuid, token string, message requestContent) (*responseContent, []byte) {
+	kafakMessageNumber++
+	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
+	writeTestMessage(t, dbName, userUuid, userName, token, gridUuid, key, message)
+	consumer := kafkaTestConsumer
+	if dbName == "baddb" {
+		consumer = kafkaBaddbConsumer
+	}
+	return readKafkaTestMessage(t, consumer, key)
+}
+
+func writeTestMessage(t *testing.T, dbName, userUuid, user, token, gridUuid, key string, message requestContent) {
+	messageEncoded, _ := json.Marshal(message)
+	producer := kafkaTestProducer
+	if dbName == "baddb" {
+		producer = kafkaBaddbProducer
+	}
+	t.Logf("PUSH request message key: %s", key)
+	err := (*producer).WriteMessages(
+		context.Background(),
+		kafka.Message{
+			Key: []byte(key),
+			Headers: []kafka.Header{
+				{Key: "from", Value: []byte("εncooη testing")},
+				{Key: "url", Value: []byte("http://localhost")},
+				{Key: "contextUuid", Value: []byte(contextUuid)},
+				{Key: "dbName", Value: []byte(dbName)},
+				{Key: "userUuid", Value: []byte(userUuid)},
+				{Key: "user", Value: []byte(user)},
+				{Key: "jwt", Value: []byte(token)},
+				{Key: "gridUuid", Value: []byte(gridUuid)},
+				{Key: "requestInitiatedOn", Value: []byte(time.Now().UTC().Format(time.RFC3339Nano))},
+			},
+			Value: messageEncoded,
+		},
+	)
+
+	if err != nil {
+		t.Error("Failed to write messages:", err)
+	}
 }
 
 func stringToJson(in string) GridPost {

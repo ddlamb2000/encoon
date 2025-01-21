@@ -1,11 +1,10 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2023
+// Copyright David Lambert 2025
 
 package apis
 
 import (
 	"errors"
-	"net/http"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -58,9 +57,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"k","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 09","text2":"text1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 10","text2":"text2"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 11","text2":"text3"`)
@@ -97,9 +99,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"` + column19Uuid + `","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid2 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 09","text2":"text1"`)
 	})
 
@@ -127,9 +132,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column15Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
 	})
 
@@ -152,9 +160,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", user01Uuid, user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		getRowsQueryForGridUuidReferencedByColumn = getRowsQueryForGridUuidReferencedByColumnImpl
 	})
 
@@ -177,9 +188,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", user01Uuid, user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		removeAssociatedGridNotOwnedColumnFromCache = removeAssociatedGridNotOwnedColumnFromCacheImpl
 	})
 
@@ -200,9 +214,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + gridUuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column20Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid03","text2":"Test grid 03","text3":"journal"`)
 	})
 
@@ -247,9 +264,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship3","fromUuid":"c","toGridUuid":"` + grid1Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid3Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid3Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":3`)
 		jsonStringContains(t, responseData, `"text1":"test-09","text2":"test-10","text3":"test-11","text4":"test-12","int1":13,"int2":14,"int3":15,"int4":15`)
 		jsonStringContains(t, responseData, `"owned":true,"label":"Test Column 09","name":"text1","type":"Text"`)
@@ -269,9 +289,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid3Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid3Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
 		getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
 	})
@@ -290,9 +313,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"` + row09Uuid + `","toGridUuid":"` + grid1Uuid + `","uuid":"` + row05Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid3Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid3Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Delete referenced row error: pq: syntax error`)
 		getDeleteReferenceRowStatement = getDeleteReferenceRowStatementImpl
 	})
@@ -311,9 +337,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid1Uuid + `","uuid":"` + row01Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid3Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid3Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":4`)
 		jsonStringContains(t, responseData, `"text1":"test-xx","text2":"test-yy","text3":"test-zz"`)
 		var rowXXUuid, referenceRowXXUuid string
@@ -337,9 +366,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"uuid":"` + rowXXUuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid3Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid3Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid3Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":3`)
 		var newRowXXUuid, newReferenceRowXXUuid string
 		db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2 and enabled = true", grid3Uuid, "test-xx").Scan(&newRowXXUuid)
@@ -368,9 +400,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":false,"columnName":"relationship4","fromUuid":"b","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid2Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid2Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":14`)
 		jsonStringContains(t, responseData, `"int1":2,"int2":3,"int3":4,"int4":5`)
 		jsonStringContains(t, responseData, `"int1":3,"int2":4,"int3":5,"int4":6`)
@@ -389,9 +424,12 @@ func RunSystemTestPostRelationships(t *testing.T) {
 			`{"owned":false,"columnName":"relationship4","fromUuid":"` + rowInt3Uuid + `","toGridUuid":"` + grid3Uuid + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid2Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid2Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid2Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":3,"int2":4,"int3":5,"int4":6`)
 	})
 }

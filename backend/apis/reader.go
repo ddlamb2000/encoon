@@ -143,7 +143,7 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 func validMessage(messageKey string, dbName string, tokenString string, content requestContent) (string, string, responseContent) {
 	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
-		return "", "", invalidToken(messageKey, dbName, content)
+		return "", "", noToken(messageKey, dbName, content)
 	} else {
 		if token == nil {
 			return "", "", notAuthorization(messageKey, dbName, content)
@@ -247,6 +247,17 @@ func invalidAction(dbName string, content requestContent) responseContent {
 		ActionText:  content.ActionText,
 		GridUuid:    content.GridUuid,
 		TextMessage: "Invalid action (" + content.Action + ")",
+	}
+}
+
+func noToken(messageKey, dbName string, content requestContent) responseContent {
+	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, content.Action, content.ActionText)
+	return responseContent{
+		Status:      FailedStatus,
+		Action:      content.Action,
+		ActionText:  content.ActionText,
+		GridUuid:    content.GridUuid,
+		TextMessage: "Missing authorization",
 	}
 }
 

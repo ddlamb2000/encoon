@@ -29,9 +29,11 @@ func RunSystemTestCache(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("User01VerifyActualGridsCount", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":10`)
 	})
 
@@ -80,18 +82,22 @@ func RunSystemTestCache(t *testing.T) {
 	})
 
 	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":11`)
 	})
 
 	t.Run("User01VerifyActualGridsColumns", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid05Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 	})
 
@@ -136,9 +142,11 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridsColumns2", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid05Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
@@ -183,9 +191,11 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridsColumns3", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid05Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 26","name":"relationship1","type":"Reference"`)
@@ -224,9 +234,11 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridName", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid05Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
@@ -266,9 +278,11 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualColumnName", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid05Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid05Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 		jsonStringContains(t, responseData, `"label":"Test Column 24","name":"text1","type":"Text"`)
 		jsonStringDoesntContain(t, responseData, `"label":"Test Column 25","name":"text2","type":"Text"`)
@@ -287,14 +301,20 @@ func RunSystemTestCache(t *testing.T) {
 		errorIsNil(t, err)
 		httpCodeEqual(t, code, http.StatusCreated)
 
-		responseData, _, _ := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 	})
 
 	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":10`)
 	})
 
