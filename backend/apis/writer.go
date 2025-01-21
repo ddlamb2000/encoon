@@ -83,7 +83,7 @@ func getProducer(dbName string) (*kafka.Writer, error) {
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
 		MaxAttempts:            3,
-		WriteBackoffMax:        5 * time.Millisecond,
+		WriteBackoffMax:        500 * time.Millisecond,
 		BatchSize:              10,
 		BatchTimeout:           50 * time.Millisecond,
 		RequiredAcks:           -1,

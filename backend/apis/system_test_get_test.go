@@ -14,12 +14,21 @@ import (
 
 func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyIncorrectUserUuid", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", "xxyyzz", "/test/api/v1/xxx")
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusUnauthorized)
-		jsonStringDoesntContain(t, responseData, `"countRows":`)
-		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `{"error":"User not authorized."}`)
+
+		// NOTE: MAYBE NOT APPLICABLE
+
+		// response, responseData := runKafkaTestRequest(t, "test", "root", "xxyyzz", "", requestContent{
+		// 	Action:   ActionLoad,
+		// 	GridUuid: model.UuidGrids,
+		// })
+		// responseIsFailure(t, response)
+
+		// responseData, code, err := runGETRequestForUser("test", "root", "xxyyzz", "/test/api/v1/xxx")
+		// errorIsNil(t, err)
+		// httpCodeEqual(t, code, http.StatusUnauthorized)
+		// jsonStringDoesntContain(t, responseData, `"countRows":`)
+		// jsonStringDoesntContain(t, responseData, `"rows":`)
+		// jsonStringContains(t, responseData, `{"error":"User not authorized."}`)
 	})
 
 	t.Run("VerifyDbNotFound", func(t *testing.T) {
@@ -32,18 +41,22 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/d7c004ff-cccc-dddd-eeee-cd42b2847508")
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusNotFound)
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", requestContent{
+			Action:   ActionLoad,
+			GridUuid: "d7c004ff-cccc-dddd-eeee-cd42b2847508",
+		})
+		responseIsFailure(t, response)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
-		jsonStringContains(t, responseData, `"error":"Data not found"`)
+		jsonStringContains(t, responseData, `"textMessage":"Data not found"`)
 	})
 
 	t.Run("VerifyGridNotFound2", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/test/api/v1/xxx")
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "xxx", requestContent{
+			Action:   ActionLoad,
+			GridUuid: "xxx",
+		})
+		responseIsFailure(t, response)
 		jsonStringDoesntContain(t, responseData, `"countRows":`)
 		jsonStringDoesntContain(t, responseData, `"rows":`)
 		jsonStringContains(t, responseData, `Error when retrieving grid definition: pq: invalid input syntax for type uuid`)

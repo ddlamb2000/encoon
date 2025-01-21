@@ -1,6 +1,11 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2023
 
+//
+// Note
+// System test can be run using command line `go test apis/* -v -run TestSystem`
+//
+
 package apis
 
 import (
@@ -28,6 +33,8 @@ var kafakMessageNumber = 0
 var kafkaTestConsumer *kafka.Reader = nil
 var kafkaTestProducer *kafka.Writer = nil
 
+var contextUuid = utils.GetNewUUID()
+
 func TestSystem(t *testing.T) {
 	gin.SetMode(gin.TestMode)
 	SetApiRoutes(testRouter)
@@ -37,24 +44,26 @@ func TestSystem(t *testing.T) {
 	t.Run("ConnectDb", func(t *testing.T) { RunTestConnectDbServers(t) })
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 
+	configuration.LoadConfiguration("../testData/systemTest.yml")
 	go ReadMessagesFromKafka()
-	kafkaTestProducer = getKafkaTestProducer("test")
-	kafkaTestConsumer = getKafkaTestConsumer("test")
+	createKafkaTestProducer("test")
+	createKafkaTestConsumer("test")
 	defer kafkaTestProducer.Close()
 	defer kafkaTestConsumer.Close()
 	defer ShutdownKafkaProducers()
 	defer ShutdownKafkaConsumers()
+	time.Sleep(time.Second * 5) // wait for Kafka election
 
 	t.Run("Kafka", func(t *testing.T) { RunSystemTestKafka(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
 	t.Run("Get", func(t *testing.T) { RunSystemTestGet(t) })
-	// t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
-	// InitializeCaches()
+	t.Run("Post", func(t *testing.T) { RunSystemTestPost(t) })
+
+	InitializeCaches()
 	// t.Run("PostRelationships", func(t *testing.T) { RunSystemTestPostRelationships(t) })
 	// t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	// t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
 	// t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
-
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
@@ -125,6 +134,16 @@ func responseIsSuccess(t *testing.T, response *responseContent) {
 	}
 }
 
+func responseIsFailure(t *testing.T, response *responseContent) {
+	if response != nil {
+		if response.Status != FailedStatus {
+			t.Errorf(`Response status isn't failure: %v.`, response)
+		}
+	} else {
+		t.Error(`No response.`)
+	}
+}
+
 func jsonStringContains(t *testing.T, got []byte, expect string) {
 	if got != nil {
 		gotString := utils.CleanupStrings(string(got))
@@ -183,20 +202,17 @@ func RunTestRecreateDb(t *testing.T) {
 }
 
 func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*responseContent, []byte) {
-	for i := 0; i < 10; i++ {
-		ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	for i := 0; i < 50; i++ {
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		message, err := consumer.ReadMessage(ctx)
 		if err != nil {
 			t.Errorf("Error reading message: %v", err)
 			return nil, nil
 		}
-		t.Logf("Got message key: %s", message.Key)
-		if err := consumer.CommitMessages(ctx, message); err != nil {
-			t.Errorf("Error committing message key: %s, %v", message.Key, err)
-			return nil, nil
-		}
+		t.Logf("GOT response message %s [offset %d in partition %d] (expecting %s)", message.Key, message.Offset, message.Partition, key)
 		if string(message.Key) == key {
+			t.Log("Message matches")
 			var response responseContent
 			if err := json.Unmarshal(message.Value, &response); err != nil {
 				t.Errorf("Error unmarshal message key: %s, %v", message.Key, err)
@@ -204,49 +220,44 @@ func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*re
 			}
 			return &response, message.Value
 		}
-		time.Sleep(time.Millisecond * 200)
 	}
 	return nil, nil
 }
 
-func getKafkaTestConsumer(dbName string) *kafka.Reader {
+func createKafkaTestConsumer(dbName string) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-responses"
 	groupID := configuration.GetConfiguration().Kafka.GroupID + "-" + dbName
-	consumer := kafka.NewReader(kafka.ReaderConfig{
+	kafkaTestConsumer = kafka.NewReader(kafka.ReaderConfig{
 		Brokers:          strings.Split(kafkaBrokers, ","),
 		Topic:            topic,
 		GroupID:          groupID,
 		MaxBytes:         10e3,
-		MaxWait:          10 * time.Millisecond,
+		MaxWait:          5 * time.Millisecond,
 		RebalanceTimeout: 2 * time.Second,
 		CommitInterval:   time.Second,
 	})
-	return consumer
 }
 
-func getKafkaTestProducer(dbName string) *kafka.Writer {
+func createKafkaTestProducer(dbName string) {
 	kafkaBrokers := configuration.GetConfiguration().Kafka.Brokers
 	topic := configuration.GetConfiguration().Kafka.TopicPrefix + "-" + dbName + "-requests"
-	writer := &kafka.Writer{
+	kafkaTestProducer = &kafka.Writer{
 		Addr:                   kafka.TCP(strings.Split(kafkaBrokers, ",")[:]...),
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
 		MaxAttempts:            3,
-		WriteBackoffMax:        5 * time.Millisecond,
+		WriteBackoffMax:        500 * time.Millisecond,
 		BatchSize:              10,
 		BatchTimeout:           50 * time.Millisecond,
 		RequiredAcks:           -1,
 		Compression:            compress.Gzip,
 		Balancer:               &CustomRoundRobin{},
 	}
-	return writer
 }
 
-func writeTestMessage(t *testing.T, dbName string, userUuid string, user string, token string, gridUuid string,
-	contextUuid string, key string, message requestContent) {
+func writeTestMessage(t *testing.T, dbName, userUuid, user, token, contextUuid, gridUuid, key string, message requestContent) {
 	requestInitiatedOn := time.Now().UTC().Format(time.RFC3339Nano)
-
 	headers := []kafka.Header{
 		{Key: "from", Value: []byte("εncooη testing")},
 		{Key: "url", Value: []byte("http://localhost")},
@@ -258,11 +269,12 @@ func writeTestMessage(t *testing.T, dbName string, userUuid string, user string,
 		{Key: "gridUuid", Value: []byte(gridUuid)},
 		{Key: "requestInitiatedOn", Value: []byte(requestInitiatedOn)},
 	}
-
 	messageEncoded, _ := json.Marshal(message)
-	t.Logf("PUSH message key: %s", key)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	t.Logf("PUSH request message key: %s", key)
 	err := (*kafkaTestProducer).WriteMessages(
-		context.Background(),
+		ctx,
 		kafka.Message{
 			Key:     []byte(key),
 			Value:   messageEncoded,
@@ -271,14 +283,14 @@ func writeTestMessage(t *testing.T, dbName string, userUuid string, user string,
 	)
 
 	if err != nil {
-		t.Error("failed to write messages:", err)
+		t.Error("Failed to write messages:", err)
 	}
 }
 
 func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid string, message requestContent) (*responseContent, []byte) {
 	token := getTokenForUser(dbName, userName, userUuid)
 	kafakMessageNumber++
-	key := fmt.Sprintf("test-%d", kafakMessageNumber)
-	writeTestMessage(t, dbName, userUuid, userName, token, gridUuid, "systemTest", key, message)
+	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
+	writeTestMessage(t, dbName, userUuid, userName, token, contextUuid, gridUuid, key, message)
 	return readKafkaTestMessage(t, kafkaTestConsumer, key)
 }

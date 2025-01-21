@@ -90,18 +90,14 @@ func readMessages(dbName string) {
 			configuration.LogError(dbName, "", "Error reading message", err)
 			continue
 		}
-		go func() {
-			handleMessage(dbName, message)
-			if err := consumer.CommitMessages(context.Background(), message); err != nil {
-				configuration.LogError(dbName, "", "Error committing message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, err)
-			}
-		}()
+		go handleMessage(dbName, message)
 	}
 }
 
 func handleMessage(dbName string, message kafka.Message) {
 	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	requestInitiatedOn, tokenString, gridUuid, contextUuid := getDataFromHeaders(message)
+	messageKey := string(message.Key)
 	var content requestContent
 	var response responseContent
 	user := ""
@@ -118,7 +114,7 @@ func handleMessage(dbName string, message kafka.Message) {
 		} else if content.Action == ActionLogout {
 			response = logOut(content)
 		} else {
-			userUuid, user, response = validMessage(dbName, tokenString, content)
+			userUuid, user, response = validMessage(messageKey, dbName, tokenString, content)
 		}
 	}
 	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
@@ -144,22 +140,22 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 	return requestInitiatedOn, tokenString, gridUuid, contextUuid
 }
 
-func validMessage(dbName string, tokenString string, content requestContent) (string, string, responseContent) {
+func validMessage(messageKey string, dbName string, tokenString string, content requestContent) (string, string, responseContent) {
 	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
-		return "", "", invalidToken(dbName, content)
+		return "", "", invalidToken(messageKey, dbName, content)
 	} else {
 		if token == nil {
-			return "", "", notAuthorization(dbName, content)
+			return "", "", notAuthorization(messageKey, dbName, content)
 		} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userUuid, user, tokenExpired := getDataFromJWTClaims(claims)
 			if tokenExpired {
-				return "", "", expired(dbName, user, content)
+				return "", "", expired(messageKey, dbName, user, content)
 			} else {
 				return userUuid, user, handleActions(dbName, userUuid, user, content)
 			}
 		} else {
-			return "", "", invalidToken(dbName, content)
+			return "", "", invalidToken(messageKey, dbName, content)
 		}
 	}
 }
@@ -221,8 +217,8 @@ func locate(content requestContent) responseContent {
 	}
 }
 
-func notAuthorization(dbName string, content requestContent) responseContent {
-	configuration.LogError(dbName, "", "No authorization for action: %s %s", content.Action, content.ActionText)
+func notAuthorization(messageKey, dbName string, content requestContent) responseContent {
+	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, content.Action, content.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
 		Action:      content.Action,
@@ -232,8 +228,8 @@ func notAuthorization(dbName string, content requestContent) responseContent {
 	}
 }
 
-func expired(dbName string, userName string, content requestContent) responseContent {
-	configuration.LogError(dbName, userName, "Authorization expired for action: %s %s", content.Action, content.ActionText)
+func expired(messageKey, dbName string, userName string, content requestContent) responseContent {
+	configuration.LogError(dbName, userName, "Authorization expired for message %s action: %s %s", messageKey, content.Action, content.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
 		Action:      content.Action,
@@ -254,8 +250,8 @@ func invalidAction(dbName string, content requestContent) responseContent {
 	}
 }
 
-func invalidToken(dbName string, content requestContent) responseContent {
-	configuration.LogError(dbName, "", "Invalid token for action: %s %s", content.Action, content.ActionText)
+func invalidToken(messageKey, dbName string, content requestContent) responseContent {
+	configuration.LogError(dbName, "", "Invalid token for message %s action: %s %s", messageKey, content.Action, content.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
 		Action:      content.Action,

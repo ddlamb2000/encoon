@@ -31,9 +31,9 @@ type ApiParameters struct {
 }
 
 type GridResponse struct {
-	Grid                   *model.Grid         `json:"grid"`
-	CountRows              int                 `json:"countRows"`
-	Rows                   []model.Row         `json:"rows"`
+	Grid                   *model.Grid         `json:"grid,omitempty"`
+	CountRows              int                 `json:"countRows,omitempty"`
+	Rows                   []model.Row         `json:"rows,omitempty"`
 	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
 	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
 	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
@@ -43,18 +43,18 @@ type GridResponse struct {
 	TimeOut                bool                `json:"timeOut,omitempty"`
 	System                 bool                `json:"system,omitempty"`
 	Forbidden              bool                `json:"forbidden,omitempty"`
-	CanViewRows            bool                `json:"canViewRows"`
-	CanEditRows            bool                `json:"canEditRows"`
-	CanAddRows             bool                `json:"canAddRows"`
-	CanEditGrid            bool                `json:"canEditGrid"`
+	CanViewRows            bool                `json:"canViewRows,omitempty"`
+	CanEditRows            bool                `json:"canEditRows,omitempty"`
+	CanAddRows             bool                `json:"canAddRows,omitempty"`
+	CanEditGrid            bool                `json:"canEditGrid,omitempty"`
 }
 
 type GridPost struct {
-	RowsAdded              []*model.Row        `json:"rowsAdded"`
-	RowsEdited             []*model.Row        `json:"rowsEdited"`
-	RowsDeleted            []*model.Row        `json:"rowsDeleted"`
-	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded"`
-	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved"`
+	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
+	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
+	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
+	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded,omitempty"`
+	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved,omitempty"`
 }
 
 type GridReferencePost struct {
