@@ -1,11 +1,10 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2023
+// Copyright David Lambert 2025
 
 package apis
 
 import (
 	"errors"
-	"net/http"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -25,9 +24,12 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"uuid":"a","text1":"Grid06","text2":"Test grid 06","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid06","text2":"Test grid 06","text3":"journal"`)
 	})
 
@@ -56,9 +58,12 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"d","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 27","text2":"text1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 28","text2":"int1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 29","text2":"text2"`)
@@ -97,9 +102,12 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"j","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid6, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid6,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":10`)
 		jsonStringContains(t, responseData, `"text1":"test01","text2":"","int1":1`)
 		jsonStringContains(t, responseData, `"text1":"test02","text2":"true","int1":2`)
@@ -112,10 +120,15 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 	})
 
 	t.Run("VerifyActualGridsOwnedByUser01Count", func(t *testing.T) {
-		filter := "?filterColumnOwned=true&filterColumnName=relationship3&filterColumnGridUuid=" + model.UuidUsers + "&filterColumnValue=" + user01Uuid
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids+filter)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:               ActionLoad,
+			GridUuid:             model.UuidGrids,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship3",
+			FilterColumnGridUuid: model.UuidUsers,
+			FilterColumnValue:    user01Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":5`)
 	})
 
@@ -124,8 +137,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		getInsertStatementForReferenceRow = func() string { return "xxx" } // mock function
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 31","text2":"text3"}` +
@@ -135,9 +146,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Insert referenced row error: pq: syntax error`)
 		getInsertStatementForReferenceRow = getInsertStatementForReferenceRowImpl
 	})
@@ -145,8 +163,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 	t.Run("User01CreateAdditionalColumnsWithDefaultFor6thGrid", func(t *testing.T) {
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 31"}` +
@@ -156,9 +172,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 31","text2":"text3"`)
 	})
 
@@ -180,9 +203,12 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid6, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid6,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"countRows":13`)
 		jsonStringContains(t, responseData, `"text1":"test11","text2":"","text3":"12","int1":11`)
 		jsonStringContains(t, responseData, `"text1":"test13","text2":"","text3":"14","int1":13`)
@@ -195,8 +221,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		getUpdateColumnOrderNumberQuery = func() string { return "xxx" }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32"}` +
@@ -207,9 +231,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		getUpdateColumnOrderNumberQuery = getUpdateColumnOrderNumberQueryImpl
 	})
 
@@ -218,8 +249,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		getUpdateColumnNameQuery = func() string { return "xxx" }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32"}` +
@@ -230,9 +259,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		getUpdateColumnNameQuery = getUpdateColumnNameQueryImpl
 	})
 
@@ -241,8 +277,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		getGridInstanceWithColumnsForGridsApi = func(ApiRequest, string) (*model.Grid, error) { return nil, errors.New("xxx") }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32"}` +
@@ -253,9 +287,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		getGridInstanceWithColumnsForGridsApi = getGridInstanceWithColumnsForGridsApiImpl
 	})
 
@@ -264,8 +305,6 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 		getGridUuidAttachedToColumnToUpdateWithColumnDefaults = func(ApiRequest, string) (string, error) { return "", errors.New("xxx") }
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32"}` +
@@ -276,17 +315,22 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		getGridUuidAttachedToColumnToUpdateWithColumnDefaults = getGridUuidAttachedToColumnToUpdateWithColumnDefaultsImpl
 	})
 
 	t.Run("User01CreateAnotherColumnsWithDefaultFor6thGrid", func(t *testing.T) {
 		var gridUuid6 string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid06").Scan(&gridUuid6)
-
-		filter := "?filterColumnOwned=true&filterColumnName=relationship1&filterColumnGridUuid=" + model.UuidColumnTypes + "&filterColumnValue=" + model.UuidTextColumnType
 		postStr := `{"rowsAdded":` +
 			`[` +
 			`{"uuid":"a","text1":"Test Column 32"}` +
@@ -297,9 +341,16 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns+filter, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:               ActionChangeGrid,
+			GridUuid:             model.UuidColumns,
+			FilterColumnOwned:    true,
+			FilterColumnName:     "relationship1",
+			FilterColumnGridUuid: model.UuidColumnTypes,
+			FilterColumnValue:    model.UuidTextColumnType,
+			DataSet:              stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 32","text2":"text4"`)
 	})
 }

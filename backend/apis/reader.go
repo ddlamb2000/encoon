@@ -12,7 +12,7 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/configuration"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/segmentio/kafka-go"
 )
 
@@ -98,23 +98,23 @@ func handleMessage(dbName string, message kafka.Message) {
 	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	requestInitiatedOn, tokenString, gridUuid, contextUuid := getDataFromHeaders(message)
 	messageKey := string(message.Key)
-	var content requestContent
+	var request requestContent
 	var response responseContent
 	user := ""
 	userUuid := ""
-	if err := json.Unmarshal(message.Value, &content); err != nil {
-		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, content.Action, content.ActionText, err)
-		response = invalidMessage(content)
+	if err := json.Unmarshal(message.Value, &request); err != nil {
+		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, request.Action, request.ActionText, err)
+		response = invalidMessage(request)
 	} else {
-		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, content.Action, content.ActionText)
-		if content.Action == ActionHeartbeat {
-			response = heartBeat(content)
-		} else if content.Action == ActionAuthentication {
-			response = handleAuthentication(dbName, content)
-		} else if content.Action == ActionLogout {
-			response = logOut(content)
+		configuration.Log(dbName, "", "PULL Message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, request.Action, request.ActionText)
+		if request.Action == ActionHeartbeat {
+			response = heartBeat(request)
+		} else if request.Action == ActionAuthentication {
+			response = handleAuthentication(dbName, request)
+		} else if request.Action == ActionLogout {
+			response = logOut(request)
 		} else {
-			userUuid, user, response = validMessage(messageKey, dbName, tokenString, content)
+			userUuid, user, response = validMessage(messageKey, dbName, tokenString, request)
 		}
 	}
 	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
@@ -140,22 +140,22 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 	return requestInitiatedOn, tokenString, gridUuid, contextUuid
 }
 
-func validMessage(messageKey string, dbName string, tokenString string, content requestContent) (string, string, responseContent) {
+func validMessage(messageKey string, dbName string, tokenString string, request requestContent) (string, string, responseContent) {
 	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
-		return "", "", noToken(messageKey, dbName, content)
+		return "", "", noToken(messageKey, dbName, request)
 	} else {
 		if token == nil {
-			return "", "", notAuthorization(messageKey, dbName, content)
+			return "", "", notAuthorization(messageKey, dbName, request)
 		} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 			userUuid, user, tokenExpired := getDataFromJWTClaims(claims)
 			if tokenExpired {
-				return "", "", expired(messageKey, dbName, user, content)
+				return "", "", expired(messageKey, dbName, user, request)
 			} else {
-				return userUuid, user, handleActions(dbName, userUuid, user, content)
+				return userUuid, user, handleActions(dbName, userUuid, user, request)
 			}
 		} else {
-			return "", "", invalidToken(messageKey, dbName, content)
+			return "", "", invalidToken(messageKey, dbName, request)
 		}
 	}
 }
@@ -169,130 +169,140 @@ func getDataFromJWTClaims(claims jwt.MapClaims) (string, string, bool) {
 	return userUuid, user, today.After(expirationDate)
 }
 
-func invalidMessage(content requestContent) responseContent {
+func invalidMessage(request requestContent) responseContent {
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
 		TextMessage: "Incorrect message",
 	}
 }
 
-func handleActions(dbName string, userUuid string, userName string, content requestContent) responseContent {
-	if content.Action == ActionLoad {
-		return executeActionGrid(dbName, userUuid, userName, content, GetGridsRows)
-	} else if content.Action == ActionChangeGrid {
-		return executeActionGrid(dbName, userUuid, userName, content, PostGridsRows)
-	} else if content.Action == ActionLocateGrid {
-		return locate(content)
+func handleActions(dbName string, userUuid string, userName string, request requestContent) responseContent {
+	if request.Action == ActionLoad {
+		return executeActionGrid(dbName, userUuid, userName, request, GetGridsRows)
+	} else if request.Action == ActionChangeGrid {
+		return executeActionGrid(dbName, userUuid, userName, request, PostGridsRows)
+	} else if request.Action == ActionLocateGrid {
+		return locate(request)
 	} else {
-		return invalidAction(dbName, content)
+		return invalidAction(dbName, request)
 	}
 }
 
-func heartBeat(content requestContent) responseContent {
+func heartBeat(request requestContent) responseContent {
 	return responseContent{
 		Status: SuccessStatus,
-		Action: content.Action,
+		Action: request.Action,
 	}
 }
 
-func logOut(content requestContent) responseContent {
+func logOut(request requestContent) responseContent {
 	return responseContent{
 		Status:      SuccessStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
 		TextMessage: "User logged out",
 	}
 }
 
-func locate(content requestContent) responseContent {
+func locate(request requestContent) responseContent {
 	return responseContent{
 		Status:     SuccessStatus,
-		Action:     content.Action,
-		ActionText: content.ActionText,
-		GridUuid:   content.GridUuid,
-		ColumnUuid: content.ColumnUuid,
-		Uuid:       content.Uuid,
+		Action:     request.Action,
+		ActionText: request.ActionText,
+		GridUuid:   request.GridUuid,
+		ColumnUuid: request.ColumnUuid,
+		Uuid:       request.Uuid,
 	}
 }
 
-func notAuthorization(messageKey, dbName string, content requestContent) responseContent {
-	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, content.Action, content.ActionText)
+func notAuthorization(messageKey, dbName string, request requestContent) responseContent {
+	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
-		GridUuid:    content.GridUuid,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
 		TextMessage: "No authorization",
 	}
 }
 
-func expired(messageKey, dbName string, userName string, content requestContent) responseContent {
-	configuration.LogError(dbName, userName, "Authorization expired for message %s action: %s %s", messageKey, content.Action, content.ActionText)
+func expired(messageKey, dbName string, userName string, request requestContent) responseContent {
+	configuration.LogError(dbName, userName, "Authorization expired for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
-		GridUuid:    content.GridUuid,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
 		TextMessage: "Authorization expired",
 	}
 }
 
-func invalidAction(dbName string, content requestContent) responseContent {
-	configuration.Log(dbName, "", "Invalid action: %s %s", content.Action, content.ActionText)
+func invalidAction(dbName string, request requestContent) responseContent {
+	configuration.Log(dbName, "", "Invalid action: %s %s", request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
-		GridUuid:    content.GridUuid,
-		TextMessage: "Invalid action (" + content.Action + ")",
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		TextMessage: "Invalid action (" + request.Action + ")",
 	}
 }
 
-func noToken(messageKey, dbName string, content requestContent) responseContent {
-	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, content.Action, content.ActionText)
+func noToken(messageKey, dbName string, request requestContent) responseContent {
+	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
-		GridUuid:    content.GridUuid,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
 		TextMessage: "Missing authorization",
 	}
 }
 
-func invalidToken(messageKey, dbName string, content requestContent) responseContent {
-	configuration.LogError(dbName, "", "Invalid token for message %s action: %s %s", messageKey, content.Action, content.ActionText)
+func invalidToken(messageKey, dbName string, request requestContent) responseContent {
+	configuration.LogError(dbName, "", "Invalid token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
-		Action:      content.Action,
-		ActionText:  content.ActionText,
-		GridUuid:    content.GridUuid,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
 		TextMessage: "Invalid token",
 	}
 }
 
 type ActionGridDataFunc func(ct context.Context, uri string, p ApiParameters, payload GridPost) GridResponse
 
-func executeActionGrid(dbName string, userUuid string, userName string, content requestContent, f ActionGridDataFunc) responseContent {
-	parameters := getRequestParameters(dbName, userUuid, userName, content)
-	response := f(context.Background(), "", parameters, content.DataSet)
+func executeActionGrid(dbName string, userUuid string, userName string, request requestContent, f ActionGridDataFunc) responseContent {
+	parameters := ApiParameters{
+		DbName:               dbName,
+		UserUuid:             userUuid,
+		UserName:             userName,
+		GridUuid:             request.GridUuid,
+		Uuid:                 request.Uuid,
+		FilterColumnOwned:    request.FilterColumnOwned,
+		FilterColumnName:     request.FilterColumnName,
+		FilterColumnGridUuid: request.FilterColumnGridUuid,
+		FilterColumnValue:    request.FilterColumnValue,
+	}
+	response := f(context.Background(), "", parameters, request.DataSet)
 	if response.Err != nil {
 		return responseContent{
 			Status:      FailedStatus,
-			Action:      content.Action,
-			ActionText:  content.ActionText,
-			GridUuid:    content.GridUuid,
-			Uuid:        content.Uuid,
+			Action:      request.Action,
+			ActionText:  request.ActionText,
+			GridUuid:    request.GridUuid,
+			Uuid:        request.Uuid,
 			TextMessage: response.Err.Error(),
 		}
 	}
 	return responseContent{
 		Status:     SuccessStatus,
-		Action:     content.Action,
-		ActionText: content.ActionText,
-		GridUuid:   content.GridUuid,
-		Uuid:       content.Uuid,
+		Action:     request.Action,
+		ActionText: request.ActionText,
+		GridUuid:   request.GridUuid,
+		Uuid:       request.Uuid,
 		DataSet:    response,
 	}
 }

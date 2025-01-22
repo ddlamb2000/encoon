@@ -142,7 +142,7 @@ services:
       - encoon
     depends_on:
       - db
-  backend:
+  backend-development:
     build:
       context: ./backend
       dockerfile: Dockerfile.development
@@ -203,7 +203,7 @@ services:
     depends_on:
       - db
       - broker1
-  frontend:
+  frontend-development:
     build:
       context: ./frontend
       dockerfile: Dockerfile.development

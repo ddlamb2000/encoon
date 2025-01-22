@@ -1,5 +1,5 @@
 # Go build
-FROM golang:1.23.4 AS go-builder
+FROM golang:1.23.5 AS go-builder
 WORKDIR /usr/src/encoon
 COPY go.mod go.sum ./
 RUN go mod download && go mod verify
@@ -15,7 +15,7 @@ RUN go build -v
 FROM almalinux:9.1
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."
-LABEL version="2.0"
+LABEL version="3.0"
 RUN useradd -ms /bin/bash encoon
 USER encoon
 WORKDIR /usr/encoon

@@ -4,7 +4,6 @@
 package apis
 
 import (
-	"net/http"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -58,41 +57,51 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetGrid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid01Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringContains(t, responseData, `"canEditRows":true`)
 	})
 
 	t.Run("User01CanGetGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid02Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringContains(t, responseData, `"canEditRows":true`)
 	})
 
 	t.Run("User02CannotGetGrid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid01Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotGetGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotGetGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
@@ -102,15 +111,20 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 
 	t.Run("User02CanGetGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"canAddRows"`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringDoesntContain(t, responseData, `"canEditRows"`)
@@ -122,24 +136,31 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship4","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user02Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 
 	t.Run("User02CanGetGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"canAddRows"`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringDoesntContain(t, responseData, `"canEditRows"`)
 	})
 
 	t.Run("User03CannotGetGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
@@ -149,24 +170,32 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship5","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user03Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 
 	t.Run("User03CanGetGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"canAddRows":true`)
 		jsonStringContains(t, responseData, `"canViewRows":true`)
 		jsonStringContains(t, responseData, `"canEditRows":true`)
 	})
 
 	t.Run("User01CanGetRow17Grid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+			Uuid:     row17Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-17"`)
 	})
 
@@ -176,9 +205,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"`)
 	})
 
@@ -189,9 +221,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-20","text2":"test-21","text3":"test-22","text4":"test-23"`)
 		jsonStringContains(t, responseData, `"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"`)
 	})
@@ -204,16 +239,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row24Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-24"`)
 	})
 
 	t.Run("User01CanGetRowGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+			Uuid:     rowInt100Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":100,"int2":100,"int3":100,"int4":100`)
 	})
 
@@ -223,9 +264,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":101,"int2":101,"int3":101,"int4":101}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
@@ -236,9 +280,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":200,"int2":200,"int3":200,"int4":200`)
 		jsonStringContains(t, responseData, `"int1":300,"int2":300,"int3":300,"int4":300`)
 	})
@@ -251,16 +298,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt300Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"int1":300`)
 	})
 
 	t.Run("User01CanGetRowGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+			Uuid:     row23Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-23"`)
 	})
 
@@ -270,9 +323,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `","text1":"test-23 {2}","text2":"test-24 {2}","text3":"test-25 {2}","text4":"test-26 {2}","int1":27,"int2":28,"int3":29,"int4":30}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-23 {2}","text2":"test-24 {2}","text3":"test-25 {2}","text4":"test-26 {2}","int1":27,"int2":28,"int3":29,"int4":30`)
 	})
 
@@ -287,9 +343,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-31","text2":"test-32","text3":"test-33","text4":"test-34","int1":35,"int2":36,"int3":37,"int4":38`)
 		jsonStringContains(t, responseData, `"text1":"test-39","text2":"test-40","text3":"test-41","text4":"test-42","int1":43,"int2":44,"int3":45,"int4":46`)
 	})
@@ -302,16 +361,23 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row39Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-39"`)
 	})
 
 	t.Run("User02CannotGetRow17Grid01", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+			Uuid:     row17Uuid,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-17"`)
 	})
 
@@ -321,9 +387,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {3}","text2":"test-18 {3}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-17 {3}"`)
 	})
 
@@ -334,9 +404,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 		jsonStringDoesntContain(t, responseData, `"text1":"test-25"`)
 	})
 
@@ -346,15 +420,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CanGetRowGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+			Uuid:     rowInt100Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
@@ -364,9 +445,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":102,"int2":102,"int3":102,"int4":102}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotAddRowsGrid02", func(t *testing.T) {
@@ -376,9 +461,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":500,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotDeleteRowsGrid02", func(t *testing.T) {
@@ -387,15 +476,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CanGetRowGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+			Uuid:     row23Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-23 {2}"`)
 	})
 
@@ -405,9 +501,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `","text1":"test-23 {4}","text2":"test-24 {4}","text3":"test-25 {3}","text4":"test-26 {3}","int1":27,"int2":28,"int3":29,"int4":30}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotAddRowsGrid03", func(t *testing.T) {
@@ -421,9 +521,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user02Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotDeleteRowsGrid03", func(t *testing.T) {
@@ -432,15 +536,23 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CannotGetRow17Grid01", func(t *testing.T) {
-		_, code, err := runGETRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid01Uuid+"/"+row17Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid01Uuid,
+			Uuid:     row17Uuid,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User02CannotUpdateRow17Grid01", func(t *testing.T) {
@@ -449,9 +561,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {6}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CannotAddRowsGrid01", func(t *testing.T) {
@@ -461,9 +577,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CannotDeleteRowsGrid01", func(t *testing.T) {
@@ -472,15 +592,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid01Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid01Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CanGetRowGrid02", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid02Uuid+"/"+rowInt100Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid02Uuid,
+			Uuid:     rowInt100Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"int1":101,"int2":101,"int3":101,"int4":101`)
 	})
 
@@ -490,9 +617,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":601,"int2":101,"int3":101,"int4":101}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CannotAddRowsGrid02", func(t *testing.T) {
@@ -502,9 +633,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CannotDeleteRowsGrid02", func(t *testing.T) {
@@ -513,15 +648,22 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid02Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid02Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User03CanGetRowGrid03", func(t *testing.T) {
-		responseData, code, err := runGETRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid+"/"+row23Uuid)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusOK)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+			Action:   ActionLoad,
+			GridUuid: grid03Uuid,
+			Uuid:     row23Uuid,
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-23 {2}"`)
 	})
 
@@ -536,9 +678,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test03", user03Uuid, "/test/api/v1/"+grid03Uuid, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: grid03Uuid,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-47","text2":"test-48","text3":"test-49","text4":"test-50","int1":51,"int2":52,"int3":53,"int4":54`)
 		jsonStringContains(t, responseData, `"text1":"test-55","text2":"test-56","text3":"test-57","text4":"test-58","int1":59,"int2":60,"int3":61,"int4":62`)
 	})
@@ -549,9 +694,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"testxx","text2":"Zero-xxx","text3":"Test xxx","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidUsers, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidUsers, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidUsers,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
@@ -573,9 +721,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 21","text2":"text1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 22","text2":"text2"`)
 	})
@@ -597,9 +748,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid04","text2":"Test grid 04","text3":"journal"`)
 	})
 
@@ -611,9 +765,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + gridUuid4 + `","text1":"Grid04","text2":"Test grid 04","text3":"person"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid04","text2":"Test grid 04","text3":"person"`)
 	})
 
@@ -625,9 +782,13 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + gridUuid4 + `","text1":"Grid04","text2":"Test grid 04","text3":"grid"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusForbidden)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `Access forbidden`)
 	})
 
 	t.Run("User01CanAddRowIn4thSingleGrid", func(t *testing.T) {
@@ -647,9 +808,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row16Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+gridUuid4, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid4, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid4,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-01","text2":"test-02"`)
 	})
 
@@ -668,9 +832,12 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test02", user02Uuid, "/test/api/v1/"+gridUuid4, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, gridUuid4, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: gridUuid4,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"test-03","text2":"test-04"`)
 	})
 }

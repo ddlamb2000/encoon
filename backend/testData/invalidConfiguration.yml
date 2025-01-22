@@ -2,7 +2,6 @@
 #  Copyright David Lambert 2023
 
 appName: "invalid" # Application name to be displayed
-appTag: "Data structuration, presentation and navigation." # Application tag to be displayed
 
 # Http Server configuration
 httpServer:

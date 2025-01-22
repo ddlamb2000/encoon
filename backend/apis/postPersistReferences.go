@@ -175,7 +175,7 @@ func getUuidFromRowsForTmpUuid(r ApiRequest, addedRows []*model.Row, tmpUuid str
 }
 
 func defaultReferenceValues(r ApiRequest, payload GridPost) []GridReferencePost {
-	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
+	if r.p.FilterColumnName == "" || r.p.FilterColumnGridUuid == "" || r.p.FilterColumnValue == "" {
 		return nil
 	}
 	defaults := make([]GridReferencePost, 0)
@@ -183,20 +183,20 @@ func defaultReferenceValues(r ApiRequest, payload GridPost) []GridReferencePost 
 		var foundReference = false
 		for _, refAdded := range payload.ReferenceValuesAdded {
 			if refAdded.FromUuid == rowAdded.TmpUuid &&
-				refAdded.ColumnName == r.p.filterColumnName &&
-				refAdded.ToGridUuid == r.p.filterColumnGridUuid &&
-				refAdded.ToUuid == r.p.filterColumnValue &&
-				refAdded.Owned == r.p.filterColumnOwned {
+				refAdded.ColumnName == r.p.FilterColumnName &&
+				refAdded.ToGridUuid == r.p.FilterColumnGridUuid &&
+				refAdded.ToUuid == r.p.FilterColumnValue &&
+				refAdded.Owned == r.p.FilterColumnOwned {
 				foundReference = true
 			}
 		}
 		if !foundReference {
 			referencePost := GridReferencePost{
 				FromUuid:   rowAdded.TmpUuid,
-				ColumnName: r.p.filterColumnName,
-				ToGridUuid: r.p.filterColumnGridUuid,
-				ToUuid:     r.p.filterColumnValue,
-				Owned:      r.p.filterColumnOwned,
+				ColumnName: r.p.FilterColumnName,
+				ToGridUuid: r.p.FilterColumnGridUuid,
+				ToUuid:     r.p.FilterColumnValue,
+				Owned:      r.p.FilterColumnOwned,
 			}
 			r.trace("defaultReferenceValues() - referencePost=%v", referencePost)
 			defaults = append(defaults, referencePost)

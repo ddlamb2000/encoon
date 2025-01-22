@@ -12,7 +12,7 @@ import (
 )
 
 func GetGridsRows(ct context.Context, uri string, p ApiParameters, payload GridPost) GridResponse {
-	r, cancel, err := createContextAndApiRequest(ct, p, uri)
+	r, cancel, err := createContextAndApiRequest(ct, p)
 	defer cancel()
 	t := r.startTiming()
 	defer r.stopTiming("getGridsRows()", t)
@@ -115,14 +115,14 @@ func getRowSetForGridsApi(r ApiRequest, grid *model.Grid, uuid string, getRefere
 }
 
 func matchesFilterColumn(r ApiRequest, references []*model.Reference) bool {
-	if r.p.filterColumnName == "" || r.p.filterColumnGridUuid == "" || r.p.filterColumnValue == "" {
+	if r.p.FilterColumnName == "" || r.p.FilterColumnGridUuid == "" || r.p.FilterColumnValue == "" {
 		return true
 	}
 	for _, ref := range references {
-		if ref.Owned == r.p.filterColumnOwned && ref.Name == r.p.filterColumnName {
+		if ref.Owned == r.p.FilterColumnOwned && ref.Name == r.p.FilterColumnName {
 			for _, refRow := range ref.Rows {
-				r.trace("matchesFilterColumn() - refRow.GridUuid=%s ; r.p.filterColumnGridUuid=%s", refRow.GridUuid, r.p.filterColumnGridUuid)
-				if (ref.Owned || refRow.GridUuid == r.p.filterColumnGridUuid) && refRow.Uuid == r.p.filterColumnValue {
+				r.trace("matchesFilterColumn() - refRow.GridUuid=%s ; r.p.filterColumnGridUuid=%s", refRow.GridUuid, r.p.FilterColumnGridUuid)
+				if (ref.Owned || refRow.GridUuid == r.p.FilterColumnGridUuid) && refRow.Uuid == r.p.FilterColumnValue {
 					return true
 				}
 			}

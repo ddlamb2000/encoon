@@ -98,32 +98,10 @@ func TestValidateConfiguration1(t *testing.T) {
 	}
 }
 
-func TestValidateConfiguration2(t *testing.T) {
-	fileName := "../testData/validConfiguration1.yml"
-	LoadConfiguration(fileName)
-	appConfiguration.AppTag = ""
-	got := validateConfiguration(&appConfiguration)
-	expect := "Missing application tag"
-	if got == nil || !strings.Contains(got.Error(), expect) {
-		t.Errorf("Got %q instead of %q.", got, expect)
-	}
-}
-
-func TestValidateConfiguration3(t *testing.T) {
-	fileName := "../testData/validConfiguration1.yml"
-	LoadConfiguration(fileName)
-	appConfiguration.HttpServer.Port = 0
-	got := validateConfiguration(&appConfiguration)
-	expect := "Missing port"
-	if got == nil || !strings.Contains(got.Error(), expect) {
-		t.Errorf("Got %q instead of %q.", got, expect)
-	}
-}
-
 func TestValidateConfiguration4(t *testing.T) {
 	fileName := "../testData/validConfiguration1.yml"
 	LoadConfiguration(fileName)
-	appConfiguration.HttpServer.JwtExpiration = 0
+	appConfiguration.JwtExpiration = 0
 	got := validateConfiguration(&appConfiguration)
 	expect := "Missing expiration"
 	if got == nil || !strings.Contains(got.Error(), expect) {
@@ -187,12 +165,8 @@ func TestGetContextWithTimeOut2(t *testing.T) {
 func TestConfigurationAutoUpdates(t *testing.T) {
 	fileName := "/tmp/testConfiguration.yml"
 	conf := Configuration{
-		AppName: "testA",
-		AppTag:  "tagA",
-		HttpServer: HttpServerConfiguration{
-			Port:          22,
-			JwtExpiration: 10,
-		},
+		AppName:       "testA",
+		JwtExpiration: 10,
 	}
 	out, err := yaml.Marshal(conf)
 	if err != nil {
@@ -213,12 +187,8 @@ func TestConfigurationAutoUpdates(t *testing.T) {
 		return
 	}
 	conf = Configuration{
-		AppName: "testB",
-		AppTag:  "tagB",
-		HttpServer: HttpServerConfiguration{
-			Port:          22,
-			JwtExpiration: 10,
-		},
+		AppName:       "testB",
+		JwtExpiration: 10,
 	}
 	out, err = yaml.Marshal(conf)
 	if err != nil {

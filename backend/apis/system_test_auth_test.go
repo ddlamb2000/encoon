@@ -11,7 +11,7 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/model"
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 func RunSystemTestAuth(t *testing.T) {
@@ -159,7 +159,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersExpired", func(t *testing.T) {
-		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
 		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
 			Action:   ActionLoad,
@@ -170,7 +170,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersPassing", func(t *testing.T) {
-		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
 		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
 			Action:   ActionLoad,
@@ -346,7 +346,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersDefectToken", func(t *testing.T) {
 		verifyTokenImpl := verifyToken
 		verifyToken = func(*jwt.Token) bool { return false } // mock function
-		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
 		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
 			Action:   ActionLoad,

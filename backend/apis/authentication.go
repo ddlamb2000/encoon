@@ -7,7 +7,7 @@ import (
 	"context"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v5"
 
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
@@ -42,7 +42,7 @@ func handleAuthentication(dbName string, content requestContent) responseContent
 			}
 		}
 	}
-	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 	token, err := getNewToken(dbName, content.Userid, userUuid, firstName, lastName, expiration)
 	if err != nil {
 		configuration.LogError(dbName, "", "Authentication: creation of JWT failed ", err)

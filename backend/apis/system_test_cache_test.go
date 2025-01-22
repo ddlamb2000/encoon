@@ -1,11 +1,10 @@
 // εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2023
+// Copyright David Lambert 2025
 
 package apis
 
 import (
 	"errors"
-	"net/http"
 	"testing"
 
 	"d.lambert.fr/encoon/configuration"
@@ -55,9 +54,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 24","text2":"text1"`)
 		jsonStringContains(t, responseData, `"text1":"Test Column 25","text2":"text2"`)
 	})
@@ -75,9 +77,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
 	})
 
@@ -115,9 +120,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
 	})
 
@@ -133,9 +141,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
 	})
 
@@ -165,9 +176,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
 	})
 
@@ -182,9 +196,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05","text2":"Test grid 05","text3":"journal"`)
 	})
 
@@ -211,9 +228,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		removeAssociatedGridFromCache = removeAssociatedGridFromCacheImpl
 	})
 
@@ -225,9 +245,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 	})
 
@@ -255,9 +278,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
 		getGridUuidAttachedToColumn = getGridUuidAttachedToColumnImpl
 	})
 
@@ -269,9 +295,12 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 		jsonStringContains(t, responseData, `"text1":"Test Column 26 {2}"`)
 	})
 
@@ -297,11 +326,16 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidGrids, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
-
 		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidGrids,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
+		jsonStringContains(t, responseData, `"rowsDeleted":`)
+		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
+
+		response, responseData = runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -328,10 +362,13 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		responseData, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusInternalServerError)
-		jsonStringContains(t, responseData, `"error":"Error when getting data for cache deletion: xxx."`)
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Error when getting data for cache deletion: xxx."`)
 		getGridUuidAttachedToColumnForCache = getGridUuidAttachedToColumnForCacheImpl
 	})
 
@@ -343,8 +380,11 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		_, code, err := runPOSTRequestForUser("test", "test01", user01Uuid, "/test/api/v1/"+model.UuidColumns, postStr)
-		errorIsNil(t, err)
-		httpCodeEqual(t, code, http.StatusCreated)
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+			Action:   ActionChangeGrid,
+			GridUuid: model.UuidColumns,
+			DataSet:  stringToJson(postStr),
+		})
+		responseIsSuccess(t, response)
 	})
 }

@@ -9,13 +9,9 @@
 package apis
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
@@ -23,12 +19,10 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/database"
 	"d.lambert.fr/encoon/utils"
-	"github.com/gin-gonic/gin"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 )
 
-var testRouter = gin.Default()
 var kafakMessageNumber = 0
 var kafkaTestConsumer *kafka.Reader = nil
 var kafkaTestProducer *kafka.Writer = nil
@@ -38,8 +32,6 @@ var kafkaBaddbProducer *kafka.Writer = nil
 var contextUuid = utils.GetNewUUID()
 
 func TestSystem(t *testing.T) {
-	gin.SetMode(gin.TestMode)
-	SetApiRoutes(testRouter)
 	setDefaultTestSleepTimeAndTimeOutThreshold()
 	InitializeCaches()
 	t.Run("IncorrectDb", func(t *testing.T) { RunTestConnectDbServersIncorrect(t) })
@@ -73,36 +65,9 @@ func TestSystem(t *testing.T) {
 }
 
 func getTokenForUser(dbName, userName, userUuid string) string {
-	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
 	return token
-}
-
-func runPOSTRequestForUser(dbName, userName, userUuid, uri, body string) ([]byte, int, error) {
-	req, _ := http.NewRequest("POST", uri, bytes.NewBuffer([]byte(body)))
-	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
-	w := httptest.NewRecorder()
-	testRouter.ServeHTTP(w, req)
-	responseData, err := io.ReadAll(w.Body)
-	return responseData, w.Code, err
-}
-
-func runGETRequestForUser(dbName, userName, userUuid, uri string) ([]byte, int, error) {
-	req, err := http.NewRequest("GET", uri, nil)
-	if err != nil {
-		return nil, 0, err
-	}
-	req.Header.Add("Authorization", "Bearer "+getTokenForUser(dbName, userName, userUuid))
-	w := httptest.NewRecorder()
-	testRouter.ServeHTTP(w, req)
-	responseData, err := io.ReadAll(w.Body)
-	return responseData, w.Code, err
-}
-
-func httpCodeEqual(t *testing.T, code int, expectCode int) {
-	if code != expectCode {
-		t.Errorf(`Response code %v instead of %v.`, code, expectCode)
-	}
 }
 
 func stringNotEqual(t *testing.T, got, expect string) {
@@ -114,12 +79,6 @@ func stringNotEqual(t *testing.T, got, expect string) {
 func intEqual(t *testing.T, got, expect int) {
 	if got != expect {
 		t.Errorf(`Got %v instead of %v.`, got, expect)
-	}
-}
-
-func errorIsNil(t *testing.T, err error) {
-	if err != nil {
-		t.Errorf(`Error: %v.`, err)
 	}
 }
 
@@ -207,9 +166,7 @@ func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*re
 			t.Errorf("Error reading message: %v", err)
 			return nil, nil
 		}
-		t.Logf("GOT response message %s [offset %d in partition %d] (expecting %s)", message.Key, message.Offset, message.Partition, key)
 		if string(message.Key) == key {
-			t.Log("Message matches")
 			var response responseContent
 			if err := json.Unmarshal(message.Value, &response); err != nil {
 				t.Errorf("Error unmarshal message key: %s, %v", message.Key, err)
@@ -244,7 +201,7 @@ func createKafkaTestProducer(dbName string) *kafka.Writer {
 		Topic:                  topic,
 		AllowAutoTopicCreation: true,
 		MaxAttempts:            3,
-		WriteBackoffMax:        500 * time.Millisecond,
+		WriteBackoffMax:        10 * time.Millisecond,
 		BatchSize:              10,
 		BatchTimeout:           50 * time.Millisecond,
 		RequiredAcks:           -1,
@@ -270,7 +227,6 @@ func writeTestAuthMessage(t *testing.T, dbName, key string, message requestConte
 	if dbName == "baddb" {
 		producer = kafkaBaddbProducer
 	}
-	t.Logf("PUSH authentication request message key: %s", key)
 	err := (*producer).WriteMessages(
 		context.Background(),
 		kafka.Message{
@@ -320,7 +276,6 @@ func writeTestMessage(t *testing.T, dbName, userUuid, user, token, gridUuid, key
 	if dbName == "baddb" {
 		producer = kafkaBaddbProducer
 	}
-	t.Logf("PUSH request message key: %s", key)
 	err := (*producer).WriteMessages(
 		context.Background(),
 		kafka.Message{

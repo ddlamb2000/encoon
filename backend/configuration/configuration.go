@@ -12,27 +12,19 @@ import (
 	"time"
 
 	"d.lambert.fr/encoon/utils"
-	"github.com/gin-gonic/gin"
 	"gopkg.in/yaml.v2"
 )
 
 type Configuration struct {
-	AppName             string                   `yaml:"appName"`
-	AppTag              string                   `yaml:"appTag"`
-	Log                 bool                     `yaml:"log"`
-	Trace               bool                     `yaml:"trace"`
-	ShowTiming          bool                     `yaml:"showTiming"`
-	FrontEndDevelopment bool                     `yaml:"frontEndDevelopment"`
-	GridCacheSize       int                      `yaml:"gridCacheSize"`
-	SeedDataFile        string                   `yaml:"seedDataFile"`
-	HttpServer          HttpServerConfiguration  `yaml:"httpServer"`
-	Databases           []*DatabaseConfiguration `yaml:"database"`
-	Kafka               KafkaConfiguration       `yaml:"kafka"`
-}
-
-type HttpServerConfiguration struct {
-	Port          int `yaml:"port"`
-	JwtExpiration int `yaml:"jwtExpiration"`
+	AppName       string                   `yaml:"appName"`
+	Log           bool                     `yaml:"log"`
+	Trace         bool                     `yaml:"trace"`
+	ShowTiming    bool                     `yaml:"showTiming"`
+	GridCacheSize int                      `yaml:"gridCacheSize"`
+	SeedDataFile  string                   `yaml:"seedDataFile"`
+	Databases     []*DatabaseConfiguration `yaml:"database"`
+	Kafka         KafkaConfiguration       `yaml:"kafka"`
+	JwtExpiration int                      `yaml:"jwtExpiration"`
 }
 
 type KafkaConfiguration struct {
@@ -98,14 +90,8 @@ func validateConfiguration(conf *Configuration) error {
 	if conf.AppName == "" {
 		return LogAndReturnError("", "", "Missing application name (appName) from configuration file %v.", configurationFileName)
 	}
-	if conf.AppTag == "" {
-		return LogAndReturnError("", "", "Missing application tag line (appTag) from configuration file %v.", configurationFileName)
-	}
-	if conf.HttpServer.Port == 0 {
-		return LogAndReturnError("", "", "Missing port (httpServer.port) from configuration file %v.", configurationFileName)
-	}
-	if conf.HttpServer.JwtExpiration == 0 {
-		return LogAndReturnError("", "", "Missing expiration (httpServer.jwtExpiration) from configuration file %v.", configurationFileName)
+	if conf.JwtExpiration == 0 {
+		return LogAndReturnError("", "", "Missing expiration (jwtExpiration) from configuration file %v.", configurationFileName)
 	}
 	Log("", "", "Configuration from %v is valid.", configurationFileName)
 	return nil
@@ -167,12 +153,12 @@ func WatchConfigurationChanges(fileName string) {
 
 func Log(dbName, userName, format string, a ...any) {
 	if appConfiguration.Log {
-		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+format+"\n", a...)
+		fmt.Printf(getLogPrefix(dbName, userName)+format+"\n", a...)
 	}
 }
 
 func LogError(dbName, userName, format string, a ...any) {
-	fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[ERROR] "+format+"\n", a...)
+	fmt.Printf(getLogPrefix(dbName, userName)+"[ERROR] "+format+"\n", a...)
 }
 
 func LogAndReturnError(dbName, userName, format string, a ...any) error {
@@ -183,7 +169,7 @@ func LogAndReturnError(dbName, userName, format string, a ...any) error {
 
 func Trace(dbName, userName, format string, a ...any) {
 	if appConfiguration.Trace {
-		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[TRACE] "+format+"\n", a...)
+		fmt.Printf(getLogPrefix(dbName, userName)+"[TRACE] "+format+"\n", a...)
 	}
 }
 
@@ -205,7 +191,7 @@ func StartTiming() time.Time {
 func StopTiming(dbName, userName, funcName string, start time.Time) {
 	if appConfiguration.ShowTiming {
 		duration := time.Since(start)
-		fmt.Fprintf(gin.DefaultWriter, getLogPrefix(dbName, userName)+"[TIMING] "+funcName+" - %v\n", duration)
+		fmt.Printf(getLogPrefix(dbName, userName)+"[TIMING] "+funcName+" - %v\n", duration)
 	}
 }
 

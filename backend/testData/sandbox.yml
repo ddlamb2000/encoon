@@ -1,15 +1,12 @@
 #  εncooη : data structuration, presentation and navigation.
 #  Copyright David Lambert 2025
 appName: "εncooη (sandbox)"
-appTag: "Data structuration, presentation and navigation."
 log: true
 trace: false
 showTiming: false
 gridCacheSize: 500
 seedDataFile: /usr/encoon/seedData.json
-httpServer:
-  port: 8080
-  jwtExpiration: 1440
+jwtExpiration: 1440
 kafka:
   brokers: broker1:19092
   groupID: backend-encoon

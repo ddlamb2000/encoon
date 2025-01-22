@@ -84,7 +84,7 @@ var getRollbackTransactionQuery = func() string {
 	return "ROLLBACK"
 }
 
-func createContextAndApiRequest(ct context.Context, p ApiParameters, uri string) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
+func createContextAndApiRequest(ct context.Context, p ApiParameters) (request ApiRequest, cancelFunc context.CancelFunc, error error) {
 	ctx, cancel := configuration.GetContextWithTimeOut(ct, p.DbName)
 	db, err := database.GetDbByName(p.DbName)
 	r := ApiRequest{

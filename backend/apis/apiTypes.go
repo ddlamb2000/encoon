@@ -24,10 +24,10 @@ type ApiParameters struct {
 	UserName             string
 	GridUuid             string
 	Uuid                 string
-	filterColumnOwned    bool
-	filterColumnName     string
-	filterColumnGridUuid string
-	filterColumnValue    string
+	FilterColumnOwned    bool
+	FilterColumnName     string
+	FilterColumnGridUuid string
+	FilterColumnValue    string
 }
 
 type GridResponse struct {
