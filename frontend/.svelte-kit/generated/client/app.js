@@ -9,7 +9,7 @@ export const nodes = [
 export const server_loads = [];
 
 export const dictionary = {
-		"/[[dbName]]/[[gridUuid]]": [~2]
+		"/[[dbName]]/[[gridUuid]]/[[uuid]]": [~2]
 	};
 
 export const hooks = {

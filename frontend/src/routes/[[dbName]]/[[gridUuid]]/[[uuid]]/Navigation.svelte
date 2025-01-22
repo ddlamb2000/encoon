@@ -23,7 +23,7 @@
     {/if}
     {#if context && context.user && context.user.getIsLoggedIn()}
       {context.user.getFirstName()} {context.user.getLastName()}
-      <Button size="xs" class="ms-2 py-0" outline color="red" onclick={() => context.logout()}>Log out</Button>
+      <Button size="xs" class="ms-2 me-2 py-0" outline color="red" onclick={() => context.logout()}>Log out</Button>
     {/if}
   </span>
 </div>
