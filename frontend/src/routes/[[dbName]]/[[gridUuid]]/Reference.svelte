@@ -31,17 +31,20 @@
     {#if reference.owned === column.owned && reference.name === column.name}
       {#each reference.rows as referencedRow, indexReferencedRow}
         {#if indexReferencedRow > 0}<br/>{/if}
-        <Badge color="dark" rounded class="px-1.5">
+        <Badge color="dark" rounded class="px-1.5 shadow-lg">
           {@html referencedRow.displayString}
-          <Icon.ChevronDownOutline size="sm" color="gray" />
+          <Icon.ArrowUpRightFromSquareOutline size="sm" class="text-gray-300  hover:text-gray-900" />
+          {#if column.owned}<Icon.ChevronDownOutline size="sm" class="text-gray-300  hover:text-gray-900" />{/if}
         </Badge>
       {/each}
     {/if}
   {/each}
-  {#if !hasReferenceToDisplay()}
-    <Icon.ChevronDownOutline size="sm" color="gray" />
+  {#if !hasReferenceToDisplay() && column.owned}
+    <Icon.ChevronDownOutline size="sm" class="text-gray-300  hover:text-gray-900" />
   {/if}
-  <Prompt {context} {set} {column} {row}
-          gridPromptUuid={column.gridPromptUuid}
-          elementReference={"reference-" + set.grid.uuid + column.uuid + row.uuid} />
+  {#if column.owned}
+    <Prompt {context} {set} {column} {row}
+            gridPromptUuid={column.gridPromptUuid}
+            elementReference={"reference-" + set.grid.uuid + column.uuid + row.uuid} />
+  {/if}
 </a>
