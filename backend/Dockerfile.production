@@ -12,7 +12,7 @@ COPY encoon.go .
 RUN go build -v
 
 # Image
-FROM almalinux:9.1
+FROM almalinux:9.5
 LABEL application="εncooη"
 LABEL description="Data structuration, presentation and navigation."
 LABEL version="3.0"
