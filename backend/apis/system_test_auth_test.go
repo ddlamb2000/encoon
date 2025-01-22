@@ -16,7 +16,7 @@ import (
 
 func RunSystemTestAuth(t *testing.T) {
 	t.Run("AuthInvalid1", func(t *testing.T) {
-		response, responseData := runKafkaTestAuthRequest(t, "test", requestContent{
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action: ActionAuthentication,
 		})
 		responseIsFailure(t, response)
@@ -24,7 +24,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("AuthInvalid2", func(t *testing.T) {
-		response, responseData := runKafkaTestAuthRequest(t, "test", requestContent{
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionAuthentication,
 			Userid:   "root",
 			Password: "======",
@@ -54,7 +54,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("AuthValid", func(t *testing.T) {
-		response, responseData := runKafkaTestAuthRequest(t, "test", requestContent{
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionAuthentication,
 			Userid:   "root",
 			Password: "dGVzdA==",
@@ -66,7 +66,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		defer setDefaultTestSleepTimeAndTimeOutThreshold()
-		response, responseData := runKafkaTestAuthRequest(t, "test", requestContent{
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionAuthentication,
 			Userid:   "root",
 			Password: "dGVzdA==",
@@ -96,7 +96,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersNoHeader", func(t *testing.T) {
-		response, responseData := runKafkaTestAuthRequest(t, "test", requestContent{
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,
@@ -106,7 +106,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersIncorrectToken", func(t *testing.T) {
-		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, "xxxxxxxxxxx", requestContent{
+		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, "xxxxxxxxxxx", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidUsers,
 		})
@@ -161,7 +161,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersExpired", func(t *testing.T) {
 		expiration := time.Now().Add(-time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
+		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidUsers,
 		})
@@ -172,7 +172,7 @@ func RunSystemTestAuth(t *testing.T) {
 	t.Run("ApiUsersPassing", func(t *testing.T) {
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
-		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
+		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -185,7 +185,7 @@ func RunSystemTestAuth(t *testing.T) {
 		getNewToken = func(dbName, user, userUuid, firstName, lastName string, expiration time.Time) (string, error) {
 			return "", errors.New("xxx")
 		} // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -218,7 +218,7 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersNotFound2", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: "d7c004ff-cccc-dddd-eeee-cd42b2847508",
 		})
@@ -265,7 +265,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("Post404", func(t *testing.T) {
 		postStr := `{}`
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: "",
 			DataSet:  stringToJson(postStr),
@@ -276,7 +276,7 @@ func RunSystemTestAuth(t *testing.T) {
 
 	t.Run("CreateUserNoData", func(t *testing.T) {
 		postStr := `{}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidUsers,
 			DataSet:  stringToJson(postStr),
@@ -294,7 +294,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test01","text2":"Zero-one","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidUsers,
 			DataSet:  stringToJson(postStr),
@@ -316,7 +316,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test04","text2":"Zero-four","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", model.UuidRootUser, model.UuidUsers, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidUsers,
 			DataSet:  stringToJson(postStr),
@@ -335,7 +335,7 @@ func RunSystemTestAuth(t *testing.T) {
 			`{"text1":"test02","text2":"Zero-two","text3":"Test","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "root", "xxyyzz", model.UuidUsers, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "root", "xxyyzz", model.UuidUsers, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidUsers,
 			DataSet:  stringToJson(postStr),
@@ -348,7 +348,7 @@ func RunSystemTestAuth(t *testing.T) {
 		verifyToken = func(*jwt.Token) bool { return false } // mock function
 		expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
 		token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
-		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, requestContent{
+		response, responseData := runKafkaTestRequestWithToken(t, "test", "root", model.UuidRootUser, model.UuidUsers, token, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidUsers,
 		})

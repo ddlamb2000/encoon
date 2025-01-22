@@ -35,7 +35,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: "d7c004ff-cccc-dddd-eeee-cd42b2847508",
 		})
@@ -46,7 +46,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyGridNotFound2", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "xxx", requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "xxx", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: "xxx",
 		})
@@ -57,7 +57,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRows", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -71,7 +71,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyDbNotConfigured", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "baddb", "root", model.UuidRootUser, "xxx", requestContent{
+		response, responseData := runKafkaTestRequest(t, "baddb", "root", model.UuidRootUser, "xxx", ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: "xxx",
 		})
@@ -89,7 +89,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidRootUser,
@@ -100,7 +100,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingle", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,
@@ -113,7 +113,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowSingleWithTimeOut", func(t *testing.T) {
 		database.ForceTestSleepTimeAndTimeOutThreshold("test", 500, 200)
 		defer setDefaultTestSleepTimeAndTimeOutThreshold()
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,
@@ -123,7 +123,7 @@ func RunSystemTestGet(t *testing.T) {
 	})
 
 	t.Run("VerifyActualRowSingleBis", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,
@@ -136,7 +136,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect1", func(t *testing.T) {
 		getRowsQueryForGridsApiImpl := getRowsQueryForGridsApi
 		getRowsQueryForGridsApi = func(*model.Grid, string, bool) string { return "xxx" } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -148,7 +148,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect2", func(t *testing.T) {
 		getGridQueryForGridsApiImpl := getGridQueryForGridsApi
 		getGridQueryForGridsApi = func() string { return "xxx" } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -160,7 +160,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect3", func(t *testing.T) {
 		getGridColumsOwnedQueryForGridsApiImpl := getGridColumsOwnedQueryForGridsApi
 		getGridColumsOwnedQueryForGridsApi = func() string { return "xxx" } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -172,7 +172,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect4", func(t *testing.T) {
 		getGridColumnQueryOutputForGridsApiImpl := getGridColumnQueryOutputForGridsApi
 		getGridColumnQueryOutputForGridsApi = func(column *model.Column) []any { return nil } // mock function
-		response, _ := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -183,7 +183,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect5", func(t *testing.T) {
 		getQueryReferencedRowsForRowImpl := getQueryReferencedRowsForRow
 		getQueryReferencedRowsForRow = func(bool) string { return "xxx" } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -197,7 +197,7 @@ func RunSystemTestGet(t *testing.T) {
 		getQueryReferencedRowsForRow = func(bool) string {
 			return "SELECT NULL, NULL FROM relationships WHERE gridUuid = $1 AND text1 = $2 AND text2 = $3 AND text3 = $4 AND text2 = $5"
 		} // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -209,7 +209,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect7", func(t *testing.T) {
 		getGridForGridsApiImpl := getGridForGridsApi
 		getGridForGridsApi = func(r ApiRequest, gridUuid string) (*model.Grid, error) { return nil, errors.New("xxx") } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -221,7 +221,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowsWithDefect8", func(t *testing.T) {
 		getGridQueryOutputForGridsApiImpl := getGridQueryOutputForGridsApi
 		getGridQueryOutputForGridsApi = func(grid *model.Grid) []any { return nil } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -233,7 +233,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualGridsOwnedByUser01Defect", func(t *testing.T) {
 		getGridColumsNotOwnedQueryForGridsApiImpl := getGridColumsNotOwnedQueryForGridsApi
 		getGridColumsNotOwnedQueryForGridsApi = func(bool) string { return "xxx" } // mock function
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -245,7 +245,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
 		getRowsQueryParametersForGridsApiImpl := getRowsQueryParametersForGridsApi
 		getRowsQueryParametersForGridsApi = func(gridUuid, uuid string) []any { return nil }
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,
@@ -258,7 +258,7 @@ func RunSystemTestGet(t *testing.T) {
 	t.Run("VerifyActualRowSingleDefect", func(t *testing.T) {
 		getRowsQueryOutputForGridsApiImpl := getRowsQueryOutputForGridsApi
 		getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any { return nil }
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 			Uuid:     model.UuidGrids,

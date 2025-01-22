@@ -13,7 +13,7 @@ import (
 	"d.lambert.fr/encoon/database"
 )
 
-func handleAuthentication(dbName string, content requestContent) responseContent {
+func handleAuthentication(dbName string, content ApiParameters) responseContent {
 	if dbName == "" || content.Userid == "" || content.Password == "" {
 		return responseContent{
 			Status:      FailedStatus,

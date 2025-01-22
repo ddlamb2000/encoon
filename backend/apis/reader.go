@@ -98,7 +98,7 @@ func handleMessage(dbName string, message kafka.Message) {
 	requestReceivedOn := time.Now().UTC().Format(time.RFC3339Nano)
 	requestInitiatedOn, tokenString, gridUuid, contextUuid := getDataFromHeaders(message)
 	messageKey := string(message.Key)
-	var request requestContent
+	var request ApiParameters
 	var response responseContent
 	user := ""
 	userUuid := ""
@@ -140,7 +140,7 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 	return requestInitiatedOn, tokenString, gridUuid, contextUuid
 }
 
-func validMessage(messageKey string, dbName string, tokenString string, request requestContent) (string, string, responseContent) {
+func validMessage(messageKey string, dbName string, tokenString string, request ApiParameters) (string, string, responseContent) {
 	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
 		return "", "", noToken(messageKey, dbName, request)
@@ -169,7 +169,7 @@ func getDataFromJWTClaims(claims jwt.MapClaims) (string, string, bool) {
 	return userUuid, user, today.After(expirationDate)
 }
 
-func invalidMessage(request requestContent) responseContent {
+func invalidMessage(request ApiParameters) responseContent {
 	return responseContent{
 		Status:      FailedStatus,
 		Action:      request.Action,
@@ -178,7 +178,7 @@ func invalidMessage(request requestContent) responseContent {
 	}
 }
 
-func handleActions(dbName string, userUuid string, userName string, request requestContent) responseContent {
+func handleActions(dbName string, userUuid string, userName string, request ApiParameters) responseContent {
 	if request.Action == ActionLoad {
 		return executeActionGrid(dbName, userUuid, userName, request, GetGridsRows)
 	} else if request.Action == ActionChangeGrid {
@@ -190,14 +190,14 @@ func handleActions(dbName string, userUuid string, userName string, request requ
 	}
 }
 
-func heartBeat(request requestContent) responseContent {
+func heartBeat(request ApiParameters) responseContent {
 	return responseContent{
 		Status: SuccessStatus,
 		Action: request.Action,
 	}
 }
 
-func logOut(request requestContent) responseContent {
+func logOut(request ApiParameters) responseContent {
 	return responseContent{
 		Status:      SuccessStatus,
 		Action:      request.Action,
@@ -206,7 +206,7 @@ func logOut(request requestContent) responseContent {
 	}
 }
 
-func locate(request requestContent) responseContent {
+func locate(request ApiParameters) responseContent {
 	return responseContent{
 		Status:     SuccessStatus,
 		Action:     request.Action,
@@ -217,7 +217,7 @@ func locate(request requestContent) responseContent {
 	}
 }
 
-func notAuthorization(messageKey, dbName string, request requestContent) responseContent {
+func notAuthorization(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -228,7 +228,7 @@ func notAuthorization(messageKey, dbName string, request requestContent) respons
 	}
 }
 
-func expired(messageKey, dbName string, userName string, request requestContent) responseContent {
+func expired(messageKey, dbName string, userName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, userName, "Authorization expired for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -239,7 +239,7 @@ func expired(messageKey, dbName string, userName string, request requestContent)
 	}
 }
 
-func invalidAction(dbName string, request requestContent) responseContent {
+func invalidAction(dbName string, request ApiParameters) responseContent {
 	configuration.Log(dbName, "", "Invalid action: %s %s", request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -250,7 +250,7 @@ func invalidAction(dbName string, request requestContent) responseContent {
 	}
 }
 
-func noToken(messageKey, dbName string, request requestContent) responseContent {
+func noToken(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -261,7 +261,7 @@ func noToken(messageKey, dbName string, request requestContent) responseContent 
 	}
 }
 
-func invalidToken(messageKey, dbName string, request requestContent) responseContent {
+func invalidToken(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "Invalid token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -272,21 +272,13 @@ func invalidToken(messageKey, dbName string, request requestContent) responseCon
 	}
 }
 
-type ActionGridDataFunc func(ct context.Context, uri string, p ApiParameters, payload GridPost) GridResponse
+type ActionGridDataFunc func(ct context.Context, p ApiParameters, payload GridPost) GridResponse
 
-func executeActionGrid(dbName string, userUuid string, userName string, request requestContent, f ActionGridDataFunc) responseContent {
-	parameters := ApiParameters{
-		DbName:               dbName,
-		UserUuid:             userUuid,
-		UserName:             userName,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-	}
-	response := f(context.Background(), "", parameters, request.DataSet)
+func executeActionGrid(dbName string, userUuid string, userName string, request ApiParameters, f ActionGridDataFunc) responseContent {
+	request.DbName = dbName
+	request.UserUuid = userUuid
+	request.UserName = userName
+	response := f(context.Background(), request, request.DataSet)
 	if response.Err != nil {
 		return responseContent{
 			Status:      FailedStatus,

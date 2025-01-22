@@ -11,7 +11,7 @@ import (
 
 func RunSystemTestKafka(t *testing.T) {
 	t.Run("Heartbeat", func(t *testing.T) {
-		response, _ := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", ApiParameters{
 			Action: ActionHeartbeat,
 		})
 		responseIsSuccess(t, response)

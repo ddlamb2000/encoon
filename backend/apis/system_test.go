@@ -210,7 +210,7 @@ func createKafkaTestProducer(dbName string) *kafka.Writer {
 	}
 }
 
-func runKafkaTestAuthRequest(t *testing.T, dbName string, message requestContent) (*responseContent, []byte) {
+func runKafkaTestAuthRequest(t *testing.T, dbName string, message ApiParameters) (*responseContent, []byte) {
 	kafakMessageNumber++
 	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
 	writeTestAuthMessage(t, dbName, key, message)
@@ -221,7 +221,7 @@ func runKafkaTestAuthRequest(t *testing.T, dbName string, message requestContent
 	return readKafkaTestMessage(t, consumer, key)
 }
 
-func writeTestAuthMessage(t *testing.T, dbName, key string, message requestContent) {
+func writeTestAuthMessage(t *testing.T, dbName, key string, message ApiParameters) {
 	messageEncoded, _ := json.Marshal(message)
 	producer := kafkaTestProducer
 	if dbName == "baddb" {
@@ -247,7 +247,7 @@ func writeTestAuthMessage(t *testing.T, dbName, key string, message requestConte
 	}
 }
 
-func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid string, message requestContent) (*responseContent, []byte) {
+func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid string, message ApiParameters) (*responseContent, []byte) {
 	token := getTokenForUser(dbName, userName, userUuid)
 	kafakMessageNumber++
 	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
@@ -259,7 +259,7 @@ func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid stri
 	return readKafkaTestMessage(t, consumer, key)
 }
 
-func runKafkaTestRequestWithToken(t *testing.T, dbName, userName, userUuid, gridUuid, token string, message requestContent) (*responseContent, []byte) {
+func runKafkaTestRequestWithToken(t *testing.T, dbName, userName, userUuid, gridUuid, token string, message ApiParameters) (*responseContent, []byte) {
 	kafakMessageNumber++
 	key := fmt.Sprintf("%d-%s", kafakMessageNumber, contextUuid)
 	writeTestMessage(t, dbName, userUuid, userName, token, gridUuid, key, message)
@@ -270,7 +270,7 @@ func runKafkaTestRequestWithToken(t *testing.T, dbName, userName, userUuid, grid
 	return readKafkaTestMessage(t, consumer, key)
 }
 
-func writeTestMessage(t *testing.T, dbName, userUuid, user, token, gridUuid, key string, message requestContent) {
+func writeTestMessage(t *testing.T, dbName, userUuid, user, token, gridUuid, key string, message ApiParameters) {
 	messageEncoded, _ := json.Marshal(message)
 	producer := kafkaTestProducer
 	if dbName == "baddb" {

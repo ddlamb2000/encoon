@@ -28,7 +28,7 @@ func RunSystemTestCache(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("User01VerifyActualGridsCount", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -54,7 +54,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -77,7 +77,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -87,7 +87,7 @@ func RunSystemTestCache(t *testing.T) {
 	})
 
 	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -98,7 +98,7 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridsColumns", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid05Uuid,
 		})
@@ -120,7 +120,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -141,7 +141,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -153,7 +153,7 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridsColumns2", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid05Uuid,
 		})
@@ -176,7 +176,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -196,7 +196,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"` + grid05Uuid + `","toGridUuid":"` + model.UuidColumns + `","uuid":"` + column25Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -208,7 +208,7 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridsColumns3", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05").Scan(&grid05Uuid)
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid05Uuid,
 		})
@@ -228,7 +228,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -245,7 +245,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -257,7 +257,7 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualGridName", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid05Uuid,
 		})
@@ -278,7 +278,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -295,7 +295,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `","text1":"Test Column 26 {2}","text2":"relationship1","text3":"true"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -307,7 +307,7 @@ func RunSystemTestCache(t *testing.T) {
 	t.Run("User01VerifyActualColumnName", func(t *testing.T) {
 		var grid05Uuid string
 		db.QueryRow("SELECT uuid FROM grids WHERE gridUuid = $1 and text1= $2", model.UuidGrids, "Grid05 {2}").Scan(&grid05Uuid)
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid05Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid05Uuid,
 		})
@@ -326,7 +326,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + grid05Uuid + `","text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -335,7 +335,7 @@ func RunSystemTestCache(t *testing.T) {
 		jsonStringContains(t, responseData, `"rowsDeleted":`)
 		jsonStringContains(t, responseData, `"text1":"Grid05 {2}","text2":"Test grid 05 {2}","text3":"journal"`)
 
-		response, responseData = runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData = runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -344,7 +344,7 @@ func RunSystemTestCache(t *testing.T) {
 	})
 
 	t.Run("User01VerifyActualGridsCount2", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -362,7 +362,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -380,7 +380,7 @@ func RunSystemTestCache(t *testing.T) {
 			`{"uuid":"` + column26Uuid + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),

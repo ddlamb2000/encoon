@@ -27,7 +27,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	db.QueryRow("SELECT uuid FROM rows WHERE gridUuid = $1 and text1= $2", grid03Uuid, "test-23").Scan(&row23Uuid)
 
 	t.Run("RootCanGetGrid", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -37,7 +37,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetGrid", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: model.UuidGrids,
 		})
@@ -48,7 +48,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("RootCannotGetGrid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 		})
@@ -57,7 +57,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetGrid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 		})
@@ -68,7 +68,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 		})
@@ -79,7 +79,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CannotGetGrid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 		})
@@ -88,7 +88,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CannotGetGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 		})
@@ -97,7 +97,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CannotGetGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 		})
@@ -111,7 +111,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"` + grid02Uuid + `","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelReadAccess + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -120,7 +120,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CanGetGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 		})
@@ -136,7 +136,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship4","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user02Uuid + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -145,7 +145,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CanGetGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 		})
@@ -156,7 +156,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User03CannotGetGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 		})
@@ -170,7 +170,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship5","fromUuid":"` + grid03Uuid + `","toGridUuid":"` + model.UuidUsers + `","uuid":"` + user03Uuid + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -179,7 +179,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User03CanGetGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 		})
@@ -190,7 +190,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetRow17Grid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 			Uuid:     row17Uuid,
@@ -205,7 +205,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {2}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -221,7 +221,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -239,7 +239,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row24Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -249,7 +249,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetRowGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 			Uuid:     rowInt100Uuid,
@@ -264,7 +264,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":101,"int2":101,"int3":101,"int4":101}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -280,7 +280,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -298,7 +298,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt300Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -308,7 +308,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User01CanGetRowGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 			Uuid:     row23Uuid,
@@ -323,7 +323,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `","text1":"test-23 {2}","text2":"test-24 {2}","text3":"test-25 {2}","text4":"test-26 {2}","int1":27,"int2":28,"int3":29,"int4":30}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -343,7 +343,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -361,7 +361,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row39Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -371,7 +371,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CannotGetRow17Grid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 			Uuid:     row17Uuid,
@@ -387,7 +387,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {3}","text2":"test-18 {3}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -404,7 +404,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -420,7 +420,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -430,7 +430,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CanGetRowGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 			Uuid:     rowInt100Uuid,
@@ -445,7 +445,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":102,"int2":102,"int3":102,"int4":102}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -461,7 +461,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":500,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -476,7 +476,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -486,7 +486,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User02CanGetRowGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 			Uuid:     row23Uuid,
@@ -501,7 +501,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `","text1":"test-23 {4}","text2":"test-24 {4}","text3":"test-25 {3}","text4":"test-26 {3}","int1":27,"int2":28,"int3":29,"int4":30}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -521,7 +521,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -536,7 +536,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row23Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -546,7 +546,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User03CannotGetRow17Grid01", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid01Uuid,
 			Uuid:     row17Uuid,
@@ -561,7 +561,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `","text1":"test-17 {6}","text2":"test-18 {2}","text3":"test-19 {2}","text4":"test-20 {2}"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -577,7 +577,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"test-24","text2":"test-25","text3":"test-26","text4":"test-27"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -592,7 +592,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid01Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid01Uuid,
 			DataSet:  stringToJson(postStr),
@@ -602,7 +602,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User03CanGetRowGrid02", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid02Uuid,
 			Uuid:     rowInt100Uuid,
@@ -617,7 +617,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `","int1":601,"int2":101,"int3":101,"int4":101}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -633,7 +633,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"int1":300,"int2":300,"int3":300,"int4":300}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -648,7 +648,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + rowInt100Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid02Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid02Uuid,
 			DataSet:  stringToJson(postStr),
@@ -658,7 +658,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 	})
 
 	t.Run("User03CanGetRowGrid03", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionLoad,
 			GridUuid: grid03Uuid,
 			Uuid:     row23Uuid,
@@ -678,7 +678,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + grid01Uuid + `","uuid":"` + row17Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test03", user03Uuid, grid03Uuid, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: grid03Uuid,
 			DataSet:  stringToJson(postStr),
@@ -694,7 +694,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"text1":"testxx","text2":"Zero-xxx","text3":"Test xxx","text4":"$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidUsers, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidUsers, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidUsers,
 			DataSet:  stringToJson(postStr),
@@ -721,7 +721,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + model.UuidColumnTypes + `","uuid":"` + model.UuidReferenceColumnType + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -748,7 +748,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship2","fromUuid":"a","toGridUuid":"` + model.UuidAccessLevels + `","uuid":"` + model.UuidAccessLevelWriteAccess + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -765,7 +765,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + gridUuid4 + `","text1":"Grid04","text2":"Test grid 04","text3":"person"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -782,7 +782,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"uuid":"` + gridUuid4 + `","text1":"Grid04","text2":"Test grid 04","text3":"grid"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -808,7 +808,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row16Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid4, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid4, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: gridUuid4,
 			DataSet:  stringToJson(postStr),
@@ -832,7 +832,7 @@ func RunSystemTestGetRowLevel(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, gridUuid4, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test02", user02Uuid, gridUuid4, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: gridUuid4,
 			DataSet:  stringToJson(postStr),

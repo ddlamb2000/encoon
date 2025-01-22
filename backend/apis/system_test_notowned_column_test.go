@@ -24,7 +24,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"uuid":"a","text1":"Grid06","text2":"Test grid 06","text3":"journal"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidGrids,
 			DataSet:  stringToJson(postStr),
@@ -58,7 +58,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"d","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: model.UuidColumns,
 			DataSet:  stringToJson(postStr),
@@ -102,7 +102,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"j","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: gridUuid6,
 			DataSet:  stringToJson(postStr),
@@ -120,7 +120,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 	})
 
 	t.Run("VerifyActualGridsOwnedByUser01Count", func(t *testing.T) {
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidGrids, ApiParameters{
 			Action:               ActionLoad,
 			GridUuid:             model.UuidGrids,
 			FilterColumnOwned:    true,
@@ -146,7 +146,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -172,7 +172,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -203,7 +203,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":true,"columnName":"relationship1","fromUuid":"c","toGridUuid":"` + gridUuid3 + `","uuid":"` + row09Uuid + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, gridUuid6, ApiParameters{
 			Action:   ActionChangeGrid,
 			GridUuid: gridUuid6,
 			DataSet:  stringToJson(postStr),
@@ -231,7 +231,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -259,7 +259,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -287,7 +287,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -315,7 +315,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, _ := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
@@ -341,7 +341,7 @@ func RunSystemTestNotOwnedColumn(t *testing.T) {
 			`{"owned":false,"columnName":"relationship1","fromUuid":"a","toGridUuid":"` + model.UuidGrids + `","uuid":"` + gridUuid6 + `"}` +
 			`]` +
 			`}`
-		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, requestContent{
+		response, responseData := runKafkaTestRequest(t, "test", "test01", user01Uuid, model.UuidColumns, ApiParameters{
 			Action:               ActionChangeGrid,
 			GridUuid:             model.UuidColumns,
 			FilterColumnOwned:    true,
