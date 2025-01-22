@@ -42,8 +42,12 @@
               {#each set.grid.columns as column, indexColumn}
                 <th class="sticky -top-3 py-1 bg-gray-100">
                   <span class="flex">
-                    <span contenteditable on:input={() => context.changeColumn(set.grid, column)}
-                          bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
+                    {#if column.bidirectional && !column.owned && column.grid}
+                      {column.grid.displayString} <span class="text-xs">({column.label})</span>
+                    {:else}
+                      <span contenteditable on:input={() => context.changeColumn(set.grid, column)}
+                        bind:innerHTML={context.dataSet[setIndex].grid.columns[indexColumn].label}></span>
+                    {/if}
                     <Icon.DotsVerticalOutline size="sm" color="gray" class={"column-menu-" + set.grid.uuid + "-" + column.uuid + " dark:text-white"} />
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".column-menu-" + set.grid.uuid + "-" + column.uuid}>
                       {#if indexColumn === set.grid.columns.length - 1}
