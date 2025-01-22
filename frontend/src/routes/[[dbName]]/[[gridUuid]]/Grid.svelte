@@ -98,11 +98,7 @@
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                       <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
-                        {#if column.owned}
-                          <Reference {context} {set} {row} {column} />
-                        {:else}
-                          <Icon.DotsHorizontalOutline />
-                        {/if}
+                        <Reference {context} {set} {row} {column} />
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                       <td class="cursor-pointer" align='center'>

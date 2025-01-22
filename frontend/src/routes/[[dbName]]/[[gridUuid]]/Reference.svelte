@@ -13,9 +13,9 @@
   const hasReferenceToDisplay = () => {
     let numberReferences = 0
     if(row !== undefined && row.references !== undefined) {
-      row.references.forEach((ref: ReferenceType) => {
-        if(ref.owned && ref.name === column.name) {
-          if(ref.rows !== undefined && ref.rows.length > 0) numberReferences += 1
+      row.references.forEach((reference: ReferenceType) => {
+        if(reference.owned === column.owned && reference.name === column.name) {
+          if(reference.rows !== undefined && reference.rows.length > 0) numberReferences += 1
         }
       })
     }
@@ -28,7 +28,7 @@
     onfocus={() => context.changeFocus(set.grid, column, row)}
     onclick={() => loadPrompt()}>
   {#each row.references as reference}
-    {#if reference.owned && reference.name == column.name}
+    {#if reference.owned === column.owned && reference.name === column.name}
       {#each reference.rows as referencedRow, indexReferencedRow}
         {#if indexReferencedRow > 0}<br/>{/if}
         <Badge color="dark" rounded class="px-1.5">
