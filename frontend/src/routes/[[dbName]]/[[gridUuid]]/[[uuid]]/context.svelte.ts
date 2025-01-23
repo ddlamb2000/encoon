@@ -698,23 +698,31 @@ export class Context {
                         }
                         if(message.uuid !== undefined && message.dataSet.grid && message.dataSet.grid.columns) {
                           message.dataSet.grid.columns.forEach((column) => {
-                            if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional) {
+                            if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
                               this.pushTransaction({
                                 action: metadata.ActionLoad,
                                 actionText: "Load associated grid",
-                                gridUuid: column.gridPromptUuid
-                              })                          
+                                gridUuid: column.gridPromptUuid,
+                                filterColumnOwned: false,
+                                filterColumnName: column.name,
+                                filterColumnGridUuid: message.dataSet.grid.uuid,
+                                filterColumnValue: message.uuid
+                              })
                             }
                           })
                         }
                         if(message.uuid !== undefined && message.dataSet.grid && message.dataSet.grid.columnsUsage) {
                           message.dataSet.grid.columnsUsage.forEach((usage) => {
                             if(usage.grid) {
-                              this.pushTransaction({
-                                action: metadata.ActionLoad,
-                                actionText: "Load usage grid",
-                                gridUuid: usage.grid.uuid
-                              })
+                              // this.pushTransaction({
+                              //   action: metadata.ActionLoad,
+                              //   actionText: "Load usage grid",
+                              //   gridUuid: usage.grid.uuid,
+                              //   filterColumnOwned: true,
+                              //   filterColumnName: usage.name,
+                              //   filterColumnGridUuid: usage.gridUuid,
+                              //   filterColumnValue: message.uuid
+                              // })
                             }
                           })
                         }

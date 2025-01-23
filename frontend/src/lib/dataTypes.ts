@@ -98,6 +98,10 @@ export interface RequestContent {
   uuid?: string
   userid?: string
   password?: string
+  filterColumnOwned?: boolean
+  filterColumnName?: string
+  filterColumnGridUuid?: string
+  filterColumnValue?: string
   dataSet?: GridPost
 }
 

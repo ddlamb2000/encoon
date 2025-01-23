@@ -83,12 +83,11 @@
                   {/each}
                   {#if row.audits && row.audits.length > 0}
                     <tr>
-                      <td></td>
-                      <td>
+                      <td colspan="2">
                         <ul>
-                        {#each row.audits as audit}
-                          <li>{audit.actionName} on <DateTime dateTime={audit.created} /> by {audit.createdByName}</li>
-                        {/each}    
+                          {#each row.audits as audit}
+                            <li class="font-extralight">{audit.actionName} on <DateTime dateTime={audit.created} /> by {audit.createdByName}</li>
+                          {/each}
                         </ul>
                       </td>
                     </tr>
@@ -100,7 +99,7 @@
                   {#if usage.grid}
                     <div class="mt-4 ms-2">
                       <span class="font-bold">
-                        {@html usage.label} in {@html usage.grid.displayString}
+                        {@html usage.label} <span class="font-extralight">in</span> {@html usage.grid.displayString}
                       </span>
                       <Grid {context} gridUuid={usage.grid.uuid} embedded={true} />
                     </div>
