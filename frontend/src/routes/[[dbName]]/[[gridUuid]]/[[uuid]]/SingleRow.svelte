@@ -3,6 +3,7 @@
 	import { Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import Grid from './Grid.svelte'
+  import DateTime from '$lib/DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, uuid } = $props()
@@ -61,7 +62,7 @@
                       {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                         <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                           {#if column.owned && column.bidirectional}
-                            <Grid {context} gridUuid={column.gridPromptUuid} embedded={true }/>
+                            <Grid {context} gridUuid={column.gridPromptUuid} embedded={true} />
                           {:else}
                             <Reference {context} {set} {row} {column} />
                           {/if}
@@ -80,8 +81,32 @@
                       {/if}
                     </tr>
                   {/each}
+                  {#if row.audits && row.audits.length > 0}
+                    <tr>
+                      <td></td>
+                      <td>
+                        <ul>
+                        {#each row.audits as audit}
+                          <li>{audit.actionName} on <DateTime dateTime={audit.created} /> by {audit.createdByName}</li>
+                        {/each}    
+                        </ul>
+                      </td>
+                    </tr>
+                  {/if}
                 </tbody>
               </table>
+              {#if set.grid && set.grid.columnsUsage.length > 0}
+                {#each set.grid.columnsUsage as usage}
+                  {#if usage.grid}
+                    <div class="mt-4 ms-2">
+                      <span class="font-bold">
+                        {@html usage.label} in {@html usage.grid.displayString}
+                      </span>
+                      <Grid {context} gridUuid={usage.grid.uuid} embedded={true} />
+                    </div>
+                  {/if}
+                {/each}    
+              {/if}
             {/key}   
           {/if}   
         {/each}

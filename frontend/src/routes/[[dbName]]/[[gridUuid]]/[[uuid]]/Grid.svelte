@@ -26,10 +26,10 @@
           <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
                 bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>
         {/if}
-        <table class="font-light text-sm table-auto border-collapse border border-slate-100">
-          <thead class="border border-slate-200">
+        <table class="font-light text-sm table-auto border-collapse">
+          <thead>
             <tr>
-              <th class="sticky -top-3 py-1 bg-gray-100">
+              <th class="sticky -top-3 py-1">
                 {#if set.grid.columns === undefined || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
@@ -41,7 +41,7 @@
                 {/if}
               </th>
               {#each set.grid.columns as column, indexColumn}
-                <th class="sticky -top-3 py-1 bg-gray-100">
+                <th class="sticky -top-3 py-1 bg-gray-100 border border-slate-300">
                   <span class="flex">
                     {#if column.bidirectional && !column.owned && column.grid}
                       {column.grid.displayString} <span class="text-xs">({column.label})</span>
@@ -71,10 +71,10 @@
               {/each}
             </tr>
           </thead>
-          <tbody class="border border-slate-100">
+          <tbody>
             {#each context.dataSet[setIndex].rows as row, rowIndex}
               {#key row.uuid}
-                <tr class="border border-slate-100 align-top">
+                <tr class="align-top">
                   <td class="nowrap flex">
                     <a href={"/" + context.dbName + "/" + set.grid.uuid + "/" + row.uuid}
                         onclick={() => context.navigateToGrid(set.grid.uuid, row.uuid)}>
@@ -98,7 +98,7 @@
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
-                          class="{context.isFocused(set, column, row) ? colorFocus : ''}
+                          class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}
                                  {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
                           align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
@@ -106,11 +106,11 @@
                           bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
-                      <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
+                      <td class="border border-slate-100 {context.isFocused(set, column, row) ? colorFocus : ''}">
                         <Reference {context} {set} {row} {column} />
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td class="cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
+                      <td class="border border-slate-100 cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, column, row)}>
@@ -128,11 +128,15 @@
               <tr><td>No data</td></tr>
             {/each}
           </tbody>
-          <tfoot class="border border-slate-200">
+          <tfoot>
             <tr>
-              <th class="py-1 bg-gray-100" colspan="99">
+              <th>
                 <span class="flex">
                   <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex])}><Icon.CirclePlusOutline /></a>
+                </span>
+              </th>
+              <th class="py-1 bg-gray-100" colspan="99">
+                <span class="flex ms-1">
                   {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
                 </span>
               </th>
