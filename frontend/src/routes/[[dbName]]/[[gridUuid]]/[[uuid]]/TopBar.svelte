@@ -27,5 +27,5 @@
   {/if}
 {/each}
 <span class="text-xs ms-2 text-gray-500">
-  {context.gridsInMemory} grids, {context.rowsInMemory} rows
+  {context.rowsInMemory} rows in {context.gridsInMemory} grids
 </span>

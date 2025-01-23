@@ -6,7 +6,7 @@
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, uuid } = $props()
-  const colorFocus = "bg-yellow-100/10"
+  const colorFocus = "bg-yellow-100/20"
 
   const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
     row[column.name] = row[column.name] === "true" ? "false" : "true"
@@ -37,7 +37,7 @@
               <table class="font-light text-sm table-auto border-collapse border border-slate-100">
                 <tbody class="border border-slate-100">
                   {#each set.grid.columns as column, indexColumn}
-                    <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
+                    <tr class="border border-slate-100 align-top">
                       <td class="bg-gray-100">
                         {#if column.bidirectional && !column.owned && column.grid}
                           {column.grid.displayString} <span class="text-xs">({column.label})</span>
@@ -61,13 +61,13 @@
                       {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                         <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
                           {#if column.owned && column.bidirectional}
-                            <Grid bind:context={context} gridUuid={column.gridPromptUuid} />
+                            <Grid {context} gridUuid={column.gridPromptUuid} embedded={true }/>
                           {:else}
                             <Reference {context} {set} {row} {column} />
                           {/if}
                         </td>
                       {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                        <td class="cursor-pointer" align='center'>
+                        <td class="cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                           <a href="#top"
                               onfocus={() => context.changeFocus(set.grid, column, row)}
                               onclick={() => toggleBoolean(set, column, row)}>

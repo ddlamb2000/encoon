@@ -5,8 +5,8 @@
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  let { context = $bindable(), gridUuid } = $props()
-  const colorFocus = "bg-yellow-100/10"
+  let { context = $bindable(), gridUuid, embedded = false } = $props()
+  const colorFocus = "bg-yellow-100/20"
 
   const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
     row[column.name] = row[column.name] === "true" ? "false" : "true"
@@ -20,10 +20,12 @@
   {#each context.dataSet as set, setIndex}
     {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
       {#key set.grid.uuid}
-        <span contenteditable class="text-2xl font-extrabold" oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
-        <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
-              bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>        
+        {#if !embedded}
+          <span contenteditable class="text-2xl font-extrabold" oninput={() => context.changeGrid(set.grid)}
+                bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
+          <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
+                bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>
+        {/if}
         <table class="font-light text-sm table-auto border-collapse border border-slate-100">
           <thead class="border border-slate-200">
             <tr>
@@ -72,7 +74,7 @@
           <tbody class="border border-slate-100">
             {#each context.dataSet[setIndex].rows as row, rowIndex}
               {#key row.uuid}
-                <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
+                <tr class="border border-slate-100 align-top">
                   <td class="nowrap flex">
                     <a href={"/" + context.dbName + "/" + set.grid.uuid + "/" + row.uuid}
                         onclick={() => context.navigateToGrid(set.grid.uuid, row.uuid)}>
@@ -108,7 +110,7 @@
                         <Reference {context} {set} {row} {column} />
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td class="cursor-pointer" align='center'>
+                      <td class="cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, column, row)}>

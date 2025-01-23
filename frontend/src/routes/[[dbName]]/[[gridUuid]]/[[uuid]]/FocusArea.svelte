@@ -7,7 +7,7 @@
 
 {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
   {#if context.hasDataSet() && context.focus.hasFocus()}
-    <Badge color="dark" rounded class="px-2.5">{@html context.focus.getGridName()}</Badge>
+    <Badge color="blue" rounded class="px-2.5">{@html context.focus.getGridName()}</Badge>
     <ResponseMessage response={context.getGridLastResponse()} />
     {#if context.focus.hasColumn()}
       <Badge color="indigo" rounded class="px-2.5">{@html context.focus.getColumnName()} ({@html context.focus.getColumnType()})</Badge>
