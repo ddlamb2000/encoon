@@ -2,6 +2,7 @@
   import type { GridResponse, RowType, ColumnType } from '$lib/dataTypes.ts'
 	import { Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
+  import Grid from './Grid.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, uuid } = $props()
@@ -59,7 +60,11 @@
                         </td>
                       {:else if column.typeUuid === metadata.UuidReferenceColumnType}
                         <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
-                          <Reference {context} {set} {row} {column} />
+                          {#if column.owned && column.bidirectional}
+                            <Grid bind:context={context} gridUuid={column.gridPromptUuid} />
+                          {:else}
+                            <Reference {context} {set} {row} {column} />
+                          {/if}
                         </td>
                       {:else if column.typeUuid === metadata.UuidBooleanColumnType}
                         <td class="cursor-pointer" align='center'>
