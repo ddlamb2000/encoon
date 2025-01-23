@@ -7,19 +7,28 @@
 <div class="relative flex items-center">
   <span class="ms-2 text-xl font-extrabold">
     <a data-sveltekit-reload href={"/" + context.dbName}>εncooη</a>
+    <span class="text-xs ms-1 font-light text-gray-600">{context.getContextUuid()}</span>
   </span>
   <span class="lg:flex ml-auto">
     {#if context.isStreaming}
       {#if context.isSending}
-        <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="orange" class="me-1" />Sending message</span>
+        <span transition:fade class="inline-flex items-center me-4">
+          <Indicator size="sm" color="orange" class="me-1" />Sending message
+        </span>
       {:else}
         {#if context.messageStatus}
-          <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="red" class="me-1" />{context.messageStatus}</span>
+          <span transition:fade class="inline-flex items-center me-4">
+            <Indicator size="sm" color="red" class="me-1" />{context.messageStatus}
+          </span>
         {/if}
       {/if}
-      <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="teal" class="me-1" />Connected to {context.dbName}</span>
+      <span transition:fade class="inline-flex items-center me-4">
+        <Indicator size="sm" color="teal" class="me-1" />Connected to {context.dbName}
+      </span>
     {:else}
-      <span transition:fade class="inline-flex items-center me-4"><Indicator size="sm" color="orange" class="me-1" />Connecting</span>
+      <span transition:fade class="inline-flex items-center me-4">
+        <Indicator size="sm" color="orange" class="me-1" />Connecting
+      </span>
     {/if}
     {#if context && context.user && context.user.getIsLoggedIn()}
       {context.user.getFirstName()} {context.user.getLastName()}

@@ -129,4 +129,5 @@ export interface GridResponse {
   canEditRows: boolean
   canAddRows: boolean
   canEditGrid: boolean
+  singleRowUuid?: string
 }

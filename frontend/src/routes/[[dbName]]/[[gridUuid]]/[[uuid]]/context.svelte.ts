@@ -32,6 +32,8 @@ export class Context {
   messageStatus: string = $state("")
   isStreaming: boolean = $state(false)
   dataSet: GridResponse[] = $state([])
+  gridsInMemory: number = $state(0)
+  rowsInMemory: number = $state(0)
   messageStack = $state([{}])
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #tokenName = ""
@@ -78,8 +80,11 @@ export class Context {
   }
 
   getSet = (gridUuid: string) => this.dataSet.find((s) => s.grid.uuid === gridUuid)
+  getSetIndex = (gridUuid: string) => this.dataSet.findIndex((s) => s.grid.uuid === gridUuid)
 
   hasDataSet = () => this.dataSet.length > 0
+
+  getContextUuid = () => this.#contextUuid
 
   authentication = async (loginId: string, loginPassword: string) => {
     if(loginId === "" || loginPassword === "") return
@@ -242,13 +247,14 @@ export class Context {
   navigateToGrid = async (gridUuid: string, uuid: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
     this.reset()
-    const set = this.getSet(gridUuid)
+    // const set = this.getSet(gridUuid)
     const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")
     replaceState(url, { gridUuid: this.gridUuid, uuid: this.uuid })
     this.gridUuid = gridUuid
     this.uuid = uuid
-    if(set && set.grid) this.focus.set(set.grid, undefined, undefined)
-    else this.load()
+    // if(set && set.grid) this.focus.set(set.grid, undefined, undefined)
+    // else this.load()
+    this.load()
 	}
 
  changeCell = debounce(
@@ -439,6 +445,8 @@ export class Context {
       canEditGrid: true    
     }
     this.dataSet.push(set)
+    this.gridsInMemory += 1
+    this.rowsInMemory += 1
     this.pushTransaction({
       action: metadata.ActionChangeGrid,
       actionText: 'New grid',
@@ -679,8 +687,18 @@ export class Context {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.action == metadata.ActionLoad) {
                       if(message.dataSet && message.dataSet.grid) {
-                        console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-                        this.dataSet.push(message.dataSet)
+                        if(message.uuid !== undefined) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                        else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                        const setIndex = this.getSetIndex(message.dataSet.grid.uuid)
+                        message.dataSet.singleRowUuid = message.uuid
+                        if(setIndex < 0) {
+                          this.dataSet.push(message.dataSet)
+                          this.gridsInMemory += 1
+                          if(message.dataSet.grid && message.dataSet.countRows) this.rowsInMemory += message.dataSet.countRows
+                        } else {
+                          this.dataSet[setIndex] = message.dataSet
+                          console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1} is reloaded`)
+                        }
                         if(this.gridUuid === message.dataSet.grid.uuid) this.focus.set(message.dataSet.grid, undefined, undefined)
                       }
                     } else if(message.action == metadata.ActionLocateGrid) {

@@ -14,8 +14,18 @@
       <DynIcon iconName={set.grid.text3}/>
       {@html set.grid.text1}
       <span class="sr-only">Notifications</span>
-      <Indicator color="gray" border size="xl"
-                  class="ms-1 font-extralight text-black">{set.countRows}</Indicator>      
+      {#if set.singleRowUuid === undefined}
+        <Indicator color="gray" border size="xl" class="ms-1 font-extralight text-black">
+            {set.countRows}
+        </Indicator>
+      {:else}
+        <Indicator color="yellow" border size="xl" class="ms-1 font-extralight text-black">
+          {set.countRows}
+      </Indicator>
+    {/if}
     </Button>
   {/if}
 {/each}
+<span class="text-xs ms-2 text-gray-500">
+  {context.gridsInMemory} grids, {context.rowsInMemory} rows
+</span>
