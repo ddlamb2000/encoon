@@ -9,8 +9,7 @@
   const colorFocus = "bg-yellow-100/10"
 
   const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
-    if(row[column.name] === "true") row[column.name] = "false"
-    else row[column.name] = "true"
+    row[column.name] = row[column.name] === "true" ? "false" : "true"
     context.changeCell(set, row)
   }
 </script>
@@ -75,7 +74,8 @@
               {#key row.uuid}
                 <tr class={"border border-slate-100 " + (context.isRowFocused(set, row) ? colorFocus : "")}>
                   <td class="nowrap flex">
-                    <a href={"/" + context.dbName + "/" + set.grid.uuid + "/" + row.uuid}>
+                    <a href={"/" + context.dbName + "/" + set.grid.uuid + "/" + row.uuid}
+                        onclick={() => context.navigateToGrid(set.grid.uuid, row.uuid)}>
                       <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
                     </a>
                     <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 row-menu-" + row.uuid}/>

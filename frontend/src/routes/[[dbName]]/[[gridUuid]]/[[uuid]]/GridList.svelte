@@ -24,7 +24,7 @@
                         href={"/" + context.dbName + "/" + row.uuid}
                         size="xs" class="me-2 mb-1 h-10 w-full shadow-lg"
                         color={context.gridUuid === row.uuid ? "dark" : "light"}
-                        onclick={() => context.navigateToGrid(row.uuid)}>
+                        onclick={() => context.navigateToGrid(row.uuid, "")}>
                   <DynIcon iconName={row.text3}/>
                   {#if userPreferences.expandSidebar}{@html row.text1}{/if}
                 </Button>

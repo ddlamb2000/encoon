@@ -49,15 +49,21 @@ export class Context {
   }
 
   mount = async () => {
-    if(this.gridUuid !== "") {
-      if(this.uuid !== "") this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid, uuid: this.uuid})
-      else this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
-    }
-    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: metadata.UuidGrids})  
+    if(this.gridUuid !== "") this.load()
+    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({
+      action: metadata.ActionLoad,
+      actionText: 'Load grid of grids',
+      gridUuid: metadata.UuidGrids
+    })
   }
 
   load = async () => {
-    this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
+    this.pushTransaction({
+      action: metadata.ActionLoad,
+      actionText: "Load " + (this.uuid !== "" ? "row" : "grid"),
+      gridUuid: this.gridUuid,
+      uuid: this.uuid
+    })
   }
 
   reset = () => {
@@ -233,13 +239,14 @@ export class Context {
     }
   }
 
-  navigateToGrid = async (gridUuid: string) => {
-		console.log("[Context.navigateToGrid()] gridUuid=", gridUuid)
-    const set = this.getSet(gridUuid)
+  navigateToGrid = async (gridUuid: string, uuid: string) => {
+		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
     this.reset()
-    const url = `/${this.dbName}/${gridUuid}`
-    replaceState(url, { gridUuid: this.gridUuid })
+    const set = this.getSet(gridUuid)
+    const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")
+    replaceState(url, { gridUuid: this.gridUuid, uuid: this.uuid })
     this.gridUuid = gridUuid
+    this.uuid = uuid
     if(set && set.grid) this.focus.set(set.grid, undefined, undefined)
     else this.load()
 	}
@@ -457,7 +464,7 @@ export class Context {
     }
     this.addColumn(set, rowPrompt)
     this.addRow(set)
-    this.navigateToGrid(gridUuid)
+    this.navigateToGrid(gridUuid, "")
   }
 
   addReferencedValue = async (set: GridResponse, column: ColumnType, row: RowType, rowPrompt: RowType) => {

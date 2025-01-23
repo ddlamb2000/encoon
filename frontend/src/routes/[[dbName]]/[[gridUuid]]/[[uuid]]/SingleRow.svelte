@@ -8,8 +8,7 @@
   const colorFocus = "bg-yellow-100/10"
 
   const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
-    if(row[column.name] === "true") row[column.name] = "false"
-    else row[column.name] = "true"
+    row[column.name] = row[column.name] === "true" ? "false" : "true"
     context.changeCell(set, row)
   }
 </script>
@@ -23,8 +22,17 @@
         {#each context.dataSet[setIndex].rows as row, rowIndex}
           {#if row.uuid === uuid}
             {#key row.uuid}
-              <span contenteditable class="text-2xl font-extrabold">{row.displayString}</span>
-              <span contenteditable class="ms-2 text-sm font-light">{context.dataSet[setIndex].grid.text1}</span>
+              <span class="flex">
+                <span class="text-2xl font-extrabold">{@html row.displayString}</span>
+                <a class="ms-2 text-sm font-light hover:underline"
+                    href={"/" + context.dbName + "/" + set.grid.uuid}
+                    onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
+                  <span class="flex">
+                    {@html set.grid.text1}
+                    <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
+                  </span>
+                </a>
+              </span>
               <table class="font-light text-sm table-auto border-collapse border border-slate-100">
                 <tbody class="border border-slate-100">
                   {#each set.grid.columns as column, indexColumn}
