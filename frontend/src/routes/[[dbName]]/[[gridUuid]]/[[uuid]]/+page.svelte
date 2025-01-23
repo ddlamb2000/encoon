@@ -7,6 +7,7 @@
   import Login from './Login.svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
+  import SingleRow from './SingleRow.svelte'
   import GridList from './GridList.svelte'
   import FocusArea from './FocusArea.svelte'
   import Navigation from './Navigation.svelte'
@@ -14,7 +15,7 @@
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
-  let context = $state(new Context(data.dbName, data.url, data.gridUuid))
+  let context = $state(new Context(data.dbName, data.url, data.gridUuid, data.uuid))
   const userPreferences = new UserPreferences
 
   onMount(() => {
@@ -24,7 +25,6 @@
   })
 
   onDestroy(() => { context.stopStreaming()  })
-
 </script>
 
 <svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
@@ -50,8 +50,12 @@
       <div class="p-2 bg-white grid overflow-auto">
         {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
-            {#if context.gridUuid !== undefined && context.gridUuid !== "" && context.hasDataSet()}
-              <Grid bind:context={context} gridUuid={context.gridUuid} />
+            {#if context.hasDataSet() && context.gridUuid !== undefined && context.gridUuid !== ""}
+              {#if context.uuid !== undefined && context.uuid !== ""}
+                <SingleRow bind:context={context} gridUuid={context.gridUuid} uuid={context.uuid} />
+              {:else}
+                <Grid bind:context={context} gridUuid={context.gridUuid} />
+              {/if}
             {/if}
           </article>
         {:else if context.isStreaming}
@@ -67,5 +71,4 @@
   </section>
 </main>
 
-<style>
-</style>
+<style></style>

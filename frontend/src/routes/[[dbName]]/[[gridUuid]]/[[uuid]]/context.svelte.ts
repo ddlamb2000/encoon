@@ -26,6 +26,7 @@ export class Context {
   dbName: string = $state("")
   url: string = $state("")
   gridUuid: string = $state("")
+  uuid: string = $state("")
   focus = new Focus
   isSending: boolean = $state(false)
   messageStatus: string = $state("")
@@ -38,16 +39,20 @@ export class Context {
   #hearbeatId: any = null
   #messageTimerId: any = null
 
-  constructor(dbName: string | undefined, url: string, gridUuid: string) {
+  constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
     this.dbName = dbName || ""
     this.url = url
     this.user = new User()
     this.gridUuid = gridUuid
+    this.uuid = uuid
     this.#tokenName = `access_token_${this.dbName}`
   }
 
   mount = async () => {
-    if(this.gridUuid !== "") this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
+    if(this.gridUuid !== "") {
+      if(this.uuid !== "") this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid, uuid: this.uuid})
+      else this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: this.gridUuid})
+    }
     if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({action: metadata.ActionLoad, actionText: 'Load', gridUuid: metadata.UuidGrids})  
   }
 
@@ -213,14 +218,16 @@ export class Context {
     return this.focus && this.focus.isFocused(set.grid, column, row)
   }
 
-  async changeFocus(grid: GridType | undefined, column: ColumnType | undefined, row: RowType | undefined) { 
+  async changeFocus(grid: GridType | undefined, column: ColumnType | undefined, row: RowType | undefined) {
+    console.log("changeFocus[1]", row !== undefined ? row.uuid : undefined)
     if(grid) {
+      console.log("changeFocus[2]", row !== undefined ? row.uuid : undefined)
       await this.pushTransaction(
         {
           action: metadata.ActionLocateGrid,
           gridUuid: grid.uuid,
-          rowUuid: row !== undefined ? row.uuid : undefined,
-          columnUuid: column !== undefined ? column.uuid : undefined
+          columnUuid: column !== undefined ? column.uuid : undefined,
+          uuid: row !== undefined ? row.uuid : undefined
         }
       )
     }
@@ -550,8 +557,8 @@ export class Context {
     500
   )
 
-  locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, rowUuid: string | undefined) => {
-    console.log(`Locate ${gridUuid} ${columnUuid} ${rowUuid}`)
+  locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, uuid: string | undefined) => {
+    console.log(`Locate ${gridUuid} ${columnUuid} ${uuid}`)
     if(gridUuid !== undefined) {
       let set = this.getSet(gridUuid)
       if(set && set.grid) {
@@ -559,12 +566,12 @@ export class Context {
         if(grid.columns) {
           const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
           if(column && column !== undefined) {
-            const row = set.rows.find((row) => row.uuid === rowUuid)
+            const row = set.rows.find((row) => row.uuid === uuid)
             this.focus.set(grid, column, row)
             return
           }
           else {
-            const row = set.rows.find((row) => row.uuid === rowUuid)
+            const row = set.rows.find((row) => row.uuid === uuid)
             this.focus.set(grid, undefined, row)
             return
           }
@@ -670,7 +677,7 @@ export class Context {
                         if(this.gridUuid === message.dataSet.grid.uuid) this.focus.set(message.dataSet.grid, undefined, undefined)
                       }
                     } else if(message.action == metadata.ActionLocateGrid) {
-                      this.locateGrid(message.gridUuid, message.columnUuid, message.rowUuid)
+                      this.locateGrid(message.gridUuid, message.columnUuid, message.uuid)
                     }
                   }
                 }
