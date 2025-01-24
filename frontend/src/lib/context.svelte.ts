@@ -66,11 +66,13 @@ export class Context {
   }
 
   reset = () => {
+    console.log("[Context.reset()]")
     this.focus.reset()
     this.isSending = false
   }
 
   purge = () => {
+    console.log("[Context.purge()]")
     this.user.reset()
     this.reset()
     this.dataSet = []
@@ -255,12 +257,14 @@ export class Context {
     async (set: GridResponse, row: RowType) => {
       row.updated = new Date
       const rowClone = Object.assign({}, row)
-      set.grid.columns?.forEach((column) => {
-        if(column.typeUuid === metadata.UuidIntColumnType) {
-          if(!row[column.name] || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
-          else if(typeof row[column.name] === "string") rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
+      if(set.grid.columns) {
+        for(const column of set.grid.columns) {
+          if(column.typeUuid === metadata.UuidIntColumnType) {
+            if(!row[column.name] || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
+            else if(typeof row[column.name] === "string") rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
+          }
         }
-      })
+      }
       this.pushTransaction(
         {
           action: metadata.ActionChangeGrid,
@@ -567,9 +571,9 @@ export class Context {
   )
 
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, uuid: string | undefined) => {
-    console.log(`Locate ${gridUuid} ${columnUuid} ${uuid}`)
+    console.log(`[Context.locateGrid(${gridUuid},${columnUuid},${uuid})`)
     if(gridUuid) {
-      this.dataSet.forEach((set) => {
+      for(const set of this.dataSet) {
         if(set && set.grid && set.gridUuid === gridUuid) {
           const grid: GridType = set.grid
           if(grid.columns) {
@@ -584,15 +588,18 @@ export class Context {
               this.focus.set(grid, undefined, row)
               return
             }
+          } else {
+            this.focus.set(grid, undefined, undefined)
+            return
           }
         }
-      })
+      }
     }
     this.focus.reset()
   }
 
   controlMessages = () => {
-    this.messageStack.forEach((message) => {
+    for(const message of this.messageStack) {
       if(message.request !== undefined && message.request.dateTime !== undefined) {
         const localDate = new Date(message.request.dateTime)
         const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
@@ -607,7 +614,7 @@ export class Context {
           console.log("Message timed out: ", message.request.messageKey, message.request.dateTime, seconds)
         }
       }
-    })
+    }
   }
   
   async * getStreamIteration(uri: string) {
@@ -629,7 +636,7 @@ export class Context {
         chunk = ""
         console.log("Received chunk with stop")
         const chunks = chunkString.split(metadata.StopString)
-        chunks.forEach((chunkPartial) => {
+        for(const chunkPartial of chunks) {
           if(chunkPartial.length > 0) {
             try {
               const json = JSON.parse(chunkPartial)
@@ -695,7 +702,7 @@ export class Context {
                         }
                         if(message.uuid !== undefined && message.dataSet.grid) {
                           if(message.dataSet.grid.columns) {
-                            message.dataSet.grid.columns.forEach((column) => {
+                            for(const column of message.dataSet.grid.columns) {
                               if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
                                 this.pushTransaction({
                                   action: metadata.ActionLoad,
@@ -707,10 +714,10 @@ export class Context {
                                   filterColumnValue: message.uuid
                                 })
                               }
-                            })
+                            }
                           }
                           if(message.dataSet.grid.columnsUsage) {
-                            message.dataSet.grid.columnsUsage.forEach((usage) => {
+                            for(const usage of message.dataSet.grid.columnsUsage) {
                               if(usage.grid) {
                                 this.pushTransaction({
                                   action: metadata.ActionLoad,
@@ -722,7 +729,7 @@ export class Context {
                                   filterColumnValue: message.uuid
                                 })
                               }
-                            })
+                            }
                           }
                         }
                         if(this.gridUuid === message.dataSet.grid.uuid) {
@@ -741,7 +748,7 @@ export class Context {
               console.log(`Data from stream ${uri} is incorrect`, error, chunkPartial)
             }
           }
-        })
+        }
       }
 
       let result = re.exec(chunk)

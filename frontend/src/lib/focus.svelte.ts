@@ -6,12 +6,14 @@ export class Focus {
   #row?: RowType | undefined = $state(undefined)
 
   reset = () => {
+    console.log("[Focus.reset()]")
     this.#grid = undefined
     this.#column = undefined
     this.#row = undefined
   }
 
   set = (grid: GridType | undefined, column: ColumnType | undefined, row: RowType | undefined) => {
+    if(this.#grid) console.log(`[Focus.set(${this.#grid.uuid})]`)
     this.#grid = grid
     this.#column = column
     this.#row = row
@@ -23,9 +25,9 @@ export class Focus {
   hasRow = (): boolean => this.#row !== undefined
 
   isFocused = (grid: GridType, column: ColumnType, row: RowType): boolean | undefined => {
-    return this.#grid !== undefined && this.#grid.uuid === grid.uuid 
-            && this.#row !== undefined && this.#row.uuid === row.uuid 
-            && this.#column !== undefined && this.#column.uuid === column.uuid
+    return this.#grid && this.#grid.uuid === grid.uuid 
+            && this.#row && this.#row.uuid === row.uuid 
+            && this.#column && this.#column.uuid === column.uuid
   }
 
   getGridName = () => this.#grid !== undefined ? this.#grid.text1 : ""
