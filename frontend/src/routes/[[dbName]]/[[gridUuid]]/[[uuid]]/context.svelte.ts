@@ -185,7 +185,7 @@ export class Context {
       && r.response.sameContext
       && r.response.action !== metadata.ActionHeartbeat
     )
-    if(last && last.response && last.response.status === metadata.FailedStatus && last.response.gridUuid === undefined) return last
+    if(last && last.response && last.response.status === metadata.FailedStatus && !last.response.gridUuid) return last
     else return undefined
   }
 
@@ -244,13 +244,13 @@ export class Context {
     }
   }
 
-  navigateToGrid = async (gridUuid: string, uuid: string) => {
+  navigateToGrid = async (gridUuid: string, uuid?: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
     this.reset()
     const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")
     replaceState(url, { gridUuid: this.gridUuid, uuid: this.uuid })
     this.gridUuid = gridUuid
-    this.uuid = uuid
+    this.uuid = uuid ?? ""
     this.load()
 	}
 
@@ -260,7 +260,7 @@ export class Context {
       const rowClone = Object.assign({}, row)
       set.grid.columns?.forEach((column) => {
         if(column.typeUuid === metadata.UuidIntColumnType) {
-          if(row[column.name] === undefined || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
+          if(!row[column.name] || row[column.name] === "" || row[column.name] === "<br>") rowClone[column.name] = undefined
           else if(typeof row[column.name] === "string") rowClone[column.name] = row[column.name].replace(/[^0-9-]/g, "") * 1
         }
       })

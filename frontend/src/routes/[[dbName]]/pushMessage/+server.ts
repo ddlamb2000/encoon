@@ -4,7 +4,7 @@ import { postMessage } from '$lib/kafka'
 
 export const POST: RequestHandler = async ({ params, request, url }) => {
   const auth = request.headers.get("Authorization")
-  if(!auth || auth === "" || auth === undefined || auth.length < 10) {
+  if(!auth || auth === "" || auth.length < 10) {
     console.error('Not authorized')
     return json({ error: 'Not authorized' } as KafkaMessageResponse, { status: 401 })
   }

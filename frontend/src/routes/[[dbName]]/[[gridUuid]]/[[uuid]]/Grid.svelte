@@ -47,7 +47,7 @@
           <thead>
             <tr>
               <th class="sticky -top-3 py-1">
-                {#if set.grid.columns === undefined || set.grid.columns.length === 0}
+                {#if !set.grid.columns || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
                     <li class="p-0.5">

@@ -35,7 +35,7 @@ const producer = kafka.producer({
 })
 
 export const postMessage = async (params, request) => {
-  if(params.dbName === undefined) {
+  if(!params.dbName) {
     console.error('Missing dbName')
     return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
   }

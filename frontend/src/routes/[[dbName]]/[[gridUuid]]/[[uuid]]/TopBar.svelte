@@ -5,31 +5,28 @@
 </script>
   
 {#each context.dataSet as set}
-  {#if set.grid && set.grid.uuid}
-    <Button outline
-            href={"/" + context.dbName + "/" + set.grid.uuid}
+  {#if set.grid}
+    <Button outline pill
+            href={"/" + context.dbName + "/" + set.gridUuid}
             size="xs" class="mt-1 me-1 h-10 shadow-lg relative"
-            color={context.gridUuid === set.grid.uuid ? "dark" : "light"}
-            onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
+            disabled={set.filterColumnName}
+            color={context.gridUuid === set.gridUuid && context.uuid === (set.uuid ?? "") ? "dark" : "light"}
+            onclick={() => context.navigateToGrid(set.grid.uuid, set.uuid)}>
       <DynIcon iconName={set.grid.text3}/>
-      {@html set.grid.text1}
-      <span class="sr-only">Notifications</span>
-      {#if set.filterColumnName !== undefined}
-        <Indicator color="indigo" border size="xl" class="ms-1 font-extralight text-white">
-          {set.countRows}
-        </Indicator>
-      {:else if set.uuid === undefined}
-        <Indicator color="gray" border size="xl" class="ms-1 font-extralight text-black">
-          {set.countRows}
-        </Indicator>
+      {#if set.uuid && set.rows && set.rows.length > 0}
+        {set.rows[0].displayString}
       {:else}
-        <Indicator color="yellow" border size="xl" class="ms-1 font-extralight text-black">
-          {set.countRows}
-        </Indicator>
+        {@html set.grid.displayString}
+      {/if}
+      <span class="sr-only">Notifications</span>
+      {#if set.filterColumnName}
+        <Indicator color="none" border size="xs" class="font-extralight text-gray">{set.countRows}</Indicator>
+      {:else if !set.uuid}
+        <Indicator color="gray" border size="xl" class="ms-1 font-extralight text-black">{set.countRows}</Indicator>
       {/if}
     </Button>
   {/if}
 {/each}
-<span class="text-xs ms-2 text-gray-500">
+<span class="text-xs text-gray-500">
   {context.rowsInMemory} rows in {context.gridsInMemory} grids
 </span>

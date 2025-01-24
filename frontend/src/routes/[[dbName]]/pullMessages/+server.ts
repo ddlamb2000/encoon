@@ -6,7 +6,7 @@ import * as metadata from "$lib/metadata.svelte"
 let consumerCount = 0
 	
 export const GET = async ({ params, request, url }) => {
-  if(params.dbName === undefined) {
+  if(!params.dbName) {
     console.error(`PULL: Missing dbName`)
     return new Response(JSON.stringify({ error: 'Missing dbName' }), { status: 500 })
   }
