@@ -5,8 +5,23 @@
   import PromptColumnType from './PromptColumnType.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  let { context = $bindable(), gridUuid, embedded = false } = $props()
+  let { context = $bindable(),
+        gridUuid,
+        filterColumnOwned = undefined,
+        filterColumnName = undefined,
+        filterColumnGridUuid = undefined,
+        filterColumnValue = undefined,
+        embedded = false } = $props()
   const colorFocus = "bg-yellow-100/20"
+
+  const matchesProps = (set: GridResponse): boolean => {
+    return set.gridUuid === gridUuid
+            && !set.uuid
+            && ((!set.filterColumnOwned && !filterColumnOwned) || (set.filterColumnOwned === filterColumnOwned))
+            && set.filterColumnName === filterColumnName
+            && set.filterColumnGridUuid === filterColumnGridUuid
+            && set.filterColumnValue === filterColumnValue
+  }
 
   const toggleBoolean = (set: GridResponse, column: ColumnType, row: RowType) => {
     row[column.name] = row[column.name] === "true" ? "false" : "true"
@@ -14,16 +29,18 @@
   }
 </script>
 
-{#if context.getSet(gridUuid) === undefined}
+{#if !context.gotData(matchesProps)}
   <Spinner size={4} />
 {:else}
   {#each context.dataSet as set, setIndex}
-    {#if set.grid && set.grid.uuid && set.grid.uuid === gridUuid}
+    {#if matchesProps(set)}
       {#key set.grid.uuid}
         {#if !embedded}
-          <span contenteditable class="text-2xl font-extrabold" oninput={() => context.changeGrid(set.grid)}
+          <span contenteditable class="text-2xl font-extrabold"
+                oninput={() => context.changeGrid(set.grid)}
                 bind:innerHTML={context.dataSet[setIndex].grid.text1}></span>
-          <span contenteditable class="ms-2 text-sm font-light" oninput={() => context.changeGrid(set.grid)}
+          <span contenteditable class="ms-2 text-sm font-light"
+                oninput={() => context.changeGrid(set.grid)}
                 bind:innerHTML={context.dataSet[setIndex].grid.text2}></span>
         {/if}
         <table class="font-light text-sm table-auto border-collapse">
@@ -125,7 +142,7 @@
                 </tr>
               {/key}      
             {:else}
-              <tr><td>No data</td></tr>
+              <tr><td></td><td colspan="99">No data</td></tr>
             {/each}
           </tbody>
           <tfoot>
@@ -136,9 +153,11 @@
                 </span>
               </th>
               <th class="py-1 bg-gray-100" colspan="99">
-                <span class="flex ms-1">
-                  {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
-                </span>
+                {#if context.dataSet[setIndex].countRows}
+                  <span class="flex ms-1">
+                    {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}
+                  </span>
+                {/if}
               </th>
             </tr>
           </tfoot>

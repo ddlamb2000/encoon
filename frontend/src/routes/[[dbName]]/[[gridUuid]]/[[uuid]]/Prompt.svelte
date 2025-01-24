@@ -1,12 +1,22 @@
 <script lang="ts">
+  import type { GridResponse } from '$lib/dataTypes.ts'
   import { Dropdown, Spinner, Search } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row, gridPromptUuid, elementReference } = $props()
   let searchText = $state("")
+
+  const matchesProps = (set: GridResponse): boolean => {
+    return set.gridUuid === gridPromptUuid
+            && !set.uuid
+            && !set.filterColumnOwned
+            && !set.filterColumnName
+            && !set.filterColumnGridUuid
+            && !set.filterColumnValue
+  }
 </script>
   
 <Dropdown placement="right-start" class="w-48 overflow-y-auto max-h-72 shadow-lg" triggeredBy={"." + elementReference}>
-  {#if context.getSet(gridPromptUuid) === undefined}
+  {#if !context.gotData(matchesProps)}
     <Spinner size={4} />
   {:else}
     {#each row.references as reference}
@@ -26,7 +36,7 @@
       <Search size="md" class="py-1" bind:value={searchText} on:click={(e) => {e.stopPropagation()}} />
     </span>
     {#each context.dataSet as setPrompt}
-      {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
+      {#if matchesProps(setPrompt)}
         {#key "prompt" + elementReference + gridPromptUuid}
           {#each setPrompt.rows as rowPrompt}
             {#if searchText === "" || rowPrompt.displayString.toLowerCase().indexOf(searchText?.toLowerCase()) !== -1}

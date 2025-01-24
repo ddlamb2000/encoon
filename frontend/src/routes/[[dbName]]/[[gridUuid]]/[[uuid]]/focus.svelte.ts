@@ -22,16 +22,6 @@ export class Focus {
   hasColumn = (): boolean => this.#column !== undefined
   hasRow = (): boolean => this.#row !== undefined
 
-  isColumnFocused = (grid: GridType, column: ColumnType): boolean | undefined => {
-    return this.#grid !== undefined && this.#grid.uuid === grid.uuid 
-            && this.#column !== undefined && this.#column.uuid === column.uuid
-  }
-
-  isRowFocused = (grid: GridType, row: RowType): boolean | undefined => {
-    return this.#grid !== undefined && this.#grid.uuid === grid.uuid 
-            && this.#row !== undefined && this.#row.uuid === row.uuid 
-  }
-
   isFocused = (grid: GridType, column: ColumnType, row: RowType): boolean | undefined => {
     return this.#grid !== undefined && this.#grid.uuid === grid.uuid 
             && this.#row !== undefined && this.#row.uuid === row.uuid 

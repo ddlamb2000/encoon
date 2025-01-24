@@ -37,21 +37,17 @@ type ApiParameters struct {
 }
 
 type responseContent struct {
-	Action               string       `json:"action"`
-	ActionText           string       `json:"actionText,omitempty"`
-	Status               string       `json:"status"`
-	GridUuid             string       `json:"gridUuid,omitempty"`
-	ColumnUuid           string       `json:"columnUuid,omitempty"`
-	Uuid                 string       `json:"uuid,omitempty"`
-	TextMessage          string       `json:"textMessage,omitempty"`
-	FirstName            string       `json:"firstName,omitempty"`
-	LastName             string       `json:"lastName,omitempty"`
-	JWT                  string       `json:"jwt,omitempty"`
-	FilterColumnOwned    bool         `json:"filterColumnOwned,omitempty"`
-	FilterColumnName     string       `json:"filterColumnName,omitempty"`
-	FilterColumnGridUuid string       `json:"filterColumnGridUuid,omitempty"`
-	FilterColumnValue    string       `json:"filterColumnValue,omitempty"`
-	DataSet              GridResponse `json:"dataSet,omitempty"`
+	Action      string       `json:"action"`
+	ActionText  string       `json:"actionText,omitempty"`
+	Status      string       `json:"status"`
+	GridUuid    string       `json:"gridUuid,omitempty"`
+	ColumnUuid  string       `json:"columnUuid,omitempty"`
+	Uuid        string       `json:"uuid,omitempty"`
+	TextMessage string       `json:"textMessage,omitempty"`
+	FirstName   string       `json:"firstName,omitempty"`
+	LastName    string       `json:"lastName,omitempty"`
+	JWT         string       `json:"jwt,omitempty"`
+	DataSet     GridResponse `json:"dataSet,omitempty"`
 }
 
 type GridResponse struct {
@@ -61,6 +57,13 @@ type GridResponse struct {
 	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
 	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
 	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
+	GridUuid               string              `json:"gridUuid,omitempty"`
+	ColumnUuid             string              `json:"columnUuid,omitempty"`
+	Uuid                   string              `json:"uuid,omitempty"`
+	FilterColumnOwned      bool                `json:"filterColumnOwned,omitempty"`
+	FilterColumnName       string              `json:"filterColumnName,omitempty"`
+	FilterColumnGridUuid   string              `json:"filterColumnGridUuid,omitempty"`
+	FilterColumnValue      string              `json:"filterColumnValue,omitempty"`
 	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded,omitempty"`
 	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved,omitempty"`
 	Err                    error               `json:"err,omitempty"`

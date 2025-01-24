@@ -56,4 +56,4 @@ database:
   root: "root"
   rootPassword: "$2a$08$40D/LcEidSirsqMSQcfc9.DAPTBOpPBelNik5.ppbLwSodxczbNWa"
   testSleepTime: 100 # Temporisation (in milliseconds) of every database requests
-  timeOutThreshold: 2000
+  timeOutThreshold: 5000

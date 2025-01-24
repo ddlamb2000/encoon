@@ -14,15 +14,19 @@
       <DynIcon iconName={set.grid.text3}/>
       {@html set.grid.text1}
       <span class="sr-only">Notifications</span>
-      {#if set.singleRowUuid === undefined}
+      {#if set.filterColumnName !== undefined}
+        <Indicator color="indigo" border size="xl" class="ms-1 font-extralight text-white">
+          {set.countRows}
+        </Indicator>
+      {:else if set.uuid === undefined}
         <Indicator color="gray" border size="xl" class="ms-1 font-extralight text-black">
-            {set.countRows}
+          {set.countRows}
         </Indicator>
       {:else}
         <Indicator color="yellow" border size="xl" class="ms-1 font-extralight text-black">
           {set.countRows}
-      </Indicator>
-    {/if}
+        </Indicator>
+      {/if}
     </Button>
   {/if}
 {/each}

@@ -220,80 +220,60 @@ func locate(request ApiParameters) responseContent {
 func notAuthorization(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
-		Status:               FailedStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		TextMessage:          "No authorization",
+		Status:      FailedStatus,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		Uuid:        request.Uuid,
+		TextMessage: "No authorization",
 	}
 }
 
 func expired(messageKey, dbName string, userName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, userName, "Authorization expired for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
-		Status:               FailedStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		TextMessage:          "Authorization expired",
+		Status:      FailedStatus,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		Uuid:        request.Uuid,
+		TextMessage: "Authorization expired",
 	}
 }
 
 func invalidAction(dbName string, request ApiParameters) responseContent {
 	configuration.Log(dbName, "", "Invalid action: %s %s", request.Action, request.ActionText)
 	return responseContent{
-		Status:               FailedStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		TextMessage:          "Invalid action (" + request.Action + ")",
+		Status:      FailedStatus,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		Uuid:        request.Uuid,
+		TextMessage: "Invalid action (" + request.Action + ")",
 	}
 }
 
 func noToken(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
-		Status:               FailedStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		TextMessage:          "Missing authorization",
+		Status:      FailedStatus,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		Uuid:        request.Uuid,
+		TextMessage: "Missing authorization",
 	}
 }
 
 func invalidToken(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "Invalid token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
-		Status:               FailedStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		TextMessage:          "Invalid token",
+		Status:      FailedStatus,
+		Action:      request.Action,
+		ActionText:  request.ActionText,
+		GridUuid:    request.GridUuid,
+		Uuid:        request.Uuid,
+		TextMessage: "Invalid token",
 	}
 }
 
@@ -306,28 +286,20 @@ func executeActionGrid(dbName string, userUuid string, userName string, request 
 	response := f(context.Background(), request, request.DataSet)
 	if response.Err != nil {
 		return responseContent{
-			Status:               FailedStatus,
-			Action:               request.Action,
-			ActionText:           request.ActionText,
-			GridUuid:             request.GridUuid,
-			Uuid:                 request.Uuid,
-			FilterColumnOwned:    request.FilterColumnOwned,
-			FilterColumnName:     request.FilterColumnName,
-			FilterColumnGridUuid: request.FilterColumnGridUuid,
-			FilterColumnValue:    request.FilterColumnValue,
-			TextMessage:          response.Err.Error(),
+			Status:      FailedStatus,
+			Action:      request.Action,
+			ActionText:  request.ActionText,
+			GridUuid:    request.GridUuid,
+			Uuid:        request.Uuid,
+			TextMessage: response.Err.Error(),
 		}
 	}
 	return responseContent{
-		Status:               SuccessStatus,
-		Action:               request.Action,
-		ActionText:           request.ActionText,
-		GridUuid:             request.GridUuid,
-		Uuid:                 request.Uuid,
-		FilterColumnOwned:    request.FilterColumnOwned,
-		FilterColumnName:     request.FilterColumnName,
-		FilterColumnGridUuid: request.FilterColumnGridUuid,
-		FilterColumnValue:    request.FilterColumnValue,
-		DataSet:              response,
+		Status:     SuccessStatus,
+		Action:     request.Action,
+		ActionText: request.ActionText,
+		GridUuid:   request.GridUuid,
+		Uuid:       request.Uuid,
+		DataSet:    response,
 	}
 }

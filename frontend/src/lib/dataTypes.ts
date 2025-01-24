@@ -94,7 +94,6 @@ export interface RequestContent {
   actionText?: string
   gridUuid?: string
   columnUuid?: string
-  rowUuid?: string
   uuid?: string
   userid?: string
   password?: string
@@ -111,7 +110,6 @@ export interface ResponseContent {
   status: string
   gridUuid?: string
   columnUuid?: string
-  rowUuid?: string
   uuid?: string
 	textMessage?: string
 	firstName?: string
@@ -127,11 +125,17 @@ export interface GridResponse {
   rowsAdded?: RowType[]
   rowsEdited?: RowType[]
   rowsDeleted?: RowType[]
+  gridUuid?: string
+  columnUuid?: string
+  uuid?: string
 	referencedValuesAdded?: GridReferencePost[]
 	referencedValuesRemoved?: GridReferencePost[]
   canViewRows: boolean
   canEditRows: boolean
   canAddRows: boolean
   canEditGrid: boolean
-  singleRowUuid?: string
+  filterColumnOwned?: boolean
+  filterColumnName?: string
+  filterColumnGridUuid?: string
+  filterColumnValue?: string
 }

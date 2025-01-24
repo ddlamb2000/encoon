@@ -1,9 +1,18 @@
 <script lang="ts">
+  import type { GridResponse } from '$lib/dataTypes.ts'
   import { Button, Spinner } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte.ts"
   import DynIcon from './DynIcon.svelte'
   let { context, userPreferences } = $props()
+  const matchesProps = (set: GridResponse): boolean => {
+    return set.gridUuid === metadata.UuidGrids
+            && !set.uuid
+            && !set.filterColumnOwned
+            && !set.filterColumnName
+            && !set.filterColumnGridUuid
+            && !set.filterColumnValue
+  }
 </script>
 
 {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
@@ -12,11 +21,11 @@
     {#if userPreferences.expandSidebar}New{/if}
   </Button>
   {#if context.hasDataSet()}
-    {#if context.getSet(metadata.UuidGrids) === undefined}
+    {#if !context.gotData(matchesProps)}
       <Spinner size={4} />
     {:else}
       {#each context.dataSet as set, setIndex}
-        {#if set.grid && set.grid.uuid && set.grid.uuid === metadata.UuidGrids}
+        {#if matchesProps(set)}
           {#key set.grid.uuid}
             {#each context.dataSet[setIndex].rows as row}
               {#key row.uuid}            

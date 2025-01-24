@@ -79,8 +79,16 @@ export class Context {
     this.dataSet = []
   }
 
-  getSet = (gridUuid: string) => this.dataSet.find((s) => s.grid.uuid === gridUuid)
-  getSetIndex = (gridUuid: string) => this.dataSet.findIndex((s) => s.grid.uuid === gridUuid)
+  gotData = (matchesProps: Function) => this.dataSet.find((set: GridResponse) => matchesProps(set))
+
+  getSetIndex = (set: GridResponse) => {
+    return this.dataSet.findIndex((s) => s.gridUuid === set.gridUuid
+                                          && s.uuid === set.uuid
+                                          && s.filterColumnOwned === set.filterColumnOwned
+                                          && s.filterColumnName === set.filterColumnName
+                                          && s.filterColumnGridUuid === set.filterColumnGridUuid
+                                          && s.filterColumnValue === set.filterColumnValue)
+  }
 
   hasDataSet = () => this.dataSet.length > 0
 
@@ -216,14 +224,6 @@ export class Context {
 		if (!response.ok) this.messageStatus = data.error || 'Failed to send message'
 		else this.messageStatus = data.message
 	}
-
-  isRowFocused = (set: GridResponse, row: RowType): boolean | undefined => {
-    return this.focus && this.focus.isRowFocused(set.grid, row)
-  }
-
-  isColumnFocused = (set: GridResponse, column: ColumnType): boolean | undefined => {
-    return this.focus && this.focus.isColumnFocused(set.grid, column)
-  }
 
   isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean | undefined => {
     return this.focus && this.focus.isFocused(set.grid, column, row)
@@ -571,24 +571,25 @@ export class Context {
 
   locateGrid = (gridUuid: string | undefined, columnUuid: string | undefined, uuid: string | undefined) => {
     console.log(`Locate ${gridUuid} ${columnUuid} ${uuid}`)
-    if(gridUuid !== undefined) {
-      let set = this.getSet(gridUuid)
-      if(set && set.grid) {
-        const grid: GridType = set.grid
-        if(grid.columns) {
-          const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
-          if(column && column !== undefined) {
-            const row = set.rows.find((row) => row.uuid === uuid)
-            this.focus.set(grid, column, row)
-            return
-          }
-          else {
-            const row = set.rows.find((row) => row.uuid === uuid)
-            this.focus.set(grid, undefined, row)
-            return
+    if(gridUuid) {
+      this.dataSet.forEach((set) => {
+        if(set && set.grid && set.gridUuid === gridUuid) {
+          const grid: GridType = set.grid
+          if(grid.columns) {
+            const column: ColumnType | undefined = grid.columns.find((column) => column.uuid === columnUuid)
+            if(column) {
+              const row = set.rows.find((row) => row.uuid === uuid)
+              this.focus.set(grid, column, row)
+              return
+            }
+            else {
+              const row = set.rows.find((row) => row.uuid === uuid)
+              this.focus.set(grid, undefined, row)
+              return
+            }
           }
         }
-      }
+      })
     }
     this.focus.reset()
   }
@@ -686,8 +687,7 @@ export class Context {
                       if(message.dataSet && message.dataSet.grid) {
                         if(message.uuid !== undefined) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                         else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
-                        message.dataSet.singleRowUuid = message.uuid
-                        const setIndex = this.getSetIndex(message.dataSet.grid.uuid)
+                        const setIndex = this.getSetIndex(message.dataSet)
                         if(setIndex < 0) {
                           this.dataSet.push(message.dataSet)
                           this.gridsInMemory += 1
@@ -696,35 +696,37 @@ export class Context {
                           this.dataSet[setIndex] = message.dataSet
                           console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1} is reloaded`)
                         }
-                        if(message.uuid !== undefined && message.dataSet.grid && message.dataSet.grid.columns) {
-                          message.dataSet.grid.columns.forEach((column) => {
-                            if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
-                              this.pushTransaction({
-                                action: metadata.ActionLoad,
-                                actionText: "Load associated grid",
-                                gridUuid: column.gridPromptUuid,
-                                filterColumnOwned: false,
-                                filterColumnName: column.name,
-                                filterColumnGridUuid: message.dataSet.grid.uuid,
-                                filterColumnValue: message.uuid
-                              })
-                            }
-                          })
-                        }
-                        if(message.uuid !== undefined && message.dataSet.grid && message.dataSet.grid.columnsUsage) {
-                          message.dataSet.grid.columnsUsage.forEach((usage) => {
-                            if(usage.grid) {
-                              // this.pushTransaction({
-                              //   action: metadata.ActionLoad,
-                              //   actionText: "Load usage grid",
-                              //   gridUuid: usage.grid.uuid,
-                              //   filterColumnOwned: true,
-                              //   filterColumnName: usage.name,
-                              //   filterColumnGridUuid: usage.gridUuid,
-                              //   filterColumnValue: message.uuid
-                              // })
-                            }
-                          })
+                        if(message.uuid !== undefined && message.dataSet.grid) {
+                          if(message.dataSet.grid.columns) {
+                            message.dataSet.grid.columns.forEach((column) => {
+                              if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
+                                this.pushTransaction({
+                                  action: metadata.ActionLoad,
+                                  actionText: "Load associated grid",
+                                  gridUuid: column.gridPromptUuid,
+                                  filterColumnOwned: false,
+                                  filterColumnName: column.name,
+                                  filterColumnGridUuid: message.gridUuid,
+                                  filterColumnValue: message.uuid
+                                })
+                              }
+                            })
+                          }
+                          if(message.dataSet.grid.columnsUsage) {
+                            message.dataSet.grid.columnsUsage.forEach((usage) => {
+                              if(usage.grid) {
+                                this.pushTransaction({
+                                  action: metadata.ActionLoad,
+                                  actionText: "Load usage grid",
+                                  gridUuid: usage.grid.uuid,
+                                  filterColumnOwned: true,
+                                  filterColumnName: usage.name,
+                                  filterColumnGridUuid: usage.gridUuid,
+                                  filterColumnValue: message.uuid
+                                })
+                              }
+                            })
+                          }
                         }
                         if(this.gridUuid === message.dataSet.grid.uuid) {
                           this.focus.set(message.dataSet.grid, undefined, undefined)

@@ -1,12 +1,22 @@
 <script lang="ts">
+  import type { GridResponse } from '$lib/dataTypes.ts'
   import { Dropdown, Spinner, Search } from 'flowbite-svelte'
   import * as metadata from "$lib/metadata.svelte"
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, rowPrompt, gridPromptUuid, elementReference } = $props()
   let searchText = $state("")
 
+  const matchesProps = (set: GridResponse): boolean => {
+    return set.gridUuid === gridPromptUuid
+            && !set.uuid
+            && !set.filterColumnOwned
+            && !set.filterColumnName
+            && !set.filterColumnGridUuid
+            && !set.filterColumnValue
+  }
+
   const loadPrompt = () => {
-    if(context.getSet(gridPromptUuid) === undefined) context.pushTransaction({action: metadata.ActionLoad, gridUuid: gridPromptUuid})
+    if(!context.gotData(matchesProps)) context.pushTransaction({action: metadata.ActionLoad, gridUuid: gridPromptUuid})
   }
 </script>
   
@@ -18,7 +28,7 @@
     <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />  
   </span>
   <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto max-h-60 shadow-lg">
-    {#if context.getSet(gridPromptUuid) === undefined}
+    {#if !context.gotData(matchesProps)}
       <Spinner size={4} />
     {:else}
       <span class="flex p-1">

@@ -45,13 +45,21 @@ func GetGridsRows(ct context.Context, p ApiParameters, payload GridPost) GridRes
 			return
 		}
 		r.ctxChan <- GridResponse{
-			Grid:        grid,
-			Rows:        rowSet,
-			CountRows:   rowSetCount,
-			CanViewRows: canViewRows,
-			CanEditRows: canEditRows,
-			CanAddRows:  canAddRows,
-			CanEditGrid: canEditGrid}
+			Grid:                 grid,
+			Rows:                 rowSet,
+			CountRows:            rowSetCount,
+			CanViewRows:          canViewRows,
+			CanEditRows:          canEditRows,
+			CanAddRows:           canAddRows,
+			CanEditGrid:          canEditGrid,
+			GridUuid:             p.GridUuid,
+			ColumnUuid:           p.ColumnUuid,
+			Uuid:                 p.Uuid,
+			FilterColumnOwned:    p.FilterColumnOwned,
+			FilterColumnName:     p.FilterColumnName,
+			FilterColumnGridUuid: p.FilterColumnGridUuid,
+			FilterColumnValue:    p.FilterColumnValue,
+		}
 		r.trace("getGridsRows() - Done")
 	}()
 	select {
