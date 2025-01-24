@@ -2,7 +2,7 @@
   import type { PageData } from './$types'
   import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
-  import { Context } from './context.svelte.ts'
+  import { Context } from '$lib/context.svelte.ts'
   import { UserPreferences } from '$lib/userPreferences.svelte.ts'
   import Login from './Login.svelte'
   import Info from './Info.svelte'

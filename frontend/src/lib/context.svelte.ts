@@ -1,6 +1,3 @@
-// εncooη : data structuration, presentation and navigation.
-// Copyright David Lambert 2025
-
 import type { KafkaMessageRequest,
               KafkaMessageHeader,
               KafkaMessageResponse,
@@ -12,8 +9,8 @@ import type { KafkaMessageRequest,
               GridType,
               ReferenceType } from '$lib/dataTypes.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
-import { User } from './user.svelte.ts'
-import { Focus } from './focus.svelte.ts'
+import { User } from '$lib//user.svelte.ts'
+import { Focus } from '$lib/focus.svelte.ts'
 import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 

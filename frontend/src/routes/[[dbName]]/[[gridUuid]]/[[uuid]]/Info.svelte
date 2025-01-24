@@ -2,7 +2,7 @@
 	import { Spinner, Badge } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
   import * as Icon from 'flowbite-svelte-icons'
-  import DateTime from '$lib/DateTime.svelte'
+  import DateTime from './DateTime.svelte'
   import { SuccessStatus } from '$lib/metadata.svelte'
   let { context } = $props()
 </script>

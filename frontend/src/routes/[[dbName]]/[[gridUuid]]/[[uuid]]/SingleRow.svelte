@@ -3,7 +3,7 @@
 	import { Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import Grid from './Grid.svelte'
-  import DateTime from '$lib/DateTime.svelte'
+  import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, uuid } = $props()

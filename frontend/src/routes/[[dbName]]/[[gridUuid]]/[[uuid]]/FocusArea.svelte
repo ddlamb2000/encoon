@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Badge } from 'flowbite-svelte'
-  import DateTime from '$lib/DateTime.svelte'
+  import DateTime from './DateTime.svelte'
   import ResponseMessage from './ResponseMessage.svelte'
   let { context } = $props()
 </script>
