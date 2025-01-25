@@ -25,15 +25,11 @@ export class ContextBase {
     this.uuid = uuid
   }
 
-  removeToken = () => this.user.removeToken()
-  setToken = (jwt: string) => this.user.setToken(jwt)
-  checkToken = (): boolean => this.user.checkToken()
-
   sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
     this.isSending = true
     const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
     if(!authMessage) {
-      if(!this.user.checkToken()) {
+      if(!this.user.checkLocalToken()) {
         this.messageStatus = "Not authorized "
         this.isSending = false
         return

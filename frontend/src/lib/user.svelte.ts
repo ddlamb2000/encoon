@@ -31,9 +31,9 @@ export class User {
   getIsLoggedIn = (): boolean => this.#loggedIn
   removeToken = () => localStorage.removeItem(this.#tokenName)
   setToken = (jwt: string) => localStorage.setItem(this.#tokenName, jwt)
+  checkLocalToken = (): boolean => this.checkToken(localStorage.getItem(this.#tokenName))
 
-  checkToken = (): boolean => {
-    const token = localStorage.getItem(this.#tokenName)
+  checkToken = (token: string | null): boolean => {
     if(token) {
       try {
         const arrayToken = token.split('.')

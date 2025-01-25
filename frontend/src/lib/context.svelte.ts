@@ -14,8 +14,6 @@ import { Focus } from '$lib/focus.svelte.ts'
 import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 
-const heartBeat = 60
-
 export class Context extends ContextBase {
   url: string = $state("")
   focus = new Focus
@@ -101,7 +99,7 @@ export class Context extends ContextBase {
   }
 
   logout = async () => {
-    this.removeToken()
+    this.user.removeToken()
     this.purge()
   }
 
@@ -360,7 +358,7 @@ export class Context extends ContextBase {
     this.dataSet.push(set)
     this.gridsInMemory += 1
     this.rowsInMemory += 1
-    this.pushTransaction({
+    await this.pushTransaction({
       action: metadata.ActionChangeGrid,
       actionText: 'New grid',
       gridUuid: metadata.UuidGrids,
@@ -383,8 +381,8 @@ export class Context extends ContextBase {
       created: new Date,
       updated: new Date
     }
-    this.addColumn(set, rowPrompt)
-    this.addRow(set)
+    await this.addColumn(set, rowPrompt)
+    await this.addRow(set)
     this.navigateToGrid(gridUuid, "")
   }
 
@@ -567,18 +565,18 @@ export class Context extends ContextBase {
                 })
                 if(message.action == metadata.ActionAuthentication) {
                   if(message.status == metadata.SuccessStatus) {
-                    if(message.jwt !== undefined && this.user.checkToken(message.jwt)) {
+                    if(message.jwt && this.user.checkToken(message.jwt)) {
                       console.log(`Logged in: ${message.firstName} ${message.lastName}`)
-                      this.setToken(message.jwt)
+                      this.user.setToken(message.jwt)
                       this.mount()
                     } else {
                       console.error(`Invalid token for ${message.firstName}`)
                     }
                   } else {
-                    this.removeToken()
+                    this.user.removeToken()
                     this.purge()
                   }
-                } else if(this.checkToken()) {
+                } else if(this.user.checkLocalToken()) {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.action == metadata.ActionLoad) {
                       if(message.dataSet && message.dataSet.grid) {
@@ -663,10 +661,10 @@ export class Context extends ContextBase {
 
   async startStreaming() {
     const uri = `/${this.dbName}/pullMessages`
-    this.checkToken()
+    this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, heartBeat * 1000)
+    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
     this.#messageTimerId = setInterval(() => { this.controlMessages() }, 2000)
     for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  

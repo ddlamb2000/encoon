@@ -142,13 +142,15 @@ export interface GridResponse {
 
 export interface TransactionItem {
   messageKey: string,
-  action: string
+  action?: string
   actionText?: string
+  textMessage?: string
   status?: string
   gridUuid?: string
   dateTime?: string
   sameContext?: boolean
   timeOut?: boolean
+  elapsedMs?: number
 }
 
 export interface Transaction {
