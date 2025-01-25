@@ -168,6 +168,8 @@ services:
     configs:
       - source: encoon-configuration-sandbox
         target: /usr/encoon/configuration.yml
+    volumes:
+      - ./.backup:/usr/encoon/.backup
     networks:
       - encoon
     depends_on:
