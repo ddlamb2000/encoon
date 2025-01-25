@@ -25,7 +25,7 @@ func handleAuthentication(dbName string, content ApiParameters) responseContent 
 	userUuid, firstName, lastName, timeOut, err := database.IsDbAuthorized(context.Background(), dbName, content.Userid, content.Password)
 	if err != nil || userUuid == "" {
 		if timeOut {
-			configuration.LogError(dbName, "", "Authentication: time out ", err)
+			configuration.LogError(dbName, "", "Authentication: timed out ", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      content.Action,

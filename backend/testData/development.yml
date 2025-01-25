@@ -5,7 +5,7 @@ appName: "εncooη (development)" # Application name to be displayed
 
 log: true # show basic messages
 trace: false # show detailed trace
-showTiming: true # show basic timings
+showTiming: false # show basic timings
 
 gridCacheSize: 50 # number of grids kept in local server cache
 seedDataFile: ./seedData.json

@@ -9,7 +9,6 @@ const (
 
 	ActionHeartbeat      = "HEARTBEAT"
 	ActionAuthentication = "AUTHENTICATION"
-	ActionLogout         = "LOGOUT"
 	ActionLoad           = "LOAD"
 	ActionChangeGrid     = "CHANGE"
 	ActionLocateGrid     = "LOCATE"

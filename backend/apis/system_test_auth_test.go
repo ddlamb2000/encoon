@@ -33,26 +33,6 @@ func RunSystemTestAuth(t *testing.T) {
 		jsonStringContains(t, responseData, `"textMessage":"Authentication failed"`)
 	})
 
-	t.Run("AuthInvalid3", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// req, _ := http.NewRequest("POST", "/undefined/api/v1/authentication", strings.NewReader(`{"id": "root", "password": "======"}`))
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusBadRequest)
-
-		// expect := utils.CleanupStrings(`{"error":"No database parameter"}`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if response != expect {
-		// 	t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
-		// }
-	})
-
 	t.Run("AuthValid", func(t *testing.T) {
 		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionAuthentication,
@@ -75,26 +55,6 @@ func RunSystemTestAuth(t *testing.T) {
 		jsonStringContains(t, responseData, `"textMessage":"Authentication timed out"`)
 	})
 
-	t.Run("404Html", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// req, _ := http.NewRequest("GET", "/xxx/yyy", nil)
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusNotFound)
-
-		// expect := utils.CleanupStrings(`404 page not found`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if response != expect {
-		// 	t.Errorf(`Response %v incorrect.`, response)
-		// }
-	})
-
 	t.Run("ApiUsersNoHeader", func(t *testing.T) {
 		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
 			Action:   ActionLoad,
@@ -115,47 +75,18 @@ func RunSystemTestAuth(t *testing.T) {
 	})
 
 	t.Run("ApiUsersIncorrectToken2", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
-		// req.Header.Add("Authorization", "xxxxxxx")
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusUnauthorized)
-
-		// expect := utils.CleanupStrings(`{"error":"Incorrect header."}`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if response != expect {
-		// 	t.Errorf(`Response %v incorrect.`, response)
-		// }
-	})
-
-	t.Run("ApiUsersMissingBearer", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		// token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-		// req, _ := http.NewRequest("GET", "/test/api/v1/"+model.UuidUsers, nil)
-		// req.Header.Add("Authorization", token)
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusUnauthorized)
-
-		// expect := utils.CleanupStrings(`Invalid request`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if !strings.Contains(response, expect) {
-		// 	t.Errorf(`Response %v incorrect.`, response)
-		// }
+		getNewTokenImpl := getNewToken
+		getNewToken = func(dbName, user, userUuid, firstName, lastName string, expiration time.Time) (string, error) {
+			return "", errors.New("xxx")
+		} // mock function
+		response, responseData := runKafkaTestAuthRequest(t, "test", ApiParameters{
+			Action:   ActionAuthentication,
+			Userid:   "root",
+			Password: "dGVzdA==",
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Creation of JWT failed"`)
+		getNewToken = getNewTokenImpl
 	})
 
 	t.Run("ApiUsersExpired", func(t *testing.T) {
@@ -194,29 +125,6 @@ func RunSystemTestAuth(t *testing.T) {
 		getNewToken = getNewTokenImpl
 	})
 
-	t.Run("ApiUsersNotFound", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		// token, _ := getNewToken("test", "root", "0", "root", "root", expiration)
-		// req, _ := http.NewRequest("GET", "/test/api/v0/users", nil)
-		// req.Header.Add("Authorization", "Bearer "+token)
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusNotFound)
-
-		// expect := utils.CleanupStrings(`404 page not found`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if !strings.Contains(response, expect) {
-		// 	t.Errorf(`Response %v incorrect.`, response)
-		// }
-	})
-
 	t.Run("ApiUsersNotFound2", func(t *testing.T) {
 		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", ApiParameters{
 			Action:   ActionLoad,
@@ -224,43 +132,6 @@ func RunSystemTestAuth(t *testing.T) {
 		})
 		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `"textMessage":"Data not found"`)
-	})
-
-	t.Run("ApiUsersNotFound3", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().HttpServer.JwtExpiration) * time.Minute)
-		// token, _ := getNewToken("test", "root", model.UuidRootUser, "root", "root", expiration)
-		// req, _ := http.NewRequest("GET", "/test/api/v1/us", nil)
-		// req.Header.Add("Authorization", "Bearer "+token)
-		// w := httptest.NewRecorder()
-		// testRouter.ServeHTTP(w, req)
-		// responseData, err := io.ReadAll(w.Body)
-		// httpCodeEqual(t, w.Code, http.StatusInternalServerError)
-
-		// expect := utils.CleanupStrings(`Error when retrieving grid definition: pq: invalid input syntax for type uuid`)
-		// response := utils.CleanupStrings(string(responseData))
-
-		// if err != nil {
-		// 	t.Errorf(`Response %v for %v: %v.`, response, w, err)
-		// }
-		// if !strings.Contains(response, expect) {
-		// 	t.Errorf(`Response %v incorrect instead of %v.`, response, expect)
-		// }
-	})
-
-	t.Run("CreateNewUserNoAuth", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// postStr := `{"rowsAdded":` +
-		// 	`[` +
-		// 	`{"text1":"aaaa","text2":"bbbb"}` +
-		// 	`]` +
-		// 	`}`
-		// responseData, code, err := runPOSTRequestForUser("te st", "root", model.UuidRootUser, "/test/api/v1/"+model.UuidUsers, postStr)
-		// errorIsNil(t, err)
-		// httpCodeEqual(t, code, http.StatusUnauthorized)
-		// jsonStringContains(t, responseData, `"error":"Invalid request or unauthorized database access: signature is invalid."`)
 	})
 
 	t.Run("Post404", func(t *testing.T) {

@@ -73,25 +73,28 @@ func getConsumer(dbName string) (*kafka.Reader, error) {
 	return consumer, nil
 }
 
-func readMessages(dbName string) {
+func readMessages(dbName string) error {
 	consumer, err := getConsumer(dbName)
 	if err != nil {
-		configuration.LogError(dbName, "", "Error getting Kafka consumer", err)
-		return
+		return configuration.LogAndReturnError(dbName, "", "Error getting Kafka consumer: %v", err)
 	}
 	configuration.Log(dbName, "", "Read messages")
 	for {
-		message, err := consumer.ReadMessage(context.Background())
+		message, err := readMessage(consumer, context.Background())
 		if err != nil {
 			if consumerShutdown.shutdown[dbName] {
-				configuration.Log(dbName, "", "Kafka consumer stopped")
-				return
+				return configuration.LogAndReturnError(dbName, "", "Kafka consumer stopped: %v", err)
 			}
 			configuration.LogError(dbName, "", "Error reading message", err)
 			continue
 		}
 		go handleMessage(dbName, message)
 	}
+}
+
+// function is available for mocking
+var readMessage = func(r *kafka.Reader, ctx context.Context) (kafka.Message, error) {
+	return r.ReadMessage(ctx)
 }
 
 func handleMessage(dbName string, message kafka.Message) {
@@ -111,8 +114,6 @@ func handleMessage(dbName string, message kafka.Message) {
 			response = heartBeat(request)
 		} else if request.Action == ActionAuthentication {
 			response = handleAuthentication(dbName, request)
-		} else if request.Action == ActionLogout {
-			response = logOut(request)
 		} else {
 			userUuid, user, response = validMessage(messageKey, dbName, tokenString, request)
 		}
@@ -194,15 +195,6 @@ func heartBeat(request ApiParameters) responseContent {
 	return responseContent{
 		Status: SuccessStatus,
 		Action: request.Action,
-	}
-}
-
-func logOut(request ApiParameters) responseContent {
-	return responseContent{
-		Status:      SuccessStatus,
-		Action:      request.Action,
-		ActionText:  request.ActionText,
-		TextMessage: "User logged out",
 	}
 }
 
