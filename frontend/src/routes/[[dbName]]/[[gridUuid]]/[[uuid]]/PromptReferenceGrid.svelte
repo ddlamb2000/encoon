@@ -22,7 +22,7 @@
   
 <a href="#top" role="menuitem"
     class={"cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light " + elementReference}
-    on:click={() => loadPrompt()}>
+    onclick={() => loadPrompt()}>
   <span class="flex">
     {rowPrompt.displayString}
     <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />  
@@ -32,7 +32,7 @@
       <Spinner size={4} />
     {:else}
       <span class="flex p-1">
-        <Search size="md" class="py-1" bind:value={searchText}  on:click={(e) => {e.stopPropagation()}} />
+        <Search size="md" class="py-1" bind:value={searchText}  onclick={(e) => {e.stopPropagation()}} />
       </span>      
       {#each context.dataSet as setPrompt}
         {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}
@@ -43,7 +43,7 @@
                   <li class="p-1">
                     <a href="#top" role="menuitem"
                         class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600"
-                        on:click={() => context.addColumn(set, rowPrompt, rowReference)}>
+                        onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
                       {@html  rowReference.displayString}
                     </a>
                   </li>

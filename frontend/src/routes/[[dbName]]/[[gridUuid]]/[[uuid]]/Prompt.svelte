@@ -24,7 +24,7 @@
         {#each reference.rows as referencedRow}
           <li class="p-1">
             <a href="#top" class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-                on:click={(e) => {e.stopPropagation(); context.removeReferencedValue(set, column, row, referencedRow)}}>
+                onclick={(e) => {e.stopPropagation(); context.removeReferencedValue(set, column, row, referencedRow)}}>
               {@html referencedRow.displayString}
               <Icon.CircleMinusOutline class="ms-1" color="lightgray" />
             </a>
@@ -33,7 +33,7 @@
       {/if}
     {/each}
     <span class="flex p-1">
-      <Search size="md" class="py-1" bind:value={searchText} on:click={(e) => {e.stopPropagation()}} />
+      <Search size="md" class="py-1" bind:value={searchText} onclick={(e) => {e.stopPropagation()}} />
     </span>
     {#each context.dataSet as setPrompt}
       {#if matchesProps(setPrompt)}
@@ -43,7 +43,7 @@
               {#key "prompt" + elementReference + rowPrompt.uuid}
                 <li class="p-1">
                   <a href="#top" role="menuitem" class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-                      on:click={(e) => {e.stopPropagation(); context.addReferencedValue(set, column, row, rowPrompt)}}>
+                      onclick={(e) => {e.stopPropagation(); context.addReferencedValue(set, column, row, rowPrompt)}}>
                     {@html rowPrompt.displayString}
                   </a>
                 </li>

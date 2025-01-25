@@ -22,7 +22,7 @@
 
 <a href="#top" role="menuitem"
     class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-    on:click={() => loadPrompt()}>
+    onclick={() => loadPrompt()}>
   <span class="flex">
     Add column
     <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />      
@@ -44,7 +44,7 @@
                   {:else}
                     <a href="#top" role="menuitem"
                         class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
-                        on:click={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
+                        onclick={() => rowPrompt.uuid !== metadata.UuidReferenceColumnType ? context.addColumn(set, rowPrompt) : {}}>
                       {@html rowPrompt.displayString}
                     </a>
                   {/if}
