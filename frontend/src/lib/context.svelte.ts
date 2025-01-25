@@ -1,50 +1,37 @@
-import type { KafkaMessageRequest,
-              KafkaMessageHeader,
-              KafkaMessageResponse,
-              RequestContent,
+// εncooη : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
+import type { RequestContent,
               GridResponse,
               ResponseContent,
               RowType,
               ColumnType,
               GridType,
               ReferenceType } from '$lib/dataTypes.ts'
+import { ContextBase } from '$lib//contextBase.svelte.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
-import { User } from '$lib//user.svelte.ts'
 import { Focus } from '$lib/focus.svelte.ts'
 import { replaceState } from "$app/navigation"
 import * as metadata from "$lib/metadata.svelte"
 
-const messageStackLimit = 100
 const heartBeat = 60
-const thresholdMessages = 10
 
-export class Context {
-  user: User
-  dbName: string = $state("")
+export class Context extends ContextBase {
   url: string = $state("")
-  gridUuid: string = $state("")
-  uuid: string = $state("")
   focus = new Focus
-  isSending: boolean = $state(false)
-  messageStatus: string = $state("")
   isStreaming: boolean = $state(false)
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
   rowsInMemory: number = $state(0)
-  messageStack = $state([{}])
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
-  #tokenName = ""
   #contextUuid = newUuid()
   #hearbeatId: any = null
   #messageTimerId: any = null
 
   constructor(dbName: string | undefined, url: string, gridUuid: string, uuid: string) {
+    super(dbName, gridUuid, uuid)
     this.dbName = dbName || ""
     this.url = url
-    this.user = new User()
-    this.gridUuid = gridUuid
-    this.uuid = uuid
-    this.#tokenName = `access_token_${this.dbName}`
   }
 
   mount = async () => {
@@ -114,7 +101,7 @@ export class Context {
   }
 
   logout = async () => {
-    localStorage.removeItem(this.#tokenName)
+    this.removeToken()
     this.purge()
   }
 
@@ -151,77 +138,6 @@ export class Context {
       request
     )
   }
-
-  trackRequest = (request) => {
-    this.messageStack.push({request : request})
-    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
-  }
-
-  trackResponse = (response) => {
-    // Remove corresponding request from messageStack
-    const requestIndex = this.messageStack.findIndex((r) => r.request && r.request.messageKey == response.messageKey)
-    if(requestIndex >= 0) this.messageStack.splice(requestIndex, 1)
-    // Compaction of the messageStack
-    const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
-    if(responseIndex >= 0) this.messageStack.splice(responseIndex, 1)
-    this.messageStack.push({response : response})
-    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
-  }
-
-  getGridLastResponse = () => {
-    return this.messageStack.findLast((r) =>
-      r.response 
-      && r.response.gridUuid === this.gridUuid
-      && r.response.sameContext 
-      && (r.response.action === metadata.ActionLoad || r.response.action === metadata.ActionChangeGrid)
-    )
-  }
-
-  getNonGridLastFailResponse = () => {
-    const last = this.messageStack.findLast((r) =>
-      r.response 
-      && r.response.sameContext
-      && r.response.action !== metadata.ActionHeartbeat
-    )
-    if(last && last.response && last.response.status === metadata.FailedStatus && !last.response.gridUuid) return last
-    else return undefined
-  }
-
-  sendMessage = async (authMessage: boolean, messageKey: string, headers: KafkaMessageHeader[], message: RequestContent) => {
-		this.isSending = true
-    const uri = (authMessage ? `/${this.dbName}/authentication` : `/${this.dbName}/pushMessage`)
-    if(!authMessage) {
-      if(!this.user.checkToken(localStorage.getItem(this.#tokenName))) {
-        this.messageStatus = "Not authorized "
-        this.isSending = false
-        return
-      }
-    }
-    const request: KafkaMessageRequest = { messageKey: messageKey, headers: headers, message: JSON.stringify(message) }    
-    console.log(`[Send] to ${uri}`, request)
-
-    this.trackRequest({
-      messageKey: messageKey,
-      action: message.action,
-      actionText: message.actionText,
-      gridUuid: message.gridUuid,
-      dateTime: (new Date).toISOString()
-    })
-
-		this.messageStatus = 'Sending'
-		const response = await fetch(uri, {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + this.user.getToken()
-			},
-			body: JSON.stringify(request)
-		})
-		const data: KafkaMessageResponse = await response.json()
-		this.isSending = false
-		if (!response.ok) this.messageStatus = data.error || 'Failed to send message'
-		else this.messageStatus = data.message
-	}
 
   isFocused = (set: GridResponse, column: ColumnType, row: RowType): boolean | undefined => {
     return this.focus && this.focus.isFocused(set.grid, column, row)
@@ -597,25 +513,6 @@ export class Context {
     this.focus.reset()
   }
 
-  controlMessages = () => {
-    for(const message of this.messageStack) {
-      if(message.request !== undefined && message.request.dateTime !== undefined) {
-        const localDate = new Date(message.request.dateTime)
-        const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
-                                      localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
-        const localNow = new Date
-        const localNowUTC =  Date.UTC(localNow.getUTCFullYear(), localNow.getUTCMonth(), localNow.getUTCDate(),
-                                      localNow.getUTCHours(), localNow.getUTCMinutes(), localNow.getUTCSeconds())
-        const seconds = (localNowUTC - localDateUTC) / 1000
-        if(seconds > thresholdMessages) {
-          message.request.timeOut = true
-          this.messageStatus = "Timed out"
-          console.log("Message timed out: ", message.request.messageKey, message.request.dateTime, seconds)
-        }
-      }
-    }
-  }
-  
   async * getStreamIteration(uri: string) {
     let response = await fetch(uri)
     if(!response.ok || !response.body) {
@@ -672,16 +569,16 @@ export class Context {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.jwt !== undefined && this.user.checkToken(message.jwt)) {
                       console.log(`Logged in: ${message.firstName} ${message.lastName}`)
-                      localStorage.setItem(this.#tokenName, message.jwt)
+                      this.setToken(message.jwt)
                       this.mount()
                     } else {
                       console.error(`Invalid token for ${message.firstName}`)
                     }
                   } else {
-                    localStorage.removeItem(this.#tokenName)
+                    this.removeToken()
                     this.purge()
                   }
-                } else if(this.user.checkToken(localStorage.getItem(this.#tokenName))) {
+                } else if(this.checkToken()) {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.action == metadata.ActionLoad) {
                       if(message.dataSet && message.dataSet.grid) {
@@ -766,11 +663,11 @@ export class Context {
 
   async startStreaming() {
     const uri = `/${this.dbName}/pullMessages`
-    this.user.checkToken(localStorage.getItem(this.#tokenName))
+    this.checkToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, heartBeat * 1000)
-    this.#messageTimerId = setInterval(() => { this.controlMessages() }, thresholdMessages * 1000)
+    this.#messageTimerId = setInterval(() => { this.controlMessages() }, 2000)
     for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
@@ -780,5 +677,4 @@ export class Context {
     if(this.#messageTimerId) clearInterval(this.#messageTimerId)
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
-
 }

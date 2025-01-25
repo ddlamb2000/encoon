@@ -1,3 +1,6 @@
+// εncooη : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 export interface KafkaMessageHeader {
   key: string
   value: string
@@ -7,15 +10,12 @@ export interface KafkaMessageRequest {
   messageKey?: string
   message: string
   headers: KafkaMessageHeader[]
-  selectedPartitions?: number[]
 }
 
 export interface KafkaMessageResponse {
   message: string
   error?: string
 }
-
-export type Partition = number
 
 export interface GridType extends RowType {
   columns?: ColumnType[]
@@ -138,4 +138,20 @@ export interface GridResponse {
   filterColumnName?: string
   filterColumnGridUuid?: string
   filterColumnValue?: string
+}
+
+export interface TransactionItem {
+  messageKey: string,
+  action: string
+  actionText?: string
+  status?: string
+  gridUuid?: string
+  dateTime?: string
+  sameContext?: boolean
+  timeOut?: boolean
+}
+
+export interface Transaction {
+  request?: TransactionItem
+  response?: TransactionItem
 }

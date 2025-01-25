@@ -8,6 +8,11 @@ export class User {
   #userFirstName: string = $state("")
   #userLastName: string = $state("")
   #loggedIn: boolean = $state(false)
+  #tokenName = ""
+
+  constructor(dbName: string) {
+    this.#tokenName = `access_token_${dbName}`
+  }
 
   reset() {
     this.#token = ""
@@ -18,14 +23,17 @@ export class User {
     this.#userLastName = ""
   }
 
-  getUserUuid(): string { return this.#userUuid }
-  getUser(): string { return this.#user }
-  getFirstName(): string { return this.#userFirstName }
-  getLastName(): string { return this.#userLastName }
-  getToken(): string { return this.#token }
-  getIsLoggedIn(): boolean { return this.#loggedIn }
+  getUserUuid = (): string => this.#userUuid
+  getUser = (): string => this.#user
+  getFirstName = (): string => this.#userFirstName
+  getLastName = (): string => this.#userLastName
+  getToken = (): string => this.#token
+  getIsLoggedIn = (): boolean => this.#loggedIn
+  removeToken = () => localStorage.removeItem(this.#tokenName)
+  setToken = (jwt: string) => localStorage.setItem(this.#tokenName, jwt)
 
-  checkToken(token: string | null): boolean {
+  checkToken = (): boolean => {
+    const token = localStorage.getItem(this.#tokenName)
     if(token) {
       try {
         const arrayToken = token.split('.')

@@ -1,7 +1,10 @@
+// εncooη : data structuration, presentation and navigation.
+// Copyright David Lambert 2025
+
 import { env } from "$env/dynamic/private"
 import { json } from '@sveltejs/kit'
-import { Kafka, type Message, CompressionTypes } from 'kafkajs'
-import { type KafkaMessageRequest, type KafkaMessageResponse } from '$lib/dataTypes.ts'
+import { Kafka, type Message, CompressionTypes, type ICustomPartitioner } from 'kafkajs'
+import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/dataTypes.ts'
 
 function hashCode(str: string): number {
   let hash = 0
@@ -9,10 +12,10 @@ function hashCode(str: string): number {
   return hash > 0 ? hash : -hash
 }
 
-const CustomRoundRobin = () => {
+const CustomRoundRobin: ICustomPartitioner = () => {
   return ({ topic, partitionMetadata, message }) => {
     const nbPartitions: number = partitionMetadata.length
-    const gridUuid: string = message && message.headers && message.headers.gridUuid ? message.headers.gridUuid : ""
+    const gridUuid: string = (message && message.headers && message.headers.gridUuid) ? message.headers.gridUuid.toString() : ""
     const hash = hashCode(gridUuid)
     return hash % nbPartitions
   }
@@ -34,7 +37,7 @@ const producer = kafka.producer({
   createPartitioner: CustomRoundRobin
 })
 
-export const postMessage = async (params, request) => {
+export const postMessage = async (params: Partial<Record<string, string>>, request: Request) => {
   if(!params.dbName) {
     console.error('Missing dbName')
     return json({ error: 'Missing dbName' } as KafkaMessageResponse, { status: 500 })
