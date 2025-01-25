@@ -93,7 +93,7 @@ func TestGetColumnNamePrefixFromType(t *testing.T) {
 		{"2", UuidIntColumnType, "int"},
 		{"3", UuidPasswordColumnType, "text"},
 		{"4", UuidReferenceColumnType, "relationship"},
-		{"5", UuidRichTextColumnType, "text"},
+		{"5", UuidDateColumnType, "text"},
 		{"6", UuidTextColumnType, "text"},
 		{"7", UuidUuidColumnType, "text"},
 	}

@@ -23,7 +23,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 	for _, gridUuid := range gridsToExport {
 		grid := model.GetNewGrid(gridUuid)
 		tableName := grid.GetTableName()
-		configuration.Log(dbName, "", "Export from %s.", tableName)
+		configuration.Log(dbName, "", "Export %s", tableName)
 		query := GetGridRowsQueryForExportDb(grid)
 		configuration.Trace(dbName, "", "ExportDb() - query=%s", query)
 		rows, err := db.QueryContext(ct, query)

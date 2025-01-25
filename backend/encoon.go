@@ -27,13 +27,13 @@ var (
 const (
 	configurationFileNameFlag    = "configuration"
 	defaultConfigurationFileName = "./configuration.yml"
-	usageConfigurationFileName   = "Name of the file (.yml) used to configure the application (full path)."
+	usageConfigurationFileName   = "Name of the file (.yml) used to configure the application (full path)"
 	exportDbFlag                 = "export"
 	defaultDbExport              = ""
-	usageDbExport                = "Name of the database to export."
+	usageDbExport                = "Name of the database to export"
 	exportFileNameFlag           = "exportfile"
 	defaultExportFileName        = ""
-	usageExportFileName          = "Name of the file (.ymp) used for exporting data."
+	usageExportFileName          = "Name of the file (.ymp) used for exporting data"
 )
 
 func main() {

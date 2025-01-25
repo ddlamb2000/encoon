@@ -14,7 +14,7 @@ import (
 )
 
 func migrateDb(ctx context.Context, db *sql.DB, dbName string) error {
-	return migrateDataModelDb(ctx, db, dbName, getLatestMigration(ctx, db, dbName))
+	return migrateDataModelDb(ctx, db, dbName, getLatestMigration(db, dbName))
 }
 
 func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
@@ -45,7 +45,7 @@ func RecreateDb(ctx context.Context, db *sql.DB, dbName string) error {
 	return migrateDb(ctx, db, dbName)
 }
 
-func getLatestMigration(ctx context.Context, db *sql.DB, dbName string) int {
+func getLatestMigration(db *sql.DB, dbName string) int {
 	latestMigration := 0
 	if err := db.QueryRow("SELECT MAX(int1) FROM migrations WHERE gridUuid = $1", model.UuidMigrations).Scan(&latestMigration); err != nil {
 		configuration.Log(dbName, "", "No latest migration found: %v.", err)
@@ -63,7 +63,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 	}
 	sort.Ints(keys)
 	for _, step := range keys {
-		err := migrateDbCommand(ctx, db, latestMigration, step, commands[step], dbName)
+		err := migrateDbCommand(db, latestMigration, step, commands[step], dbName)
 		if err != nil {
 			return err
 		}
@@ -71,7 +71,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 	return seedDb(ctx, db, dbName)
 }
 
-func migrateDbCommand(ctx context.Context, db *sql.DB, latestMigration int, step int, command string, dbName string) error {
+func migrateDbCommand(db *sql.DB, latestMigration int, step int, command string, dbName string) error {
 	if step > latestMigration {
 		_, err := db.Exec(command)
 		if err != nil {

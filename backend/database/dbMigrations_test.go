@@ -53,7 +53,7 @@ func TestRecreateDb(t *testing.T) {
 	t.Run("RecreateDb3", func(t *testing.T) {
 		getMigrationInsertStatementImpl := getMigrationInsertStatement
 		getMigrationInsertStatement = func() string { return "x x x" } // mock function
-		if err := migrateDbCommand(context.Background(), db, 0, 1, "SELECT pg_sleep(0.1)", dbName); err == nil {
+		if err := migrateDbCommand(db, 0, 1, "SELECT pg_sleep(0.1)", dbName); err == nil {
 			t.Errorf(`Can recreate database %q while it shouldn't be.`, dbName)
 		}
 		getMigrationInsertStatement = getMigrationInsertStatementImpl
