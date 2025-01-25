@@ -119,7 +119,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		},
 	)
 	if err != nil {
-		return configuration.LogAndReturnError(dbName, "", "Failed to PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
+		return configuration.LogAndReturnError(dbName, "", "Failed to PUSH message (%d bytes), key: %s, action: %s, status: %s: %v", len(messageEncoded), key, message.Action, message.Status, err)
 	} else {
 		configuration.Log(dbName, user, "PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
 	}
