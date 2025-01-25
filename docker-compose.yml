@@ -150,6 +150,7 @@ services:
     image: backend-encoon-development
     volumes:
       - ./backend:/usr/src/encoon/backend
+      - ./.backup:/usr/src/encoon/.backup
     restart: unless-stopped
     environment:
       ENCOON_MOCK_DB_LOCALHOST: db

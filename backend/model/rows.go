@@ -129,6 +129,16 @@ func (row *Row) GetRowsQueryOutput() []any {
 		output = append(output, &row.Text3)
 		output = append(output, &row.Text4)
 		output = append(output, &row.Text5)
+	case UuidMigrations:
+		output = append(output, &row.Text1)
+		output = append(output, &row.Int1)
+	case UuidUsers:
+		output = append(output, &row.Text1)
+		output = append(output, &row.Text2)
+		output = append(output, &row.Text3)
+		output = append(output, &row.Text4)
+	case UuidTransactions:
+		output = append(output, &row.Text1)
 	default:
 		output = append(output, &row.Text1)
 		output = append(output, &row.Text2)
@@ -173,6 +183,16 @@ func (row *Row) AppendRowValuesForSeedRowDb(values []any) []any {
 		values = append(values, row.Text3)
 		values = append(values, row.Text4)
 		values = append(values, row.Text5)
+	case UuidMigrations:
+		values = append(values, row.Text1)
+		values = append(values, row.Int1)
+	case UuidUsers:
+		values = append(values, row.Text1)
+		values = append(values, row.Text2)
+		values = append(values, row.Text3)
+		values = append(values, row.Text4)
+	case UuidTransactions:
+		values = append(values, row.Text1)
 	default:
 		values = append(values, row.Text1)
 		values = append(values, row.Text2)

@@ -127,6 +127,12 @@ func (grid *Grid) getRowsColumnDefinitionsForExportDb() string {
 		columnDefinitions += ", text1, text2, text3, int1"
 	case UuidRelationships:
 		columnDefinitions += ", text1, text2, text3, text4, text5"
+	case UuidMigrations:
+		columnDefinitions += ", text1, int1"
+	case UuidUsers:
+		columnDefinitions += ", text1, text2, text3, text4"
+	case UuidTransactions:
+		columnDefinitions += ", text1"
 	default:
 		for i := 1; i <= NumberOfTextFields; i++ {
 			columnDefinitions += fmt.Sprintf(", text%d", i)
@@ -159,8 +165,8 @@ func (grid *Grid) GetInsertStatementForSeedRowDb() string {
 		"NOW(), " +
 		"$2, " +
 		"$2, " +
-		"true, " +
-		"$3" +
+		"$3, " +
+		"$4" +
 		grid.getInsertStatementParametersForSeedRowDb() + ")"
 }
 
@@ -168,13 +174,19 @@ func (grid *Grid) getInsertStatementParametersForSeedRowDb() string {
 	parameters := ""
 	switch grid.Uuid {
 	case UuidGrids:
-		parameters += ", $4, $5, $6"
+		parameters += ", $5, $6, $7"
 	case UuidColumns:
-		parameters += ", $4, $5, $6, $7"
+		parameters += ", $5, $6, $7, $8"
 	case UuidRelationships:
-		parameters += ", $4, $5, $6, $7, $8"
+		parameters += ", $5, $6, $7, $8, $9"
+	case UuidMigrations:
+		parameters += ", $5, $6"
+	case UuidUsers:
+		parameters += ", $5, $6, $7, $8"
+	case UuidTransactions:
+		parameters += ", $5"
 	default:
-		parameterIndex := 4
+		parameterIndex := 5
 		for i := 1; i <= NumberOfTextFields; i++ {
 			parameters += fmt.Sprintf(", $%d", parameterIndex)
 			parameterIndex += 1
@@ -191,6 +203,7 @@ func (grid *Grid) GetInsertValuesForSeedRowDb(userUuid string, row *Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
 	values = append(values, userUuid)
+	values = append(values, row.Enabled)
 	values = append(values, grid.Uuid)
 	values = row.AppendRowValuesForSeedRowDb(values)
 	return values

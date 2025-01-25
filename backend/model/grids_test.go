@@ -166,7 +166,10 @@ func TestGetRowsColumnDefinitionsForExportDb(t *testing.T) {
 		{"1", UuidGrids, ", text1, text2, text3"},
 		{"2", UuidColumns, ", text1, text2, text3, int1"},
 		{"3", UuidRelationships, ", text1, text2, text3, text4, text5"},
-		{"4", "xxx", ", text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10"},
+		{"4", UuidMigrations, ", text1, int1"},
+		{"5", UuidUsers, ", text1, text2, text3, text4"},
+		{"6", UuidTransactions, ", text1"},
+		{"7", "xxx", ", text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -200,7 +203,7 @@ func TestGetRowsQueryForSeedData(t *testing.T) {
 func TestGetInsertStatementForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid("xxx")
 	got := grid.GetInsertStatementForSeedRowDb()
-	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10) VALUES ($1, 1, NOW(), NOW(), $2, $2, true, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23)"
+	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10) VALUES ($1, 1, NOW(), NOW(), $2, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)"
 	if got != expect {
 		t.Errorf(`Got %s instead of %s.`, got, expect)
 	}
@@ -212,10 +215,13 @@ func TestGetInsertStatementParametersForSeedRowDb(t *testing.T) {
 		uuid   string
 		expect string
 	}{
-		{"1", UuidGrids, ", $4, $5, $6"},
-		{"2", UuidColumns, ", $4, $5, $6, $7"},
-		{"3", UuidRelationships, ", $4, $5, $6, $7, $8"},
-		{"4", "xxx", ", $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23"},
+		{"1", UuidGrids, ", $5, $6, $7"},
+		{"2", UuidColumns, ", $5, $6, $7, $8"},
+		{"3", UuidRelationships, ", $5, $6, $7, $8, $9"},
+		{"4", UuidMigrations, ", $5, $6"},
+		{"5", UuidUsers, ", $5, $6, $7, $8"},
+		{"6", UuidTransactions, ", $5"},
+		{"7", "xxx", ", $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -234,6 +240,7 @@ func TestGetInsertValuesForSeedRowDb(t *testing.T) {
 	row := Row{
 		Uuid:     "zzz",
 		GridUuid: UuidGrids,
+		Enabled:  true,
 		Text1:    &text1,
 		Text2:    &text1,
 		Text3:    &text1,
@@ -242,9 +249,88 @@ func TestGetInsertValuesForSeedRowDb(t *testing.T) {
 	expect := []any{
 		"zzz",
 		"xxx",
+		true,
 		UuidGrids,
 		&text1,
 		&text1,
+		&text1,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetInsertValuesMigrationsForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidMigrations)
+	text1 := "yyy"
+	int1 := int64(1)
+	row := Row{
+		Uuid:     "zzz",
+		GridUuid: UuidMigrations,
+		Enabled:  true,
+		Text1:    &text1,
+		Int1:     &int1,
+	}
+	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		"zzz",
+		"xxx",
+		true,
+		UuidMigrations,
+		&text1,
+		&int1,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetInsertValuesUsersForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidUsers)
+	text1 := "yyy"
+	text2 := "aaa"
+	text3 := "bbb"
+	text4 := "ccc"
+	row := Row{
+		Uuid:     "zzz",
+		GridUuid: UuidUsers,
+		Enabled:  true,
+		Text1:    &text1,
+		Text2:    &text2,
+		Text3:    &text3,
+		Text4:    &text4,
+	}
+	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		"zzz",
+		"xxx",
+		true,
+		UuidUsers,
+		&text1,
+		&text2,
+		&text3,
+		&text4,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetInsertValuesTrasnactionsForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidTransactions)
+	text1 := "yyy"
+	row := Row{
+		Uuid:     "zzz",
+		GridUuid: UuidTransactions,
+		Enabled:  true,
+		Text1:    &text1,
+	}
+	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		"zzz",
+		"xxx",
+		true,
+		UuidTransactions,
 		&text1,
 	}
 	if !reflect.DeepEqual(got, expect) {

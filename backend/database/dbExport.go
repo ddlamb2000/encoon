@@ -12,14 +12,18 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func ExportDb(ct context.Context, dbName, exportFileName string) error {
+func ExportDb(ct context.Context, dbName, exportFileName string, exportAll bool) error {
 	db, err := GetDbByName(dbName)
 	if err != nil {
 		return err
 	}
 
 	rowSet := make([]model.Row, 0)
+	// "" is added for exporting from table 'rows'
 	gridsToExport := []string{model.UuidGrids, model.UuidColumns, model.UuidRelationships, ""}
+	if exportAll {
+		gridsToExport = append(gridsToExport, model.UuidMigrations, model.UuidUsers, model.UuidTransactions)
+	}
 	for _, gridUuid := range gridsToExport {
 		grid := model.GetNewGrid(gridUuid)
 		tableName := grid.GetTableName()
@@ -37,7 +41,7 @@ func ExportDb(ct context.Context, dbName, exportFileName string) error {
 			if err := rows.Scan(GetRowsQueryOutput(row)...); err != nil {
 				return configuration.LogAndReturnError(dbName, "", "Error when exporting rows: %v.", err)
 			}
-			if !(row.GridUuid == model.UuidRelationships && *row.Text2 == model.UuidTransactions) {
+			if exportAll || !(row.GridUuid == model.UuidRelationships && *row.Text2 == model.UuidTransactions) {
 				rowSet = append(rowSet, *row)
 			}
 		}
