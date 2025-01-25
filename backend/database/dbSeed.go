@@ -13,8 +13,15 @@ import (
 	"d.lambert.fr/encoon/model"
 )
 
-func seedDb(ctx context.Context, db *sql.DB, dbName string) error {
-	seedDataFileName := configuration.GetSeedDataFile()
+func SeedDb(ct context.Context, dbName, importFileName string) error {
+	db, err := GetDbByName(dbName)
+	if err != nil {
+		return err
+	}
+	return seedDb(ct, db, dbName, importFileName)
+}
+
+func seedDb(ctx context.Context, db *sql.DB, dbName string, seedDataFileName string) error {
 	configuration.Log(dbName, "", "Start seeding data from %s.", seedDataFileName)
 	f, err := os.ReadFile(seedDataFileName)
 	if err != nil {

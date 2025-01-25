@@ -68,7 +68,7 @@ func migrateDataModelDb(ctx context.Context, db *sql.DB, dbName string, latestMi
 			return err
 		}
 	}
-	return seedDb(ctx, db, dbName)
+	return seedDb(ctx, db, dbName, configuration.GetSeedDataFile())
 }
 
 func migrateDbCommand(db *sql.DB, latestMigration int, step int, command string, dbName string) error {

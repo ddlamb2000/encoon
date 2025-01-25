@@ -22,6 +22,8 @@ var (
 	configurationFileName string
 	exportDb              string
 	exportFileName        string
+	importDb              string
+	importFileName        string
 )
 
 const (
@@ -34,13 +36,23 @@ const (
 	exportFileNameFlag           = "exportfile"
 	defaultExportFileName        = ""
 	usageExportFileName          = "Name of the file (.ymp) used for exporting data"
+	importDbFlag                 = "import"
+	defaultDbImport              = ""
+	usageDbImport                = "Name of the database to import"
+	importFileNameFlag           = "importfile"
+	defaultImportFileName        = ""
+	usageImportFileName          = "Name of the file (.ymp) used for importing data"
 )
 
 func main() {
 	handleFlags()
 	if configuration.LoadConfiguration(configurationFileName) == nil {
 		if exportDb != "" && exportFileName != "" {
+			configuration.Log("", "", "Export")
 			database.ExportDb(context.Background(), exportDb, exportFileName)
+		} else if importDb != "" && importFileName != "" {
+			configuration.Log("", "", "Import")
+			database.SeedDb(context.Background(), importDb, importFileName)
 		} else {
 			configuration.Log("", "", "Starting")
 			configuration.WatchConfigurationChanges(configurationFileName)
@@ -67,5 +79,7 @@ func handleFlags() {
 	flag.StringVar(&configurationFileName, configurationFileNameFlag, defaultConfigurationFileName, usageConfigurationFileName)
 	flag.StringVar(&exportDb, exportDbFlag, defaultDbExport, usageDbExport)
 	flag.StringVar(&exportFileName, exportFileNameFlag, defaultExportFileName, usageExportFileName)
+	flag.StringVar(&importDb, importDbFlag, defaultDbImport, usageDbImport)
+	flag.StringVar(&importFileName, importFileNameFlag, defaultImportFileName, usageImportFileName)
 	flag.Parse()
 }

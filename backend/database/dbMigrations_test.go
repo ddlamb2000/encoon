@@ -143,7 +143,7 @@ func TestRecreateDb(t *testing.T) {
 		if err := RecreateDb(context.Background(), db, dbName); err != nil {
 			t.Errorf(`Can't recreate database %q: %v.`, dbName, err)
 		}
-		err = seedDb(context.Background(), db, dbName)
+		err = seedDb(context.Background(), db, dbName, configuration.GetSeedDataFile())
 		if err != nil {
 			t.Errorf(`Error when seeding database %q: %v`, dbName, err)
 		}
