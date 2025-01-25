@@ -26,13 +26,18 @@ var consumerShutdown = struct {
 	shutdown map[string]bool
 }{shutdown: make(map[string]bool)}
 
-func ReadMessagesFromKafka() {
+func StartReadingMessages() {
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
 		go readMessages(dbConfig.Name)
 	}
 }
 
-func ShutdownKafkaConsumers() {
+func StopReadingMessages() {
+	stopKafkaProducers()
+	stopKafkaConsumers()
+}
+
+func stopKafkaConsumers() {
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
 		consumer := consumers.m[dbConfig.Name]
 		if consumer != nil {
@@ -105,7 +110,7 @@ func handleMessage(dbName string, message kafka.Message) {
 	var response responseContent
 	user := ""
 	userUuid := ""
-	if err := json.Unmarshal(message.Value, &request); err != nil {
+	if err := jsonUnmarshal(message.Value, &request); err != nil {
 		configuration.LogError(dbName, "", "Error message (%d bytes), topic: %s, key: %s, partition: %d, offset: %d, action: %s %s", len(message.Value), message.Topic, message.Key, message.Partition, message.Offset, request.Action, request.ActionText, err)
 		response = invalidMessage(request)
 	} else {
@@ -119,6 +124,11 @@ func handleMessage(dbName string, message kafka.Message) {
 		}
 	}
 	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
+}
+
+// function is available for mocking
+var jsonUnmarshal = func(data []byte, v any) error {
+	return json.Unmarshal(data, v)
 }
 
 func getDataFromHeaders(message kafka.Message) (string, string, string, string) {
@@ -142,13 +152,13 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 }
 
 func validMessage(messageKey string, dbName string, tokenString string, request ApiParameters) (string, string, responseContent) {
-	token, err := jwt.Parse(tokenString, getTokenParsingHandler(dbName))
+	token, err := jwtParse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
-		return "", "", noToken(messageKey, dbName, request)
+		return "", "", invalidAuthorization(messageKey, dbName, request)
 	} else {
 		if token == nil {
-			return "", "", notAuthorization(messageKey, dbName, request)
-		} else if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+			return "", "", noAuthorization(messageKey, dbName, request)
+		} else if claims, ok := getJwtClaims(token).(jwt.MapClaims); ok && token.Valid {
 			userUuid, user, tokenExpired := getDataFromJWTClaims(claims)
 			if tokenExpired {
 				return "", "", expired(messageKey, dbName, user, request)
@@ -159,6 +169,16 @@ func validMessage(messageKey string, dbName string, tokenString string, request 
 			return "", "", invalidToken(messageKey, dbName, request)
 		}
 	}
+}
+
+// function is available for mocking
+var jwtParse = func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+	return jwt.Parse(tokenString, keyFunc)
+}
+
+// function is available for mocking
+var getJwtClaims = func(token *jwt.Token) jwt.Claims {
+	return token.Claims
 }
 
 func getDataFromJWTClaims(claims jwt.MapClaims) (string, string, bool) {
@@ -209,7 +229,7 @@ func locate(request ApiParameters) responseContent {
 	}
 }
 
-func notAuthorization(messageKey, dbName string, request ApiParameters) responseContent {
+func noAuthorization(messageKey, dbName string, request ApiParameters) responseContent {
 	configuration.LogError(dbName, "", "No authorization for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
@@ -245,15 +265,15 @@ func invalidAction(dbName string, request ApiParameters) responseContent {
 	}
 }
 
-func noToken(messageKey, dbName string, request ApiParameters) responseContent {
-	configuration.LogError(dbName, "", "No token for message %s action: %s %s", messageKey, request.Action, request.ActionText)
+func invalidAuthorization(messageKey, dbName string, request ApiParameters) responseContent {
+	configuration.LogError(dbName, "", "Invalid authorization for message %s action: %s %s", messageKey, request.Action, request.ActionText)
 	return responseContent{
 		Status:      FailedStatus,
 		Action:      request.Action,
 		ActionText:  request.ActionText,
 		GridUuid:    request.GridUuid,
 		Uuid:        request.Uuid,
-		TextMessage: "Missing authorization",
+		TextMessage: "Invalid authorization",
 	}
 }
 

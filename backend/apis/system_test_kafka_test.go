@@ -15,6 +15,7 @@ import (
 	"d.lambert.fr/encoon/configuration"
 	"d.lambert.fr/encoon/model"
 	"d.lambert.fr/encoon/utils"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/segmentio/kafka-go"
 	"github.com/segmentio/kafka-go/compress"
 )
@@ -67,6 +68,43 @@ func RunSystemTestKafka(t *testing.T) {
 		}
 	})
 
+	t.Run("WriteMessagesNoDbName", func(t *testing.T) {
+		err := WriteMessage("", "", "", "", "", "", "", "", responseContent{})
+		expect := "Error getting Kafka producer: Missing database name parameter."
+		if err == nil || err.Error() != expect {
+			t.Errorf("Got err %v instead of %v.", err, expect)
+		}
+	})
+
+	t.Run("WriteMessagesDefectJson", func(t *testing.T) {
+		jsonMarshalImpl := jsonMarshal
+		jsonMarshal = func(v any) ([]byte, error) {
+			return nil, errors.New("xxx")
+		} // mock function
+		err := WriteMessage("test", "", "", "", "", "", "", "", responseContent{})
+		expect := "Error marshal response: xxx"
+		if err == nil || err.Error() != expect {
+			t.Errorf("Got err %v instead of %v.", err, expect)
+		}
+		jsonMarshal = jsonMarshalImpl
+	})
+
+	t.Run("WriteMessagesDefectWrite", func(t *testing.T) {
+		writeMessageImpl := writeMessage
+		writeMessage = func(w *kafka.Writer, ctx context.Context, msgs ...kafka.Message) error {
+			return errors.New("xxx")
+		} // mock function
+		err := WriteMessage("test", "", "", "", "", "", "", "KEY", responseContent{
+			Action: ActionHeartbeat,
+			Status: FailedStatus,
+		})
+		expect := "Failed to PUSH message (53 bytes), key: KEY, action: HEARTBEAT, status: FAILED"
+		if err == nil || err.Error() != expect {
+			t.Errorf("Got err %v instead of %v.", err, expect)
+		}
+		writeMessage = writeMessageImpl
+	})
+
 	t.Run("Heartbeat", func(t *testing.T) {
 		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", ApiParameters{
 			Action: ActionHeartbeat,
@@ -87,6 +125,93 @@ func RunSystemTestKafka(t *testing.T) {
 		jsonStringContains(t, responseData, `"action":"HEARTBEAT","status":"SUCCESS"`)
 		readMessage = readMessageImpl
 	})
+
+	t.Run("HeartbeatBadjsonUnmarshal", func(t *testing.T) {
+		jsonUnmarshalImpl := jsonUnmarshal
+		jsonUnmarshal = func(data []byte, v any) error {
+			return errors.New("xxx")
+		} // mock function
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "", ApiParameters{
+			Action: ActionHeartbeat,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Incorrect message"`)
+		jsonUnmarshal = jsonUnmarshalImpl
+	})
+
+	t.Run("HeartbeatBadjsonUnmarshal", func(t *testing.T) {
+		jwtParseImpl := jwtParse
+		jwtParse = func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+			return nil, errors.New("yyy")
+		} // mock function
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid authorization"`)
+		jwtParse = jwtParseImpl
+	})
+
+	t.Run("HeartbeatNoAuthorization", func(t *testing.T) {
+		jwtParseImpl := jwtParse
+		jwtParse = func(tokenString string, keyFunc jwt.Keyfunc) (*jwt.Token, error) {
+			return nil, nil
+		} // mock function
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"No authorization"`)
+		jwtParse = jwtParseImpl
+	})
+
+	t.Run("HeartbeatBadJwtClaims", func(t *testing.T) {
+		getJwtClaimsImpl := getJwtClaims
+		getJwtClaims = func(token *jwt.Token) jwt.Claims {
+			return nil
+		} // mock function
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
+			Action:   ActionLoad,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid token"`)
+		getJwtClaims = getJwtClaimsImpl
+	})
+
+	t.Run("Locate", func(t *testing.T) {
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
+			Action:   ActionLocateGrid,
+			GridUuid: model.UuidGrids,
+		})
+		responseIsSuccess(t, response)
+		jsonStringContains(t, responseData, `"action":"LOCATE","status":"SUCCESS"`)
+	})
+
+	t.Run("InvalidAction", func(t *testing.T) {
+		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, model.UuidGrids, ApiParameters{
+			Action:   "X",
+			GridUuid: model.UuidGrids,
+		})
+		responseIsFailure(t, response)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid action (X)`)
+	})
+}
+
+func startReadingTestMessages() {
+	StartReadingMessages()
+	kafkaTestProducer, kafkaTestConsumer = createKafkaTestProducer("test"), createKafkaTestConsumer("test")
+	kafkaBaddbProducer, kafkaBaddbConsumer = createKafkaTestProducer("baddb"), createKafkaTestConsumer("baddb")
+}
+
+func stopReadingTestMessages() {
+	kafkaTestProducer.Close()
+	kafkaTestConsumer.Close()
+	kafkaBaddbProducer.Close()
+	kafkaBaddbConsumer.Close()
+	StopReadingMessages()
 }
 
 func readKafkaTestMessage(t *testing.T, consumer *kafka.Reader, key string) (*responseContent, []byte) {
@@ -176,6 +301,12 @@ func writeTestAuthMessage(t *testing.T, dbName, key string, message ApiParameter
 	if err != nil {
 		t.Error("Failed to write messages:", err)
 	}
+}
+
+func getTokenForUser(dbName, userName, userUuid string) string {
+	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
+	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
+	return token
 }
 
 func runKafkaTestRequest(t *testing.T, dbName, userName, userUuid, gridUuid string, message ApiParameters) (*responseContent, []byte) {

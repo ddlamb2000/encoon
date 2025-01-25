@@ -22,11 +22,6 @@ var producers = struct {
 	m map[string]*kafka.Writer
 }{m: make(map[string]*kafka.Writer)}
 
-var producerShutdown = struct {
-	sync.RWMutex
-	shutdown map[string]bool
-}{shutdown: make(map[string]bool)}
-
 type CustomRoundRobin struct{}
 
 func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) int {
@@ -42,17 +37,12 @@ func (b *CustomRoundRobin) Balance(message kafka.Message, partitions ...int) int
 	return 0
 }
 
-func ShutdownKafkaProducers() {
+func stopKafkaProducers() {
 	for _, dbConfig := range configuration.GetConfiguration().Databases {
 		writer := producers.m[dbConfig.Name]
 		if writer != nil {
 			configuration.Log(dbConfig.Name, "", "Stop requested for Kafka producer")
-			producerShutdown.shutdown[dbConfig.Name] = true
-			if err := writer.Close(); err != nil {
-				configuration.LogError(dbConfig.Name, "", "Failed to close Kafka producer:", err)
-			} else {
-				configuration.Log(dbConfig.Name, "", "Kafka producer stopped")
-			}
+			writer.Close()
 		}
 	}
 }
@@ -91,23 +81,21 @@ func getProducer(dbName string) (*kafka.Writer, error) {
 		Balancer:               &CustomRoundRobin{},
 	}
 	producers.m[dbName] = writer
-	producerShutdown.shutdown[dbName] = false
 	return writer, nil
 }
 
 func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
-	contextUuid string, requestInitiatedOn string, receivedOn string, key string, message responseContent) {
+	contextUuid string, requestInitiatedOn string, receivedOn string, key string, message responseContent) error {
 	hostname, _ := os.Hostname()
 	responseInitiatedOn := time.Now().UTC().Format(time.RFC3339Nano)
 
 	writer, err := getProducer(dbName)
 	if err != nil {
-		configuration.LogError(dbName, "", "Error getting Kafka producer", err)
-		return
+		return configuration.LogAndReturnError(dbName, "", "Error getting Kafka producer: %v", err)
 	}
-	if producerShutdown.shutdown[dbName] {
-		configuration.Log(dbName, user, "Message not sent (producer is shuting down), key: %s, action: %s, status: %s", key, message.Action, message.Status)
-		return
+	messageEncoded, err := jsonMarshal(message)
+	if err != nil {
+		return configuration.LogAndReturnError(dbName, "", "Error marshal response: %v", err)
 	}
 
 	headers := []kafka.Header{
@@ -122,13 +110,7 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		{Key: "requestReceivedOn", Value: []byte(receivedOn)},
 		{Key: "responseInitiatedOn", Value: []byte(responseInitiatedOn)},
 	}
-
-	messageEncoded, err := json.Marshal(message)
-	if err != nil {
-		configuration.LogError(dbName, user, "Error marshal response:", err)
-		return
-	}
-	err = (*writer).WriteMessages(
+	err = writeMessage(writer,
 		context.Background(),
 		kafka.Message{
 			Key:     []byte(key),
@@ -137,8 +119,19 @@ func WriteMessage(dbName string, userUuid string, user string, gridUuid string,
 		},
 	)
 	if err != nil {
-		configuration.LogError(dbName, user, "Failed to PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
+		return configuration.LogAndReturnError(dbName, "", "Failed to PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
 	} else {
 		configuration.Log(dbName, user, "PUSH message (%d bytes), key: %s, action: %s, status: %s", len(messageEncoded), key, message.Action, message.Status)
 	}
+	return nil
+}
+
+// function is available for mocking
+var jsonMarshal = func(v any) ([]byte, error) {
+	return json.Marshal(v)
+}
+
+// function is available for mocking
+var writeMessage = func(w *kafka.Writer, ctx context.Context, msgs ...kafka.Message) error {
+	return (*w).WriteMessages(ctx, msgs...)
 }

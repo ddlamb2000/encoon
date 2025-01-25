@@ -28,18 +28,9 @@ func TestSystem(t *testing.T) {
 	t.Run("RecreateDb", func(t *testing.T) { RunTestRecreateDb(t) })
 
 	configuration.LoadConfiguration("../testData/systemTest.yml")
-	go ReadMessagesFromKafka()
-	kafkaTestProducer = createKafkaTestProducer("test")
-	kafkaTestConsumer = createKafkaTestConsumer("test")
-	kafkaBaddbProducer = createKafkaTestProducer("baddb")
-	kafkaBaddbConsumer = createKafkaTestConsumer("baddb")
-	defer kafkaTestProducer.Close()
-	defer kafkaTestConsumer.Close()
-	defer kafkaBaddbProducer.Close()
-	defer kafkaBaddbConsumer.Close()
-	defer ShutdownKafkaProducers()
-	defer ShutdownKafkaConsumers()
-	time.Sleep(time.Second * 5) // wait for Kafka election
+	startReadingTestMessages()
+	defer stopReadingTestMessages()
+	time.Sleep(time.Second * 2) // wait for Kafka election
 
 	t.Run("Kafka", func(t *testing.T) { RunSystemTestKafka(t) })
 	t.Run("Auth", func(t *testing.T) { RunSystemTestAuth(t) })
@@ -51,12 +42,6 @@ func TestSystem(t *testing.T) {
 	t.Run("RowLevelAccess", func(t *testing.T) { RunSystemTestGetRowLevel(t) })
 	t.Run("Cache", func(t *testing.T) { RunSystemTestCache(t) })
 	t.Run("NotOwnedColumn", func(t *testing.T) { RunSystemTestNotOwnedColumn(t) })
-}
-
-func getTokenForUser(dbName, userName, userUuid string) string {
-	expiration := time.Now().Add(time.Duration(configuration.GetConfiguration().JwtExpiration) * time.Minute)
-	token, _ := getNewToken(dbName, userName, userUuid, userName, userName, expiration)
-	return token
 }
 
 func stringNotEqual(t *testing.T, got, expect string) {

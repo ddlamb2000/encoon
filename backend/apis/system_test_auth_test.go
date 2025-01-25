@@ -62,7 +62,7 @@ func RunSystemTestAuth(t *testing.T) {
 			Uuid:     model.UuidGrids,
 		})
 		responseIsFailure(t, response)
-		jsonStringContains(t, responseData, `"textMessage":"Missing authorization"`)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid authorization"`)
 	})
 
 	t.Run("ApiUsersIncorrectToken", func(t *testing.T) {
@@ -71,7 +71,7 @@ func RunSystemTestAuth(t *testing.T) {
 			GridUuid: model.UuidUsers,
 		})
 		responseIsFailure(t, response)
-		jsonStringContains(t, responseData, `"textMessage":"Missing authorization"`)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid authorization"`)
 	})
 
 	t.Run("ApiUsersIncorrectToken2", func(t *testing.T) {
@@ -121,7 +121,7 @@ func RunSystemTestAuth(t *testing.T) {
 			GridUuid: model.UuidGrids,
 		})
 		responseIsFailure(t, response)
-		jsonStringContains(t, responseData, `"textMessage":"Missing authorization"`)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid authorization"`)
 		getNewToken = getNewTokenImpl
 	})
 
@@ -224,7 +224,7 @@ func RunSystemTestAuth(t *testing.T) {
 			GridUuid: model.UuidUsers,
 		})
 		responseIsFailure(t, response)
-		jsonStringContains(t, responseData, `"textMessage":"Missing authorization"`)
+		jsonStringContains(t, responseData, `"textMessage":"Invalid authorization"`)
 		verifyToken = verifyTokenImpl
 	})
 }

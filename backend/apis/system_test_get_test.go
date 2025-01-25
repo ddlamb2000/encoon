@@ -12,28 +12,6 @@ import (
 )
 
 func RunSystemTestGet(t *testing.T) {
-	t.Run("VerifyIncorrectUserUuid", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// responseData, code, err := runGETRequestForUser("test", "root", "xxyyzz", "/test/api/v1/xxx")
-		// errorIsNil(t, err)
-		// httpCodeEqual(t, code, http.StatusUnauthorized)
-		// jsonStringDoesntContain(t, responseData, `"countRows":`)
-		// jsonStringDoesntContain(t, responseData, `"rows":`)
-		// jsonStringContains(t, responseData, `{"error":"User not authorized."}`)
-	})
-
-	t.Run("VerifyDbNotFound", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/tst/api/v1/xxx")
-		// errorIsNil(t, err)
-		// httpCodeEqual(t, code, http.StatusUnauthorized)
-		// jsonStringDoesntContain(t, responseData, `"countRows":`)
-		// jsonStringDoesntContain(t, responseData, `"rows":`)
-		// jsonStringContains(t, responseData, `{"error":"Invalid request or unauthorized database access: signature is invalid."}`)
-	})
-
 	t.Run("VerifyGridNotFound", func(t *testing.T) {
 		response, responseData := runKafkaTestRequest(t, "test", "root", model.UuidRootUser, "d7c004ff-cccc-dddd-eeee-cd42b2847508", ApiParameters{
 			Action:   ActionLoad,
@@ -77,15 +55,6 @@ func RunSystemTestGet(t *testing.T) {
 		})
 		responseIsFailure(t, response)
 		jsonStringContains(t, responseData, `Unable to connect to database: dial tcp`)
-	})
-
-	t.Run("VerifyDbNotConfigured2", func(t *testing.T) {
-		// NOTE: MAYBE NOT APPLICABLE for Kafka
-
-		// responseData, code, err := runGETRequestForUser("test", "root", model.UuidRootUser, "/undefined/api/v1/xxx")
-		// errorIsNil(t, err)
-		// httpCodeEqual(t, code, http.StatusUnauthorized)
-		// jsonStringContains(t, responseData, `{"error":"No database parameter."}`)
 	})
 
 	t.Run("VerifyMissingRow", func(t *testing.T) {
