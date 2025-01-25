@@ -1,19 +1,19 @@
 <script lang="ts">
   import { Button, Indicator, Toggle } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
-  let { context, userPreferences } = $props()
+  let { context, userPreferences, appName } = $props()
 </script>
 
 <div class="relative flex items-center">
   <span class="ms-2 text-xl font-extrabold">
-    <a data-sveltekit-reload href={"/" + context.dbName}>εncooη</a>
+    <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
     <span class="text-xs ms-1 font-light text-gray-600">{context.getContextUuid()}</span>
   </span>
   <span class="lg:flex ml-auto">
     {#if context.isStreaming}
       {#if context.isSending}
         <span transition:fade class="inline-flex items-center me-4">
-          <Indicator size="sm" color="orange" class="me-1" />Sending message
+          <Indicator size="sm" color="orange" class="me-1" />Sending
         </span>
       {:else}
         {#if context.messageStatus}
@@ -27,7 +27,7 @@
       </span>
     {:else}
       <span transition:fade class="inline-flex items-center me-4">
-        <Indicator size="sm" color="orange" class="me-1" />Connecting
+        <Indicator size="sm" color="orange" class="me-1" />
       </span>
     {/if}
     {#if context && context.user && context.user.getIsLoggedIn()}

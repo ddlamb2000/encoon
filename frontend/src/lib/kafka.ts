@@ -1,4 +1,4 @@
-import { env } from "$env/dynamic/private";
+import { env } from "$env/dynamic/private"
 import { json } from '@sveltejs/kit'
 import { Kafka, type Message, CompressionTypes } from 'kafkajs'
 import { type KafkaMessageRequest, type KafkaMessageResponse } from '$lib/dataTypes.ts'

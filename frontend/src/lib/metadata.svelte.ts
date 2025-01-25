@@ -1,7 +1,6 @@
 export const InitializationKey = "INIT"
 export const ActionHeartbeat = "HEARTBEAT"
 export const ActionAuthentication = "AUTHENTICATION"
-export const ActionLogout = "LOGOUT"
 export const ActionLoad = "LOAD"
 export const ActionChangeGrid = "CHANGE"
 export const ActionLocateGrid = "LOCATE"

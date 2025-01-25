@@ -19,18 +19,20 @@
   const userPreferences = new UserPreferences
 
   onMount(() => {
-    userPreferences.readUserPreferences()
-    context.startStreaming()
-    context.mount()
+    if(data.ok) {
+      userPreferences.readUserPreferences()
+      context.startStreaming()
+      context.mount()
+    }
   })
 
   onDestroy(() => { context.stopStreaming()  })
 </script>
 
-<svelte:head><title>εncooη - {context.dbName}</title></svelte:head>
+<svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    <Navigation {context} {userPreferences} />
+    <Navigation {context} {userPreferences} appName={data.appName}/>
   </nav>
   <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
@@ -40,7 +42,7 @@
     </aside>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-12 overflow-y-auto bg-gray-200">
-        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
+        {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <TopBar {context} />
         {/if}
       </div>
@@ -48,7 +50,7 @@
         <FocusArea {context} />
       </aside>
       <div class="p-2 bg-white grid overflow-auto">
-        {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
+        {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
             {#if context.hasDataSet() && context.gridUuid !== undefined && context.gridUuid !== ""}
               {#if context.uuid !== undefined && context.uuid !== ""}
@@ -58,8 +60,10 @@
               {/if}
             {/if}
           </article>
-        {:else if context.isStreaming}
+        {:else if data.ok && context.isStreaming}
           <Login {context} />
+        {:else}
+          {data.errorMessage}
         {/if}
       </div>
       {#if userPreferences.showEvents}

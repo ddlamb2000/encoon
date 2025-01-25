@@ -166,7 +166,7 @@ services:
     image: backend-encoon-production
     restart: unless-stopped
     configs:
-      - source: encoon-configuration-sandbox
+      - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
     volumes:
       - ./.backup:/usr/encoon/.backup
@@ -183,7 +183,7 @@ services:
     image: backend-encoon-production
     restart: unless-stopped
     configs:
-      - source: encoon-configuration-sandbox
+      - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
     networks:
       - encoon
@@ -198,7 +198,7 @@ services:
     image: backend-encoon-production
     restart: unless-stopped
     configs:
-      - source: encoon-configuration-sandbox
+      - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
     networks:
       - encoon
@@ -221,6 +221,9 @@ services:
       KAFKA_CLIENT_ID: frontend-encoon-development
       KAFKA_GROUP_ID: frontend-encoon-development
       TOPIC_PREFIX: encoon
+      APPNAME: "εncooη (development)"
+      DATABASES: "master,test,sandbox"
+      DEFAULTDB: "test"
     networks:
       - encoon
     depends_on:
@@ -239,6 +242,9 @@ services:
       KAFKA_CLIENT_ID: frontend-encoon-sandbox
       KAFKA_GROUP_ID: frontend-encoon-sandbox
       TOPIC_PREFIX: encoon
+      APPNAME: "εncooη (sandbox)"
+      DATABASES: "sandbox"
+      DEFAULTDB: "sandbox"
     networks:
       - encoon
     depends_on:
@@ -260,10 +266,10 @@ services:
       - db
     command: sh -c "./testData/run_all_tests.sh"
 configs:
-  encoon-configuration-sandbox:
+  encoon-backend-configuration-sandbox:
     file: ./backend/testData/sandbox.yml
   db-init:
-    file: ./.dbConfiguration/docker.sql
+    file: ./.dbConfiguration/initdb.sql
 networks:
   encoon:
     driver: bridge

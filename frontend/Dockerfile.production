@@ -1,5 +1,5 @@
 FROM node:22.12.0-alpine
-WORKDIR /usr/src/encoon/frontend
+WORKDIR /usr/src/encoon
 COPY src src
 COPY static static
 COPY package.json package.json

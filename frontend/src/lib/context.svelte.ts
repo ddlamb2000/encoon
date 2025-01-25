@@ -114,7 +114,6 @@ export class Context {
   }
 
   logout = async () => {
-    this.pushTransaction({action: metadata.ActionLogout})
     localStorage.removeItem(this.#tokenName)
     this.purge()
   }
@@ -682,9 +681,6 @@ export class Context {
                     localStorage.removeItem(this.#tokenName)
                     this.purge()
                   }
-                } else if(message.action == metadata.ActionLogout) {
-                  localStorage.removeItem(this.#tokenName)
-                  this.purge()
                 } else if(this.user.checkToken(localStorage.getItem(this.#tokenName))) {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.action == metadata.ActionLoad) {
