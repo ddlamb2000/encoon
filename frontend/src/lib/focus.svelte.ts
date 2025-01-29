@@ -1,4 +1,4 @@
-import type { RowType, ColumnType, GridType } from '$lib/dataTypes.ts'
+import type { RowType, ColumnType, GridType } from '$lib/apiTypes'
 
 export class Focus {
   #grid?: GridType | undefined = $state(undefined)

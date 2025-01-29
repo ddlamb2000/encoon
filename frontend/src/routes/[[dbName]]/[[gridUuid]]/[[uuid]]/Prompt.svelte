@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GridResponse } from '$lib/dataTypes.ts'
+  import type { GridResponse } from '$lib/apiTypes'
   import { Dropdown, Spinner, Search } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   let { context, set, column, row, gridPromptUuid, elementReference } = $props()

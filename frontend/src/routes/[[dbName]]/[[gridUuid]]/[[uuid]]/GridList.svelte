@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GridResponse } from '$lib/dataTypes.ts'
+  import type { GridResponse } from '$lib/apiTypes'
   import { Button, Spinner } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte.ts"

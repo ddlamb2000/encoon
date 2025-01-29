@@ -4,7 +4,7 @@
 import { env } from "$env/dynamic/private"
 import { json } from '@sveltejs/kit'
 import { Kafka, type Message, CompressionTypes, type ICustomPartitioner } from 'kafkajs'
-import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/dataTypes.ts'
+import type { KafkaMessageRequest, KafkaMessageResponse } from '$lib/apiTypes'
 
 function hashCode(str: string): number {
   let hash = 0

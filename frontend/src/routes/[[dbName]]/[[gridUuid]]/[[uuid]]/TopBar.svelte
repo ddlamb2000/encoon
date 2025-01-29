@@ -3,7 +3,8 @@
   import DynIcon from './DynIcon.svelte'
   let { context } = $props()
 </script>
-  
+
+{context.gridUuid}
 {#each context.dataSet as set}
   {#if set.grid}
     <Button outline pill

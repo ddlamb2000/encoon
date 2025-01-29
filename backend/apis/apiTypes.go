@@ -36,6 +36,22 @@ type ApiParameters struct {
 	DataSet              GridPost `json:"dataSet,omitempty"`
 }
 
+type GridPost struct {
+	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
+	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
+	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
+	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded,omitempty"`
+	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved,omitempty"`
+}
+
+type GridReferencePost struct {
+	ColumnName string `json:"columnName"`
+	FromUuid   string `json:"fromUuid"`
+	ToGridUuid string `json:"toGridUuid"`
+	ToUuid     string `json:"uuid"`
+	Owned      bool   `json:"owned"`
+}
+
 type responseContent struct {
 	Action      string       `json:"action"`
 	ActionText  string       `json:"actionText,omitempty"`
@@ -74,20 +90,4 @@ type GridResponse struct {
 	CanEditRows            bool                `json:"canEditRows,omitempty"`
 	CanAddRows             bool                `json:"canAddRows,omitempty"`
 	CanEditGrid            bool                `json:"canEditGrid,omitempty"`
-}
-
-type GridPost struct {
-	RowsAdded              []*model.Row        `json:"rowsAdded,omitempty"`
-	RowsEdited             []*model.Row        `json:"rowsEdited,omitempty"`
-	RowsDeleted            []*model.Row        `json:"rowsDeleted,omitempty"`
-	ReferenceValuesAdded   []GridReferencePost `json:"referencedValuesAdded,omitempty"`
-	ReferenceValuesRemoved []GridReferencePost `json:"referencedValuesRemoved,omitempty"`
-}
-
-type GridReferencePost struct {
-	ColumnName string `json:"columnName"`
-	FromUuid   string `json:"fromUuid"`
-	ToGridUuid string `json:"toGridUuid"`
-	ToUuid     string `json:"uuid"`
-	Owned      bool   `json:"owned"`
 }

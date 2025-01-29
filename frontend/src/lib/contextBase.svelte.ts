@@ -1,8 +1,8 @@
 // εncooη : data structuration, presentation and navigation.
 // Copyright David Lambert 2025
 
-import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse } from '$lib/dataTypes.ts'
-import type { RequestContent, TransactionItem, Transaction } from '$lib/dataTypes.ts'
+import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse } from '$lib/apiTypes'
+import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes'
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 

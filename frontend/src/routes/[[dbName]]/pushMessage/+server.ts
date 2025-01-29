@@ -1,5 +1,5 @@
 import { type RequestHandler, json } from '@sveltejs/kit'
-import { type KafkaMessageResponse } from '$lib/dataTypes.ts'
+import { type KafkaMessageResponse } from '$lib/apiTypes'
 import { postMessage } from '$lib/kafka'
 
 export const POST: RequestHandler = async ({ params, request, url }) => {

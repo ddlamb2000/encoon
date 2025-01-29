@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GridResponse } from '$lib/dataTypes.ts'
+  import type { GridResponse } from '$lib/apiTypes'
 	import { Badge } from 'flowbite-svelte'
   import Prompt from './Prompt.svelte'
   import * as metadata from "$lib/metadata.svelte"

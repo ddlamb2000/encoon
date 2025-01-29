@@ -7,7 +7,7 @@ import type { RequestContent,
               RowType,
               ColumnType,
               GridType,
-              ReferenceType } from '$lib/dataTypes.ts'
+              ReferenceType } from '$lib/apiTypes'
 import { ContextBase } from '$lib//contextBase.svelte.ts'
 import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { Focus } from '$lib/focus.svelte.ts'
@@ -335,29 +335,6 @@ export class Context extends ContextBase {
 
   newGrid = async () => {
     const gridUuid = newUuid()
-    this.gridUuid = gridUuid
-    const grid: GridType = {
-      gridUuid: metadata.UuidGrids,
-      uuid: gridUuid,
-      text1: 'New grid',
-      text2: 'Untitled',
-      text3: 'journal',
-      created: new Date,
-      updated: new Date,
-      columns: []
-    }
-    const set: GridResponse = {
-      grid: grid,
-      countRows: 0,
-      rows: [],
-      canViewRows: true,
-      canEditRows: true,
-      canAddRows: true,
-      canEditGrid: true    
-    }
-    this.dataSet.push(set)
-    this.gridsInMemory += 1
-    this.rowsInMemory += 1
     await this.pushTransaction({
       action: metadata.ActionChangeGrid,
       actionText: 'New grid',
@@ -366,6 +343,7 @@ export class Context extends ContextBase {
         rowsAdded: [
           { gridUuid: metadata.UuidGrids,
             uuid: gridUuid,
+            displayString: 'New grid',
             text1: 'New grid',
             text2: 'Untitled',
             text3: 'journal',
@@ -374,15 +352,46 @@ export class Context extends ContextBase {
         ]
       }
     })
-    const rowPrompt: RowType = {
-      gridUuid: metadata.UuidColumnTypes,
-      uuid: metadata.UuidTextColumnType,
-      text1: "Text",
-      created: new Date,
-      updated: new Date
-    }
-    await this.addColumn(set, rowPrompt)
-    await this.addRow(set)
+
+    const uuidColumn = newUuid()
+    await this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'Add column into new grid',
+      gridUuid: metadata.UuidColumns,
+      dataSet: { rowsAdded: [
+        { gridUuid: metadata.UuidColumns,
+          uuid: uuidColumn,
+          text1: 'A',
+          text2: 'text1',
+          int1: 1,
+          created: new Date,
+          updated: new Date } 
+      ], referencedValuesAdded: [
+        { owned: false,
+          columnName: "relationship1",
+          fromUuid: uuidColumn,
+          toGridUuid: metadata.UuidGrids,
+          uuid: gridUuid },
+        { owned: true,
+          columnName: "relationship1",
+          fromUuid: uuidColumn,
+          toGridUuid: metadata.UuidColumnTypes,
+          uuid: metadata.UuidTextColumnType }
+      ] 
+     }
+    })
+
+    const uuid = newUuid()
+    const row: RowType = { gridUuid: gridUuid, uuid: uuid, created: new Date, updated: new Date }
+    await this.pushTransaction({
+      action: metadata.ActionChangeGrid,
+      actionText: 'Add row into new grid',
+      gridUuid: gridUuid,
+      dataSet: { rowsAdded: [
+        { gridUuid: gridUuid, uuid: uuid, created: new Date, updated: new Date }
+      ] }
+    })
+
     this.navigateToGrid(gridUuid, "")
   }
 
@@ -580,7 +589,7 @@ export class Context extends ContextBase {
                   if(message.status == metadata.SuccessStatus) {
                     if(message.action == metadata.ActionLoad) {
                       if(message.dataSet && message.dataSet.grid) {
-                        if(message.uuid !== undefined) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
+                        if(message.uuid) console.log(`Load single row from ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                         else console.log(`Load grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1}`)
                         const setIndex = this.getSetIndex(message.dataSet)
                         if(setIndex < 0) {

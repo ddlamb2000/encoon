@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { GridResponse, RowType, ColumnType } from '$lib/dataTypes.ts'
+  import type { GridResponse, RowType, ColumnType } from '$lib/apiTypes'
 	import { Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import Grid from './Grid.svelte'
