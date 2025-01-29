@@ -160,13 +160,13 @@ func (grid *Grid) GetInsertStatementForSeedRowDb() string {
 		"gridUuid" +
 		grid.getRowsColumnDefinitionsForExportDb() + ") " +
 		"VALUES ($1, " +
-		"1, " +
-		"NOW(), " +
-		"NOW(), " +
-		"$2, " +
 		"$2, " +
 		"$3, " +
-		"$4" +
+		"$4, " +
+		"$5, " +
+		"$6, " +
+		"$7, " +
+		"$8" +
 		grid.getInsertStatementParametersForSeedRowDb() + ")"
 }
 
@@ -174,19 +174,19 @@ func (grid *Grid) getInsertStatementParametersForSeedRowDb() string {
 	parameters := ""
 	switch grid.Uuid {
 	case UuidGrids:
-		parameters += ", $5, $6, $7"
+		parameters += ", $9, $10, $11"
 	case UuidColumns:
-		parameters += ", $5, $6, $7, $8"
+		parameters += ", $9, $10, $11, $12"
 	case UuidRelationships:
-		parameters += ", $5, $6, $7, $8, $9"
+		parameters += ", $9, $10, $11, $12, $13"
 	case UuidMigrations:
-		parameters += ", $5, $6"
+		parameters += ", $9, $10"
 	case UuidUsers:
-		parameters += ", $5, $6, $7, $8"
+		parameters += ", $9, $10, $11, $12"
 	case UuidTransactions:
-		parameters += ", $5"
+		parameters += ", $9"
 	default:
-		parameterIndex := 5
+		parameterIndex := 9
 		for i := 1; i <= NumberOfTextFields; i++ {
 			parameters += fmt.Sprintf(", $%d", parameterIndex)
 			parameterIndex += 1
@@ -202,7 +202,11 @@ func (grid *Grid) getInsertStatementParametersForSeedRowDb() string {
 func (grid *Grid) GetInsertValuesForSeedRowDb(userUuid string, row *Row) []any {
 	values := make([]any, 0)
 	values = append(values, row.Uuid)
-	values = append(values, userUuid)
+	values = append(values, row.Revision)
+	values = append(values, row.Created)
+	values = append(values, row.Updated)
+	values = append(values, row.CreatedBy)
+	values = append(values, row.UpdatedBy)
 	values = append(values, row.Enabled)
 	values = append(values, grid.Uuid)
 	values = row.AppendRowValuesForSeedRowDb(values)
@@ -214,7 +218,8 @@ func (grid *Grid) GetUpdateValuesForSeedRowDb(userUuid string, row *Row) []any {
 	values = append(values, grid.Uuid)
 	values = append(values, row.Uuid)
 	values = append(values, row.Revision)
-	values = append(values, userUuid)
+	values = append(values, row.Updated)
+	values = append(values, row.UpdatedBy)
 	values = append(values, row.Enabled)
 	values = row.AppendRowValuesForSeedRowDb(values)
 	return values
@@ -223,9 +228,9 @@ func (grid *Grid) GetUpdateValuesForSeedRowDb(userUuid string, row *Row) []any {
 func (grid *Grid) GetUpdateStatementForSeedRowDb() string {
 	return "UPDATE " + grid.GetTableName() +
 		" SET revision = $3, " +
-		"updated = NOW(), " +
-		"updatedBy = $4, " +
-		"enabled = $5" +
+		"updated = $4, " +
+		"updatedBy = $5, " +
+		"enabled = $6" +
 		grid.getUpdateStatementParametersForSeedRowDb() +
 		" WHERE gridUuid = $1 " +
 		"AND uuid = $2"
@@ -235,13 +240,15 @@ func (grid *Grid) getUpdateStatementParametersForSeedRowDb() string {
 	parameters := ""
 	switch grid.Uuid {
 	case UuidGrids:
-		parameters += ", text1 = $6, text2 = $7, text3 = $8"
+		parameters += ", text1 = $7, text2 = $8, text3 = $9"
 	case UuidColumns:
-		parameters += ", text1 = $6, text2 = $7, text3 = $8, int1 = $9"
+		parameters += ", text1 = $7, text2 = $8, text3 = $9, int1 = $10"
+	case UuidUsers:
+		parameters += ", text1 = $7, text2 = $8, text3 = $9, text4 = $10"
 	case UuidRelationships:
-		parameters += ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10"
+		parameters += ", text1 = $7, text2 = $8, text3 = $9, text4 = $10, text5 = $11"
 	default:
-		parameterIndex := 6
+		parameterIndex := 7
 		for i := 1; i <= NumberOfTextFields; i++ {
 			parameters += fmt.Sprintf(", text%d = $%d", i, parameterIndex)
 			parameterIndex += 1

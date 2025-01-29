@@ -36,7 +36,7 @@ const (
 	usageDbExport                = "Name of the database to export"
 	exportFileNameFlag           = "exportfile"
 	defaultExportFileName        = ""
-	usageExportFileName          = "Name of the file (.ymp) used for exporting data"
+	usageExportFileName          = "Name of the file (.json) used for exporting data"
 	exportAllFlag                = "exportall"
 	defaultExportAll             = false
 	usageExportAll               = "Export all tables including including users and transactions"
@@ -45,7 +45,7 @@ const (
 	usageDbImport                = "Name of the database to import"
 	importFileNameFlag           = "importfile"
 	defaultImportFileName        = ""
-	usageImportFileName          = "Name of the file (.ymp) used for importing data"
+	usageImportFileName          = "Name of the file (.json) used for importing data"
 )
 
 func main() {

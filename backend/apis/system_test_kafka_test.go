@@ -98,7 +98,7 @@ func RunSystemTestKafka(t *testing.T) {
 			Action: ActionHeartbeat,
 			Status: FailedStatus,
 		})
-		expect := "Failed to PUSH message (53 bytes), key: KEY, action: HEARTBEAT, status: FAILED"
+		expect := "Failed to PUSH message (53 bytes), key: KEY, action: HEARTBEAT, status: FAILED: xxx"
 		if err == nil || err.Error() != expect {
 			t.Errorf("Got err %v instead of %v.", err, expect)
 		}

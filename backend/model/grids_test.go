@@ -6,6 +6,7 @@ package model
 import (
 	"reflect"
 	"testing"
+	"time"
 )
 
 func TestGetNewGrid(t *testing.T) {
@@ -203,7 +204,7 @@ func TestGetRowsQueryForSeedData(t *testing.T) {
 func TestGetInsertStatementForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid("xxx")
 	got := grid.GetInsertStatementForSeedRowDb()
-	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10) VALUES ($1, 1, NOW(), NOW(), $2, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24)"
+	expect := "INSERT INTO rows (uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, text1, text2, text3, text4, text5, text6, text7, text8, text9, text10, int1, int2, int3, int4, int5, int6, int7, int8, int9, int10) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28)"
 	if got != expect {
 		t.Errorf(`Got %s instead of %s.`, got, expect)
 	}
@@ -215,13 +216,13 @@ func TestGetInsertStatementParametersForSeedRowDb(t *testing.T) {
 		uuid   string
 		expect string
 	}{
-		{"1", UuidGrids, ", $5, $6, $7"},
-		{"2", UuidColumns, ", $5, $6, $7, $8"},
-		{"3", UuidRelationships, ", $5, $6, $7, $8, $9"},
-		{"4", UuidMigrations, ", $5, $6"},
-		{"5", UuidUsers, ", $5, $6, $7, $8"},
-		{"6", UuidTransactions, ", $5"},
-		{"7", "xxx", ", $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24"},
+		{"1", UuidGrids, ", $9, $10, $11"},
+		{"2", UuidColumns, ", $9, $10, $11, $12"},
+		{"3", UuidRelationships, ", $9, $10, $11, $12, $13"},
+		{"4", UuidMigrations, ", $9, $10"},
+		{"5", UuidUsers, ", $9, $10, $11, $12"},
+		{"6", UuidTransactions, ", $9"},
+		{"7", "xxx", ", $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -237,18 +238,29 @@ func TestGetInsertStatementParametersForSeedRowDb(t *testing.T) {
 func TestGetInsertValuesForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidGrids)
 	text1 := "yyy"
+	who := "xxx"
+	now := time.Now()
 	row := Row{
-		Uuid:     "zzz",
-		GridUuid: UuidGrids,
-		Enabled:  true,
-		Text1:    &text1,
-		Text2:    &text1,
-		Text3:    &text1,
+		Uuid:      "zzz",
+		GridUuid:  UuidGrids,
+		Enabled:   true,
+		Text1:     &text1,
+		Text2:     &text1,
+		Text3:     &text1,
+		Revision:  int8(1),
+		Created:   &now,
+		Updated:   &now,
+		CreatedBy: &who,
+		UpdatedBy: &who,
 	}
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		"xxx",
+		int8(1),
+		&now,
+		&now,
+		&who,
+		&who,
 		true,
 		UuidGrids,
 		&text1,
@@ -264,17 +276,28 @@ func TestGetInsertValuesMigrationsForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidMigrations)
 	text1 := "yyy"
 	int1 := int64(1)
+	who := "xxx"
+	now := time.Now()
 	row := Row{
-		Uuid:     "zzz",
-		GridUuid: UuidMigrations,
-		Enabled:  true,
-		Text1:    &text1,
-		Int1:     &int1,
+		Uuid:      "zzz",
+		GridUuid:  UuidMigrations,
+		Enabled:   true,
+		Text1:     &text1,
+		Int1:      &int1,
+		Revision:  int8(1),
+		Created:   &now,
+		Updated:   &now,
+		CreatedBy: &who,
+		UpdatedBy: &who,
 	}
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		"xxx",
+		int8(1),
+		&now,
+		&now,
+		&who,
+		&who,
 		true,
 		UuidMigrations,
 		&text1,
@@ -291,19 +314,30 @@ func TestGetInsertValuesUsersForSeedRowDb(t *testing.T) {
 	text2 := "aaa"
 	text3 := "bbb"
 	text4 := "ccc"
+	who := "xxx"
+	now := time.Now()
 	row := Row{
-		Uuid:     "zzz",
-		GridUuid: UuidUsers,
-		Enabled:  true,
-		Text1:    &text1,
-		Text2:    &text2,
-		Text3:    &text3,
-		Text4:    &text4,
+		Uuid:      "zzz",
+		GridUuid:  UuidUsers,
+		Enabled:   true,
+		Text1:     &text1,
+		Text2:     &text2,
+		Text3:     &text3,
+		Text4:     &text4,
+		Revision:  int8(1),
+		Created:   &now,
+		Updated:   &now,
+		CreatedBy: &who,
+		UpdatedBy: &who,
 	}
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		"xxx",
+		int8(1),
+		&now,
+		&now,
+		&who,
+		&who,
 		true,
 		UuidUsers,
 		&text1,
@@ -319,16 +353,27 @@ func TestGetInsertValuesUsersForSeedRowDb(t *testing.T) {
 func TestGetInsertValuesTrasnactionsForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidTransactions)
 	text1 := "yyy"
+	who := "xxx"
+	now := time.Now()
 	row := Row{
-		Uuid:     "zzz",
-		GridUuid: UuidTransactions,
-		Enabled:  true,
-		Text1:    &text1,
+		Uuid:      "zzz",
+		GridUuid:  UuidTransactions,
+		Enabled:   true,
+		Text1:     &text1,
+		Revision:  int8(1),
+		Created:   &now,
+		Updated:   &now,
+		CreatedBy: &who,
+		UpdatedBy: &who,
 	}
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		"xxx",
+		int8(1),
+		&now,
+		&now,
+		&who,
+		&who,
 		true,
 		UuidTransactions,
 		&text1,
@@ -342,22 +387,63 @@ func TestGetUpdateValuesForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidGrids)
 	text1 := "yyy"
 	const revision int8 = 10
+	who := "xxx"
+	now := time.Now()
 	row := Row{
-		Uuid:     "zzz",
-		GridUuid: UuidGrids,
-		Text1:    &text1,
-		Text2:    &text1,
-		Text3:    &text1,
-		Revision: revision,
-		Enabled:  true,
+		Uuid:      "zzz",
+		GridUuid:  UuidGrids,
+		Text1:     &text1,
+		Text2:     &text1,
+		Text3:     &text1,
+		Revision:  revision,
+		Enabled:   true,
+		Updated:   &now,
+		UpdatedBy: &who,
 	}
 	got := grid.GetUpdateValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		UuidGrids,
 		"zzz",
 		revision,
-		"xxx",
+		&now,
+		&who,
 		true,
+		&text1,
+		&text1,
+		&text1,
+	}
+	if !reflect.DeepEqual(got, expect) {
+		t.Errorf(`Got %v instead of %v.`, got, expect)
+	}
+}
+
+func TestGetUpdateValuesUsersForSeedRowDb(t *testing.T) {
+	grid := GetNewGrid(UuidUsers)
+	text1 := "yyy"
+	const revision int8 = 10
+	who := "xxx"
+	now := time.Now()
+	row := Row{
+		Uuid:      "zzz",
+		GridUuid:  UuidUsers,
+		Text1:     &text1,
+		Text2:     &text1,
+		Text3:     &text1,
+		Text4:     &text1,
+		Revision:  revision,
+		Enabled:   true,
+		Updated:   &now,
+		UpdatedBy: &who,
+	}
+	got := grid.GetUpdateValuesForSeedRowDb("xxx", &row)
+	expect := []any{
+		UuidUsers,
+		"zzz",
+		revision,
+		&now,
+		&who,
+		true,
+		&text1,
 		&text1,
 		&text1,
 		&text1,
@@ -373,10 +459,11 @@ func TestGetUpdateStatementParametersForSeedRowDb(t *testing.T) {
 		uuid   string
 		expect string
 	}{
-		{"1", UuidGrids, ", text1 = $6, text2 = $7, text3 = $8"},
-		{"2", UuidColumns, ", text1 = $6, text2 = $7, text3 = $8, int1 = $9"},
-		{"3", UuidRelationships, ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10"},
-		{"4", "xxx", ", text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10, text6 = $11, text7 = $12, text8 = $13, text9 = $14, text10 = $15, int1 = $16, int2 = $17, int3 = $18, int4 = $19, int5 = $20, int6 = $21, int7 = $22, int8 = $23, int9 = $24, int10 = $25"},
+		{"1", UuidGrids, ", text1 = $7, text2 = $8, text3 = $9"},
+		{"2", UuidColumns, ", text1 = $7, text2 = $8, text3 = $9, int1 = $10"},
+		{"3", UuidRelationships, ", text1 = $7, text2 = $8, text3 = $9, text4 = $10, text5 = $11"},
+		{"4", UuidUsers, ", text1 = $7, text2 = $8, text3 = $9, text4 = $10"},
+		{"5", "xxx", ", text1 = $7, text2 = $8, text3 = $9, text4 = $10, text5 = $11, text6 = $12, text7 = $13, text8 = $14, text9 = $15, text10 = $16, int1 = $17, int2 = $18, int3 = $19, int4 = $20, int5 = $21, int6 = $22, int7 = $23, int8 = $24, int9 = $25, int10 = $26"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.test, func(t *testing.T) {
@@ -392,7 +479,7 @@ func TestGetUpdateStatementParametersForSeedRowDb(t *testing.T) {
 func TestGetUpdateStatementForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid("xxx")
 	got := grid.GetUpdateStatementForSeedRowDb()
-	expect := "UPDATE rows SET revision = $3, updated = NOW(), updatedBy = $4, enabled = $5, text1 = $6, text2 = $7, text3 = $8, text4 = $9, text5 = $10, text6 = $11, text7 = $12, text8 = $13, text9 = $14, text10 = $15, int1 = $16, int2 = $17, int3 = $18, int4 = $19, int5 = $20, int6 = $21, int7 = $22, int8 = $23, int9 = $24, int10 = $25 WHERE gridUuid = $1 AND uuid = $2"
+	expect := "UPDATE rows SET revision = $3, updated = $4, updatedBy = $5, enabled = $6, text1 = $7, text2 = $8, text3 = $9, text4 = $10, text5 = $11, text6 = $12, text7 = $13, text8 = $14, text9 = $15, text10 = $16, int1 = $17, int2 = $18, int3 = $19, int4 = $20, int5 = $21, int6 = $22, int7 = $23, int8 = $24, int9 = $25, int10 = $26 WHERE gridUuid = $1 AND uuid = $2"
 	if got != expect {
 		t.Errorf(`Got %s instead of %s.`, got, expect)
 	}

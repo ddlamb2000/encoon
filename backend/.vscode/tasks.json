@@ -33,5 +33,15 @@
             },
             "problemMatcher": []
         },
+        {
+            "label": "Import sandbox data into test database",
+            "type": "shell",
+            "command": "go run . -configuration testData/development.yml -import test -importfile /usr/src/encoon/.backup/sandbox.json",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        },
     ]
 }
