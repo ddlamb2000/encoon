@@ -478,11 +478,6 @@ export class Context extends ContextBase {
 
   mount = async () => {
     if(this.gridUuid !== "") this.load()
-    if(this.gridUuid !== metadata.UuidGrids) this.pushTransaction({
-      action: metadata.ActionLoad,
-      actionText: 'Load grid of grids',
-      gridUuid: metadata.UuidGrids
-    })
   }
 
   async * getStreamIteration(uri: string) {
