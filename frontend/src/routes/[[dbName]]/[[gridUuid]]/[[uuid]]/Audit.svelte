@@ -1,0 +1,32 @@
+<script lang="ts">
+  import DateTime from './DateTime.svelte'
+  import * as metadata from "$lib/metadata.svelte"
+  let { context = $bindable(), audits } = $props()
+  let expanded = $state(false)
+</script>
+
+<tr>
+  <td class="bg-gray-100 font-bold">
+    Audit
+    {#if audits.length > 1}
+      <a href="#top" class="cursor-pointer font-light underline" onclick={() => expanded = !expanded}>
+        {expanded ? "(show less)" : "(show more)"}
+      </a>
+    {/if}
+  </td>
+  <td>
+    <ul>
+      {#each audits as audit, auditIndex}
+        {#if expanded || auditIndex === 0 }  
+          <li class="font-extralight">
+            {audit.actionName} on <DateTime dateTime={audit.created} />
+            by
+            <a href="#" class="cursor-pointer font-light underline" onclick={() => context.navigateToGrid(metadata.UuidUsers, audit.createdBy)}>
+              {audit.createdByName}
+            </a>
+          </li>
+        {/if}
+      {/each}    
+    </ul>
+  </td>
+</tr>

@@ -3,7 +3,7 @@
 	import { Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import Grid from './Grid.svelte'
-  import DateTime from './DateTime.svelte'
+  import Audit from './Audit.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(), gridUuid, uuid } = $props()
@@ -47,7 +47,7 @@
               <tbody class="border border-slate-100">
                 {#each set.grid.columns as column, indexColumn}
                   <tr class="border border-slate-100 align-top">
-                    <td class="bg-gray-100">
+                    <td class="bg-gray-100 font-bold">
                       {#if column.bidirectional && !column.owned && column.grid}
                         {column.grid.displayString} <span class="text-xs">({column.label})</span>
                       {:else}
@@ -96,15 +96,7 @@
                   </tr>
                 {/each}
                 {#if row.audits && row.audits.length > 0}
-                  <tr>
-                    <td colspan="2">
-                      <ul>
-                        {#each row.audits as audit}
-                          <li class="font-extralight">{audit.actionName} on <DateTime dateTime={audit.created} /> by {audit.createdByName}</li>
-                        {/each}
-                      </ul>
-                    </td>
-                  </tr>
+                  <Audit {context} audits={row.audits} />
                 {/if}
               </tbody>
             </table>
