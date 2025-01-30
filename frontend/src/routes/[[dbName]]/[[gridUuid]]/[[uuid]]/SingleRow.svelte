@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { GridResponse, RowType, ColumnType } from '$lib/apiTypes'
-	import { Spinner } from 'flowbite-svelte'
+	import { Spinner, Badge } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import Grid from './Grid.svelte'
   import Audit from './Audit.svelte'
@@ -105,7 +105,8 @@
                 {#if usage.grid}
                   <div class="mt-4 ms-2">
                     <span class="font-bold">
-                      {@html usage.label} <span class="font-extralight">in</span> {@html usage.grid.displayString}
+                      {@html usage.grid.displayString}
+                      <span class="font-extralight">{usage.label} = </span><Badge color="dark" rounded class="px-1 text-sm/5">{row.displayString}</Badge>  
                     </span>
                     <Grid {context}
                           gridUuid={usage.grid.uuid}

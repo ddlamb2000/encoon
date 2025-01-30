@@ -170,7 +170,7 @@ export class Context extends ContextBase {
     }
   }
   
-  addRow = async (set: GridResponse) => {
+  addRow = async (set: GridResponse, filterColumnOwned: boolean, filterColumnName: string, filterColumnGridUuid: string, filterColumnValue: string) => {
     const uuid = newUuid()
     const row: RowType = { gridUuid: set.grid.uuid, uuid: uuid, created: new Date, updated: new Date }
     if(!set.rows) set.rows = []
@@ -180,6 +180,10 @@ export class Context extends ContextBase {
       action: metadata.ActionChangeGrid,
       actionText: 'Add row',
       gridUuid: set.grid.uuid,
+      filterColumnOwned: filterColumnOwned,
+      filterColumnName: filterColumnName,
+      filterColumnGridUuid: filterColumnGridUuid,
+      filterColumnValue: filterColumnValue,
       dataSet: { rowsAdded: [row] }
     })
   }
@@ -585,7 +589,7 @@ export class Context extends ContextBase {
               this.dataSet[setIndex] = message.dataSet
               console.log(`Grid ${message.dataSet.grid.uuid} ${message.dataSet.grid.text1} is reloaded`)
             }
-            if(message.uuid !== undefined && message.dataSet.grid) {
+            if(message.uuid && message.dataSet.grid) {
               if(message.dataSet.grid.columns) {
                 for(const column of message.dataSet.grid.columns) {
                   if(column.typeUuid === metadata.UuidReferenceColumnType && column.owned && column.bidirectional && message.dataSet) {
