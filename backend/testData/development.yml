@@ -4,7 +4,7 @@
 appName: "εncooη (development)" # Application name to be displayed
 
 log: true # show basic messages
-trace: true # show detailed trace
+trace: false # show detailed trace
 showTiming: false # show basic timings
 
 gridCacheSize: 50 # number of grids kept in local server cache

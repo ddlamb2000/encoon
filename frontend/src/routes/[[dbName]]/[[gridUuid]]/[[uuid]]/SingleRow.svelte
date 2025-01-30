@@ -37,7 +37,7 @@
               {#if set.grid.uuid === metadata.UuidGrids}
                 <a class="ms-2 text-sm font-light text-gray-500 underline"
                     href={"/" + context.dbName + "/" + row.uuid}
-                    onclick={() => context.navigateToGrid(row.uuid)}>
+                    onclick={() => context.navigateToGrid(row.uuid, "")}>
                   <span class="flex">
                     Data
                     <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />

@@ -27,7 +27,7 @@
     {rowPrompt.displayString}
     <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />  
   </span>
-  <Dropdown placement="right-start" triggeredBy={"." + elementReference} class="w-48 overflow-y-auto max-h-60 shadow-lg">
+  <Dropdown triggeredBy={"." + elementReference} class="w-48 overflow-y-auto max-h-60 shadow-lg">
     {#if !context.gotData(matchesProps)}
       <Spinner size={4} />
     {:else}
@@ -44,7 +44,7 @@
                     <a href="#top" role="menuitem"
                         class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600"
                         onclick={() => context.addColumn(set, rowPrompt, rowReference)}>
-                      {@html  rowReference.displayString}
+                      {@html rowReference.displayString}
                     </a>
                   </li>
                 {/key}

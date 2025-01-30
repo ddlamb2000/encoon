@@ -27,7 +27,7 @@
     Add column
     <Icon.ChevronRightOutline class="w-5 h-5 ms-1 text-gray-700 dark:text-white" />      
   </span>
-  <Dropdown placement="right-start" class="w-40 overflow-y-auto shadow-lg">
+  <Dropdown class="w-40 overflow-y-auto shadow-lg">
     {#if !context.gotData(matchesProps)}
       <Spinner size={4} />
     {:else}
