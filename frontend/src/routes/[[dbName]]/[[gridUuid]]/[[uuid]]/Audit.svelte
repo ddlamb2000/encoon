@@ -9,8 +9,8 @@
   <td class="bg-gray-100 font-bold">
     Audit
     {#if audits.length > 1}
-      <a href="#top" class="cursor-pointer font-light underline" onclick={() => expanded = !expanded}>
-        {expanded ? "(show less)" : "(show more)"}
+      <a href="#top" class="cursor-pointer font-light underline text-xs italic text-gray-500" onclick={() => expanded = !expanded}>
+        {expanded ? "Less" : "More"}
       </a>
     {/if}
   </td>

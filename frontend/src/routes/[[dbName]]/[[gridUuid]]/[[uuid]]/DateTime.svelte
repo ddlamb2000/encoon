@@ -33,4 +33,4 @@
 </script>
 
 {#if showDate}{displayDateTime(dateTime)}{/if}
-<small class="ms-1"><em>{@html timeAgo}</em></small>
+<span class="ms-0.5 text-xs italic text-gray-500">{@html timeAgo}</span>

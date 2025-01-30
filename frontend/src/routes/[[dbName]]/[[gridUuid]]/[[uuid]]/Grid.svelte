@@ -3,6 +3,7 @@
 	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
+  import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(),
@@ -53,8 +54,7 @@
                 </span>
               </a>
             {/if}
-          </span>
-
+        </span>
         {/if}
         <table class="font-light text-sm table-auto border-collapse">
           <thead>
