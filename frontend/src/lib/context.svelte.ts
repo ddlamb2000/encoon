@@ -51,7 +51,12 @@ export class Context extends ContextBase {
     }
   }
 
-  navigateToGrid = async (gridUuid: string, uuid?: string) => {
+  navigateToGrid = async (gridUuid: string,
+                          uuid?: string,
+                          filterColumnOwned?: boolean,
+                          filterColumnName?: string,
+                          filterColumnGridUuid?: string,
+                          filterColumnValue?: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
     this.reset()
     const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")

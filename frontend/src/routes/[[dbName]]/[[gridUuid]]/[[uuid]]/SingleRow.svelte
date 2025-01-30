@@ -34,14 +34,28 @@
           {#key row.uuid}
             <span class="flex">
               <span class="text-2xl font-extrabold">{@html row.displayString}</span>
-              <a class="ms-2 text-sm font-light hover:underline"
-                  href={"/" + context.dbName + "/" + set.grid.uuid}
-                  onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
-                <span class="flex">
-                  {@html set.grid.text1}
-                  <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
-                </span>
-              </a>
+              {#if set.grid.uuid === metadata.UuidGrids}
+                <a class="ms-2 text-sm font-light text-gray-500 underline"
+                    href={"/" + context.dbName + "/" + row.uuid}
+                    onclick={() => context.navigateToGrid(row.uuid)}>
+                  <span class="flex">
+                    Data
+                    <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
+                  </span>
+                </a>
+              {:else}
+                <span class="ms-2 text-sm font-light"
+                      oninput={() => context.changeGrid(set.grid)}
+                      >{@html set.grid.text2}</span>
+                <a class="ms-2 text-sm font-light text-gray-500 underline"
+                    href={"/" + context.dbName + "/" + set.grid.uuid}
+                    onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
+                    <span class="flex">
+                    {@html set.grid.text1}
+                    <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
+                  </span>
+                </a>
+              {/if}
             </span>
             <table class="font-light text-sm table-auto border-collapse border border-slate-100">
               <tbody class="border border-slate-100">
@@ -106,7 +120,7 @@
                   <div class="mt-4 ms-2">
                     <span class="font-bold">
                       {@html usage.grid.displayString}
-                      <span class="font-extralight">{usage.label} = </span><Badge color="dark" rounded class="px-1 text-sm/5">{row.displayString}</Badge>  
+                      <span class="text-sm font-extralight">{usage.label} =</span><Badge color="dark" rounded class="ms-1 px-1 text-sm/5 font-light">{row.displayString}</Badge>  
                     </span>
                     <Grid {context}
                           gridUuid={usage.grid.uuid}
