@@ -125,23 +125,6 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: broker1:19092
     networks:
       - encoon
-  v2:
-    build:
-      context: ./v2
-      dockerfile: Dockerfile.development
-    container_name: encoon-v2
-    image: encoon-v2-development
-    volumes:
-      - ./v2:/usr/src/encoon/v2
-    restart: unless-stopped
-    ports:
-      - "8080:8080"
-    environment:
-      ENCOON_MOCK_DB_LOCALHOST: db
-    networks:
-      - encoon
-    depends_on:
-      - db
   backend-development:
     build:
       context: ./backend
