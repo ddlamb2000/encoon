@@ -27,73 +27,104 @@ Copyright David Lambert 2025
 # History
 
 2007 - Project factory (https://sourceforge.net/projects/projectfactory/). As an open source project for project management, Factory lets you organize actors in teams, define projects, create version-based plans, generate forecast calendars and track statuses. Small and stand alone, it runs on every system with Java.
+
 2012 - Prototype using Ruby on Rails and sqlite3 . First attenpt to make somthing entirely generic and dynamic. The implementation of row-level security came very late and turned to be impossible to make.
+
 2022 - Prototype using Docker, Go, Go-gin, React and Postgreqsl. Adopting Go was great, but React wasn't. The code for the UI was a mess. The traditional approach as a monolith was a mistake.
+
 2025 - Prototype using Docker, Go, Kafka, Postgreqsl and Svelte. Adoption an event-based architecture using Kafka. Svelte is sweet.
 
 # Notes and references
 
-Go
-    https://go.dev/
-    https://github.com/uber-go/guide/blob/master/style.md
+## Go
+https://go.dev/
 
-    Contexts: https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
+https://github.com/uber-go/guide/blob/master/style.md
 
-    Docker: https://registry.hub.docker.com/_/golang
+Contexts: https://www.digitalocean.com/community/tutorials/how-to-use-contexts-in-go
 
-PostgreSQL
-    https://www.postgresql.org/ 
-    https://postgresapp.com/
+Docker: https://registry.hub.docker.com/_/golang
 
-    https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
+## PostgreSQL
+https://www.postgresql.org/ 
 
-    Docker: https://registry.hub.docker.com/_/postgres
+https://postgresapp.com/
 
-    Passwords:
-        create an "encoded64 password"
-        run CREATE EXTENSION pgcrypto;
-        run
-            select crypt('encoded64 password', gen_salt('bf', 8));
-        on the database
+https://www.meetspaceapp.com/2016/04/12/passwords-postgresql-pgcrypto.html
 
-Authentication
-    https://blog.logrocket.com/jwt-authentication-go/
-    https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/
+Docker: https://registry.hub.docker.com/_/postgres
 
-SAML
-    https://medium.com/@arpitkh96/adding-saml-sso-in-your-golang-service-in-20-minutes-e35a30f52abd
-    https://pkg.go.dev/github.com/crewjam/saml
+### Passwords:
 
-Confluent (zookeeper, kafka)
-    https://www.confluent.io/ 
+create an "encoded64 password"
 
-Kafka
-    Go library: https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme 
-    Svelte library: https://kafka.js.org/
+run CREATE EXTENSION pgcrypto;
 
-    https://www.redpanda.com/guides/kafka-cloud-kafka-headers
+run
 
-    Commit messages: see https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme.
+    select crypt('encoded64 password', gen_salt('bf', 8));
 
-    Streaming:
-        https://svelte.dev/docs/kit/load#Streaming-with-promises
-        https://khromov.se/sveltekit-streaming-the-complete-guide/
-        https://joyofcode.xyz/using-websockets-with-sveltekit 
-        https://medium.com/version-1/websockets-in-sveltekit-28e91eec9245
-        https://stackoverflow.com/questions/74330190/how-to-respond-with-a-stream-in-a-sveltekit-server-load-function
+on the database
 
-    Graceful shutdown:
-        Backend: https://withcodeexample.com/a-practical-guide-to-using-golang-with-apache-kafka/
-        Frontend: https://medium.com/@curtis.porter/graceful-termination-of-kafkajs-client-processes-b05dd185759d 
+## Authentication
 
-Tailwind Css
-    https://tailwindcss.com/
-    https://play.tailwindcss.com/Ow445YYOoI?layout=horizontal    
+https://blog.logrocket.com/jwt-authentication-go/
 
-Future
-    Kafka ACL
-    Logging thru Kafka
-    Create topics for locators, auth and logging
+https://jinhoyoo.github.io/Build-a-Go-lang-back-end-with-the-Gin-framework-an/
 
-Gen AI
-    https://developers.googleblog.com/en/introducing-genkit-for-go-build-scalable-ai-powered-apps-in-go/ 
+## SAML
+
+https://medium.com/@arpitkh96/adding-saml-sso-in-your-golang-service-in-20-minutes-e35a30f52abd
+
+https://pkg.go.dev/github.com/crewjam/saml
+
+## Confluent (zookeeper, kafka)
+
+https://www.confluent.io/ 
+
+## Kafka
+
+Go library: https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme 
+
+Svelte library: https://kafka.js.org/
+
+https://www.redpanda.com/guides/kafka-cloud-kafka-headers
+
+Commit messages: see https://pkg.go.dev/github.com/segmentio/kafka-go#section-readme.
+
+### Streaming:
+
+https://svelte.dev/docs/kit/load#Streaming-with-promises
+
+https://khromov.se/sveltekit-streaming-the-complete-guide/
+
+https://joyofcode.xyz/using-websockets-with-sveltekit 
+
+https://medium.com/version-1/websockets-in-sveltekit-28e91eec9245
+
+https://stackoverflow.com/questions/74330190/how-to-respond-with-a-stream-in-a-sveltekit-server-load-function
+
+
+### Graceful shutdown:
+
+Backend: https://withcodeexample.com/a-practical-guide-to-using-golang-with-apache-kafka/
+
+Frontend: https://medium.com/@curtis.porter/graceful-termination-of-kafkajs-client-processes-b05dd185759d 
+
+## Tailwind Css
+
+https://tailwindcss.com/
+
+https://play.tailwindcss.com/Ow445YYOoI?layout=horizontal    
+
+## Future
+
+Kafka ACL
+
+Logging thru Kafka
+
+Create topics for locators, auth and logging
+
+## Gen AI
+
+https://developers.googleblog.com/en/introducing-genkit-for-go-build-scalable-ai-powered-apps-in-go/ 
