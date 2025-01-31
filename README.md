@@ -1,24 +1,16 @@
 # εncooη
 
-For the time being, εncooη is an experimental web-based application 
-oriented toward data management.
+PROOF OF CONCEPT
 
-The object of the reasearches εncooη is based on is to propose 
-a true engine that allows data structuration, data relationship 
-management, data presentation, and, mainly, to make obvious data navigation.
+Currently, εncooη is an experimental web application focused on data management.
 
-This brand new application doesn't require database system 
-learning or skills, because everything in the application 
-is managed through a very simple web-based user interface, 
-in real time. 
+The research behind εncooη aims to develop a robust engine for data structuring, relationship management, presentation, and, most importantly, intuitive data navigation.
 
-Primary dedicated to small business structures, 
-the application lets manage a large amount of multi-purposes information 
-within the organization, and share this information across business stakeholders 
-in an easy and natural way, using one Internet browser only.
+This innovative application requires no database knowledge or skills, as all aspects are managed in real time through a simple, web-based user interface.
 
-εncooη is also the foundation for the development of a true business-oriented 
-application development toolkit.
+Primarily designed for small businesses, the application enables the management of diverse and extensive organizational information, facilitating easy and natural sharing among stakeholders using only a web browser.
+
+εncooη also serves as the foundation for developing a comprehensive business-oriented application development toolkit.
 
 Copyright David Lambert 2025
 
