@@ -21,7 +21,7 @@
           <li class="font-extralight">
             {audit.actionName} on <DateTime dateTime={audit.created} />
             by
-            <a href="#" class="cursor-pointer font-light underline" onclick={() => context.navigateToGrid(metadata.UuidUsers, audit.createdBy)}>
+            <a href="#top" class="cursor-pointer font-light underline" onclick={() => context.navigateToGrid(metadata.UuidUsers, audit.createdBy)}>
               {audit.createdByName}
             </a>
           </li>

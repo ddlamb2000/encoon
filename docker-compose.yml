@@ -142,6 +142,29 @@ services:
     depends_on:
       - db
       - broker1
+  frontend-development:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.development
+    container_name: frontend-development
+    image: frontend-encoon-development
+    restart: unless-stopped
+    volumes:
+      - ./frontend:/usr/src/encoon/frontend
+    ports:
+      - "5173:5173"
+    environment:
+      KAFKA_BROKERS: broker1:19092
+      KAFKA_CLIENT_ID: frontend-encoon-development
+      KAFKA_GROUP_ID: frontend-encoon-development
+      TOPIC_PREFIX: encoon
+      APPNAME: "εncooη (development)"
+      DATABASES: "master,test,sandbox"
+      DEFAULTDB: "test"
+    networks:
+      - encoon
+    depends_on:
+      - broker1
   backend-sandbox1:
     build:
       context: ./backend
@@ -188,29 +211,6 @@ services:
       - encoon
     depends_on:
       - db
-      - broker1
-  frontend-development:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.development
-    container_name: frontend-development
-    image: frontend-encoon-development
-    restart: unless-stopped
-    volumes:
-      - ./frontend:/usr/src/encoon/frontend
-    ports:
-      - "5173:5173"
-    environment:
-      KAFKA_BROKERS: broker1:19092
-      KAFKA_CLIENT_ID: frontend-encoon-development
-      KAFKA_GROUP_ID: frontend-encoon-development
-      TOPIC_PREFIX: encoon
-      APPNAME: "εncooη (development)"
-      DATABASES: "master,test,sandbox"
-      DEFAULTDB: "test"
-    networks:
-      - encoon
-    depends_on:
       - broker1
   frontend-sandbox:
     build:
