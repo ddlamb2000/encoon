@@ -2,7 +2,7 @@ name: "encoon"
 services:
   db:
     container_name: database
-    image: postgres
+    image: pgvector/pgvector:pg17
     restart: unless-stopped
     ports:
       - "5432:5432"

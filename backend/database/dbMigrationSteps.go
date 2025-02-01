@@ -127,7 +127,7 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"UNIQUE (uuid)" +
 			")",
 
-		100: "CREATE EXTENSION pgcrypto",
+		100: "CREATE EXTENSION IF NOT EXISTS pgcrypto",
 
 		108: "INSERT INTO grids " +
 			"(uuid, revision, created, updated, createdBy, updatedBy, enabled, gridUuid, " +
@@ -164,6 +164,8 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + root + "', " +
 			"'" + root + "', " +
 			"'" + password + "')",
+
+		110: "CREATE EXTENSION IF NOT EXISTS vector",
 	}
 }
 

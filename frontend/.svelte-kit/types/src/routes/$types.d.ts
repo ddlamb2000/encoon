@@ -17,3 +17,4 @@ type LayoutParentData = EnsureDefined<{}>;
 
 export type LayoutServerData = null;
 export type LayoutData = Expand<LayoutParentData>;
+export type LayoutProps = { data: LayoutData; children: import("svelte").Snippet }
