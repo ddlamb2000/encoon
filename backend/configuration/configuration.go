@@ -25,6 +25,11 @@ type Configuration struct {
 	Databases     []*DatabaseConfiguration `yaml:"database"`
 	Kafka         KafkaConfiguration       `yaml:"kafka"`
 	JwtExpiration int                      `yaml:"jwtExpiration"`
+	AI            AIConfiguration          `yaml:"ai"`
+}
+
+type AIConfiguration struct {
+	ApiKeyFile string `yaml:"apiKeyFile"`
 }
 
 type KafkaConfiguration struct {

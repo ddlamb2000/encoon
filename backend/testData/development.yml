@@ -12,6 +12,9 @@ seedDataFile: ./seedData.json
 
 jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
 
+ai:
+  apiKeyFile: "/run/secrets/gemini_api_key_development" # File that includes Kay to get access AI API
+
 # Kafka configuration
 kafka:
   brokers: broker1:19092 # Kafka brokers, separated with a comma

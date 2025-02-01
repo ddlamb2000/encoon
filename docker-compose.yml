@@ -135,6 +135,8 @@ services:
       - ./backend:/usr/src/encoon/backend
       - ./.backup:/usr/src/encoon/.backup
     restart: unless-stopped
+    secrets:
+      - gemini_api_key_development
     environment:
       ENCOON_MOCK_DB_LOCALHOST: db
     networks:
@@ -175,6 +177,8 @@ services:
     configs:
       - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
+    secrets:
+      - gemini_api_key_sandbox
     volumes:
       - ./.backup:/usr/encoon/.backup
     networks:
@@ -192,6 +196,8 @@ services:
     configs:
       - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
+    secrets:
+      - gemini_api_key_sandbox
     networks:
       - encoon
     depends_on:
@@ -207,6 +213,8 @@ services:
     configs:
       - source: encoon-backend-configuration-sandbox
         target: /usr/encoon/configuration.yml
+    secrets:
+      - gemini_api_key_sandbox
     networks:
       - encoon
     depends_on:
@@ -260,6 +268,10 @@ networks:
 secrets:
   db-password:
     file: ./.dbConfiguration/.db_password
+  gemini_api_key_development:
+    file: ./.gemini_api_key
+  gemini_api_key_sandbox:
+    file: ./.gemini_api_key
 volumes:
   db:
     driver: local

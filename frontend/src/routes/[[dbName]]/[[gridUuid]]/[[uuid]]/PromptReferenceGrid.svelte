@@ -32,7 +32,7 @@
       <Spinner size={4} />
     {:else}
       <span class="flex p-1">
-        <Search size="md" class="py-1" bind:value={searchText}  onclick={(e) => {e.stopPropagation()}} />
+        <Search size="md" class="py-1" bind:value={searchText} onclick={(e) => {e.stopPropagation()}} />
       </span>      
       {#each context.dataSet as setPrompt}
         {#if setPrompt.grid && setPrompt.grid.uuid && setPrompt.grid.uuid === gridPromptUuid}

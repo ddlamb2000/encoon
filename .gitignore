@@ -13,3 +13,4 @@ node_modules
 package-lock.json
 backend/go.sum
 yarn.lock
+.gemini_api_key

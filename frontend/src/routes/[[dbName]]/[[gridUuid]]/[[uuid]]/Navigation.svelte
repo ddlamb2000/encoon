@@ -1,13 +1,20 @@
 <script lang="ts">
-  import { Button, Indicator, Toggle } from 'flowbite-svelte'
+  import { Button, Indicator, Toggle, Search } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
   let { context, userPreferences, appName } = $props()
+  let prompt = $state("")
 </script>
 
 <div class="relative flex items-center">
   <span class="ms-2 text-xl font-extrabold">
     <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
     <span class="text-xs ms-1 font-light text-gray-600">{context.getContextUuid()}</span>
+  </span>
+  <span class="ms-2 text-xl font-extrabold">
+    <Search size="md" class="py-1" placeholder="Prompt (Gemini)"
+            bind:value={prompt}
+            onclick={(e) => {e.stopPropagation()}}
+            onkeyup={(e) => e.code === 'Enter' && context.prompt(prompt)} />
   </span>
   <span class="lg:flex ml-auto">
     {#if context.isStreaming}

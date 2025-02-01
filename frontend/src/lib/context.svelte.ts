@@ -385,6 +385,15 @@ export class Context extends ContextBase {
     this.focus.reset()
   }  
 
+  prompt = (prompt: string) => {
+    this.pushTransaction(
+      {
+        action: metadata.ActionPrompt,
+        actionText: prompt
+      }
+    )
+  }
+
   reset = () => {
     console.log("[Context.reset()]")
     this.focus.reset()

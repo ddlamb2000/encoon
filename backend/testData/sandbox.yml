@@ -7,6 +7,8 @@ showTiming: false
 gridCacheSize: 500
 seedDataFile: /usr/encoon/seedData.json
 jwtExpiration: 1440
+ai:
+  apiKeyFile: "/run/secrets/gemini_api_key_sandbox"
 kafka:
   brokers: broker1:19092
   groupID: backend-encoon

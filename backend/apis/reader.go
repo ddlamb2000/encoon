@@ -206,6 +206,8 @@ func handleActions(dbName string, userUuid string, userName string, request ApiP
 		return executeActionGrid(dbName, userUuid, userName, request, PostGridsRows)
 	} else if request.Action == ActionLocateGrid {
 		return locate(request)
+	} else if request.Action == ActionPrompt {
+		return answerPrompt(request)
 	} else {
 		return invalidAction(dbName, request)
 	}

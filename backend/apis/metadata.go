@@ -12,4 +12,5 @@ const (
 	ActionLoad           = "LOAD"
 	ActionChangeGrid     = "CHANGE"
 	ActionLocateGrid     = "LOCATE"
+	ActionPrompt         = "PROMPT"
 )
