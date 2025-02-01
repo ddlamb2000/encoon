@@ -247,7 +247,7 @@ func TestGetInsertValuesForSeedRowDb(t *testing.T) {
 		Text1:     &text1,
 		Text2:     &text1,
 		Text3:     &text1,
-		Revision:  int8(1),
+		Revision:  int64(1),
 		Created:   &now,
 		Updated:   &now,
 		CreatedBy: &who,
@@ -256,7 +256,7 @@ func TestGetInsertValuesForSeedRowDb(t *testing.T) {
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		int8(1),
+		int64(1),
 		&now,
 		&now,
 		&who,
@@ -284,7 +284,7 @@ func TestGetInsertValuesMigrationsForSeedRowDb(t *testing.T) {
 		Enabled:   true,
 		Text1:     &text1,
 		Int1:      &int1,
-		Revision:  int8(1),
+		Revision:  int64(1),
 		Created:   &now,
 		Updated:   &now,
 		CreatedBy: &who,
@@ -293,7 +293,7 @@ func TestGetInsertValuesMigrationsForSeedRowDb(t *testing.T) {
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		int8(1),
+		int64(1),
 		&now,
 		&now,
 		&who,
@@ -324,7 +324,7 @@ func TestGetInsertValuesUsersForSeedRowDb(t *testing.T) {
 		Text2:     &text2,
 		Text3:     &text3,
 		Text4:     &text4,
-		Revision:  int8(1),
+		Revision:  int64(1),
 		Created:   &now,
 		Updated:   &now,
 		CreatedBy: &who,
@@ -333,7 +333,7 @@ func TestGetInsertValuesUsersForSeedRowDb(t *testing.T) {
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		int8(1),
+		int64(1),
 		&now,
 		&now,
 		&who,
@@ -360,7 +360,7 @@ func TestGetInsertValuesTrasnactionsForSeedRowDb(t *testing.T) {
 		GridUuid:  UuidTransactions,
 		Enabled:   true,
 		Text1:     &text1,
-		Revision:  int8(1),
+		Revision:  int64(1),
 		Created:   &now,
 		Updated:   &now,
 		CreatedBy: &who,
@@ -369,7 +369,7 @@ func TestGetInsertValuesTrasnactionsForSeedRowDb(t *testing.T) {
 	got := grid.GetInsertValuesForSeedRowDb("xxx", &row)
 	expect := []any{
 		"zzz",
-		int8(1),
+		int64(1),
 		&now,
 		&now,
 		&who,
@@ -386,7 +386,7 @@ func TestGetInsertValuesTrasnactionsForSeedRowDb(t *testing.T) {
 func TestGetUpdateValuesForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidGrids)
 	text1 := "yyy"
-	const revision int8 = 10
+	const revision int64 = 10
 	who := "xxx"
 	now := time.Now()
 	row := Row{
@@ -420,7 +420,7 @@ func TestGetUpdateValuesForSeedRowDb(t *testing.T) {
 func TestGetUpdateValuesUsersForSeedRowDb(t *testing.T) {
 	grid := GetNewGrid(UuidUsers)
 	text1 := "yyy"
-	const revision int8 = 10
+	const revision int64 = 10
 	who := "xxx"
 	now := time.Now()
 	row := Row{

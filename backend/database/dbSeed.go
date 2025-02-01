@@ -48,7 +48,7 @@ func seedRowDb(ctx context.Context, db *sql.DB, dbName string, row model.Row) er
 	parms := GetRowsQueryParametersForSeedData(row.GridUuid, row.Uuid)
 	configuration.Trace(dbName, "", "seedRowDb(%s, %s) - query=%s, parms=%s", grid, row, query, parms)
 	var uuid string
-	var revision int8
+	var revision int64
 	if err := db.QueryRowContext(ctx, query, parms...).Scan(&uuid, &revision); err != nil {
 		if err == sql.ErrNoRows {
 			configuration.Trace(dbName, "", "Not found row with grid uuid %q and uuid %q.", row.GridUuid, row.Uuid)

@@ -18,7 +18,7 @@ const (
 type Row struct {
 	GridUuid      string       `json:"gridUuid"`
 	Uuid          string       `json:"uuid"`
-	Revision      int8         `json:"revision"`
+	Revision      int64        `json:"revision"`
 	Enabled       bool         `json:"enabled"`
 	Created       *time.Time   `json:"created"`
 	CreatedBy     *string      `json:"createdBy"`

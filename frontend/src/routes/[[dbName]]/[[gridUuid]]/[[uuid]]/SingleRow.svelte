@@ -109,6 +109,14 @@
                     {/if}
                   </tr>
                 {/each}
+                <tr>
+                  <td class="bg-gray-100 font-bold">ID</td>
+                  <td class="font-mono text-xs">{row.gridUuid}/{row.uuid}</td>              
+                </tr>
+                <tr>
+                  <td class="bg-gray-100 font-bold">Revision</td>
+                  <td>{row.revision}</td>              
+                </tr>
                 {#if row.audits && row.audits.length > 0}
                   <Audit {context} audits={row.audits} />
                 {/if}
