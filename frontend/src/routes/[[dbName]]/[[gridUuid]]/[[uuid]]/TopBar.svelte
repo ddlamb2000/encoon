@@ -27,6 +27,8 @@
     </Button>
   {/if}
 {/each}
-<span class="text-xs text-gray-500">
-  {context.rowsInMemory} rows in {context.gridsInMemory} grids
-</span>
+{#if context.rowsInMemory > 0 || context.gridsInMemory > 0}
+  <span class="text-xs text-gray-500">
+    {context.rowsInMemory} rows in {context.gridsInMemory} grids
+  </span>
+{/if}
