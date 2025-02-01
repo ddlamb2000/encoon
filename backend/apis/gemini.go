@@ -56,7 +56,7 @@ func answerPrompt(request ApiParameters) responseContent {
 				}
 			}
 		}
-		configuration.LogError("", "", "Access Gemini for generating content")
+		configuration.Log("", "", "Access Gemini for generating content")
 		model := client.GenerativeModel(modelName)
 		resp, err := model.GenerateContent(ctx, genai.Text(request.ActionText))
 		if err != nil {
@@ -68,6 +68,7 @@ func answerPrompt(request ApiParameters) responseContent {
 				TextMessage: err.Error(),
 			}
 		}
+		configuration.Log("", "", "Gemini content generated")
 		return responseContent{
 			Status:      SuccessStatus,
 			Action:      request.Action,
