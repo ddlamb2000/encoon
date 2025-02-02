@@ -14,14 +14,12 @@ import (
 	"google.golang.org/api/option"
 )
 
-const modelName = "gemini-2.0-flash-exp"
-
 var client *genai.Client = nil
 
-func readFileContent(filePath string) string {
+func readFileContent(dbName string, userUuid string, userName string, filePath string) string {
 	dat, err := os.ReadFile(filePath)
 	if err != nil {
-		configuration.LogError("", "", "Can't read file %s: %v", filePath, err)
+		configuration.LogError(dbName, userName, "Can't read file %s: %v", filePath, err)
 		return ""
 	}
 	return string(dat)
@@ -39,15 +37,15 @@ func getResponse(resp *genai.GenerateContentResponse) string {
 	return response.String()
 }
 
-func answerPrompt(request ApiParameters) responseContent {
-	apiKey := readFileContent(configuration.GetConfiguration().AI.ApiKeyFile)
+func answerPrompt(dbName string, userUuid string, userName string, request ApiParameters) responseContent {
+	apiKey := readFileContent(dbName, userUuid, userName, configuration.GetConfiguration().AI.ApiKeyFile)
 	if apiKey != "" {
 		ctx := context.Background()
 		if client == nil {
 			var err error = nil
 			client, err = genai.NewClient(ctx, option.WithAPIKey(apiKey))
 			if err != nil {
-				configuration.LogError("", "", "Can't connect to Gemini: %v", err)
+				configuration.LogError(dbName, userName, "Can't connect to Gemini: %v", err)
 				return responseContent{
 					Status:      FailedStatus,
 					Action:      request.Action,
@@ -57,10 +55,10 @@ func answerPrompt(request ApiParameters) responseContent {
 			}
 		}
 		configuration.Log("", "", "Access Gemini for generating content")
-		model := client.GenerativeModel(modelName)
+		model := client.GenerativeModel(configuration.GetConfiguration().AI.Model)
 		resp, err := model.GenerateContent(ctx, genai.Text(request.ActionText))
 		if err != nil {
-			configuration.LogError("", "", "Gemini can't generated content: %v", err)
+			configuration.LogError(dbName, userName, "Gemini can't generated content: %v", err)
 			return responseContent{
 				Status:      FailedStatus,
 				Action:      request.Action,
@@ -68,7 +66,7 @@ func answerPrompt(request ApiParameters) responseContent {
 				TextMessage: err.Error(),
 			}
 		}
-		configuration.Log("", "", "Gemini content generated")
+		configuration.Log(dbName, userName, "Gemini content generated")
 		return responseContent{
 			Status:      SuccessStatus,
 			Action:      request.Action,

@@ -207,7 +207,7 @@ func handleActions(dbName string, userUuid string, userName string, request ApiP
 	} else if request.Action == ActionLocateGrid {
 		return locate(request)
 	} else if request.Action == ActionPrompt {
-		return answerPrompt(request)
+		return answerPrompt(dbName, userUuid, userName, request)
 	} else {
 		return invalidAction(dbName, request)
 	}

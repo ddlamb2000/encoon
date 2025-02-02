@@ -8,6 +8,7 @@ gridCacheSize: 500
 seedDataFile: /usr/encoon/seedData.json
 jwtExpiration: 1440
 ai:
+  model: "gemini-2.0-flash-exp"
   apiKeyFile: "/run/secrets/gemini_api_key_sandbox"
 kafka:
   brokers: broker1:19092

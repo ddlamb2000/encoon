@@ -71,7 +71,7 @@
                 {/if}
               </th>
               {#each set.grid.columns as column, indexColumn}
-                <th class="sticky -top-3 py-1 bg-gray-100 border border-slate-300">
+                <th class="sticky -top-3 p-0.5 py-1 bg-gray-100 border border-slate-200">
                   <span class="flex">
                     {#if column.bidirectional && !column.owned && column.grid}
                       {column.grid.displayString} <span class="text-xs">({column.label})</span>
@@ -114,7 +114,7 @@
                         }>
                       <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
                     </a>
-                    <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 row-menu-" + row.uuid}/>
+                    <Icon.DotsVerticalOutline class={"text-gray-300 hover:text-gray-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>
                       <li class="p-1">
                         <a href="#top"  role="menuitem"
@@ -169,7 +169,7 @@
                   <a href="#top" onclick={() => context.addRow(context.dataSet[setIndex], filterColumnOwned, filterColumnName, filterColumnGridUuid, filterColumnValue)}><Icon.CirclePlusOutline /></a>
                 </span>
               </th>
-              <th class="py-1 bg-gray-100" colspan="99">
+              <th class="py-1 border border-slate-200 bg-gray-100" colspan="99">
                 {#if context.dataSet[setIndex].countRows}
                   <span class="flex ms-1">
                     {context.dataSet[setIndex].countRows} {context.dataSet[setIndex].countRows === 1 ? 'row' : 'rows'}

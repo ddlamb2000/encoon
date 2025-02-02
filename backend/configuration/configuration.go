@@ -29,6 +29,7 @@ type Configuration struct {
 }
 
 type AIConfiguration struct {
+	Model      string `yaml:"model"`
 	ApiKeyFile string `yaml:"apiKeyFile"`
 }
 

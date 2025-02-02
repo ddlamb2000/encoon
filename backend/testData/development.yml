@@ -1,5 +1,5 @@
 #  εncooη : data structuration, presentation and navigation.
-#  Copyright David Lambert 2024
+#  Copyright David Lambert 2025
 
 appName: "εncooη (development)" # Application name to be displayed
 
@@ -13,6 +13,7 @@ seedDataFile: ./seedData.json
 jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
 
 ai:
+  model: "gemini-2.0-flash-exp" # AI model
   apiKeyFile: "/run/secrets/gemini_api_key_development" # File that includes Kay to get access AI API
 
 # Kafka configuration

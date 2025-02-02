@@ -60,8 +60,8 @@
             <table class="font-light text-sm table-auto border-collapse border border-slate-100">
               <tbody class="border border-slate-100">
                 {#each set.grid.columns as column, indexColumn}
-                  <tr class="border border-slate-100 align-top">
-                    <td class="bg-gray-100 font-bold">
+                  <tr class="align-top">
+                    <td class="p-0.5 bg-gray-100 font-bold border border-slate-200">
                       {#if column.bidirectional && !column.owned && column.grid}
                         {column.grid.displayString} <span class="text-xs">({column.label})</span>
                       {:else}
@@ -74,15 +74,14 @@
                           || column.typeUuid === metadata.UuidPasswordColumnType 
                           || column.typeUuid === metadata.UuidIntColumnType}
                       <td contenteditable
-                          class="{context.isFocused(set, column, row) ? colorFocus : ''}
+                          class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}
                                   {column.typeUuid === metadata.UuidUuidColumnType || column.typeUuid === metadata.UuidPasswordColumnType ? ' font-mono text-xs' : ''}"
-                          align={column.typeUuid === metadata.UuidIntColumnType ? 'right' : 'left'}
                           onfocus={() => context.changeFocus(set.grid, column, row)}
                           oninput={() => context.changeCell(set, row)}
                           bind:innerHTML={context.dataSet[setIndex].rows[rowIndex][column.name]}>
                       </td>
                     {:else if column.typeUuid === metadata.UuidReferenceColumnType}
-                      <td class="{context.isFocused(set, column, row) ? colorFocus : ''}">
+                      <td class="p-0.5 border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
                         {#if column.owned && column.bidirectional}
                           <Grid {context}
                                 gridUuid={column.gridPromptUuid}
@@ -96,7 +95,7 @@
                         {/if}
                       </td>
                     {:else if column.typeUuid === metadata.UuidBooleanColumnType}
-                      <td class="cursor-pointer {context.isFocused(set, column, row) ? colorFocus : ''}" align='center'>
+                      <td class="p-0.5 cursor-pointer border border-slate-200 {context.isFocused(set, column, row) ? colorFocus : ''}">
                         <a href="#top"
                             onfocus={() => context.changeFocus(set.grid, column, row)}
                             onclick={() => toggleBoolean(set, column, row)}>
@@ -110,12 +109,12 @@
                   </tr>
                 {/each}
                 <tr>
-                  <td class="bg-gray-100 font-bold">ID</td>
-                  <td class="font-mono text-xs">{row.gridUuid}/{row.uuid}</td>              
+                  <td class="bg-gray-100 font-bold border border-slate-200">ID</td>
+                  <td class="bg-gray-100 font-mono border border-slate-200 text-xs">{row.gridUuid}/{row.uuid}</td>              
                 </tr>
                 <tr>
-                  <td class="bg-gray-100 font-bold">Revision</td>
-                  <td>{row.revision}</td>              
+                  <td class="bg-gray-100 font-bold border border-slate-200">Revision</td>
+                  <td class="bg-gray-100 border border-slate-200">{row.revision}</td>              
                 </tr>
                 {#if row.audits && row.audits.length > 0}
                   <Audit {context} audits={row.audits} />
@@ -125,10 +124,10 @@
             {#if set.grid && set.grid.columnsUsage && set.grid.columnsUsage.length > 0}
               {#each set.grid.columnsUsage as usage}
                 {#if usage.grid}
-                  <div class="mt-4 ms-2">
+                  <div class="mt-4">
                     <span class="font-bold">
                       {@html usage.grid.displayString}
-                      <span class="text-sm font-extralight">{usage.label} =</span><Badge color="dark" rounded class="ms-1 px-1 text-xs/4 font-light">{row.displayString}</Badge>  
+                      <span class="text-sm font-extralight">{usage.label} =</span><Badge color="dark" rounded class="ms-1 px-1 text-sm/4 font-light">{row.displayString}</Badge>  
                     </span>
                     <Grid {context}
                           gridUuid={usage.grid.uuid}

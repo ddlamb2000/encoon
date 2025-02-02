@@ -6,7 +6,7 @@
 </script>
 
 <tr>
-  <td class="bg-gray-100 font-bold">
+  <td class="bg-gray-100 font-bold border border-slate-200">
     Audit
     {#if audits.length > 1}
       <a href="#top" class="cursor-pointer font-light underline text-xs italic text-gray-500" onclick={(e) => {e.stopPropagation(); expanded = !expanded}}>
@@ -14,7 +14,7 @@
       </a>
     {/if}
   </td>
-  <td>
+  <td class="bg-gray-100 border border-slate-200">
     <ul>
       {#each audits as audit, auditIndex}
         {#if expanded || auditIndex === 0 }  

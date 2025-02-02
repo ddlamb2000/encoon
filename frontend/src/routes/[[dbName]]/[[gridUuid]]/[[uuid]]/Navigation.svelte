@@ -8,15 +8,20 @@
 <div class="relative flex items-center">
   <span class="ms-2 text-xl font-extrabold">
     <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
-    <span class="text-xs ms-1 font-light text-gray-600">{context.getContextUuid()}</span>
   </span>
-  <span class="ms-2 text-xl font-extrabold">
-    <Search size="md" class="py-1" placeholder="Prompt (Gemini)"
+  <span class="ms-2">
+    <Search size="md" class="py-1 font-light w-96" placeholder="Prompt (powered by Gemini)"
             bind:value={prompt}
             onclick={(e) => {e.stopPropagation()}}
             onkeyup={(e) => e.code === 'Enter' && context.prompt(prompt)} />
   </span>
   <span class="lg:flex ml-auto">
+    <span class="text-xs ms-1 mt-1 text-gray-600">{context.getContextUuid()}</span>
+    {#if context.rowsInMemory > 0 || context.gridsInMemory > 0}
+      <span class="text-xs mt-1 ms-2 me-2 py-0 text-gray-600">
+        | {context.rowsInMemory} rows in {context.gridsInMemory} grids
+      </span>
+    {/if}    
     {#if context.isStreaming}
       {#if context.isSending}
         <span transition:fade class="inline-flex items-center me-4">

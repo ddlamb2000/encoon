@@ -44,7 +44,7 @@
       {#if reference.owned === column.owned && reference.name === column.name}
         {#each reference.rows as referencedRow, indexReferencedRow}
           {#if indexReferencedRow > 0}<br/>{/if}
-          <Badge color="dark" rounded class="px-1 text-xs/4 font-light">
+          <Badge color="dark" rounded class="px-1 text-sm/4 font-light">
             <a href={"/" + context.dbName + "/" + referencedRow.gridUuid + "/" + referencedRow.uuid}
                 class="cursor-pointer underline"
                 onclick={() => context.navigateToGrid(referencedRow.gridUuid, referencedRow.uuid)}>
