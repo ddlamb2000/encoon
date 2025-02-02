@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Spinner, Badge } from 'flowbite-svelte'
+	import { Badge } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
