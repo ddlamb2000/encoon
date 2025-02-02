@@ -56,4 +56,4 @@
 <Search size="md" class="mt-1 mb-1 py-1 font-light w-96" placeholder="Prompt (powered by Gemini)"
         bind:value={prompt}
         onclick={(e) => {e.stopPropagation()}}
-        onkeyup={(e) => e.code === 'Enter' && context.prompt(prompt)} />
+        onkeyup={(e) => {if(e.code === 'Enter') {context.prompt(prompt); prompt = ""}}} />

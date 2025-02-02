@@ -29,8 +29,13 @@ type Configuration struct {
 }
 
 type AIConfiguration struct {
-	Model      string `yaml:"model"`
-	ApiKeyFile string `yaml:"apiKeyFile"`
+	Model             string  `yaml:"model"`
+	ApiKeyFile        string  `yaml:"apiKeyFile"`
+	Temperature       float32 `yaml:"temperature"`
+	TopP              float32 `yaml:"topP"`
+	TopK              int32   `yaml:"topK"`
+	MaxOutputTokens   int32   `yaml:"maxOutputTokens"`
+	SystemInstruction string  `yaml:"systemInstruction"`
 }
 
 type KafkaConfiguration struct {

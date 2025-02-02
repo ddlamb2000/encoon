@@ -15,6 +15,11 @@ jwtExpiration: 120 # Expiration (in minutes) of the JSON Web Token
 ai:
   model: "gemini-2.0-flash-exp" # AI model
   apiKeyFile: "/run/secrets/gemini_api_key_development" # File that includes Kay to get access AI API
+  temperature: 1.1 # Controls the randomness of the output
+  topP: 0.8 # maximum cumulative probability of tokens to consider when sampling
+  topK: 20 # The maximum number of tokens to consider when sampling
+  maxOutputTokens: 600 # The maximum number of tokens to include in a candidate
+  systemInstruction: "clear and concise" # "System prompt" that is a more forceful prompt to the model
 
 # Kafka configuration
 kafka:
