@@ -161,6 +161,10 @@ var getGridForOwnership = func(r ApiRequest, grid *model.Grid, row *model.Row) (
 
 // function is available for mocking
 var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string, enabledOnly bool) string {
+	revisionEmbedding := ""
+	if !grid.IsMetadata() {
+		revisionEmbedding = ",rows.revisionEmbedding "
+	}
 	columns := ""
 	for _, col := range grid.Columns {
 		if col.IsOwned() && col.IsAttribute() && col.Name != nil && *col.Name != "" {
@@ -176,6 +180,7 @@ var getRowsQueryForGridsApi = func(grid *model.Grid, uuid string, enabledOnly bo
 		"rows.updated, " +
 		"rows.updatedBy, " +
 		"rows.revision " +
+		revisionEmbedding +
 		"FROM " + grid.GetTableName() + " rows " +
 		getRowsWhereQueryForGridsApi(uuid) +
 		getEnabledCondition(enabledOnly) +
@@ -222,6 +227,9 @@ var getRowsQueryOutputForGridsApi = func(grid *model.Grid, row *model.Row) []any
 	output = append(output, &row.Updated)
 	output = append(output, &row.UpdatedBy)
 	output = append(output, &row.Revision)
+	if !grid.IsMetadata() {
+		output = append(output, &row.RevisionEmbedding)
+	}
 	return output
 }
 

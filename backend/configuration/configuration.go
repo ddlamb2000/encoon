@@ -36,6 +36,7 @@ type AIConfiguration struct {
 	TopK              int32   `yaml:"topK"`
 	MaxOutputTokens   int32   `yaml:"maxOutputTokens"`
 	SystemInstruction string  `yaml:"systemInstruction"`
+	EmbeddingModel    string  `yaml:"embeddingModel"`
 }
 
 type KafkaConfiguration struct {

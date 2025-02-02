@@ -27,3 +27,7 @@ func CalculateFileHash(fileName string) (string, error) {
 	sum := fmt.Sprintf("%x", hash.Sum(nil))
 	return sum, nil
 }
+
+func VectorToString(vector []float32) string {
+	return strings.Replace(fmt.Sprintf("%v", vector), " ", ",", -1)
+}

@@ -33,6 +33,10 @@ func (r ApiRequest) logAndReturnError(format string, a ...any) error {
 	return configuration.LogAndReturnError(r.p.DbName, r.p.UserName, format, a...)
 }
 
+func (r ApiRequest) logError(format string, a ...any) {
+	configuration.LogError(r.p.DbName, r.p.UserName, format, a...)
+}
+
 func (r ApiRequest) execContext(query string, args ...any) error {
 	_, err := r.db.ExecContext(r.ctx, query, args...)
 	return err

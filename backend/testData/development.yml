@@ -20,6 +20,7 @@ ai:
   topK: 20 # The maximum number of tokens to consider when sampling
   maxOutputTokens: 600 # The maximum number of tokens to include in a candidate
   systemInstruction: "clear and concise" # "System prompt" that is a more forceful prompt to the model
+  embeddingModel: "embedding-001" # Model that computes embeddings
 
 # Kafka configuration
 kafka:

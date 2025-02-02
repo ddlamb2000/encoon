@@ -16,39 +16,44 @@ const (
 )
 
 type Row struct {
-	GridUuid      string       `json:"gridUuid"`
-	Uuid          string       `json:"uuid"`
-	Revision      int64        `json:"revision"`
-	Enabled       bool         `json:"enabled"`
-	Created       *time.Time   `json:"created"`
-	CreatedBy     *string      `json:"createdBy"`
-	Updated       *time.Time   `json:"updated"`
-	UpdatedBy     *string      `json:"updatedBy"`
-	Text1         *string      `json:"text1,omitempty"`
-	Text2         *string      `json:"text2,omitempty"`
-	Text3         *string      `json:"text3,omitempty"`
-	Text4         *string      `json:"text4,omitempty"`
-	Text5         *string      `json:"text5,omitempty"`
-	Text6         *string      `json:"text6,omitempty"`
-	Text7         *string      `json:"text7,omitempty"`
-	Text8         *string      `json:"text8,omitempty"`
-	Text9         *string      `json:"text9,omitempty"`
-	Text10        *string      `json:"text10,omitempty"`
-	Int1          *int64       `json:"int1,omitempty"`
-	Int2          *int64       `json:"int2,omitempty"`
-	Int3          *int64       `json:"int3,omitempty"`
-	Int4          *int64       `json:"int4,omitempty"`
-	Int5          *int64       `json:"int5,omitempty"`
-	Int6          *int64       `json:"int6,omitempty"`
-	Int7          *int64       `json:"int7,omitempty"`
-	Int8          *int64       `json:"int8,omitempty"`
-	Int9          *int64       `json:"int9,omitempty"`
-	Int10         *int64       `json:"int10,omitempty"`
-	DisplayString string       `json:"displayString,omitempty"`
-	CanViewRow    bool         `json:"canViewRow"`
-	CanEditRow    bool         `json:"canEditRow"`
-	References    []*Reference `json:"references,omitempty"`
-	Audits        []*Audit     `json:"audits,omitempty"`
+	GridUuid          string       `json:"gridUuid"`
+	Uuid              string       `json:"uuid"`
+	Revision          int64        `json:"revision"`
+	Enabled           bool         `json:"enabled"`
+	Created           *time.Time   `json:"created"`
+	CreatedBy         *string      `json:"createdBy"`
+	Updated           *time.Time   `json:"updated"`
+	UpdatedBy         *string      `json:"updatedBy"`
+	Text1             *string      `json:"text1,omitempty"`
+	Text2             *string      `json:"text2,omitempty"`
+	Text3             *string      `json:"text3,omitempty"`
+	Text4             *string      `json:"text4,omitempty"`
+	Text5             *string      `json:"text5,omitempty"`
+	Text6             *string      `json:"text6,omitempty"`
+	Text7             *string      `json:"text7,omitempty"`
+	Text8             *string      `json:"text8,omitempty"`
+	Text9             *string      `json:"text9,omitempty"`
+	Text10            *string      `json:"text10,omitempty"`
+	Int1              *int64       `json:"int1,omitempty"`
+	Int2              *int64       `json:"int2,omitempty"`
+	Int3              *int64       `json:"int3,omitempty"`
+	Int4              *int64       `json:"int4,omitempty"`
+	Int5              *int64       `json:"int5,omitempty"`
+	Int6              *int64       `json:"int6,omitempty"`
+	Int7              *int64       `json:"int7,omitempty"`
+	Int8              *int64       `json:"int8,omitempty"`
+	Int9              *int64       `json:"int9,omitempty"`
+	Int10             *int64       `json:"int10,omitempty"`
+	DisplayString     string       `json:"displayString,omitempty"`
+	CanViewRow        bool         `json:"canViewRow"`
+	CanEditRow        bool         `json:"canEditRow"`
+	References        []*Reference `json:"references,omitempty"`
+	Audits            []*Audit     `json:"audits,omitempty"`
+	RevisionEmbedding int64        `json:"revisionEmbedding"`
+	EmbeddingString   string       `json:"embeddingString,omitempty"`
+	TokenCount        int64        `json:"tokenCount"`
+
+	Embedding []float32 `json:"-"`
 
 	TmpUuid string `json:"TmpUuid,omitempty"`
 }
@@ -216,4 +221,92 @@ func (row *Row) AppendRowValuesForSeedRowDb(values []any) []any {
 		values = append(values, row.Int10)
 	}
 	return values
+}
+
+func (row *Row) GetValueAsString(columnName string) string {
+	switch columnName {
+	case "text1":
+		if row.Text1 != nil {
+			return *row.Text1
+		}
+	case "text2":
+		if row.Text2 != nil {
+			return *row.Text2
+		}
+	case "text3":
+		if row.Text3 != nil {
+			return *row.Text3
+		}
+	case "text4":
+		if row.Text4 != nil {
+			return *row.Text4
+		}
+	case "text5":
+		if row.Text5 != nil {
+			return *row.Text5
+		}
+	case "text6":
+		if row.Text6 != nil {
+			return *row.Text6
+		}
+	case "text7":
+		if row.Text7 != nil {
+			return *row.Text7
+		}
+	case "text8":
+		if row.Text8 != nil {
+			return *row.Text8
+		}
+	case "text9":
+		if row.Text9 != nil {
+			return *row.Text9
+		}
+	case "text10":
+		if row.Text10 != nil {
+			return *row.Text10
+		}
+	case "int1":
+		if row.Int1 != nil {
+			return string(*row.Int1)
+		}
+	case "int2":
+		if row.Int2 != nil {
+			return string(*row.Int2)
+		}
+	case "int3":
+		if row.Int3 != nil {
+			return string(*row.Int3)
+		}
+	case "int4":
+		if row.Int4 != nil {
+			return string(*row.Int4)
+		}
+	case "int5":
+		if row.Int5 != nil {
+			return string(*row.Int5)
+		}
+	case "int6":
+		if row.Int6 != nil {
+			return string(*row.Int6)
+		}
+	case "int7":
+		if row.Int7 != nil {
+			return string(*row.Int7)
+		}
+	case "int8":
+		if row.Int8 != nil {
+			return string(*row.Int8)
+		}
+	case "int9":
+		if row.Int9 != nil {
+			return string(*row.Int9)
+		}
+	case "int10":
+		if row.Int10 != nil {
+			return string(*row.Int10)
+		}
+	default:
+		return ""
+	}
+	return ""
 }

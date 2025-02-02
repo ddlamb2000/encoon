@@ -35,6 +35,26 @@ func (grid *Grid) SetDisplayString(dbName string) {
 	}
 }
 
+func (grid *Grid) IsMetadata() bool {
+	switch grid.Uuid {
+	case UuidGrids:
+		return true
+	case UuidColumns:
+		return true
+	case UuidRelationships:
+		return true
+	case UuidMigrations:
+		return true
+	case UuidUsers:
+		return true
+	case UuidTransactions:
+		return true
+	default:
+		return false
+	}
+	return false
+}
+
 func (grid *Grid) GetTableName() string {
 	switch grid.Uuid {
 	case UuidGrids:

@@ -15,7 +15,7 @@ import (
 	"google.golang.org/api/option"
 )
 
-func readFileContent(dbName string, userUuid string, userName string, filePath string) string {
+func readFileContent(dbName string, userName string, filePath string) string {
 	dat, err := os.ReadFile(filePath)
 	if err != nil {
 		configuration.LogError(dbName, userName, "Can't read file %s: %v", filePath, err)
@@ -37,11 +37,11 @@ func getResponse(resp *genai.GenerateContentResponse) string {
 }
 
 func answerPrompt(dbName, userUuid, userName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey string, request ApiParameters) responseContent {
-	apiKey := readFileContent(dbName, userUuid, userName, configuration.GetConfiguration().AI.ApiKeyFile)
+	apiKey := readFileContent(dbName, userName, configuration.GetConfiguration().AI.ApiKeyFile)
 	if apiKey != "" {
 		configuration.Log(dbName, userName, "Access Gemini")
 		ctx := context.Background()
-		client, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
+		clientAI, err := genai.NewClient(ctx, option.WithAPIKey(apiKey))
 		if err != nil {
 			configuration.LogError(dbName, userName, "Can't connect to Gemini: %v", err)
 			return responseContent{
@@ -51,9 +51,9 @@ func answerPrompt(dbName, userUuid, userName, user, gridUuid, contextUuid, reque
 				TextMessage: err.Error(),
 			}
 		}
-		defer client.Close()
+		defer clientAI.Close()
 		configuration.Log(dbName, userName, "Request Gemini")
-		model := client.GenerativeModel(configuration.GetConfiguration().AI.Model)
+		model := clientAI.GenerativeModel(configuration.GetConfiguration().AI.Model)
 		model.SetTemperature(configuration.GetConfiguration().AI.Temperature)
 		model.SetTopP(configuration.GetConfiguration().AI.TopP)
 		model.SetTopK(configuration.GetConfiguration().AI.TopK)

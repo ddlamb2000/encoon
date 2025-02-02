@@ -128,3 +128,8 @@ Create topics for locators, auth and logging
 ## Gen AI
 
 https://developers.googleblog.com/en/introducing-genkit-for-go-build-scalable-ai-powered-apps-in-go/ 
+
+pgvector for Postgreql: https://github.com/pgvector/pgvector
+
+GenAI for Go: https://pkg.go.dev/github.com/google/generative-ai-go/genai#pkg-overview
+

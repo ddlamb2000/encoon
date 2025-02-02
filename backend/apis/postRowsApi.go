@@ -91,7 +91,7 @@ func PostGridsRows(ct context.Context, p ApiParameters, payload GridPost) GridRe
 			r.ctxChan <- GridResponse{Grid: grid, Err: r.logAndReturnError("Data not found.")}
 			return
 		}
-		r.ctxChan <- GridResponse{
+		response := GridResponse{
 			Err:                    err,
 			Grid:                   grid,
 			Rows:                   rowSet,
@@ -112,7 +112,11 @@ func PostGridsRows(ct context.Context, p ApiParameters, payload GridPost) GridRe
 			RowsDeleted:            payload.RowsDeleted,
 			ReferenceValuesAdded:   payload.ReferenceValuesAdded,
 			ReferenceValuesRemoved: payload.ReferenceValuesRemoved}
+		if !grid.IsMetadata() {
+			go postGridEmbeddings(ct, p, grid, response)
+		}
 		r.trace("postGridsRows() - Done")
+		r.ctxChan <- response
 	}()
 	select {
 	case <-r.ctx.Done():

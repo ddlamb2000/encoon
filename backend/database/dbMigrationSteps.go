@@ -166,6 +166,12 @@ var getMigrationSteps = func(dbName string) map[int]string {
 			"'" + password + "')",
 
 		110: "CREATE EXTENSION IF NOT EXISTS vector",
+
+		111: "ALTER TABLE rows ADD COLUMN embedding vector(768)",
+
+		112: "ALTER TABLE rows ADD COLUMN revisionEmbedding integer NOT NULL DEFAULT 0",
+
+		113: "ALTER TABLE rows ADD COLUMN tokenCount integer NOT NULL DEFAULT 0",
 	}
 }
 
