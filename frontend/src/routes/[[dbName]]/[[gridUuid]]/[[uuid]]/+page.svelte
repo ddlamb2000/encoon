@@ -8,10 +8,11 @@
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   import SingleRow from './SingleRow.svelte'
-  import GridList from './GridList.svelte'
+  import LeftNavigation from './LeftNavigation.svelte'
   import FocusArea from './FocusArea.svelte'
   import Navigation from './Navigation.svelte'
   import TopBar from './TopBar.svelte'
+  import AIPrompt from './AIPrompt.svelte'
   import '$lib/app.css'
   
   let { data }: { data: PageData } = $props()
@@ -32,23 +33,21 @@
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    <Navigation {context} {userPreferences} appName={data.appName}/>
+    <Navigation {context} appName={data.appName}/>
   </nav>
   <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
       <div class="p-1 overflow-y-auto overflow-x-hidden">
-        <GridList {context} {userPreferences} />
+        <LeftNavigation {context} {userPreferences} />
       </div>
     </aside>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="h-12 overflow-y-auto bg-gray-200">
+      <div class="h-12 ps-1 overflow-y-auto bg-gray-100">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <TopBar {context} />
         {/if}
       </div>
-      <aside class="p-1 h-10 overflow-y-auto bg-gray-100">
-        <FocusArea {context} />
-      </aside>
+      <aside class="p-1 h-10 overflow-y-auto bg-gray-50"><FocusArea {context} /></aside>
       <div class="p-2 bg-white grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
@@ -66,8 +65,13 @@
           {data.errorMessage}
         {/if}
       </div>
+      {#if userPreferences.showPrompt}
+        <footer transition:slide class="p-2 max-h-64 overflow-y-auto bg-gray-200">
+          <AIPrompt {context} />
+        </footer>
+      {/if}
       {#if userPreferences.showEvents}
-        <footer transition:slide class="p-2 max-h-48 overflow-y-auto bg-gray-200">
+        <footer transition:slide class="p-2 max-h-64 overflow-y-auto bg-gray-200">
           <Info {context} />
         </footer>
       {/if}

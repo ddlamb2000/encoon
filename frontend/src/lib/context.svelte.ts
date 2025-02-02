@@ -14,7 +14,6 @@ export class Context extends ContextBase {
   isStreaming: boolean = $state(false)
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #hearbeatId: any = null
-  #messageTimerId: any = null
   url: string = $state("")
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
@@ -534,6 +533,7 @@ export class Context extends ContextBase {
                   messageKey: json.key,
                   action: message.action,
                   actionText: message.actionText,
+                  responseNumber: message.responseNumber,
                   textMessage: message.textMessage,
                   gridUuid: message.gridUuid,
                   status: message.status,
@@ -647,14 +647,12 @@ export class Context extends ContextBase {
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
     this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
-    this.#messageTimerId = setInterval(() => { this.controlMessages() }, 2000)
     for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {
     this.isStreaming = false
     if(this.#hearbeatId) clearInterval(this.#hearbeatId)
-    if(this.#messageTimerId) clearInterval(this.#messageTimerId)
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 }

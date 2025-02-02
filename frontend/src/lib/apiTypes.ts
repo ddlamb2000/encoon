@@ -107,6 +107,7 @@ export interface RequestContent {
 export interface ResponseContent {
   action: string
   actionText?: string
+  responseNumber?: number
   status: string
   gridUuid?: string
   columnUuid?: string
@@ -144,6 +145,7 @@ export interface TransactionItem {
   messageKey: string,
   action?: string
   actionText?: string
+  responseNumber?: number
   textMessage?: string
   status?: string
   gridUuid?: string

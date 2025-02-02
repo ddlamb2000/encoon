@@ -3,7 +3,6 @@
 	import { Dropdown, Spinner } from 'flowbite-svelte'
   import Reference from './Reference.svelte'
   import PromptColumnType from './PromptColumnType.svelte'
-  import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   let { context = $bindable(),

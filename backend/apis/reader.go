@@ -120,10 +120,10 @@ func handleMessage(dbName string, message kafka.Message) {
 		} else if request.Action == ActionAuthentication {
 			response = handleAuthentication(dbName, request)
 		} else {
-			userUuid, user, response = validMessage(messageKey, dbName, tokenString, request)
+			userUuid, user, response = validMessage(dbName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, tokenString, request)
 		}
 	}
-	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, string(message.Key), response)
+	WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, response)
 }
 
 // function is available for mocking
@@ -151,7 +151,7 @@ func getDataFromHeaders(message kafka.Message) (string, string, string, string) 
 	return requestInitiatedOn, tokenString, gridUuid, contextUuid
 }
 
-func validMessage(messageKey string, dbName string, tokenString string, request ApiParameters) (string, string, responseContent) {
+func validMessage(dbName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, tokenString string, request ApiParameters) (string, string, responseContent) {
 	token, err := jwtParse(tokenString, getTokenParsingHandler(dbName))
 	if err != nil {
 		return "", "", invalidAuthorization(messageKey, dbName, request)
@@ -163,7 +163,7 @@ func validMessage(messageKey string, dbName string, tokenString string, request 
 			if tokenExpired {
 				return "", "", expired(messageKey, dbName, user, request)
 			} else {
-				return userUuid, user, handleActions(dbName, userUuid, user, request)
+				return userUuid, user, handleActions(dbName, userUuid, user, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, request)
 			}
 		} else {
 			return "", "", invalidToken(messageKey, dbName, request)
@@ -199,7 +199,7 @@ func invalidMessage(request ApiParameters) responseContent {
 	}
 }
 
-func handleActions(dbName string, userUuid string, userName string, request ApiParameters) responseContent {
+func handleActions(dbName, userUuid, userName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey string, request ApiParameters) responseContent {
 	if request.Action == ActionLoad {
 		return executeActionGrid(dbName, userUuid, userName, request, GetGridsRows)
 	} else if request.Action == ActionChangeGrid {
@@ -207,7 +207,7 @@ func handleActions(dbName string, userUuid string, userName string, request ApiP
 	} else if request.Action == ActionLocateGrid {
 		return locate(request)
 	} else if request.Action == ActionPrompt {
-		return answerPrompt(dbName, userUuid, userName, request)
+		return answerPrompt(dbName, userUuid, userName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, request)
 	} else {
 		return invalidAction(dbName, request)
 	}

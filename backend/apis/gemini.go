@@ -11,6 +11,7 @@ import (
 
 	"d.lambert.fr/encoon/configuration"
 	"github.com/google/generative-ai-go/genai"
+	"google.golang.org/api/iterator"
 	"google.golang.org/api/option"
 )
 
@@ -37,7 +38,7 @@ func getResponse(resp *genai.GenerateContentResponse) string {
 	return response.String()
 }
 
-func answerPrompt(dbName string, userUuid string, userName string, request ApiParameters) responseContent {
+func answerPrompt(dbName, userUuid, userName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey string, request ApiParameters) responseContent {
 	apiKey := readFileContent(dbName, userUuid, userName, configuration.GetConfiguration().AI.ApiKeyFile)
 	if apiKey != "" {
 		ctx := context.Background()
@@ -54,24 +55,35 @@ func answerPrompt(dbName string, userUuid string, userName string, request ApiPa
 				}
 			}
 		}
-		configuration.Log("", "", "Access Gemini for generating content")
 		model := client.GenerativeModel(configuration.GetConfiguration().AI.Model)
-		resp, err := model.GenerateContent(ctx, genai.Text(request.ActionText))
-		if err != nil {
-			configuration.LogError(dbName, userName, "Gemini can't generated content: %v", err)
-			return responseContent{
-				Status:      FailedStatus,
-				Action:      request.Action,
-				ActionText:  request.ActionText,
-				TextMessage: err.Error(),
+		iter := model.GenerateContentStream(ctx, genai.Text(request.ActionText))
+		for responseNumber := 1; ; responseNumber++ {
+			resp, err := iter.Next()
+			if err == iterator.Done {
+				break
 			}
+			if err != nil {
+				configuration.LogError(dbName, userName, "Error when retrieving content stream: %v", err)
+				return responseContent{
+					Status:      FailedStatus,
+					Action:      request.Action,
+					ActionText:  request.ActionText,
+					TextMessage: err.Error(),
+				}
+			}
+			response := responseContent{
+				Status:         SuccessStatus,
+				Action:         request.Action,
+				ActionText:     request.ActionText,
+				ResponseNumber: int64(responseNumber),
+				TextMessage:    getResponse(resp),
+			}
+			WriteMessage(dbName, userUuid, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey, response)
 		}
-		configuration.Log(dbName, userName, "Gemini content generated")
 		return responseContent{
-			Status:      SuccessStatus,
-			Action:      request.Action,
-			ActionText:  request.ActionText,
-			TextMessage: getResponse(resp),
+			Status:     SuccessStatus,
+			Action:     request.Action,
+			ActionText: request.ActionText,
 		}
 	} else {
 		return responseContent{
