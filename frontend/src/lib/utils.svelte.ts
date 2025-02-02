@@ -20,7 +20,9 @@ export const debounce = <T extends unknown[], U>(callback: (...args: T) => Promi
 }
 
 export const convertStreamTextToHtml = (input: string) => {
-  const exp = /\*\*([^\*]*)\*\*/g
-  const replaceBold = (match: string, p1: string) => "<strong>" + p1 + "</strong>"
-  return input.replaceAll('\n', "<br/>").replaceAll(exp, replaceBold)
+  const expBold = /\*\*([^\*]*)\*\*/g
+  const replaceBold = (match: string, p1: string) => `<span class="font-bold">` + p1 + `</span>`
+  const expCode = /`([^`]*)`/g
+  const replaceCode = (match: string, p1: string) => `<span class="font-mono text-xs">` + p1 + `</span>`
+  return input.replaceAll('\n', "<br/>").replaceAll(expBold, replaceBold).replaceAll(expCode, replaceCode)
 }

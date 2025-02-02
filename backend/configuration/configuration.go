@@ -37,6 +37,7 @@ type AIConfiguration struct {
 	MaxOutputTokens   int32   `yaml:"maxOutputTokens"`
 	SystemInstruction string  `yaml:"systemInstruction"`
 	EmbeddingModel    string  `yaml:"embeddingModel"`
+	VectorDistance    int     `yaml:"vectorDistance"`
 }
 
 type KafkaConfiguration struct {
