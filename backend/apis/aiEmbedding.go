@@ -38,21 +38,25 @@ func postGridEmbeddings(ct context.Context, p ApiParameters, grid *model.Grid, r
 func (response *GridResponse) generateEmbedding(r ApiRequest, grid *model.Grid, clientAI *genai.Client) error {
 	for _, row := range response.Rows {
 		if row.Revision > row.RevisionEmbedding {
-			row.EmbeddingString = "{URI_REFERENCE:" + r.p.DbName + "/" + row.GridUuid + "/" + row.Uuid + "} "
-			row.EmbeddingString = row.EmbeddingString + response.Grid.DisplayString + " | "
+			row.EmbeddingString = "{URI_REFERENCE:" + r.p.DbName + "/" + row.GridUuid + "/" + row.Uuid + "}\n"
+			row.EmbeddingString = row.EmbeddingString + "(" + response.Grid.DisplayString + ")\n"
 			for _, col := range response.Grid.Columns {
 				if *col.TypeUuid == model.UuidTextColumnType || *col.TypeUuid == model.UuidIntColumnType {
 					colAsString := row.GetValueAsString(*col.Name)
 					if colAsString != "" {
-						row.EmbeddingString = row.EmbeddingString + *col.Label + ": " + colAsString + ", "
+						row.EmbeddingString = row.EmbeddingString + *col.Label + ": " + colAsString + "\n"
 					}
 				}
 			}
 			for _, ref := range row.References {
 				row.EmbeddingString = row.EmbeddingString + ref.Label + ": "
-				for _, refRow := range ref.Rows {
-					row.EmbeddingString = row.EmbeddingString + refRow.DisplayString + "; "
+				for indexRefRow, refRow := range ref.Rows {
+					if indexRefRow > 0 {
+						row.EmbeddingString = row.EmbeddingString + " ; "
+					}
+					row.EmbeddingString = row.EmbeddingString + refRow.DisplayString
 				}
+				row.EmbeddingString = row.EmbeddingString + "\n"
 			}
 			if err := generateEmbeddingWithModel(r, grid, row, clientAI); err != nil {
 				return err

@@ -35,7 +35,7 @@
   </nav>
   <section class={"main-container grid "}>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
-      <div class="h-12 ps-1 overflow-y-auto bg-gray-100">
+      <div class="h-10 ps-1 overflow-y-auto bg-gray-100">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <TopBar {context} />
         {/if}

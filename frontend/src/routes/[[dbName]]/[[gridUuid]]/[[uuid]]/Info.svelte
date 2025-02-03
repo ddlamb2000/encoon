@@ -24,13 +24,13 @@
                     {message.request.actionText}
                   </Badge>
                 {/if}
-                {#if message.request !== undefined && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
+                {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
               </p>
             </div>
           </span>
         </li>
       {:else if message.response}
-        <li transition:fade>
+        <li transition:fade class="ms-2">
           <span class="flex">
             {#if message.response.sameContext}
               <span class="flex"><Icon.CodePullRequestOutline color={message.response.status === metadata.SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>
@@ -48,11 +48,11 @@
                 <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
                   {message.response.status}
                 </Badge>
-                {#if message.response.textMessage}[{message.response.textMessage}]{/if}
+                {#if message.response.textMessage}{message.response.textMessage}{/if}
                 {#if message.response.elapsedMs > 0}
                   <Badge color="dark" rounded class="ms-1 px-2.5 py-0.5 text-xs">
                     {convertMsToText(message.response.elapsedMs)}
-                    {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}              
+                    {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}
                   </Badge>
                 {/if}
               </p>

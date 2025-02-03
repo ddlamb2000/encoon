@@ -8,7 +8,7 @@
   {#if set.grid}
     <Button outline pill
             href={"/" + context.dbName + "/" + set.gridUuid}
-            size="xs" class="mt-1 me-1 h-10 shadow-lg relative"
+            size="xs" class="mt-1 me-1 h-8 shadow-lg relative"
             disabled={set.filterColumnName}
             color={context.gridUuid === set.gridUuid && context.uuid === (set.uuid ?? "") ? "dark" : "light"}
             onclick={() => context.navigateToGrid(set.grid.uuid, set.uuid)}>

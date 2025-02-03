@@ -2,7 +2,6 @@
 	import { Badge, Search } from 'flowbite-svelte'
   import { fade, slide } from 'svelte/transition'
   import DateTime from './DateTime.svelte'
-  import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
   import { convertMsToText } from '$lib/utils.svelte.ts'
   import autoscroll from '$lib/autoscroll'
@@ -18,23 +17,19 @@
     const replaceReference = (match: string, p1: string, p2: string, p3: string) => {
       return `<a data-sveltekit-reload href="/${p1}/${p2}/${p3}" `
               + `dbName="${p1}" gridUuid="${p2}" uuid="${p3}" `
-              + `class="cursor-pointer underline text-blue-800 hover:bg-gray-100 dark:hover:bg-gray-600">`
-              + `<span class="inline-flex">`
-              + `Open`
-              + `</span>`
+              + `class="text-xs/4 font-light text-blue-700 hover:bg-blue-200">`
+              + `Show`
               + `</a>`
     }      
-    return input
-            .replaceAll('\n', "<br/>")
-            .replaceAll(expBold, replaceBold)
-            .replaceAll(expReference, replaceReference)
-            .replaceAll(expCode, replaceCode)
+    return input.replaceAll('\n', "<br/>")
+                .replaceAll(expBold, replaceBold)
+                .replaceAll(expReference, replaceReference)
+                .replaceAll(expCode, replaceCode)
   }  
 </script>
 
 <footer transition:slide class="p-2 h-64 bg-gray-200 border-t-2 border-gray-500">
-  <Search size="md" class="py-1 w-full" placeholder={`Prompt ${appName}`}
-          bind:value={prompt}
+  <Search bind:value={prompt} size="md" class="py-1 w-full" placeholder={`Prompt ${appName}`}
           onclick={(e) => {e.stopPropagation()}}
           onkeyup={(e) => {
             if(e.code === 'Enter') {
@@ -47,31 +42,25 @@
     <ul>
       {#each context.messageStack as message}
         {#if message.request && message.request.action === metadata.ActionPrompt}
-          <li transition:fade class="text-sm font-normal">
+          <li transition:fade>
             {#if message.request.actionText}
-              <Badge color="blue" rounded class="px-2.5 py-0.5">
-                <Icon.AnnotationOutline class="w-4 h-4" />
+              <Badge color="blue" rounded class="px-2.5 py-0.5 text-sm font-bold">
                 {message.request.actionText}
               </Badge>
             {/if}
           </li>
-        {:else if message.response && message.response.action === metadata.ActionPrompt}
-          <li transition:fade class="text-sm font-normal ms-4">
-            <Badge color="dark" rounded class="ms-1 me-1 px-0.5 py-0.5">
-              {#if message.response.sameContext}
-              <span class="flex"><Icon.CodePullRequestOutline color={message.response.status === metadata.SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>
-              {:else}
-              <Icon.DownloadOutline color={message.response.status === metadata.SuccessStatus ? "orange" : "red"} class="w-4 h-4" />
-              {/if}
-              {convertMsToText(message.response.elapsedMs)}
-              {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}
-            </Badge>
-            <div class="ms-1.5">
-              {#if message.response.actionText && message.response.textMessage}
+        {:else if message.response && message.response.sameContext && message.response.action === metadata.ActionPrompt}
+          {#if message.response.actionText && message.response.textMessage}
+            <li transition:fade class="text-sm font-normal ms-2 mb-4">
+              <div class="ms-1.5">
                 {@html convertStreamTextToHtml(message.response.textMessage)}
-              {/if}
-            </div>
-          </li>        
+              </div>
+              <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="ms-1 me-1 px-0.5 py-0.5">
+                {convertMsToText(message.response.elapsedMs)}
+              </Badge>
+              {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}
+            </li>
+            {/if}
         {/if}
       {/each}
     </ul>

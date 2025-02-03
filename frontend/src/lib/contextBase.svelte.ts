@@ -6,7 +6,7 @@ import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 
-const messageStackLimit = 100
+const messageStackLimit = 500
 
 export class ContextBase {
   user: User
@@ -66,23 +66,23 @@ export class ContextBase {
   }
 
   trackResponse = (response: TransactionItem) => {
-    // Compaction of the messageStack
     const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
-    if(response.action === metadata.ActionPrompt && response.responseNumber && response.responseNumber > 0) {
-      if(responseIndex >= 0
-          && this.messageStack[responseIndex].response
-          && this.messageStack[responseIndex].response.textMessage) {
-        this.messageStack[responseIndex].response.textMessage = this.messageStack[responseIndex].response.textMessage + response.textMessage
-        this.messageStack[responseIndex].response.dateTime = response.dateTime
-        this.messageStack[responseIndex].response.elapsedMs = response.elapsedMs
+    if(response.action === metadata.ActionPrompt) {
+      if(response.textMessage) {
+        if(responseIndex >= 0) {
+          if(this.messageStack[responseIndex].response && this.messageStack[responseIndex].response.textMessage) {
+            this.messageStack[responseIndex].response.textMessage = this.messageStack[responseIndex].response.textMessage + response.textMessage
+            this.messageStack[responseIndex].response.dateTime = response.dateTime
+            this.messageStack[responseIndex].response.elapsedMs = response.elapsedMs
+          }
+        }
+        else this.messageStack.push({response : response})
       }
-      else this.messageStack.push({response : response})
     }
-    else if(response.action !== metadata.ActionPrompt) {
-      if(responseIndex >= 0) this.messageStack.splice(responseIndex, 1)
+    else {
       this.messageStack.push({response : response})
     }
-    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 1)
+    if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 25)
   }
 
   getGridLastResponse = () => {
