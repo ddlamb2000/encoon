@@ -202,13 +202,22 @@ func getRowSetForEmbeddingMatchingPrompt(r ApiRequest, vector []float32) ([]mode
 		if err != nil {
 			return nil, 0, err
 		}
-		rows = append(rows, *row)
+		grid, err := getGridForGridsApi(r, row.GridUuid)
+		if err != nil {
+			return nil, 0, err
+		}
+		canViewRows, _, _, _ := grid.GetViewEditAccessFlags(r.p.UserUuid)
+		if canViewRows {
+			rows = append(rows, *row)
+		}
 	}
 	return rows, len(rows), nil
 }
 
 var getRowsQueryForEmbeddingMatchingPrompt = func() string {
-	return "SELECT rows.embeddingText " +
+	return "SELECT rows.uuid, " +
+		"rows.gridUuid, " +
+		"rows.embeddingText " +
 		"FROM rows " +
 		"WHERE enabled = true " +
 		"AND embedding <-> $1 < $2"
@@ -224,6 +233,8 @@ var getRowsQueryParametersForEmbeddingMatchingPrompt = func(vector []float32) []
 
 var getRowsQueryOutputForEmbeddingMatchingPrompt = func(row *model.Row) []any {
 	output := make([]any, 0)
+	output = append(output, &row.Uuid)
+	output = append(output, &row.GridUuid)
 	output = append(output, &row.EmbeddingString)
 	return output
 }

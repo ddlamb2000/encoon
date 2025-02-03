@@ -39,7 +39,7 @@ func (response *GridResponse) generateEmbedding(r ApiRequest, grid *model.Grid, 
 	for _, row := range response.Rows {
 		if row.Revision > row.RevisionEmbedding {
 			row.EmbeddingString = "{URI_REFERENCE:" + r.p.DbName + "/" + row.GridUuid + "/" + row.Uuid + "}\n"
-			row.EmbeddingString = row.EmbeddingString + "(" + response.Grid.DisplayString + ")\n"
+			row.EmbeddingString = row.EmbeddingString + response.Grid.DisplayString + "\n"
 			for _, col := range response.Grid.Columns {
 				if *col.TypeUuid == model.UuidTextColumnType || *col.TypeUuid == model.UuidIntColumnType {
 					colAsString := row.GetValueAsString(*col.Name)

@@ -15,8 +15,8 @@
     const replaceCode = (match: string, p1: string) => `<span class="font-mono text-xs">${p1}</span>`
     const expReference = /\{URI_REFERENCE:\s?(\S+)\/(\S+)\/(\S+)\}/g
     const replaceReference = (match: string, p1: string, p2: string, p3: string) => {
-      return `<a data-sveltekit-reload href="/${p1}/${p2}/${p3}" `
-              + `dbName="${p1}" gridUuid="${p2}" uuid="${p3}" `
+      return `<a href="/${p1}/${p2}/${p3}" `
+              // + `dbName="${p1}" gridUuid="${p2}" uuid="${p3}" `
               + `class="text-xs/4 font-light text-blue-700 hover:bg-blue-200">`
               + `Show`
               + `</a>`
