@@ -1,6 +1,8 @@
 <script lang="ts">
-  import { Button, Indicator, Search } from 'flowbite-svelte'
+  import { Button, Indicator } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
+  import * as Icon from 'flowbite-svelte-icons'
+  import * as metadata from "$lib/metadata.svelte.ts"
   let { context, appName, userPreferences } = $props()
   let prompt = $state("")
 </script>
@@ -11,16 +13,23 @@
   </span>
   {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
     <span transition:fade class="inline-flex items-center ms-10 me-4">
-      <Search size="md" class="mt-1 mb-1 py-1 font-light w-96" placeholder="Prompt (powered by Gemini)"
-              bind:value={prompt}
-              onclick={(e) => {e.stopPropagation()}}
-              onkeyup={(e) => {
-                if(e.code === 'Enter') {
-                  context.prompt(prompt)
-                  prompt = ""
-                  userPreferences.showPrompt = true
-                }
-              }} />
+      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" color="green"
+              onclick={() => context.navigateToGrid(metadata.UuidGrids, "", true, "relationship3", metadata.UuidGrids, context.user.getUserUuid())}>
+        <Icon.GridOutline />
+      </Button>
+      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" color="blue" onclick={() => context.newGrid()}>  
+        <Icon.CirclePlusOutline />
+      </Button>
+      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" 
+            color={userPreferences.showPrompt ? "dark" : "light"}
+            onclick={() => userPreferences.toggleShowPrompt()}>
+        <Icon.WandMagicSparklesOutline />
+      </Button>
+      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg"
+            color={userPreferences.showEvents ? "dark" : "light"}
+            onclick={() => userPreferences.toggleShowEvents()}>
+        <Icon.MessagesOutline />
+      </Button>
     </span>
   {/if}
   <span class="lg:flex ml-auto">

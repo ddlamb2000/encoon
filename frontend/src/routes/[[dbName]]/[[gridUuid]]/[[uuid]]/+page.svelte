@@ -7,7 +7,6 @@
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
   import SingleRow from './SingleRow.svelte'
-  import LeftNavigation from './LeftNavigation.svelte'
   import FocusArea from './FocusArea.svelte'
   import Navigation from './Navigation.svelte'
   import TopBar from './TopBar.svelte'
@@ -34,12 +33,7 @@
   <nav class="p-2 global header bg-gray-900 text-gray-100">
     <Navigation {context} appName={data.appName} {userPreferences}/>
   </nav>
-  <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
-    <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
-      <div class="p-1 overflow-y-auto overflow-x-hidden">
-        <LeftNavigation {context} {userPreferences} />
-      </div>
-    </aside>
+  <section class={"main-container grid "}>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-12 ps-1 overflow-y-auto bg-gray-100">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
@@ -47,7 +41,7 @@
         {/if}
       </div>
       <aside class="p-1 h-10 overflow-y-auto bg-gray-50"><FocusArea {context} /></aside>
-      <div class="p-2 bg-white grid overflow-auto">
+      <div class="ps-4 bg-white grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
             {#if context.hasDataSet() && context.gridUuid !== undefined && context.gridUuid !== ""}
@@ -65,7 +59,7 @@
         {/if}
       </div>
       {#if userPreferences.showPrompt}
-        <AIPrompt {context} />
+        <AIPrompt {context} appName={data.appName} {userPreferences} />
       {:else if userPreferences.showEvents}
         <Info {context} />
       {/if}
