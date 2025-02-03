@@ -113,8 +113,7 @@ func getPromptWithContext(rowSetCount int, rowSet []model.Row, question string) 
 		return question
 	} else {
 		prompt := "Answer the following question based on the provided context:\n"
-		prompt = prompt + "\n\n"
-		prompt = prompt + "Question: " + question + "\n\n"
+		prompt = prompt + "Question: " + question + "\n"
 		prompt = prompt + "Context:\n"
 		for _, row := range rowSet {
 			prompt = prompt + row.EmbeddingString + "\n"

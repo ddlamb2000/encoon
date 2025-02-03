@@ -4,10 +4,32 @@
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
-  import { convertStreamTextToHtml, convertMsToText } from '$lib/utils.svelte.ts'
+  import { convertMsToText } from '$lib/utils.svelte.ts'
   import autoscroll from '$lib/autoscroll'
   let { context, appName, userPreferences } = $props()
   let prompt = $state("")
+
+  const convertStreamTextToHtml = (input: string) => {
+    const expBold = /\*\*([^\*]*)\*\*/g
+    const replaceBold = (match: string, p1: string) => `<span class="font-bold">${p1}</span>`
+    const expCode = /`([^`]*)`/g
+    const replaceCode = (match: string, p1: string) => `<span class="font-mono text-xs">${p1}</span>`
+    const expReference = /\{URI_REFERENCE:\s?(\S+)\/(\S+)\/(\S+)\}/g
+    const replaceReference = (match: string, p1: string, p2: string, p3: string) => {
+      return `<a data-sveltekit-reload href="/${p1}/${p2}/${p3}" `
+              + `dbName="${p1}" gridUuid="${p2}" uuid="${p3}" `
+              + `class="cursor-pointer underline text-blue-800 hover:bg-gray-100 dark:hover:bg-gray-600">`
+              + `<span class="inline-flex">`
+              + `Open`
+              + `</span>`
+              + `</a>`
+    }      
+    return input
+            .replaceAll('\n', "<br/>")
+            .replaceAll(expBold, replaceBold)
+            .replaceAll(expReference, replaceReference)
+            .replaceAll(expCode, replaceCode)
+  }  
 </script>
 
 <footer transition:slide class="p-2 h-64 bg-gray-200 border-t-2 border-gray-500">
