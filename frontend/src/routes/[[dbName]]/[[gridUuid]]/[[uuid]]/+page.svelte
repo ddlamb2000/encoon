@@ -1,6 +1,5 @@
 <script  lang="ts">
   import type { PageData } from './$types'
-  import { slide } from 'svelte/transition'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from '$lib/context.svelte.ts'
   import { UserPreferences } from '$lib/userPreferences.svelte.ts'
@@ -66,14 +65,9 @@
         {/if}
       </div>
       {#if userPreferences.showPrompt}
-        <footer transition:slide class="p-2 max-h-64 overflow-y-auto bg-gray-200">
-          <AIPrompt {context} />
-        </footer>
-      {/if}
-      {#if userPreferences.showEvents}
-        <footer transition:slide class="p-2 max-h-64 overflow-y-auto bg-gray-200">
-          <Info {context} />
-        </footer>
+        <AIPrompt {context} />
+      {:else if userPreferences.showEvents}
+        <Info {context} />
       {/if}
     </section>
   </section>
