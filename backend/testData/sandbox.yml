@@ -13,10 +13,10 @@ ai:
   temperature: 1.1
   topP: 0.8
   topK: 20
-  maxOutputTokens: 600
+  maxOutputTokens: 2000
   systemInstruction: "clear and concise"
   embeddingModel: "embedding-001"
-  vectorDistance: 3
+  vectorDistance: 2
 kafka:
   brokers: broker1:19092
   groupID: backend-encoon

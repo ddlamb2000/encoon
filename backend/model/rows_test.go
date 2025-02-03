@@ -329,3 +329,71 @@ func TestAppendRowValuesForSeedRowDb(t *testing.T) {
 		})
 	}
 }
+
+func TestRowGetValueAsString(t *testing.T) {
+	tests := []struct {
+		test       string
+		columnName string
+		expect     string
+	}{
+		{"1", "text1", "A"},
+		{"2", "text2", "B"},
+		{"3", "text3", "C"},
+		{"4", "text4", "A"},
+		{"5", "text5", "B"},
+		{"6", "text6", "C"},
+		{"7", "text7", "A"},
+		{"8", "text8", "B"},
+		{"9", "text9", "C"},
+		{"10", "text10", "A"},
+		{"11", "int1", "1"},
+		{"12", "int2", "2"},
+		{"13", "int3", "3"},
+		{"14", "int4", "1"},
+		{"15", "int5", "2"},
+		{"16", "int6", "3"},
+		{"17", "int7", "1"},
+		{"18", "int8", "2"},
+		{"19", "int9", "3"},
+		{"20", "int10", "1"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.test, func(t *testing.T) {
+			text1 := "A"
+			text2 := "B"
+			text3 := "C"
+			i1 := int64(1)
+			i2 := int64(2)
+			i3 := int64(3)
+			row := Row{
+				Uuid:     "12345",
+				GridUuid: "56789",
+				Text1:    &text1,
+				Text2:    &text2,
+				Text3:    &text3,
+				Text4:    &text1,
+				Text5:    &text2,
+				Text6:    &text3,
+				Text7:    &text1,
+				Text8:    &text2,
+				Text9:    &text3,
+				Text10:   &text1,
+				Int1:     &i1,
+				Int2:     &i2,
+				Int3:     &i3,
+				Int4:     &i1,
+				Int5:     &i2,
+				Int6:     &i3,
+				Int7:     &i1,
+				Int8:     &i2,
+				Int9:     &i3,
+				Int10:    &i1,
+				Enabled:  false,
+			}
+			got := row.GetValueAsString(tt.columnName)
+			if got != tt.expect {
+				t.Errorf(`Got row.GetValueAsString=%v instead of %v.`, got, tt.expect)
+			}
+		})
+	}
+}
