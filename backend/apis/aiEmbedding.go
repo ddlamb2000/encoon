@@ -66,9 +66,9 @@ func generateEmbeddingWithModel(r ApiRequest, grid *model.Grid, row model.Row, c
 	row.RevisionEmbedding = row.Revision
 	em := clientAI.EmbeddingModel(configuration.GetConfiguration().AI.EmbeddingModel)
 	em.TaskType = genai.TaskTypeRetrievalDocument
-	res, err := em.EmbedContentWithTitle(r.ctx, row.DisplayString, genai.Text(row.EmbeddingString))
+	res, err := em.EmbedContent(r.ctx, genai.Text(row.EmbeddingString))
 	if err != nil {
-		return r.logAndReturnError("Issue when generating embedding with Gemini: %v", err)
+		return r.logAndReturnError("Issue when generating embedding with Gemini for grid %s and row %s with embedding %s: %v", grid.Uuid, row.Uuid, row.EmbeddingString, err)
 	}
 	row.Embedding = res.Embedding.Values
 	row.TokenCount = int64(len(res.Embedding.Values))

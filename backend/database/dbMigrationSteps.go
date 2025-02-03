@@ -172,6 +172,8 @@ var getMigrationSteps = func(dbName string) map[int]string {
 		112: "ALTER TABLE rows ADD COLUMN revisionEmbedding integer NOT NULL DEFAULT 0",
 
 		113: "ALTER TABLE rows ADD COLUMN tokenCount integer NOT NULL DEFAULT 0",
+
+		114: "ALTER TABLE rows ADD COLUMN embeddingText text NOT NULL DEFAULT ''",
 	}
 }
 

@@ -26,3 +26,8 @@ export const convertStreamTextToHtml = (input: string) => {
   const replaceCode = (match: string, p1: string) => `<span class="font-mono text-xs">` + p1 + `</span>`
   return input.replaceAll('\n', "<br/>").replaceAll(expBold, replaceBold).replaceAll(expCode, replaceCode)
 }
+
+export const convertMsToText = (input: number) => {
+  if(input > 1000) return `${input/1000} s`
+  else return `${input} ms`
+}

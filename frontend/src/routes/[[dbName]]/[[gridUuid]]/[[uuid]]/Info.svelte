@@ -4,6 +4,7 @@
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
+  import { convertMsToText } from '$lib/utils.svelte.ts'
   let { context } = $props()
 </script>
 
@@ -11,7 +12,7 @@
   {#each context.messageStack as message}
     {#if message.request}
       <li transition:fade>
-        <span class="flex items-center">
+        <span class="flex">
           <Icon.AnnotationOutline class="w-4 h-4" />
           <div class="ps-2 text-xs font-normal">
             <p>
@@ -29,7 +30,7 @@
     {/if}
     {#if message.response}
       <li transition:fade>
-        <span class="flex items-center">
+        <span class="flex">
           {#if message.response.sameContext}
             <span class="flex"><Icon.CodePullRequestOutline color={message.response.status === metadata.SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>
           {:else}
@@ -45,14 +46,14 @@
               {/if}
               <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="px-2.5 py-0.5">
                 {message.response.status}
-                {#if message.response.textMessage}[{message.response.textMessage}]{/if}
               </Badge>
+              {#if message.response.textMessage}[{message.response.textMessage}]{/if}
               {#if message.response.elapsedMs > 0}
-                <Badge color="yellow" rounded class="px-2.5 py-0.5 text-xs">
-                  {message.response.elapsedMs} ms
+                <Badge color="dark" rounded class="ms-1 px-2.5 py-0.5 text-xs">
+                  {convertMsToText(message.response.elapsedMs)}
+                  {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}              
                 </Badge>
               {/if}
-              {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}              
             </p>
           </div>
         </span>

@@ -211,7 +211,8 @@ func getRowSetForEmbeddingMatchingPrompt(r ApiRequest, vector []float32) ([]mode
 var getRowsQueryForEmbeddingMatchingPrompt = func() string {
 	return "SELECT rows.embeddingText " +
 		"FROM rows " +
-		"WHERE embedding <-> $1 < $2"
+		"WHERE enabled = true " +
+		"AND embedding <-> $1 < $2"
 }
 
 // function is available for mocking

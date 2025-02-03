@@ -33,7 +33,7 @@
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    <Navigation {context} appName={data.appName}/>
+    <Navigation {context} appName={data.appName} {userPreferences}/>
   </nav>
   <section class={"main-container grid " + (userPreferences.expandSidebar ? "[grid-template-columns:1fr_6fr]" : "[grid-template-columns:1fr_24fr]") + " overflow-y-auto"}>
     <aside class="side-bar bg-gray-200 grid overflow-y-auto overflow-x-hidden">
