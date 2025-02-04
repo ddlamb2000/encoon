@@ -38,7 +38,7 @@ func postGridEmbeddings(ct context.Context, p ApiParameters, grid *model.Grid, r
 func (response *GridResponse) generateEmbedding(r ApiRequest, grid *model.Grid, clientAI *genai.Client) error {
 	for _, row := range response.Rows {
 		if row.Revision > row.RevisionEmbedding {
-			row.EmbeddingString = "{URI_REFERENCE:" + r.p.DbName + "/" + row.GridUuid + "/" + row.Uuid + "}\n"
+			row.EmbeddingString = "{UUIDREFERENCE:" + r.p.DbName + "/" + row.GridUuid + "/" + row.Uuid + "}\n"
 			row.EmbeddingString = row.EmbeddingString + response.Grid.DisplayString + "\n"
 			for _, col := range response.Grid.Columns {
 				if *col.TypeUuid == model.UuidTextColumnType || *col.TypeUuid == model.UuidIntColumnType {

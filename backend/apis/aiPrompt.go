@@ -128,7 +128,7 @@ func configureModel(model *genai.GenerativeModel) {
 	model.SetTopK(configuration.GetConfiguration().AI.TopK)
 	model.SetMaxOutputTokens(configuration.GetConfiguration().AI.MaxOutputTokens)
 	model.ResponseMIMEType = "text/plain"
-	model.SystemInstruction = genai.NewUserContent(genai.Text(configuration.GetConfiguration().AI.SystemInstruction) + " and show URI_REFERENCE")
+	model.SystemInstruction = genai.NewUserContent(genai.Text(configuration.GetConfiguration().AI.SystemInstruction) + " and show UUIDREFERENCE")
 }
 
 func handleGeminiResponse(dbName, userUuid, userName, user, gridUuid, contextUuid, requestInitiatedOn, requestReceivedOn, messageKey string, request ApiParameters, iter *genai.GenerateContentResponseIterator) responseContent {

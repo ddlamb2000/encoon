@@ -49,7 +49,7 @@
                   onclick={() => context.navigateToGrid(metadata.UuidGrids, set.grid.uuid)}>
                 <span class="flex">
                   Definition
-                  <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
+                  <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
                 </span>
               </a>
             {/if}
@@ -111,7 +111,7 @@
                                   ? context.navigateToGrid(row.uuid)
                                   : context.navigateToGrid(set.grid.uuid, row.uuid)
                         }>
-                      <Icon.ArrowUpRightFromSquareOutline class="text-gray-300  hover:text-gray-900" />
+                      <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
                     </a>
                     <Icon.DotsVerticalOutline class={"text-gray-300 hover:text-gray-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>

@@ -41,7 +41,7 @@
         {/if}
       </div>
       <aside class="p-1 h-10 overflow-y-auto bg-gray-50"><FocusArea {context} /></aside>
-      <div class="ps-4 bg-white grid overflow-auto">
+      <div class="ps-4 bg-gray-50 grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
             {#if context.hasDataSet() && context.gridUuid !== undefined && context.gridUuid !== ""}
