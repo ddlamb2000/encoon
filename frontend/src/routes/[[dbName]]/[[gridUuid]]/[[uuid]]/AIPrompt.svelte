@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Badge } from 'flowbite-svelte'
-  import { fade, slide } from 'svelte/transition'
+	import { Badge, Spinner } from 'flowbite-svelte'
+  import { fade } from 'svelte/transition'
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
@@ -62,12 +62,21 @@
             <Badge color="blue" rounded class="px-2.5 py-0.5 text-sm font-bold">
               {message.request.actionText}
             </Badge>
+            {#if message.request.answered}
+              <Icon.CheckOutline class="inline-flex" />
+            {:else if message.request.timeOut}
+              <Icon.ClockOutline class="inline-flex text-red-700" />
+              <span class="text-xs text-red-700">No response</span>
+            {:else}
+              <Spinner size={4} />
+            {/if}
+            {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
           {/if}
         </li>
       {:else if message.response && message.response.sameContext && message.response.action === metadata.ActionPrompt}
         {#if message.response.actionText && message.response.textMessage}
-          <li transition:fade class="text-sm font-normal ms-2 mb-4">
-            <ul class="ms-1.5">
+          <li transition:fade class="text-sm font-normal ms-2 mt-2 mb-4">
+            <ul>
               {#each splitStreamText(message.response.textMessage) as line}
                 <li>
                   {#each line.chunks as chunk}
@@ -91,7 +100,9 @@
             <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="ms-1 me-1 px-0.5 py-0.5">
               {convertMsToText(message.response.elapsedMs)}
             </Badge>
-            {#if message.response !== undefined && message.response.dateTime !== undefined}<DateTime dateTime={message.response?.dateTime} showDate={false} />{/if}
+            <span class="font-extralight text-xs text-gray-500 bottom-2">
+              This tool uses AI to generate responses, so some information may be inaccurate.
+            </span>            
           </li>
           {/if}
       {/if}

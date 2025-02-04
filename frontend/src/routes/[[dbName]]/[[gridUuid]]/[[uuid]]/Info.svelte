@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Badge } from 'flowbite-svelte'
+	import { Badge, Spinner } from 'flowbite-svelte'
   import { fade, slide } from 'svelte/transition'
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
@@ -24,13 +24,21 @@
                     {message.request.actionText}
                   </Badge>
                 {/if}
+                {#if message.request.answered}
+                  <Icon.CheckOutline class="inline-flex w-4 h-4" />
+                {:else if message.request.timeOut}
+                  <Icon.ClockOutline class="inline-flex text-red-700" />
+                  <span class="text-xs text-red-700">No response</span>
+                {:else}
+                  <Spinner size={4} />
+                {/if}
                 {#if message.request && message.request.dateTime !== undefined}<DateTime dateTime={message.request?.dateTime} showDate={false}/>{/if}
               </p>
             </div>
           </span>
         </li>
       {:else if message.response}
-        <li transition:fade class="ms-2">
+        <li transition:fade>
           <span class="flex">
             {#if message.response.sameContext}
               <span class="flex"><Icon.CodePullRequestOutline color={message.response.status === metadata.SuccessStatus ? "green" : "red"} class="w-4 h-4" /></span>

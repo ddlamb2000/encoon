@@ -151,6 +151,7 @@ export interface TransactionItem {
   gridUuid?: string
   dateTime?: string
   sameContext?: boolean
+  answered?: boolean
   timeOut?: boolean
   elapsedMs?: number
 }

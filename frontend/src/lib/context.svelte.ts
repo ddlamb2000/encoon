@@ -8,13 +8,16 @@ import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import type { RequestContent } from '$lib/apiTypes'
 import { Focus } from '$lib/focus.svelte.ts'
-import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
+
+const heartbeatFrequency = 60000
+const timeOutCheckFrequency = 10000
 
 export class Context extends ContextBase {
   isStreaming: boolean = $state(false)
   reader: ReadableStreamDefaultReader<Uint8Array> | undefined = $state()
   #hearbeatId: any = null
+  #timeOutCheckId: any = null
   url: string = $state("")
   dataSet: GridResponse[] = $state([])
   gridsInMemory: number = $state(0)
@@ -648,13 +651,15 @@ export class Context extends ContextBase {
     this.user.checkLocalToken()
     console.log(`Start streaming from ${uri}`)
     this.isStreaming = true
-    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, 60000)
+    this.#hearbeatId = setInterval(() => { this.pushAdminMessage({ action: metadata.ActionHeartbeat }) }, heartbeatFrequency)
+    this.#timeOutCheckId = setInterval(() => { this.updateTimeedOutRequests(timeOutCheckFrequency) }, timeOutCheckFrequency)
     for await (let line of this.getStreamIteration(uri)) console.log(`Get from ${uri}`, line)
   }  
 
   stopStreaming = () => {
     this.isStreaming = false
     if(this.#hearbeatId) clearInterval(this.#hearbeatId)
+    if(this.#timeOutCheckId) clearInterval(this.#timeOutCheckId)
     if(this.reader && this.reader !== undefined) this.reader.cancel()
   }
 }

@@ -68,6 +68,8 @@ export class ContextBase {
   }
 
   trackResponse = (response: TransactionItem) => {
+    const initialRequest = this.messageStack.find((r) => r.request && !r.request.answered && !r.request.timeOut && r.request.messageKey == response.messageKey)
+    if(initialRequest && initialRequest.request) initialRequest.request.answered = true
     const responseIndex = this.messageStack.findIndex((r) => r.response && r.response.messageKey == response.messageKey)
     if(response.action === metadata.ActionPrompt) {
       if(response.textMessage) {
@@ -85,6 +87,21 @@ export class ContextBase {
       this.messageStack.push({response : response})
     }
     if(this.messageStack.length > messageStackLimit) this.messageStack.splice(0, 25)
+  }
+
+  updateTimeedOutRequests = (timeOutCheckFrequency: number) => {
+    this.messageStack.find((r) => {
+      if(r.request && !r.request.answered && !r.request.timeOut && r.request.dateTime) {
+        const localDate = new Date(r.request.dateTime)
+        const localDateUTC =  Date.UTC(localDate.getUTCFullYear(), localDate.getUTCMonth(), localDate.getUTCDate(),
+                                      localDate.getUTCHours(), localDate.getUTCMinutes(), localDate.getUTCSeconds())
+        const localNow = new Date
+        const localNowUTC =  Date.UTC(localNow.getUTCFullYear(), localNow.getUTCMonth(), localNow.getUTCDate(),
+                                      localNow.getUTCHours(), localNow.getUTCMinutes(), localNow.getUTCSeconds())
+        const ms = (localNowUTC - localDateUTC)
+        if(ms > timeOutCheckFrequency) r.request.timeOut = true
+      }
+    })
   }
 
   getGridLastResponse = () => {
