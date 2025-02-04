@@ -57,7 +57,7 @@
                 </a>
               {/if}
             </span>
-            <table class="font-light text-sm table-auto border-collapse border border-slate-100">
+            <table class="font-light text-sm table-auto border-collapse border border-slate-100 shadow-lg">
               <tbody class="border border-slate-100">
                 {#each set.grid.columns as column, indexColumn}
                   <tr class="align-top">

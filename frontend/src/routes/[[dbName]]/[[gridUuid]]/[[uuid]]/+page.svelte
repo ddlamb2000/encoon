@@ -46,7 +46,7 @@
       </aside>
       <div class="ps-4 bg-gray-50 grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <article class="h-[500px]">
+          <article class="h-[50px]">
             {#if context.userPreferences.showPrompt}
               <AIPrompt {context} />
             {:else if context.hasDataSet() && context.gridUuid && context.gridUuid !== ""}

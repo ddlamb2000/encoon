@@ -55,10 +55,10 @@
             {/if}
         </span>
         {/if}
-        <table class="font-light text-sm table-auto border-collapse">
+        <table class="font-light text-sm table-auto border-collapse shadow-lg mb-0.5">
           <thead>
             <tr>
-              <th class="sticky -top-3 py-1">
+              <th class="sticky -top-3 py-1 ">
                 {#if !set.grid.columns || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>

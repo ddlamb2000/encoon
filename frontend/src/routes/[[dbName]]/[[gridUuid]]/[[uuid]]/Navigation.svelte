@@ -1,8 +1,7 @@
 <script lang="ts">
   import { Button, Indicator, Search, Toggle } from 'flowbite-svelte'
-  import { fade } from 'svelte/transition'
   import * as Icon from 'flowbite-svelte-icons'
-  import * as metadata from "$lib/metadata.svelte.ts"
+  import { fade } from 'svelte/transition'
   let { context, appName } = $props()
   let prompt = $state("")
 </script>
@@ -13,14 +12,9 @@
   </span>
   {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
     <span transition:fade class="inline-flex items-center ms-4 me-2">
-      <Button size="xs" class="ms-4 me-2 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue"
-              onclick={() => context.navigateToGrid(metadata.UuidGrids, "", true, "relationship3", metadata.UuidGrids, context.user.getUserUuid())}>
-        <Icon.GridOutline />
-      </Button>
-      <span class="h-10 me-1">  
+      <span class="h-10 me-1">
         <Toggle bind:checked={context.userPreferences.showPrompt} color="green" size="small" class="mt-3">
-          <svelte:fragment slot="offLabel"><span class="text-blue-500">Navigation</span></svelte:fragment>
-          <span class="text-green-500">Chat</span>
+          <span class="text-green-500"><Icon.WandMagicSparklesOutline /></span>
         </Toggle>
       </span>      
       <Search bind:value={prompt} size="md" class="py-1 ms-2 me-2 w-96" placeholder={`Prompt ${appName}`}

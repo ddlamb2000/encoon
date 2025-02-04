@@ -1,11 +1,16 @@
 <script lang="ts">
-  import { Button, Indicator, Toggle } from 'flowbite-svelte'
+  import { Button, Indicator } from 'flowbite-svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import DynIcon from './DynIcon.svelte'
-  let { context, appName } = $props()
+  import * as metadata from "$lib/metadata.svelte.ts"
+  let { context } = $props()
 </script>
 
-<Button outline pill size="xs" class="me-2 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue" onclick={() => context.newGrid()}>  
+<Button size="xs" class="mt-1 mb-1 h-8 w-8 shadow-lg" color="green"
+        onclick={() => context.navigateToGrid(metadata.UuidGrids, "", true, "relationship3", metadata.UuidGrids, context.user.getUserUuid())}>
+  <Icon.GridOutline />
+</Button>
+<Button size="xs" class="me-1 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue" onclick={() => context.newGrid()}>  
   <Icon.CirclePlusOutline />
 </Button>
 {#each context.dataSet as set}

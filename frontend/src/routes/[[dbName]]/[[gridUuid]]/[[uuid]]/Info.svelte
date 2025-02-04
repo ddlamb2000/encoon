@@ -9,7 +9,7 @@
   let { context } = $props()
 </script>
 
-<footer transition:slide use:autoscroll={{ pauseOnUserScroll: true }} class="p-2 max-h-64 overflow-y-auto bg-gray-200 border-t-2 border-gray-500">
+<footer transition:slide use:autoscroll={{ pauseOnUserScroll: true }} class="p-2 max-h-48 overflow-y-auto bg-gray-200 border-t-2 border-gray-500">
   <ul>
     {#each context.messageStack as message}
       {#if message.request}

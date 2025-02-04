@@ -43,7 +43,7 @@
               <a href="#top" class="cursor-pointer flex w-full rounded hover:bg-gray-100 dark:hover:bg-gray-600 font-light"
                   onclick={(e) => {e.stopPropagation(); context.removeReferencedValue(set, column, row, referencedRow)}}>
                 {@html referencedRow.displayString}
-                <Icon.CircleMinusOutline class="ms-1" color="lightgray" />
+                <Icon.CloseCircleOutline class="ms-1" color="lightgray" />
               </a>
             </li>
           {/if}
