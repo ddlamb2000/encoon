@@ -3,6 +3,7 @@
 
 import type { KafkaMessageRequest, KafkaMessageHeader, KafkaMessageResponse } from '$lib/apiTypes'
 import type { RequestContent, TransactionItem, Transaction } from '$lib/apiTypes'
+import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import { User } from '$lib//user.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 
@@ -10,6 +11,7 @@ const messageStackLimit = 500
 
 export class ContextBase {
   user: User
+  userPreferences: UserPreferences = new UserPreferences
   dbName: string = $state("")
   gridUuid: string = $state("")
   uuid: string = $state("")

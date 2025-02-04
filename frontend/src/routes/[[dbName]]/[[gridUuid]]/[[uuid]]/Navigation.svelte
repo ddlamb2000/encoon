@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { Button, Indicator } from 'flowbite-svelte'
+  import { Button, Indicator, Search, Toggle } from 'flowbite-svelte'
   import { fade } from 'svelte/transition'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte.ts"
-  let { context, appName, userPreferences } = $props()
+  let { context, appName } = $props()
   let prompt = $state("")
 </script>
 
@@ -12,24 +12,26 @@
     <a data-sveltekit-reload href={"/" + context.dbName}>{appName}</a>
   </span>
   {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-    <span transition:fade class="inline-flex items-center ms-10 me-4">
-      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" color="green"
+    <span transition:fade class="inline-flex items-center ms-4 me-2">
+      <Button size="xs" class="ms-4 me-2 mt-1 mb-1 h-8 w-8 shadow-lg" color="blue"
               onclick={() => context.navigateToGrid(metadata.UuidGrids, "", true, "relationship3", metadata.UuidGrids, context.user.getUserUuid())}>
         <Icon.GridOutline />
       </Button>
-      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" color="blue" onclick={() => context.newGrid()}>  
-        <Icon.CirclePlusOutline />
-      </Button>
-      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg" 
-            color={userPreferences.showPrompt ? "dark" : "light"}
-            onclick={() => userPreferences.toggleShowPrompt()}>
-        <Icon.WandMagicSparklesOutline />
-      </Button>
-      <Button size="xs" class="me-2 mt-1 mb-1 h-8 w-full shadow-lg"
-            color={userPreferences.showEvents ? "dark" : "light"}
-            onclick={() => userPreferences.toggleShowEvents()}>
-        <Icon.MessagesOutline />
-      </Button>
+      <span class="h-10 me-1">  
+        <Toggle bind:checked={context.userPreferences.showPrompt} color="green" size="small" class="mt-3">
+          <svelte:fragment slot="offLabel"><span class="text-blue-500">Navigation</span></svelte:fragment>
+          <span class="text-green-500">Chat</span>
+        </Toggle>
+      </span>      
+      <Search bind:value={prompt} size="md" class="py-1 ms-2 me-2 w-96" placeholder={`Prompt ${appName}`}
+              onclick={(e) => {e.stopPropagation()}}
+              onkeyup={(e) => {
+                if(e.code === 'Enter') {
+                  context.prompt(prompt)
+                  prompt = ""
+                  context.userPreferences.showPrompt = true
+                }
+      }} />
     </span>
   {/if}
   <span class="lg:flex ml-auto">

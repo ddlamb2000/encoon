@@ -8,6 +8,7 @@ import { newUuid, debounce, numberToLetters } from "$lib/utils.svelte.ts"
 import { replaceState } from "$app/navigation"
 import type { RequestContent } from '$lib/apiTypes'
 import { Focus } from '$lib/focus.svelte.ts'
+import { UserPreferences } from '$lib/userPreferences.svelte.ts'
 import * as metadata from "$lib/metadata.svelte"
 
 export class Context extends ContextBase {
@@ -57,6 +58,7 @@ export class Context extends ContextBase {
                           filterColumnGridUuid?: string,
                           filterColumnValue?: string) => {
 		console.log(`[Context.navigateToGrid()] gridUuid=${gridUuid}, uuid=${uuid}`)
+    this.userPreferences.showPrompt = false
     this.reset()
     const url = `/${this.dbName}/${gridUuid}` + (uuid !== "" ? `/${uuid}` : "")
     replaceState(url, { gridUuid: this.gridUuid, uuid: this.uuid })

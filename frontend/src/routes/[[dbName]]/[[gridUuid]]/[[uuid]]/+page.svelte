@@ -1,8 +1,8 @@
 <script  lang="ts">
   import type { PageData } from './$types'
+  import { Toggle } from 'flowbite-svelte'
   import { onMount, onDestroy } from 'svelte'
   import { Context } from '$lib/context.svelte.ts'
-  import { UserPreferences } from '$lib/userPreferences.svelte.ts'
   import Login from './Login.svelte'
   import Info from './Info.svelte'
   import Grid from './Grid.svelte'
@@ -15,11 +15,10 @@
   
   let { data }: { data: PageData } = $props()
   let context = $state(new Context(data.dbName, data.url, data.gridUuid, data.uuid))
-  const userPreferences = new UserPreferences
 
   onMount(() => {
     if(data.ok) {
-      userPreferences.readUserPreferences()
+      context.userPreferences.readUserPreferences()
       context.startStreaming()
       context.mount()
     }
@@ -31,21 +30,27 @@
 <svelte:head><title>{context.dbName} | {data.appName}</title></svelte:head>
 <main class="global-container grid h-full [grid-template-rows:auto_1fr]">
   <nav class="p-2 global header bg-gray-900 text-gray-100">
-    <Navigation {context} appName={data.appName} {userPreferences}/>
+    <Navigation {context} appName={data.appName}/>
   </nav>
   <section class={"main-container grid "}>
     <section class="content grid [grid-template-rows:auto_auto_1fr_auto] overflow-auto">
       <div class="h-10 ps-1 overflow-y-auto bg-gray-100">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
-          <TopBar {context} />
+          <TopBar {context} appName={data.appName} />
         {/if}
       </div>
-      <aside class="p-1 h-10 overflow-y-auto bg-gray-50"><FocusArea {context} /></aside>
+      <aside class={"p-1 " + (context.userPreferences.showPrompt ? "h-0" : "h-10") + "overflow-y-auto bg-gray-50"}>
+        {#if !context.userPreferences.showPrompt}
+          <FocusArea {context} />
+        {/if}
+      </aside>
       <div class="ps-4 bg-gray-50 grid overflow-auto">
         {#if data.ok && context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
           <article class="h-[500px]">
-            {#if context.hasDataSet() && context.gridUuid !== undefined && context.gridUuid !== ""}
-              {#if context.uuid !== undefined && context.uuid !== ""}
+            {#if context.userPreferences.showPrompt}
+              <AIPrompt {context} />
+            {:else if context.hasDataSet() && context.gridUuid && context.gridUuid !== ""}
+              {#if context.uuid && context.uuid !== ""}
                 <SingleRow bind:context={context} gridUuid={context.gridUuid} uuid={context.uuid} />
               {:else}
                 <Grid bind:context={context} gridUuid={context.gridUuid} />
@@ -58,13 +63,12 @@
           {data.errorMessage}
         {/if}
       </div>
-      {#if userPreferences.showPrompt}
-        <AIPrompt {context} appName={data.appName} {userPreferences} />
-      {:else if userPreferences.showEvents}
+      {#if context.userPreferences.showEvents}
         <Info {context} />
       {/if}
     </section>
   </section>
+  <Toggle bind:checked={context.userPreferences.showEvents} size="small" class="fixed bottom-0 right-0 ms-2 mb-2" />
 </main>
 
 <style></style>
