@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Badge, Spinner } from 'flowbite-svelte'
-  import { fade } from 'svelte/transition'
+  import { fade, slide } from 'svelte/transition'
   import DateTime from './DateTime.svelte'
   import * as Icon from 'flowbite-svelte-icons'
   import * as metadata from "$lib/metadata.svelte"
@@ -28,8 +28,11 @@
     const expBold = /\*\*([^\*]*)\*\*/g
     const expCode = /`([^`]*)`/g
     const expReference = /\{\s?UUIDREFERENCE:\s?(\S+)\/(\S+)\/(\S+)\s?\}/g
+    const expReferenceTruncated = /\{[^\}]*$/g
+    const expReferenceMalformed = /\{[^\}]*\}/g
     const replaceBold = (match: string, p1: string) => `<span class="font-bold">${p1}</span>`
     const replaceCode = (match: string, p1: string) => `<span class="font-mono text-xs">${p1}</span>`
+    const replaceReferenceTruncated = `<span class="italic text-xs">...(content is truncated)</span>`
     const stringLines = input.split(expParagrap)
     const streamLines: StreamLine[] = []
     for(const stringLine of stringLines) {
@@ -38,7 +41,11 @@
       let referenceChunk: ReferenceChunk = {}
       for(let i = 0; i < stringLineChunks.length; i++) {
         if(i === 0 || i === 4) streamLineChunks.push({
-          stringChunk: stringLineChunks[i].replaceAll(expBold, replaceBold).replaceAll(expCode, replaceCode)
+          stringChunk: stringLineChunks[i]
+                        .replaceAll(expBold, replaceBold)
+                        .replaceAll(expCode, replaceCode)
+                        .replaceAll(expReferenceTruncated, replaceReferenceTruncated)
+                        .replaceAll(expReferenceMalformed, "")
         })
         if(i ===1) referenceChunk.dbName = stringLineChunks[i]
         if(i ===2) referenceChunk.gridUuid = stringLineChunks[i]
@@ -53,7 +60,7 @@
   }
 </script>
 
-<div class="mt-2 overflow-y-auto bg-gray-50" use:autoscroll={{ pauseOnUserScroll: true }} >
+<div transition:slide class="mt-2 overflow-y-auto bg-gray-50" use:autoscroll={{ pauseOnUserScroll: true }} >
   <ul>
     {#each context.messageStack as message}
       {#if message.request && message.request.action === metadata.ActionPrompt}
@@ -82,12 +89,12 @@
                   {#each line.chunks as chunk}
                     {#if chunk.referenceChunk}
                       <a href={"/" + chunk.referenceChunk.dbName + "/" + chunk.referenceChunk.gridUuid + "/" + chunk.referenceChunk.uuid}
-                          class="text-blue-400 hover:text-blue-900"
+                          class="text-blue-600 hover:text-blue-900"
                           onclick={() => chunk.referenceChunk
                                           && context.navigateToGrid(chunk.referenceChunk.gridUuid, chunk.referenceChunk.uuid)} >
                         <span class="inline-flex">
-                          (show)
-                          <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
+                          show data
+                          <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                         </span>
                       </a>
                     {:else if chunk.stringChunk}
@@ -100,8 +107,8 @@
             <Badge color={message.response.status === metadata.SuccessStatus ? "green" : "red"} rounded class="ms-1 me-1 px-0.5 py-0.5">
               {convertMsToText(message.response.elapsedMs)}
             </Badge>
-            <span class="font-extralight text-xs text-gray-500 bottom-2">
-              This tool uses AI to generate responses, so some information may be inaccurate.
+            <span class="font-extralight italic text-xs text-gray-500 bottom-2">
+              Content is generated using AI (information may be inaccurate).
             </span>            
           </li>
           {/if}

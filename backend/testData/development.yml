@@ -18,7 +18,7 @@ ai:
   temperature: 1.1 # Controls the randomness of the output
   topP: 0.8 # maximum cumulative probability of tokens to consider when sampling
   topK: 20 # The maximum number of tokens to consider when sampling
-  maxOutputTokens: 2000 # The maximum number of tokens to include in a candidate
+  maxOutputTokens: 1000 # The maximum number of tokens to include in a candidate
   systemInstruction: "clear and concise" # "System prompt" that is a more forceful prompt to the model
   embeddingModel: "embedding-001" # Model that computes embeddings
   vectorDistance: 2 # L2 distance used to similarity search in vector database

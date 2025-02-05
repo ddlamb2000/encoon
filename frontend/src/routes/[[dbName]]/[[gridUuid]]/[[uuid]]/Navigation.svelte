@@ -13,7 +13,7 @@
   {#if context.isStreaming && context && context.user && context.user.getIsLoggedIn()}
     <span transition:fade class="inline-flex items-center ms-4 me-2">
       <span class="h-10 me-1">
-        <Toggle bind:checked={context.userPreferences.showPrompt} color="green" size="small" class="mt-3">
+        <Toggle bind:checked={context.userPreferences.showPrompt} color="green" size="small" class="mt-2.5">
           <span class="text-green-500"><Icon.WandMagicSparklesOutline /></span>
         </Toggle>
       </span>      

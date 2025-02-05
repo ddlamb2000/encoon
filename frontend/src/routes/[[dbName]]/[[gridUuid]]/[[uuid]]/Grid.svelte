@@ -49,7 +49,7 @@
                   onclick={() => context.navigateToGrid(metadata.UuidGrids, set.grid.uuid)}>
                 <span class="flex">
                   Definition
-                  <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
+                  <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                 </span>
               </a>
             {/if}
@@ -58,7 +58,7 @@
         <table class="font-light text-sm table-auto border-collapse shadow-lg mb-0.5">
           <thead>
             <tr>
-              <th class="sticky -top-3 py-1 ">
+              <th class="sticky -top-0.5 py-1 ">
                 {#if !set.grid.columns || set.grid.columns.length === 0}
                   <Icon.DotsVerticalOutline class={"text-gray-300  hover:text-gray-900 first-column-menu-" + set.grid.uuid + " dark:text-white"} />
                   <Dropdown class="w-40 shadow-lg" triggeredBy={".first-column-menu-" + set.grid.uuid}>
@@ -70,7 +70,7 @@
                 {/if}
               </th>
               {#each set.grid.columns as column, indexColumn}
-                <th class="sticky -top-3 p-0.5 py-1 bg-gray-100 border border-slate-200">
+                <th class="sticky -top-0.5 p-0.5 py-1 bg-gray-100 border border-slate-200">
                   <span class="flex">
                     {#if column.bidirectional && !column.owned && column.grid}
                       {column.grid.displayString} <span class="text-xs">({column.label})</span>
@@ -111,7 +111,7 @@
                                   ? context.navigateToGrid(row.uuid)
                                   : context.navigateToGrid(set.grid.uuid, row.uuid)
                         }>
-                      <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
+                      <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                     </a>
                     <Icon.DotsVerticalOutline class={"text-gray-300 hover:text-gray-900 row-menu-" + row.uuid}/>
                     <Dropdown class="w-40 shadow-lg" triggeredBy={".row-menu-" + row.uuid}>

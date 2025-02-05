@@ -40,7 +40,7 @@
                     onclick={() => context.navigateToGrid(row.uuid, "")}>
                   <span class="flex">
                     Data
-                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
+                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                   </span>
                 </a>
               {:else}
@@ -52,7 +52,7 @@
                     onclick={() => context.navigateToGrid(set.grid.uuid, "")}>
                     <span class="flex">
                     {@html set.grid.text1}
-                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-400 hover:text-blue-900" />
+                    <Icon.ArrowUpRightFromSquareOutline class="text-blue-600 hover:text-blue-900" />
                   </span>
                 </a>
               {/if}
