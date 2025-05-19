@@ -80,7 +80,7 @@ func answerPromptWithClient(ctx context.Context, dbName, userUuid, userName, use
 				Status:      FailedStatus,
 				Action:      request.Action,
 				ActionText:  request.ActionText,
-				TextMessage: fmt.Sprint("Issue when generating embedding with Gemini: %v", err),
+				TextMessage: fmt.Sprintf("Issue when generating embedding with Gemini: %v", err),
 			}
 		}
 		rowSet, rowSetCount, err := getEmbeddingMatchingPrompt(ctx, request, res.Embedding.Values)
@@ -89,7 +89,7 @@ func answerPromptWithClient(ctx context.Context, dbName, userUuid, userName, use
 				Status:      FailedStatus,
 				Action:      request.Action,
 				ActionText:  request.ActionText,
-				TextMessage: fmt.Sprint("Issue when querying vectors in database: %v", err),
+				TextMessage: fmt.Sprintf("Issue when querying vectors in database: %v", err),
 			}
 		}
 		model := clientAI.GenerativeModel(configuration.GetConfiguration().AI.Model)
